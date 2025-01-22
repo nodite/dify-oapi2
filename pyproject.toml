@@ -105,7 +105,7 @@ max-statements = 50  # function max statement
 
 [tool.poetry.dependencies]
 python = ">=3.10"
-pydantic = ">=1.10,<2.5"
+pydantic = ">=1.10,<3.0.0"
 httpx = ">=0.24,<1.0"
 
 [tool.poetry.group.dev]

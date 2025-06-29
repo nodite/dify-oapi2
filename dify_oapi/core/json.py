@@ -2,13 +2,23 @@ import copy
 import datetime
 import io
 from json import JSONEncoder, dumps, loads
-from typing import Any
+from typing import Any, overload
 
 from .const import UTF_8
 from .type import T
 
 
 class JSON:
+    @staticmethod
+    @overload
+    def marshal(obj: None, indent=None) -> None:
+        pass
+
+    @staticmethod
+    @overload
+    def marshal(obj: Any, indent=None) -> str:
+        pass
+
     @staticmethod
     def marshal(obj: Any, indent=None) -> str | None:
         if obj is None:

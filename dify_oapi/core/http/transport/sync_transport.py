@@ -74,23 +74,24 @@ def _stream_generator(
                     yield f"data: [ERROR] Stream interrupted: {str(chunk_e)}\n\n".encode()
                 return
         except httpx.RequestError as r_e:
+            err_msg = f"{r_e.__class__.__name__}: {r_e!r}"
             if stream_retry < stream_retry_count:
                 logger.info(
-                    f"in-request: retry success "
+                    f"in-request: retrying ({stream_retry+1}/{stream_retry_count}) "
                     f"{http_method_name} {url}"
                     f"{f', headers: {JSON.marshal(headers)}' if headers else ''}"
                     f"{f', params: {JSON.marshal(req.queries)}' if req.queries else ''}"
                     f"{f', body: {JSON.marshal(_merge_dicts(json_, files, data))}' if json_ or files or data else ''}"
-                    f"{f', exp: {r_e}'}"
+                    f"{f', exp: {err_msg}'}"
                 )
                 continue
             logger.info(
-                f"in-request: retry fail "
+                f"in-request: request failed, retried ({stream_retry}/{stream_retry_count})"
                 f"{http_method_name} {url}"
                 f"{f', headers: {JSON.marshal(headers)}' if headers else ''}"
                 f"{f', params: {JSON.marshal(req.queries)}' if req.queries else ''}"
                 f"{f', body: {JSON.marshal(_merge_dicts(json_, files, data))}' if json_ or files or data else ''}"
-                f"{f', exp: {r_e}'}"
+                f"{f', exp: {err_msg}'}"
             )
             raise r_e
 
@@ -187,23 +188,24 @@ class Transport:
                     )
                     break
                 except httpx.RequestError as e:
+                    err_msg = f"{e.__class__.__name__}: {e!r}"
                     if i < retry_count:
                         logger.info(
-                            f"in-request: retry success "
+                            f"in-request: retrying ({i+1}/{retry_count}) "
                             f"{http_method_name} {url}"
                             f"{f', headers: {JSON.marshal(headers)}' if headers else ''}"
                             f"{f', params: {JSON.marshal(req.queries)}' if req.queries else ''}"
                             f"{f', body: {JSON.marshal(_merge_dicts(json_, files, data))}' if json_ or files or data else ''}"
-                            f"{f', exp: {e}'}"
+                            f"{f', exp: {err_msg}'}"
                         )
                         continue
                     logger.info(
-                        f"in-request: retry fail "
+                        f"in-request: request failed, retried ({i}/{retry_count}) "
                         f"{http_method_name} {url}"
                         f"{f', headers: {JSON.marshal(headers)}' if headers else ''}"
                         f"{f', params: {JSON.marshal(req.queries)}' if req.queries else ''}"
                         f"{f', body: {JSON.marshal(_merge_dicts(json_, files, data))}' if json_ or files or data else ''}"
-                        f"{f', exp: {e}'}"
+                        f"{f', exp: {err_msg}'}"
                     )
                     raise e
             logger.debug(

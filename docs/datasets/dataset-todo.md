@@ -83,20 +83,20 @@ This document tracks the implementation progress of the dataset management funct
 ### Phase 4: Tag Management APIs (7 APIs)
 
 #### Step 11: Tag Request/Response Models
-- [ ] Create `create_request.py`
-- [ ] Create `create_response.py`
-- [ ] Create `list_request.py`
-- [ ] Create `list_response.py`
-- [ ] Create `update_request.py`
-- [ ] Create `update_response.py`
-- [ ] Create `delete_request.py`
-- [ ] Create `delete_response.py`
-- [ ] Create `bind_request.py`
-- [ ] Create `bind_response.py`
-- [ ] Create `unbind_request.py`
-- [ ] Create `unbind_response.py`
-- [ ] Create `query_bound_request.py`
-- [ ] Create `query_bound_response.py`
+- [x] Create `create_request.py`
+- [x] Create `create_response.py`
+- [x] Create `list_request.py`
+- [x] Create `list_response.py`
+- [x] Create `update_request.py`
+- [x] Create `update_response.py`
+- [x] Create `delete_request.py`
+- [x] Create `delete_response.py`
+- [x] Create `bind_request.py`
+- [x] Create `bind_response.py`
+- [x] Create `unbind_request.py`
+- [x] Create `unbind_response.py`
+- [x] Create `query_bound_request.py`
+- [x] Create `query_bound_response.py`
 
 #### Step 12: Test Tag Models
 - [ ] Create `tests/knowledge_base/v1/model/test_tag_models.py`

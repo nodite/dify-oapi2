@@ -570,4 +570,5 @@ Each step should meet the following criteria:
 - Prioritize type safety and developer experience throughout the implementation
 - Follow the established directory structure and naming conventions
 - All models should use Pydantic with builder patterns following existing project conventions
+- **Pydantic BaseModel Rule**: All request body and response models must inherit from pydantic BaseModel without custom `model_dump()` methods
 - Use `:parameter_name` format for path parameters to match existing patterns

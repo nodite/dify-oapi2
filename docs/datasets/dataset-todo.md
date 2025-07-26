@@ -75,7 +75,7 @@ This document tracks the implementation progress of the dataset management funct
 - [x] Create `tests/knowledge_base/v1/model/test_metadata_models.py`
 
 #### Step 9: Metadata Resource Implementation
-- [ ] Implement `dify_oapi/api/knowledge_base/v1/resource/metadata.py`
+- [x] Implement `dify_oapi/api/knowledge_base/v1/resource/metadata.py`
 
 #### Step 10: Test Metadata Resource
 - [ ] Create `tests/knowledge_base/v1/resource/test_metadata_resource.py`
@@ -198,6 +198,7 @@ This document tracks the implementation progress of the dataset management funct
 - [ ] Comprehensive type hints and Pydantic validation
 - [ ] Both sync and async method variants implemented
 - [ ] Builder pattern support for all request models
+- [ ] **Pydantic BaseModel compliance**: All models inherit from pydantic BaseModel without custom `model_dump()` methods
 - [ ] Proper error handling and HTTP status code mapping
 - [ ] Unit tests with good coverage (>90%)
 - [ ] Integration tests with mock API responses

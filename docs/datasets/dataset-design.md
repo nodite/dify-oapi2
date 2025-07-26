@@ -60,7 +60,14 @@ This document outlines the design for implementing comprehensive dataset managem
 - Remove old model files after new implementations are validated
 - Update import paths and references throughout the codebase
 
-### 7. Model File Organization
+### 7. Pydantic BaseModel Usage
+**Decision**: All request body and response models must inherit from pydantic BaseModel
+- **No Custom Serialization**: Do not implement custom `model_dump()` methods
+- **Use Pydantic Features**: Leverage pydantic's built-in serialization, validation, and type checking
+- **Consistent Behavior**: Ensure all models follow the same serialization patterns
+- **Builder Pattern Integration**: Builder patterns should use pydantic's `model_dump()` method directly
+
+### 8. Model File Organization
 **Decision**: Organize models by resource grouping with shared common models
 
 ```

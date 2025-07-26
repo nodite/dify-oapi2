@@ -4,6 +4,9 @@ from typing import List
 
 from pydantic import BaseModel
 
+from dify_oapi.core.enum import HttpMethod
+from dify_oapi.core.model.base_request import BaseRequest
+
 
 class DocumentMetadata(BaseModel):
     id: str
@@ -60,9 +63,15 @@ class OperationDataBuilder:
         return self
 
 
-class UpdateDocumentMetadataRequest(BaseModel):
-    dataset_id: str
-    operation_data: List[OperationData]
+class UpdateDocumentMetadataRequestBody(BaseModel):
+    operation_data: List[OperationData] = []
+
+
+class UpdateDocumentMetadataRequest(BaseRequest):
+    def __init__(self):
+        super().__init__()
+        self.dataset_id: str | None = None
+        self.request_body: UpdateDocumentMetadataRequestBody | None = None
 
     @staticmethod
     def builder() -> UpdateDocumentMetadataRequestBuilder:
@@ -71,15 +80,22 @@ class UpdateDocumentMetadataRequest(BaseModel):
 
 class UpdateDocumentMetadataRequestBuilder:
     def __init__(self):
-        self._request = UpdateDocumentMetadataRequest(dataset_id="", operation_data=[])
+        update_document_metadata_request = UpdateDocumentMetadataRequest()
+        update_document_metadata_request.http_method = HttpMethod.POST
+        update_document_metadata_request.uri = "/v1/datasets/:dataset_id/documents/metadata"
+        self._request = update_document_metadata_request
 
     def build(self) -> UpdateDocumentMetadataRequest:
         return self._request
 
     def dataset_id(self, dataset_id: str) -> UpdateDocumentMetadataRequestBuilder:
         self._request.dataset_id = dataset_id
+        self._request.paths["dataset_id"] = dataset_id
         return self
 
     def operation_data(self, operation_data: List[OperationData]) -> UpdateDocumentMetadataRequestBuilder:
-        self._request.operation_data = operation_data
+        if self._request.request_body is None:
+            self._request.request_body = UpdateDocumentMetadataRequestBody()
+        self._request.request_body.operation_data = operation_data
+        self._request.body = self._request.request_body.model_dump(exclude_none=True, mode="json")
         return self

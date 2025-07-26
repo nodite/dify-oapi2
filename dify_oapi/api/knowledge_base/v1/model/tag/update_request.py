@@ -1,46 +1,32 @@
 from __future__ import annotations
 
-from pydantic import BaseModel
-
 from dify_oapi.core.enum import HttpMethod
 from dify_oapi.core.model.base_request import BaseRequest
 
-
-class UpdateTagRequestBody(BaseModel):
-    name: str = ""
-    tag_id: str = ""
+from .update_request_body import UpdateRequestBody
 
 
-class UpdateTagRequest(BaseRequest):
+class UpdateRequest(BaseRequest):
     def __init__(self):
         super().__init__()
-        self.request_body: UpdateTagRequestBody | None = None
+        self.request_body: UpdateRequestBody | None = None
 
     @staticmethod
-    def builder() -> UpdateTagRequestBuilder:
-        return UpdateTagRequestBuilder()
+    def builder() -> UpdateRequestBuilder:
+        return UpdateRequestBuilder()
 
 
-class UpdateTagRequestBuilder:
+class UpdateRequestBuilder:
     def __init__(self):
-        update_tag_request = UpdateTagRequest()
-        update_tag_request.http_method = HttpMethod.PATCH
-        update_tag_request.uri = "/v1/datasets/tags"
-        self._request = update_tag_request
+        update_request = UpdateRequest()
+        update_request.http_method = HttpMethod.PATCH
+        update_request.uri = "/v1/datasets/tags"
+        self._request = update_request
 
-    def build(self) -> UpdateTagRequest:
+    def build(self) -> UpdateRequest:
         return self._request
 
-    def name(self, name: str) -> UpdateTagRequestBuilder:
-        if self._request.request_body is None:
-            self._request.request_body = UpdateTagRequestBody()
-        self._request.request_body.name = name
-        self._request.body = self._request.request_body.model_dump(exclude_none=True, mode="json")
-        return self
-
-    def tag_id(self, tag_id: str) -> UpdateTagRequestBuilder:
-        if self._request.request_body is None:
-            self._request.request_body = UpdateTagRequestBody()
-        self._request.request_body.tag_id = tag_id
-        self._request.body = self._request.request_body.model_dump(exclude_none=True, mode="json")
+    def request_body(self, request_body: UpdateRequestBody) -> UpdateRequestBuilder:
+        self._request.request_body = request_body
+        self._request.body = request_body.model_dump(exclude_none=True, mode="json")
         return self

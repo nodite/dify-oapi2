@@ -8,7 +8,7 @@ This example demonstrates how to list datasets (knowledge bases) using the Dify 
 import asyncio
 import os
 
-from dify_oapi.api.knowledge_base.v1.model.dataset.list_request import ListDatasetsRequest
+from dify_oapi.api.knowledge_base.v1.model.dataset.list_request import ListRequest
 from dify_oapi.client import Client
 from dify_oapi.core.model.request_option import RequestOption
 
@@ -21,7 +21,7 @@ def list_datasets_sync() -> None:
         
         # Build list request with pagination
         request = (
-            ListDatasetsRequest.builder()
+            ListRequest.builder()
             .page(1)
             .limit(10)
             .include_all(False)
@@ -60,7 +60,7 @@ async def list_datasets_async() -> None:
         
         # Build list request with keyword search
         request = (
-            ListDatasetsRequest.builder()
+            ListRequest.builder()
             .keyword("test")
             .page(1)
             .limit(5)

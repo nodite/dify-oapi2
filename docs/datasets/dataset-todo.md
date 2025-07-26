@@ -103,7 +103,7 @@
 
 #### Dataset Examples:
 - [x] `examples/knowledge_base/dataset/create.py` - COMPLETED
-- [ ] `examples/knowledge_base/dataset/list.py`
+- [x] `examples/knowledge_base/dataset/list.py` - COMPLETED
 - [ ] `examples/knowledge_base/dataset/get.py`
 - [ ] `examples/knowledge_base/dataset/update.py`
 - [ ] `examples/knowledge_base/dataset/delete.py`
@@ -145,7 +145,7 @@ DOMAIN="http://localhost:8080" API_KEY="dataset-xDC7JXTZeIpH8MzmI37G5Hjk" poetry
 
 #### Test Results:
 - [x] `dataset/create.py` - WORKING (URL protocol issue resolved)
-- [ ] `dataset/list.py`
+- [x] `dataset/list.py` - WORKING (class naming issues resolved)
 - [ ] `dataset/get.py`
 - [ ] `dataset/update.py`
 - [ ] `dataset/delete.py`

@@ -1,38 +1,32 @@
 from __future__ import annotations
 
-from pydantic import BaseModel
-
 from dify_oapi.core.enum import HttpMethod
 from dify_oapi.core.model.base_request import BaseRequest
 
-
-class CreateTagRequestBody(BaseModel):
-    name: str = ""
+from .create_request_body import CreateRequestBody
 
 
-class CreateTagRequest(BaseRequest):
+class CreateRequest(BaseRequest):
     def __init__(self):
         super().__init__()
-        self.request_body: CreateTagRequestBody | None = None
+        self.request_body: CreateRequestBody | None = None
 
     @staticmethod
-    def builder() -> CreateTagRequestBuilder:
-        return CreateTagRequestBuilder()
+    def builder() -> CreateRequestBuilder:
+        return CreateRequestBuilder()
 
 
-class CreateTagRequestBuilder:
+class CreateRequestBuilder:
     def __init__(self):
-        create_tag_request = CreateTagRequest()
-        create_tag_request.http_method = HttpMethod.POST
-        create_tag_request.uri = "/v1/datasets/tags"
-        self._request = create_tag_request
+        create_request = CreateRequest()
+        create_request.http_method = HttpMethod.POST
+        create_request.uri = "/v1/datasets/tags"
+        self._request = create_request
 
-    def build(self) -> CreateTagRequest:
+    def build(self) -> CreateRequest:
         return self._request
 
-    def name(self, name: str) -> CreateTagRequestBuilder:
-        if self._request.request_body is None:
-            self._request.request_body = CreateTagRequestBody()
-        self._request.request_body.name = name
-        self._request.body = self._request.request_body.model_dump(exclude_none=True, mode="json")
+    def request_body(self, request_body: CreateRequestBody) -> CreateRequestBuilder:
+        self._request.request_body = request_body
+        self._request.body = request_body.model_dump(exclude_none=True, mode="json")
         return self

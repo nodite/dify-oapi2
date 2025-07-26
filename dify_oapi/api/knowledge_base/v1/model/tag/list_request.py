@@ -4,21 +4,21 @@ from dify_oapi.core.enum import HttpMethod
 from dify_oapi.core.model.base_request import BaseRequest
 
 
-class ListTagsRequest(BaseRequest):
+class ListRequest(BaseRequest):
     def __init__(self):
         super().__init__()
 
     @staticmethod
-    def builder() -> ListTagsRequestBuilder:
-        return ListTagsRequestBuilder()
+    def builder() -> ListRequestBuilder:
+        return ListRequestBuilder()
 
 
-class ListTagsRequestBuilder:
+class ListRequestBuilder:
     def __init__(self):
-        list_tags_request = ListTagsRequest()
-        list_tags_request.http_method = HttpMethod.GET
-        list_tags_request.uri = "/v1/datasets/tags"
-        self._request = list_tags_request
+        list_request = ListRequest()
+        list_request.http_method = HttpMethod.GET
+        list_request.uri = "/v1/datasets/tags"
+        self._request = list_request
 
-    def build(self) -> ListTagsRequest:
+    def build(self) -> ListRequest:
         return self._request

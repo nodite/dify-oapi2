@@ -11,17 +11,17 @@ This document tracks the implementation progress of the dataset management funct
 ### Phase 1: Common Models Foundation
 
 #### Step 1: Create Shared Common Models
-- [ ] Create `retrieval_model.py`
-- [ ] Create `reranking_model.py`
-- [ ] Create `external_knowledge_info.py`
-- [ ] Create `metadata_filtering_conditions.py`
-- [ ] Create `filter_condition.py`
-- [ ] Create `dataset_info.py`
-- [ ] Create `tag_info.py`
-- [ ] Create `metadata_info.py`
+- [x] Create `retrieval_model.py`
+- [x] Create `reranking_model.py`
+- [x] Create `external_knowledge_info.py`
+- [x] Create `metadata_filtering_conditions.py`
+- [x] Create `filter_condition.py`
+- [x] Create `dataset_info.py`
+- [x] Create `tag_info.py`
+- [x] Create `metadata_info.py`
 
 #### Step 2: Test Common Models
-- [ ] Create `tests/knowledge_base/v1/model/test_dataset_models.py`
+- [x] Create `tests/knowledge_base/v1/model/test_dataset_models.py`
 
 ### Phase 2: Dataset Management APIs (6 APIs)
 

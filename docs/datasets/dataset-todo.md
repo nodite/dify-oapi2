@@ -58,21 +58,21 @@ This document tracks the implementation progress of the dataset management funct
 ### Phase 3: Metadata Management APIs (7 APIs)
 
 #### Step 7: Metadata Request/Response Models
-- [ ] Create `create_request.py`
-- [ ] Create `create_response.py`
-- [ ] Create `list_request.py`
-- [ ] Create `list_response.py`
-- [ ] Create `update_request.py`
-- [ ] Create `update_response.py`
-- [ ] Create `delete_request.py`
-- [ ] Create `delete_response.py`
-- [ ] Create `toggle_builtin_request.py`
-- [ ] Create `toggle_builtin_response.py`
-- [ ] Create `update_document_request.py`
-- [ ] Create `update_document_response.py`
+- [x] Create `create_request.py`
+- [x] Create `create_response.py`
+- [x] Create `list_request.py`
+- [x] Create `list_response.py`
+- [x] Create `update_request.py`
+- [x] Create `update_response.py`
+- [x] Create `delete_request.py`
+- [x] Create `delete_response.py`
+- [x] Create `toggle_builtin_request.py`
+- [x] Create `toggle_builtin_response.py`
+- [x] Create `update_document_request.py`
+- [x] Create `update_document_response.py`
 
 #### Step 8: Test Metadata Models
-- [ ] Create `tests/knowledge_base/v1/model/test_metadata_models.py`
+- [x] Create `tests/knowledge_base/v1/model/test_metadata_models.py`
 
 #### Step 9: Metadata Resource Implementation
 - [ ] Implement `dify_oapi/api/knowledge_base/v1/resource/metadata.py`

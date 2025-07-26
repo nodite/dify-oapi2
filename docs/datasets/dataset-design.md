@@ -47,11 +47,18 @@ This document outlines the design for implementing comprehensive dataset managem
 - Special operations: `retrieve`, `bind_tags`, `unbind_tags`
 - Maintain intuitive and self-documenting API interface
 
-### 6. Backward Compatibility
-**Decision**: Complete rewrite without backward compatibility
-- Align all implementations with latest API specifications
-- Ensure functional completeness and consistency
-- Prioritize correctness over migration convenience
+### 6. Migration Strategy
+**Decision**: Progressive migration with legacy cleanup
+- **Migration Approach**: Create new implementations first, then remove old ones after validation
+- **Cleanup Timing**: Remove old interfaces immediately after new implementation passes tests
+- **Validation Strategy**: Create migration verification tests to ensure behavioral consistency
+- **Legacy Handling**: Maintain functional equivalence during transition period
+
+**Specific Migration Tasks**:
+- Migrate existing dataset models from flat structure to domain-organized structure
+- Replace `hit_test` method with `retrieve` method (with compatibility verification)
+- Remove old model files after new implementations are validated
+- Update import paths and references throughout the codebase
 
 ### 7. Model File Organization
 **Decision**: Organize models by resource grouping with shared common models
@@ -252,8 +259,56 @@ tests/
 - Consistent architecture across all knowledge base features
 - Enhanced maintainability and extensibility
 
+## Examples Strategy
+
+### Examples Organization
+**Decision**: Resource-based directory structure with API-specific files
+- Each resource gets its own directory under `examples/knowledge_base/`
+- Each API gets its own file within the resource directory
+- Each file contains both sync and async examples
+- Basic try-catch error handling for educational purposes
+
+### Examples Directory Structure
+```
+examples/knowledge_base/
+├── dataset/
+│   ├── create.py          # Create dataset examples (sync + async)
+│   ├── list.py            # List datasets examples (sync + async)
+│   ├── get.py             # Get dataset details examples (sync + async)
+│   ├── update.py          # Update dataset examples (sync + async)
+│   ├── delete.py          # Delete dataset examples (sync + async)
+│   └── retrieve.py        # Dataset retrieval examples (sync + async)
+├── metadata/
+│   ├── create.py          # Create metadata examples (sync + async)
+│   ├── list.py            # List metadata examples (sync + async)
+│   ├── update.py          # Update metadata examples (sync + async)
+│   ├── delete.py          # Delete metadata examples (sync + async)
+│   ├── toggle_builtin.py  # Toggle built-in metadata examples (sync + async)
+│   └── update_document.py # Update document metadata examples (sync + async)
+├── tag/
+│   ├── create.py          # Create tag examples (sync + async)
+│   ├── list.py            # List tags examples (sync + async)
+│   ├── update.py          # Update tag examples (sync + async)
+│   ├── delete.py          # Delete tag examples (sync + async)
+│   ├── bind.py            # Bind tags examples (sync + async)
+│   ├── unbind.py          # Unbind tag examples (sync + async)
+│   └── query_bound.py     # Query bound tags examples (sync + async)
+└── README.md              # Examples overview and usage guide
+```
+
+### Examples Content Strategy
+- **Simple API Calls**: Each example focuses on a single API operation
+- **Educational Purpose**: Clear comments explaining each step
+- **Dual Versions**: Both synchronous and asynchronous implementations
+- **Basic Error Handling**: Simple try-catch blocks for common exceptions
+- **Real-world Data**: Use realistic but simple test data
+- **Integration Reference**: Examples can serve as integration test references
+- **Documentation Support**: Examples complement API documentation
+
 ## Summary
 
 This design provides a comprehensive solution for dataset management in dify-oapi, covering all 19 dataset-related APIs with a clean, maintainable architecture. The implementation prioritizes type safety, consistency, and developer experience while ensuring full compatibility with the latest Dify API specifications.
 
 The modular resource-based organization, combined with shared common models and descriptive method naming, creates an intuitive and powerful interface for dataset management operations including CRUD operations, metadata management, tag management, and advanced retrieval functionality.
+
+The examples strategy ensures developers have clear, educational references for every API operation, supporting both learning and integration testing needs with comprehensive sync/async coverage.

@@ -152,10 +152,15 @@ Follow the existing transport patterns and HTTP method mappings. Map to correct 
 - DELETE /v1/datasets/:dataset_id (delete)
 - POST /v1/datasets/:dataset_id/retrieve (retrieve)
 
+**Migration Tasks**:
+- Create migration verification tests to compare new vs existing implementations
+- Ensure `retrieve` method provides equivalent functionality to existing `hit_test` method
+- After validation, remove old model files and update imports
+
 Ensure proper error handling and response parsing.
 ```
 
-#### Step 6: Test Dataset Resource
+#### Step 6: Test Dataset Resource and Migration Cleanup
 **Prompt:**
 ```
 Create comprehensive integration tests for the Dataset resource in `tests/knowledge_base/v1/resource/test_dataset_resource.py`.
@@ -166,6 +171,14 @@ Test all methods implemented in Step 5, including:
 3. Error handling for various HTTP status codes
 4. Both sync and async method variants
 5. Mock API responses based on the API documentation
+6. **Migration verification tests**: Compare behavior between new and existing implementations
+7. **Compatibility tests**: Ensure `retrieve` method matches `hit_test` functionality
+
+After all tests pass:
+1. Remove old dataset model files (create_dataset_request.py, list_dataset_request.py, etc.)
+2. Remove old hit_test method and related models
+3. Update import statements throughout the codebase
+4. Remove old test files for migrated functionality
 
 Use pytest fixtures and mock responses to simulate API interactions. Ensure all tests pass.
 ```
@@ -384,18 +397,43 @@ Ensure the complete knowledge_base module works as expected.
 ```
 Create comprehensive usage examples for the dataset management functionality in `examples/knowledge_base/`.
 
-Create the following example files:
-1. `dataset_management.py` - Complete dataset CRUD operations
-2. `metadata_management.py` - Metadata operations and document metadata updates
-3. `tag_management.py` - Tag operations and binding/unbinding
-4. `dataset_retrieval.py` - Advanced retrieval with filtering and reranking
-5. `complete_workflow.py` - End-to-end workflow combining all features
+Create examples using resource-based directory structure:
 
-Each example should include:
-- Proper error handling
+**Dataset Examples** (`examples/knowledge_base/dataset/`):
+1. `create.py` - Create dataset examples (sync + async)
+2. `list.py` - List datasets examples (sync + async)
+3. `get.py` - Get dataset details examples (sync + async)
+4. `update.py` - Update dataset examples (sync + async)
+5. `delete.py` - Delete dataset examples (sync + async)
+6. `retrieve.py` - Dataset retrieval examples (sync + async)
+
+**Metadata Examples** (`examples/knowledge_base/metadata/`):
+1. `create.py` - Create metadata examples (sync + async)
+2. `list.py` - List metadata examples (sync + async)
+3. `update.py` - Update metadata examples (sync + async)
+4. `delete.py` - Delete metadata examples (sync + async)
+5. `toggle_builtin.py` - Toggle built-in metadata examples (sync + async)
+6. `update_document.py` - Update document metadata examples (sync + async)
+
+**Tag Examples** (`examples/knowledge_base/tag/`):
+1. `create.py` - Create tag examples (sync + async)
+2. `list.py` - List tags examples (sync + async)
+3. `update.py` - Update tag examples (sync + async)
+4. `delete.py` - Delete tag examples (sync + async)
+5. `bind.py` - Bind tags examples (sync + async)
+6. `unbind.py` - Unbind tag examples (sync + async)
+7. `query_bound.py` - Query bound tags examples (sync + async)
+
+**Additional Files**:
+8. `README.md` - Examples overview and usage guide
+
+Each example file should include:
+- Simple, focused API call examples
+- Both synchronous and asynchronous implementations
+- Basic try-catch error handling
 - Clear comments explaining each step
-- Real-world use cases
-- Both sync and async variants where applicable
+- Realistic but simple test data
+- Educational value for developers
 - Follow the existing example patterns in the project
 ```
 
@@ -503,8 +541,29 @@ Each step should meet the following criteria:
 18. POST /v1/datasets/tags/unbinding - Unbind dataset and knowledge type tag
 19. POST /v1/datasets/:dataset_id/tags - Query knowledge base bound tags
 
-## Notes
+## Migration and Cleanup Notes
 
+### Progressive Migration Strategy
+- **Implementation Order**: Create new → Test new → Verify compatibility → Remove old
+- **Cleanup Timing**: Remove old interfaces immediately after new implementation validation
+- **Compatibility Verification**: Create tests to ensure behavioral consistency between old and new implementations
+- **Special Cases**: `hit_test` → `retrieve` requires functional equivalence testing
+
+### Files to Remove During Migration
+**Existing Dataset Models** (after Step 6):
+- `create_dataset_request.py` → replaced by `dataset/create_request.py`
+- `create_dataset_request_body.py` → integrated into new structure
+- `list_dataset_request.py` → replaced by `dataset/list_request.py`
+- `delete_dataset_request.py` → replaced by `dataset/delete_request.py`
+- `hit_test_request.py` → replaced by `dataset/retrieve_request.py`
+- `hit_test_response.py` → replaced by `dataset/retrieve_response.py`
+- Old `dataset.py` models → replaced by `dataset/dataset_info.py`
+
+**Resource Methods** (after Step 6):
+- Remove `hit_test` method from existing resource class
+- Update method signatures to use new request/response models
+
+### Implementation Guidelines
 - Each implementation step should be followed immediately by its corresponding test step
 - Use existing project patterns and maintain consistency with other API modules
 - Ensure all 19 dataset APIs are fully functional and well-tested

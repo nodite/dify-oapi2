@@ -44,9 +44,16 @@ This document tracks the implementation progress of the dataset management funct
 
 #### Step 5: Dataset Resource Implementation
 - [ ] Implement `dify_oapi/api/knowledge_base/v1/resource/dataset.py`
+- [ ] Create migration verification tests for existing interfaces
+- [ ] Ensure `retrieve` method compatibility with existing `hit_test`
 
-#### Step 6: Test Dataset Resource
+#### Step 6: Test Dataset Resource and Migration Cleanup
 - [ ] Create `tests/knowledge_base/v1/resource/test_dataset_resource.py`
+- [ ] Run migration verification tests
+- [ ] Remove old dataset model files after validation
+- [ ] Remove old `hit_test` method and related models
+- [ ] Update import statements throughout codebase
+- [ ] Remove old test files for migrated functionality
 
 ### Phase 3: Metadata Management APIs (7 APIs)
 
@@ -111,11 +118,33 @@ This document tracks the implementation progress of the dataset management funct
 ### Phase 6: Documentation and Examples
 
 #### Step 17: Create Usage Examples
-- [ ] Create `examples/knowledge_base/dataset_management.py`
-- [ ] Create `examples/knowledge_base/metadata_management.py`
-- [ ] Create `examples/knowledge_base/tag_management.py`
-- [ ] Create `examples/knowledge_base/dataset_retrieval.py`
-- [ ] Create `examples/knowledge_base/complete_workflow.py`
+**Dataset Examples** (`examples/knowledge_base/dataset/`):
+- [ ] Create `examples/knowledge_base/dataset/create.py`
+- [ ] Create `examples/knowledge_base/dataset/list.py`
+- [ ] Create `examples/knowledge_base/dataset/get.py`
+- [ ] Create `examples/knowledge_base/dataset/update.py`
+- [ ] Create `examples/knowledge_base/dataset/delete.py`
+- [ ] Create `examples/knowledge_base/dataset/retrieve.py`
+
+**Metadata Examples** (`examples/knowledge_base/metadata/`):
+- [ ] Create `examples/knowledge_base/metadata/create.py`
+- [ ] Create `examples/knowledge_base/metadata/list.py`
+- [ ] Create `examples/knowledge_base/metadata/update.py`
+- [ ] Create `examples/knowledge_base/metadata/delete.py`
+- [ ] Create `examples/knowledge_base/metadata/toggle_builtin.py`
+- [ ] Create `examples/knowledge_base/metadata/update_document.py`
+
+**Tag Examples** (`examples/knowledge_base/tag/`):
+- [ ] Create `examples/knowledge_base/tag/create.py`
+- [ ] Create `examples/knowledge_base/tag/list.py`
+- [ ] Create `examples/knowledge_base/tag/update.py`
+- [ ] Create `examples/knowledge_base/tag/delete.py`
+- [ ] Create `examples/knowledge_base/tag/bind.py`
+- [ ] Create `examples/knowledge_base/tag/unbind.py`
+- [ ] Create `examples/knowledge_base/tag/query_bound.py`
+
+**Documentation**:
+- [ ] Create `examples/knowledge_base/README.md`
 
 #### Step 18: Test Examples
 - [ ] Create `tests/knowledge_base/v1/integration/test_examples_validation.py`

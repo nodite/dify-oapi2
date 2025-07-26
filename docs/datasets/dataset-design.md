@@ -218,6 +218,7 @@ class V1:
 - Comprehensive type hints for all models and methods
 - Pydantic validation for request/response models
 - Builder pattern support for all request models
+- **Test typing requirements**: All test methods must include proper type annotations for parameters and return types
 
 ### Error Handling
 - Consistent error response handling across all APIs
@@ -228,6 +229,7 @@ class V1:
 - Unit tests for all resource methods
 - Integration tests with mock API responses
 - Validation tests for all model classes
+- **Comprehensive typing hints**: All test method parameters and return types must include proper type annotations
 
 ### Test Directory Structure
 ```
@@ -251,6 +253,12 @@ tests/
         │   └── test_version_integration.py
         └── __init__.py
 ```
+
+### Test Code Quality Requirements
+- **Comprehensive typing hints**: All test method parameters and return types must include proper type annotations
+- Use `typing.Any` for complex mock objects like `monkeypatch`
+- Include return type annotations (typically `-> None` for test methods)
+- Import necessary typing modules at the top of test files
 
 ## Migration Impact
 

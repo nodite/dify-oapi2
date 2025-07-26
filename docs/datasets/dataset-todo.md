@@ -78,7 +78,7 @@ This document tracks the implementation progress of the dataset management funct
 - [x] Implement `dify_oapi/api/knowledge_base/v1/resource/metadata.py`
 
 #### Step 10: Test Metadata Resource
-- [ ] Create `tests/knowledge_base/v1/resource/test_metadata_resource.py`
+- [x] Create `tests/knowledge_base/v1/resource/test_metadata_resource.py`
 
 ### Phase 4: Tag Management APIs (7 APIs)
 
@@ -204,6 +204,7 @@ This document tracks the implementation progress of the dataset management funct
 - [ ] Integration tests with mock API responses
 - [ ] Documentation and examples provided
 - [ ] Backward compatibility maintained where possible
+- [ ] **Test typing requirements**: All test method parameters and return types must include proper type annotations
 
 ## Notes
 
@@ -214,3 +215,8 @@ This document tracks the implementation progress of the dataset management funct
 - Follow the established directory structure and naming conventions
 - All models should use Pydantic with builder patterns following existing project conventions
 - Use `:parameter_name` format for path parameters to match existing patterns
+- **Test Code Quality Requirements**:
+  - All test method parameters must include proper type annotations
+  - All test methods must include return type annotations (typically `-> None`)
+  - Import necessary typing modules (`typing.Any` for complex objects like `monkeypatch`)
+  - Follow consistent typing patterns across all test files

@@ -513,6 +513,7 @@ Each step should meet the following criteria:
 - ✅ Integration tests with mock API responses
 - ✅ Documentation and examples provided
 - ✅ Backward compatibility maintained where possible
+- ✅ **Test typing requirements**: All test method parameters and return types must include proper type annotations
 
 ## API Coverage Summary
 
@@ -572,3 +573,8 @@ Each step should meet the following criteria:
 - All models should use Pydantic with builder patterns following existing project conventions
 - **Pydantic BaseModel Rule**: All request body and response models must inherit from pydantic BaseModel without custom `model_dump()` methods
 - Use `:parameter_name` format for path parameters to match existing patterns
+- **Test Code Quality Requirements**:
+  - All test method parameters must include proper type annotations
+  - All test methods must include return type annotations (typically `-> None`)
+  - Import necessary typing modules (`typing.Any` for complex objects like `monkeypatch`)
+  - Follow consistent typing patterns across all test files

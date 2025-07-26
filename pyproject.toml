@@ -113,6 +113,11 @@ optional = true
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.3"
 pytest-env = "^1.1.5"
+pytest-asyncio = "^1.1.0"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
+pytest-asyncio = "^1.1.0"
 
 [tool.poetry.group.format]
 optional = true

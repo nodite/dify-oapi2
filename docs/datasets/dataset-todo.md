@@ -99,7 +99,7 @@ This document tracks the implementation progress of the dataset management funct
 - [x] Create `query_bound_response.py`
 
 #### Step 12: Test Tag Models
-- [ ] Create `tests/knowledge_base/v1/model/test_tag_models.py`
+- [x] Create `tests/knowledge_base/v1/model/test_tag_models.py`
 
 #### Step 13: Tag Resource Implementation
 - [ ] Implement `dify_oapi/api/knowledge_base/v1/resource/tag.py`

@@ -43,12 +43,12 @@ This document tracks the implementation progress of the dataset management funct
 - [x] Update `tests/knowledge_base/v1/model/test_dataset_models.py`
 
 #### Step 5: Dataset Resource Implementation
-- [ ] Implement `dify_oapi/api/knowledge_base/v1/resource/dataset.py`
-- [ ] Create migration verification tests for existing interfaces
-- [ ] Ensure `retrieve` method compatibility with existing `hit_test`
+- [x] Implement `dify_oapi/api/knowledge_base/v1/resource/dataset.py`
+- [x] Create migration verification tests for existing interfaces
+- [x] Ensure `retrieve` method compatibility with existing `hit_test`
 
 #### Step 6: Test Dataset Resource and Migration Cleanup
-- [ ] Create `tests/knowledge_base/v1/resource/test_dataset_resource.py`
+- [x] Create `tests/knowledge_base/v1/resource/test_dataset_resource.py`
 - [ ] Run migration verification tests
 - [ ] Remove old dataset model files after validation
 - [ ] Remove old `hit_test` method and related models

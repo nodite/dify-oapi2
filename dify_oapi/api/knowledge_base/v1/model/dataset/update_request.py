@@ -1,62 +1,38 @@
 from __future__ import annotations
 
-from typing import Optional, List
+from dify_oapi.core.enum import HttpMethod
+from dify_oapi.core.model.base_request import BaseRequest
 
-from pydantic import BaseModel
-
-from .retrieval_model import RetrievalModel
+from .update_request_body import UpdateRequestBody
 
 
-class UpdateDatasetRequest(BaseModel):
-    dataset_id: str
-    name: Optional[str] = None
-    indexing_technique: Optional[str] = None
-    permission: Optional[str] = None
-    embedding_model_provider: Optional[str] = None
-    embedding_model: Optional[str] = None
-    retrieval_model: Optional[RetrievalModel] = None
-    partial_member_list: Optional[List[str]] = None
+class UpdateRequest(BaseRequest):
+    def __init__(self):
+        super().__init__()
+        self.dataset_id: str | None = None
+        self.request_body: UpdateRequestBody | None = None
 
     @staticmethod
-    def builder() -> UpdateDatasetRequestBuilder:
-        return UpdateDatasetRequestBuilder()
+    def builder() -> UpdateRequestBuilder:
+        return UpdateRequestBuilder()
 
 
-class UpdateDatasetRequestBuilder:
+class UpdateRequestBuilder:
     def __init__(self):
-        self._request = UpdateDatasetRequest(dataset_id="")
+        update_request = UpdateRequest()
+        update_request.http_method = HttpMethod.PATCH
+        update_request.uri = "/v1/datasets/:dataset_id"
+        self._update_request = update_request
 
-    def build(self) -> UpdateDatasetRequest:
-        return self._request
+    def build(self) -> UpdateRequest:
+        return self._update_request
 
-    def dataset_id(self, dataset_id: str) -> UpdateDatasetRequestBuilder:
-        self._request.dataset_id = dataset_id
+    def dataset_id(self, dataset_id: str) -> UpdateRequestBuilder:
+        self._update_request.dataset_id = dataset_id
+        self._update_request.paths["dataset_id"] = dataset_id
         return self
 
-    def name(self, name: str) -> UpdateDatasetRequestBuilder:
-        self._request.name = name
-        return self
-
-    def indexing_technique(self, indexing_technique: str) -> UpdateDatasetRequestBuilder:
-        self._request.indexing_technique = indexing_technique
-        return self
-
-    def permission(self, permission: str) -> UpdateDatasetRequestBuilder:
-        self._request.permission = permission
-        return self
-
-    def embedding_model_provider(self, embedding_model_provider: str) -> UpdateDatasetRequestBuilder:
-        self._request.embedding_model_provider = embedding_model_provider
-        return self
-
-    def embedding_model(self, embedding_model: str) -> UpdateDatasetRequestBuilder:
-        self._request.embedding_model = embedding_model
-        return self
-
-    def retrieval_model(self, retrieval_model: RetrievalModel) -> UpdateDatasetRequestBuilder:
-        self._request.retrieval_model = retrieval_model
-        return self
-
-    def partial_member_list(self, partial_member_list: List[str]) -> UpdateDatasetRequestBuilder:
-        self._request.partial_member_list = partial_member_list
+    def request_body(self, request_body: UpdateRequestBody) -> UpdateRequestBuilder:
+        self._update_request.request_body = request_body
+        self._update_request.body = request_body.model_dump(exclude_none=True, mode="json")
         return self

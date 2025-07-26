@@ -1,5 +1,169 @@
 # Dataset API Implementation TODO
 
+## Code Style Compliance Tasks
+
+### 1. MANDATORY Code Style Rules Implementation
+
+**CRITICAL**: All request models across ALL resources (dataset, metadata, tag) must follow these EXACT patterns:
+
+#### Dataset Models Status: ✅ COMPLETED
+- [x] `create_request.py` + `create_request_body.py` - POST with RequestBody - COMPLETED
+- [x] `list_request.py` - GET with query params - COMPLETED
+- [x] `get_request.py` - GET with path params - COMPLETED
+- [x] `update_request.py` + `update_request_body.py` - PATCH with RequestBody - COMPLETED
+- [x] `delete_request.py` - DELETE with path params - COMPLETED
+- [x] `retrieve_request.py` + `retrieve_request_body.py` - POST with RequestBody - COMPLETED
+- [x] Updated `__init__.py` with new class names - COMPLETED
+- [x] Updated `dataset.py` resource with new imports - COMPLETED
+
+#### Metadata Models Status: ❌ NEEDS FIXING
+- [ ] `create_request.py` + `create_request_body.py` - POST with RequestBody
+- [ ] `list_request.py` - GET with path params (dataset_id)
+- [ ] `update_request.py` + `update_request_body.py` - PATCH with RequestBody
+- [ ] `delete_request.py` - DELETE with path params
+- [ ] `toggle_builtin_request.py` + `toggle_builtin_request_body.py` - POST with RequestBody
+- [ ] `update_document_request.py` + `update_document_request_body.py` - POST with RequestBody
+- [ ] Update `__init__.py` with new class names
+- [ ] Update `metadata.py` resource with new imports
+
+#### Tag Models Status: ❌ NEEDS FIXING
+- [ ] `create_request.py` + `create_request_body.py` - POST with RequestBody
+- [ ] `list_request.py` - GET with no params
+- [ ] `update_request.py` + `update_request_body.py` - PATCH with RequestBody
+- [ ] `delete_request.py` + `delete_request_body.py` - DELETE with RequestBody
+- [ ] `bind_request.py` + `bind_request_body.py` - POST with RequestBody
+- [ ] `unbind_request.py` + `unbind_request_body.py` - POST with RequestBody
+- [ ] `query_bound_request.py` - POST with path params (dataset_id)
+- [ ] Update `__init__.py` with new class names
+- [ ] Update `tag.py` resource with new imports
+
+#### MANDATORY Request Model Architecture:
+**Request Classes (ALL must comply)**:
+- ✅ MUST inherit from `BaseRequest` (NEVER from `BaseModel`)
+- ✅ MUST include `request_body` attribute for POST/PATCH requests
+- ✅ MUST use `request_body()` method in builder
+- ✅ Builder variables MUST use full descriptive names
+- ✅ MUST set `http_method` and `uri` in builder constructor
+- ✅ Path parameters MUST use `self._request.paths["param_name"] = value`
+- ✅ Query parameters MUST use `self._request.add_query("key", value)`
+
+**RequestBody Separation (POST/PATCH/PUT only)**:
+- ✅ RequestBody MUST be in separate file from Request
+- ✅ RequestBody MUST inherit from `pydantic.BaseModel`
+- ✅ RequestBody MUST include its own Builder pattern
+- ✅ File naming: `create_request.py` + `create_request_body.py`
+
+#### STRICT Class Naming Convention:
+**File-to-Class Mapping (NO EXCEPTIONS)**:
+- ✅ `create_request.py` → `CreateRequest` + `CreateRequestBuilder`
+- ✅ `create_request_body.py` → `CreateRequestBody` + `CreateRequestBodyBuilder`
+- ✅ `list_request.py` → `ListRequest` + `ListRequestBuilder`
+- ✅ `get_request.py` → `GetRequest` + `GetRequestBuilder`
+- ✅ `update_request.py` → `UpdateRequest` + `UpdateRequestBuilder`
+- ✅ `update_request_body.py` → `UpdateRequestBody` + `UpdateRequestBodyBuilder`
+- ✅ `delete_request.py` → `DeleteRequest` + `DeleteRequestBuilder`
+- ✅ `retrieve_request.py` → `RetrieveRequest` + `RetrieveRequestBuilder`
+- ✅ `retrieve_request_body.py` → `RetrieveRequestBody` + `RetrieveRequestBodyBuilder`
+
+**Naming Rules**:
+- ✅ Remove ALL module/domain prefixes from class names
+- ✅ Class names MUST match file names exactly
+- ✅ Apply to ALL resources: dataset, metadata, tag
+
+#### HTTP Method Implementation Patterns:
+**GET Requests** (list, get):
+- ✅ NO RequestBody file needed
+- ✅ Use query parameters: `self._request.add_query("key", value)`
+- ✅ Use path parameters: `self._request.paths["param_name"] = value`
+
+**POST Requests** (create, retrieve, bind, etc.):
+- ✅ REQUIRE separate RequestBody file
+- ✅ Use `request_body()` method in Request builder
+- ✅ RequestBody builder methods set fields directly
+
+**PATCH/PUT Requests** (update):
+- ✅ REQUIRE separate RequestBody file
+- ✅ Support path parameters for resource ID
+- ✅ Use `request_body()` method in Request builder
+
+**DELETE Requests**:
+- ✅ NO RequestBody file needed (unless API requires body)
+- ✅ Use path parameters for resource ID
+
+### 2. Update All Examples to Use New Patterns
+
+#### Dataset Examples:
+- [x] `examples/knowledge_base/dataset/create.py` - COMPLETED
+- [ ] `examples/knowledge_base/dataset/list.py`
+- [ ] `examples/knowledge_base/dataset/get.py`
+- [ ] `examples/knowledge_base/dataset/update.py`
+- [ ] `examples/knowledge_base/dataset/delete.py`
+- [ ] `examples/knowledge_base/dataset/retrieve.py`
+
+#### Metadata Examples:
+- [ ] `examples/knowledge_base/metadata/create.py`
+- [ ] `examples/knowledge_base/metadata/list.py`
+- [ ] `examples/knowledge_base/metadata/update.py`
+- [ ] `examples/knowledge_base/metadata/delete.py`
+- [ ] `examples/knowledge_base/metadata/toggle_builtin.py`
+- [ ] `examples/knowledge_base/metadata/update_document.py`
+
+#### Tag Examples:
+- [ ] `examples/knowledge_base/tag/create.py`
+- [ ] `examples/knowledge_base/tag/list.py`
+- [ ] `examples/knowledge_base/tag/update.py`
+- [ ] `examples/knowledge_base/tag/delete.py`
+- [ ] `examples/knowledge_base/tag/bind.py`
+- [ ] `examples/knowledge_base/tag/unbind.py`
+- [ ] `examples/knowledge_base/tag/query_bound.py`
+
+### 3. Update Import Statements
+
+#### Model Imports:
+- [x] Update dataset `__init__.py` files to use new class names - COMPLETED
+- [x] Update dataset resource files to import correct class names - COMPLETED
+- [ ] Update example files to import correct class names
+- [ ] Update test files to import correct class names
+- [ ] Update metadata and tag `__init__.py` files
+- [ ] Update metadata and tag resource files
+
+### 4. Test All Examples with Environment Variables
+
+#### Test Command:
+```bash
+DOMAIN="http://localhost:8080" API_KEY="dataset-xDC7JXTZeIpH8MzmI37G5Hjk" poetry run python examples/knowledge_base/[resource]/[example].py
+```
+
+#### Test Results:
+- [x] `dataset/create.py` - WORKING (URL protocol issue resolved)
+- [ ] `dataset/list.py`
+- [ ] `dataset/get.py`
+- [ ] `dataset/update.py`
+- [ ] `dataset/delete.py`
+- [ ] `dataset/retrieve.py`
+- [ ] All metadata examples
+- [ ] All tag examples
+
+### 5. Create Git Commit
+
+After all examples are working:
+- [ ] Stage all changes
+- [ ] Create descriptive commit message
+- [ ] Include summary of code style fixes and example updates
+
+## Priority Order
+
+1. **HIGHEST**: Fix dataset request models (create, list, get, update, delete, retrieve) - ✅ COMPLETED
+2. **HIGH**: Fix metadata request models
+3. **HIGH**: Fix tag request models
+4. **MEDIUM**: Update all examples to use new patterns
+5. **MEDIUM**: Test all examples with provided environment variables
+6. **LOW**: Create comprehensive git commit
+
+---
+
+## Original Implementation Progress
+
 This document tracks the implementation progress of the dataset management functionality in the dify-oapi knowledge_base module.
 
 ## Overview

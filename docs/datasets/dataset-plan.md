@@ -79,35 +79,46 @@ Use pytest framework and ensure all tests pass with good coverage for the common
 #### Step 3: Dataset Request/Response Models
 **Prompt:**
 ```
-Create all request and response models for dataset management APIs in `dify_oapi/api/knowledge_base/v1/model/dataset/`.
+Create all request and response models for dataset management APIs in `dify_oapi/api/knowledge_base/v1/model/dataset/` following MANDATORY code style rules.
 
-Implement the following model files based on the API specifications:
+Implement the following model files with STRICT adherence to patterns:
 
-1. `create_request.py` - CreateDatasetRequest with fields:
-   - name: str (required)
-   - description: Optional[str]
-   - indexing_technique: Optional[str]
-   - permission: Optional[str]
-   - provider: Optional[str]
-   - external_knowledge_api_id: Optional[str]
-   - external_knowledge_id: Optional[str]
-   - embedding_model: Optional[str]
-   - embedding_model_provider: Optional[str]
-   - retrieval_model: Optional[RetrievalModel]
+**POST Request Models (with RequestBody)**:
+1. `create_request.py` - CreateRequest + CreateRequestBuilder (inherits BaseRequest)
+2. `create_request_body.py` - CreateRequestBody + CreateRequestBodyBuilder (inherits BaseModel)
+   Fields: name, description, indexing_technique, permission, provider, external_knowledge_api_id, external_knowledge_id, embedding_model, embedding_model_provider, retrieval_model
 
-2. `create_response.py` - CreateDatasetResponse using DatasetInfo
-3. `list_request.py` - ListDatasetsRequest with pagination and filtering
-4. `list_response.py` - ListDatasetsResponse with data array and pagination
-5. `get_request.py` - GetDatasetRequest with dataset_id
-6. `get_response.py` - GetDatasetResponse with full dataset details
-7. `update_request.py` - UpdateDatasetRequest with partial update fields
-8. `update_response.py` - UpdateDatasetResponse using DatasetInfo
-9. `delete_request.py` - DeleteDatasetRequest with dataset_id
-10. `delete_response.py` - DeleteDatasetResponse (empty for 204 response)
-11. `retrieve_request.py` - RetrieveDatasetRequest with query and retrieval config
-12. `retrieve_response.py` - RetrieveDatasetResponse with query and records
+3. `retrieve_request.py` - RetrieveRequest + RetrieveRequestBuilder (inherits BaseRequest)
+4. `retrieve_request_body.py` - RetrieveRequestBody + RetrieveRequestBodyBuilder (inherits BaseModel)
+   Fields: query, retrieval_model, external_retrieval_model
 
-Use the common models created in Step 1 and follow existing project patterns for builder methods and validation.
+**PATCH Request Models (with RequestBody)**:
+5. `update_request.py` - UpdateRequest + UpdateRequestBuilder (inherits BaseRequest)
+6. `update_request_body.py` - UpdateRequestBody + UpdateRequestBodyBuilder (inherits BaseModel)
+   Fields: name, indexing_technique, permission, embedding_model_provider, embedding_model, retrieval_model, partial_member_list
+
+**GET Request Models (no RequestBody)**:
+7. `list_request.py` - ListRequest + ListRequestBuilder (inherits BaseRequest)
+   Query params: keyword, tag_ids, page, limit, include_all
+
+8. `get_request.py` - GetRequest + GetRequestBuilder (inherits BaseRequest)
+   Path params: dataset_id
+
+**DELETE Request Models (no RequestBody)**:
+9. `delete_request.py` - DeleteRequest + DeleteRequestBuilder (inherits BaseRequest)
+   Path params: dataset_id
+
+**Response Models**:
+10. `create_response.py`, `list_response.py`, `get_response.py`, `update_response.py`, `delete_response.py`, `retrieve_response.py`
+
+**CRITICAL REQUIREMENTS**:
+- ALL class names MUST match file names (NO module prefixes)
+- Request classes MUST inherit from BaseRequest
+- RequestBody classes MUST inherit from BaseModel
+- Use `request_body()` method pattern for POST/PATCH requests
+- Use `add_query()` for query parameters
+- Use `paths["param"]` for path parameters
+- Builder variables MUST use full descriptive names
 ```
 
 #### Step 4: Test Dataset Models
@@ -572,7 +583,142 @@ Each step should meet the following criteria:
 - Prioritize type safety and developer experience throughout the implementation
 - Follow the established directory structure and naming conventions
 - All models should use Pydantic with builder patterns following existing project conventions
-- **Pydantic BaseModel Rule**: All request body and response models must inherit from pydantic BaseModel without custom `model_dump()` methods
+
+### Code Style Rules (MANDATORY - NO EXCEPTIONS)
+
+#### Request Model Architecture (STRICT COMPLIANCE)
+**Request Classes**:
+- MUST inherit from `BaseRequest` (NEVER from `BaseModel`)
+- MUST include `request_body` attribute of type `RequestBody | None` for POST/PATCH requests
+- MUST use `request_body()` method in builder (NOT individual field methods)
+- Builder variables MUST use full descriptive names (e.g., `self._create_request`, `self._list_request`)
+- MUST set `http_method` and `uri` in builder constructor
+- Path parameters MUST use `self._request.paths["param_name"] = value`
+- Query parameters MUST use `self._request.add_query("key", value)`
+
+**RequestBody Separation (POST/PATCH/PUT only)**:
+- RequestBody MUST be in separate file from Request
+- RequestBody MUST inherit from `pydantic.BaseModel`
+- RequestBody MUST include its own Builder pattern
+- File naming: `create_request.py` + `create_request_body.py`
+- Both Request and RequestBody MUST have Builder classes
+
+#### HTTP Method Implementation Patterns
+**GET Requests** (list, get):
+- NO RequestBody file needed
+- Use query parameters: `self._request.add_query("key", value)`
+- Use path parameters: `self._request.paths["param_name"] = value`
+- Examples: ListRequest, GetRequest
+
+**POST Requests** (create, retrieve, bind, etc.):
+- REQUIRE separate RequestBody file
+- Use `request_body()` method in Request builder
+- RequestBody builder methods set fields directly
+- Examples: CreateRequest + CreateRequestBody
+
+**PATCH/PUT Requests** (update):
+- REQUIRE separate RequestBody file
+- Support path parameters for resource ID
+- Use `request_body()` method in Request builder
+- Examples: UpdateRequest + UpdateRequestBody
+
+**DELETE Requests**:
+- NO RequestBody file needed
+- Use path parameters for resource ID
+- Examples: DeleteRequest
+
+#### Class Naming Convention (ZERO TOLERANCE)
+**Mandatory File-to-Class Mapping**:
+- `create_request.py` → `CreateRequest` + `CreateRequestBuilder`
+- `create_request_body.py` → `CreateRequestBody` + `CreateRequestBodyBuilder`
+- `list_request.py` → `ListRequest` + `ListRequestBuilder`
+- `get_request.py` → `GetRequest` + `GetRequestBuilder`
+- `update_request.py` → `UpdateRequest` + `UpdateRequestBuilder`
+- `update_request_body.py` → `UpdateRequestBody` + `UpdateRequestBodyBuilder`
+- `delete_request.py` → `DeleteRequest` + `DeleteRequestBuilder`
+- `retrieve_request.py` → `RetrieveRequest` + `RetrieveRequestBuilder`
+- `retrieve_request_body.py` → `RetrieveRequestBody` + `RetrieveRequestBodyBuilder`
+
+**Naming Rules**:
+- Remove ALL module/domain prefixes from class names
+- Class names MUST match file names exactly
+- Apply to ALL resources: dataset, metadata, tag
+- NO exceptions allowed
+
+#### Builder Pattern Implementation (EXACT SPECIFICATION)
+**Request Builder Pattern**:
+```python
+class CreateRequestBuilder:
+    def __init__(self):
+        create_request = CreateRequest()
+        create_request.http_method = HttpMethod.POST
+        create_request.uri = "/v1/datasets"
+        self._create_request = create_request
+
+    def build(self) -> CreateRequest:
+        return self._create_request
+
+    def request_body(self, request_body: CreateRequestBody) -> CreateRequestBuilder:
+        self._create_request.request_body = request_body
+        self._create_request.body = request_body.model_dump(exclude_none=True, mode="json")
+        return self
+```
+
+**RequestBody Builder Pattern**:
+```python
+class CreateRequestBodyBuilder:
+    def __init__(self):
+        create_request_body = CreateRequestBody()
+        self._create_request_body = create_request_body
+
+    def build(self) -> CreateRequestBody:
+        return self._create_request_body
+
+    def name(self, name: str) -> CreateRequestBodyBuilder:
+        self._create_request_body.name = name
+        return self
+```
+
+**Query Parameter Pattern**:
+```python
+def keyword(self, keyword: str) -> ListRequestBuilder:
+    self._list_request.add_query("keyword", keyword)
+    return self
+```
+
+**Path Parameter Pattern**:
+```python
+def dataset_id(self, dataset_id: str) -> GetRequestBuilder:
+    self._get_request.dataset_id = dataset_id
+    self._get_request.paths["dataset_id"] = dataset_id
+    return self
+```
+
+#### File Organization Requirements
+**Directory Structure**:
+```
+model/
+├── dataset/
+│   ├── create_request.py      # CreateRequest + CreateRequestBuilder
+│   ├── create_request_body.py # CreateRequestBody + CreateRequestBodyBuilder
+│   ├── list_request.py        # ListRequest + ListRequestBuilder (GET)
+│   ├── get_request.py         # GetRequest + GetRequestBuilder (GET)
+│   ├── update_request.py      # UpdateRequest + UpdateRequestBuilder
+│   ├── update_request_body.py # UpdateRequestBody + UpdateRequestBodyBuilder
+│   ├── delete_request.py      # DeleteRequest + DeleteRequestBuilder (DELETE)
+│   ├── retrieve_request.py    # RetrieveRequest + RetrieveRequestBuilder
+│   └── retrieve_request_body.py # RetrieveRequestBody + RetrieveRequestBodyBuilder
+├── metadata/ (same pattern)
+└── tag/ (same pattern)
+```
+
+#### Pydantic BaseModel Rules
+- All RequestBody and Response models MUST inherit from `pydantic.BaseModel`
+- NO custom `model_dump()` methods allowed
+- Use pydantic's built-in serialization, validation, and type checking
+- All fields MUST have proper type hints
+- Optional fields MUST use `Optional[Type]` or `Type | None`
+- Builder patterns MUST use pydantic's `model_dump()` method directly
 - Use `:parameter_name` format for path parameters to match existing patterns
 - **Test Code Quality Requirements**:
   - All test method parameters must include proper type annotations

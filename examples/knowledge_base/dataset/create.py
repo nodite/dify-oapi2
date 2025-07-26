@@ -9,7 +9,8 @@ import asyncio
 import os
 from typing import Optional
 
-from dify_oapi.api.knowledge_base.v1.model.dataset.create_request import CreateDatasetRequest
+from dify_oapi.api.knowledge_base.v1.model.dataset.create_request import CreateRequest
+from dify_oapi.api.knowledge_base.v1.model.dataset.create_request_body import CreateRequestBody
 from dify_oapi.api.knowledge_base.v1.model.dataset.retrieval_model import RetrievalModel
 from dify_oapi.client import Client
 from dify_oapi.core.model.request_option import RequestOption
@@ -31,9 +32,9 @@ def create_dataset_sync() -> None:
             .build()
         )
         
-        # Build create request
-        request = (
-            CreateDatasetRequest.builder()
+        # Build request body
+        request_body = (
+            CreateRequestBody.builder()
             .name("My Test Dataset")
             .description("A test dataset created via API")
             .indexing_technique("high_quality")
@@ -42,6 +43,13 @@ def create_dataset_sync() -> None:
             .embedding_model("text-embedding-3-small")
             .embedding_model_provider("openai")
             .retrieval_model(retrieval_model)
+            .build()
+        )
+        
+        # Build create request
+        request = (
+            CreateRequest.builder()
+            .request_body(request_body)
             .build()
         )
         
@@ -78,15 +86,22 @@ async def create_dataset_async() -> None:
             .build()
         )
         
-        # Build create request
-        request = (
-            CreateDatasetRequest.builder()
+        # Build request body
+        request_body = (
+            CreateRequestBody.builder()
             .name("My Async Dataset")
             .description("A test dataset created via async API")
             .indexing_technique("economy")
             .permission("all_team_members")
             .provider("vendor")
             .retrieval_model(retrieval_model)
+            .build()
+        )
+        
+        # Build create request
+        request = (
+            CreateRequest.builder()
+            .request_body(request_body)
             .build()
         )
         

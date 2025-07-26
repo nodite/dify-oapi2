@@ -1,23 +1,30 @@
 from __future__ import annotations
 
-from pydantic import BaseModel
+from dify_oapi.core.enum import HttpMethod
+from dify_oapi.core.model.base_request import BaseRequest
 
 
-class DeleteDatasetRequest(BaseModel):
-    dataset_id: str
+class DeleteRequest(BaseRequest):
+    def __init__(self):
+        super().__init__()
+        self.dataset_id: str | None = None
 
     @staticmethod
-    def builder() -> DeleteDatasetRequestBuilder:
-        return DeleteDatasetRequestBuilder()
+    def builder() -> DeleteRequestBuilder:
+        return DeleteRequestBuilder()
 
 
-class DeleteDatasetRequestBuilder:
+class DeleteRequestBuilder:
     def __init__(self):
-        self._request = DeleteDatasetRequest(dataset_id="")
+        delete_request = DeleteRequest()
+        delete_request.http_method = HttpMethod.DELETE
+        delete_request.uri = "/v1/datasets/:dataset_id"
+        self._delete_request = delete_request
 
-    def build(self) -> DeleteDatasetRequest:
-        return self._request
+    def build(self) -> DeleteRequest:
+        return self._delete_request
 
-    def dataset_id(self, dataset_id: str) -> DeleteDatasetRequestBuilder:
-        self._request.dataset_id = dataset_id
+    def dataset_id(self, dataset_id: str) -> DeleteRequestBuilder:
+        self._delete_request.dataset_id = dataset_id
+        self._delete_request.paths["dataset_id"] = dataset_id
         return self

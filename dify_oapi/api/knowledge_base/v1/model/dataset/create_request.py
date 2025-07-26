@@ -1,72 +1,32 @@
 from __future__ import annotations
 
-from typing import Optional
+from dify_oapi.core.enum import HttpMethod
+from dify_oapi.core.model.base_request import BaseRequest
 
-from pydantic import BaseModel
-
-from .retrieval_model import RetrievalModel
+from .create_request_body import CreateRequestBody
 
 
-class CreateDatasetRequest(BaseModel):
-    name: str
-    description: Optional[str] = None
-    indexing_technique: Optional[str] = None
-    permission: Optional[str] = None
-    provider: Optional[str] = None
-    external_knowledge_api_id: Optional[str] = None
-    external_knowledge_id: Optional[str] = None
-    embedding_model: Optional[str] = None
-    embedding_model_provider: Optional[str] = None
-    retrieval_model: Optional[RetrievalModel] = None
+class CreateRequest(BaseRequest):
+    def __init__(self):
+        super().__init__()
+        self.request_body: CreateRequestBody | None = None
 
     @staticmethod
-    def builder() -> CreateDatasetRequestBuilder:
-        return CreateDatasetRequestBuilder()
+    def builder() -> CreateRequestBuilder:
+        return CreateRequestBuilder()
 
 
-class CreateDatasetRequestBuilder:
+class CreateRequestBuilder:
     def __init__(self):
-        self._request = CreateDatasetRequest(name="")
+        create_request = CreateRequest()
+        create_request.http_method = HttpMethod.POST
+        create_request.uri = "/v1/datasets"
+        self._create_request = create_request
 
-    def build(self) -> CreateDatasetRequest:
-        return self._request
+    def build(self) -> CreateRequest:
+        return self._create_request
 
-    def name(self, name: str) -> CreateDatasetRequestBuilder:
-        self._request.name = name
-        return self
-
-    def description(self, description: str) -> CreateDatasetRequestBuilder:
-        self._request.description = description
-        return self
-
-    def indexing_technique(self, indexing_technique: str) -> CreateDatasetRequestBuilder:
-        self._request.indexing_technique = indexing_technique
-        return self
-
-    def permission(self, permission: str) -> CreateDatasetRequestBuilder:
-        self._request.permission = permission
-        return self
-
-    def provider(self, provider: str) -> CreateDatasetRequestBuilder:
-        self._request.provider = provider
-        return self
-
-    def external_knowledge_api_id(self, external_knowledge_api_id: str) -> CreateDatasetRequestBuilder:
-        self._request.external_knowledge_api_id = external_knowledge_api_id
-        return self
-
-    def external_knowledge_id(self, external_knowledge_id: str) -> CreateDatasetRequestBuilder:
-        self._request.external_knowledge_id = external_knowledge_id
-        return self
-
-    def embedding_model(self, embedding_model: str) -> CreateDatasetRequestBuilder:
-        self._request.embedding_model = embedding_model
-        return self
-
-    def embedding_model_provider(self, embedding_model_provider: str) -> CreateDatasetRequestBuilder:
-        self._request.embedding_model_provider = embedding_model_provider
-        return self
-
-    def retrieval_model(self, retrieval_model: RetrievalModel) -> CreateDatasetRequestBuilder:
-        self._request.retrieval_model = retrieval_model
+    def request_body(self, request_body: CreateRequestBody) -> CreateRequestBuilder:
+        self._create_request.request_body = request_body
+        self._create_request.body = request_body.model_dump(exclude_none=True, mode="json")
         return self

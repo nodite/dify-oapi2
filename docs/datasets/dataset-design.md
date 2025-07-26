@@ -60,12 +60,110 @@ This document outlines the design for implementing comprehensive dataset managem
 - Remove old model files after new implementations are validated
 - Update import paths and references throughout the codebase
 
-### 7. Pydantic BaseModel Usage
-**Decision**: All request body and response models must inherit from pydantic BaseModel
-- **No Custom Serialization**: Do not implement custom `model_dump()` methods
-- **Use Pydantic Features**: Leverage pydantic's built-in serialization, validation, and type checking
-- **Consistent Behavior**: Ensure all models follow the same serialization patterns
-- **Builder Pattern Integration**: Builder patterns should use pydantic's `model_dump()` method directly
+### 7. Request/Response Model Code Style Rules (MANDATORY)
+**Decision**: Strict adherence to established patterns for consistency across all knowledge base APIs
+
+#### Request Model Architecture
+**Request Classes**:
+- MUST inherit from `BaseRequest` (never from `BaseModel`)
+- MUST include `request_body` attribute of type `RequestBody | None`
+- MUST use `request_body()` method in builder to accept entire RequestBody object
+- Builder variables MUST use full descriptive names (e.g., `self._create_request`, `self._list_request`)
+- MUST set `http_method` and `uri` in builder constructor
+- Path parameters MUST use `self._request.paths["param_name"] = value` pattern
+- Query parameters MUST use `self._request.add_query("key", value)` pattern
+
+**RequestBody Separation (For POST/PATCH/PUT requests)**:
+- RequestBody MUST be in separate file from Request
+- RequestBody MUST inherit from `pydantic.BaseModel`
+- RequestBody MUST include its own Builder pattern
+- File naming convention: `create_request.py` and `create_request_body.py`
+- Both Request and RequestBody MUST have Builder classes
+
+#### HTTP Method Patterns
+**GET Requests** (list, get):
+- No RequestBody file needed
+- Use query parameters: `self._request.add_query("key", value)`
+- Use path parameters: `self._request.paths["param_name"] = value`
+
+**POST Requests** (create, retrieve, bind, etc.):
+- Require separate RequestBody file
+- Use `request_body()` method in Request builder
+- RequestBody builder methods set fields directly
+
+**PATCH/PUT Requests** (update):
+- Require separate RequestBody file
+- Support path parameters for resource ID
+- Use `request_body()` method in Request builder
+
+**DELETE Requests**:
+- No RequestBody file needed
+- Use path parameters for resource ID
+
+#### Builder Pattern Rules
+**Request Builder**:
+- Constructor sets `http_method`, `uri`, and initializes request object
+- `build()` method returns the request object
+- `request_body()` method calls `request_body.model_dump(exclude_none=True, mode="json")`
+- Path parameter methods call `self._request.paths["param"] = value`
+- Query parameter methods call `self._request.add_query("key", value)`
+
+**RequestBody Builder**:
+- Constructor initializes RequestBody object
+- Each field method sets `self._request_body.field = value` then returns self
+- `build()` method returns the RequestBody object
+- No body serialization in RequestBody builder
+
+#### Class Naming Convention (STRICT)
+**File-to-Class Mapping**:
+- `create_request.py` → `CreateRequest` and `CreateRequestBuilder`
+- `create_request_body.py` → `CreateRequestBody` and `CreateRequestBodyBuilder`
+- `list_request.py` → `ListRequest` and `ListRequestBuilder`
+- `get_request.py` → `GetRequest` and `GetRequestBuilder`
+- `update_request.py` → `UpdateRequest` and `UpdateRequestBuilder`
+- `update_request_body.py` → `UpdateRequestBody` and `UpdateRequestBodyBuilder`
+- `delete_request.py` → `DeleteRequest` and `DeleteRequestBuilder`
+- `retrieve_request.py` → `RetrieveRequest` and `RetrieveRequestBuilder`
+- `retrieve_request_body.py` → `RetrieveRequestBody` and `RetrieveRequestBodyBuilder`
+
+**Naming Rules**:
+- Remove ALL module/domain prefixes from class names
+- Class names MUST match file names exactly
+- NO exceptions to this rule across any resource (dataset, metadata, tag)
+
+#### URI and HTTP Method Configuration
+**Dataset APIs**:
+- `POST /v1/datasets` → `CreateRequest`
+- `GET /v1/datasets` → `ListRequest`
+- `GET /v1/datasets/:dataset_id` → `GetRequest`
+- `PATCH /v1/datasets/:dataset_id` → `UpdateRequest`
+- `DELETE /v1/datasets/:dataset_id` → `DeleteRequest`
+- `POST /v1/datasets/:dataset_id/retrieve` → `RetrieveRequest`
+
+**Metadata APIs**:
+- `POST /v1/datasets/:dataset_id/metadata` → `CreateRequest`
+- `GET /v1/datasets/:dataset_id/metadata` → `ListRequest`
+- `PATCH /v1/datasets/:dataset_id/metadata/:metadata_id` → `UpdateRequest`
+- `DELETE /v1/datasets/:dataset_id/metadata/:metadata_id` → `DeleteRequest`
+- `POST /v1/datasets/:dataset_id/metadata/built-in/:action` → `ToggleBuiltinRequest`
+- `POST /v1/datasets/:dataset_id/documents/metadata` → `UpdateDocumentRequest`
+
+**Tag APIs**:
+- `POST /v1/datasets/tags` → `CreateRequest`
+- `GET /v1/datasets/tags` → `ListRequest`
+- `PATCH /v1/datasets/tags` → `UpdateRequest`
+- `DELETE /v1/datasets/tags` → `DeleteRequest`
+- `POST /v1/datasets/tags/binding` → `BindRequest`
+- `POST /v1/datasets/tags/unbinding` → `UnbindRequest`
+- `POST /v1/datasets/:dataset_id/tags` → `QueryBoundRequest`
+
+#### Pydantic BaseModel Usage
+- All RequestBody and Response models MUST inherit from `pydantic.BaseModel`
+- Use pydantic's built-in serialization, validation, and type checking
+- NO custom `model_dump()` methods allowed
+- Builder patterns MUST use pydantic's `model_dump()` method directly
+- All fields MUST have proper type hints
+- Optional fields MUST use `Optional[Type]` or `Type | None`
 
 ### 8. Model File Organization
 **Decision**: Organize models by resource grouping with shared common models
@@ -73,8 +171,21 @@ This document outlines the design for implementing comprehensive dataset managem
 ```
 model/
 ├── dataset/          # Dataset-specific models
-│   ├── create_request.py
-│   ├── create_response.py
+│   ├── create_request.py      # CreateRequest + CreateRequestBuilder
+│   ├── create_request_body.py # CreateRequestBody + CreateRequestBodyBuilder
+│   ├── create_response.py     # CreateResponse
+│   ├── list_request.py        # ListRequest + ListRequestBuilder (GET)
+│   ├── list_response.py       # ListResponse
+│   ├── get_request.py         # GetRequest + GetRequestBuilder (GET)
+│   ├── get_response.py        # GetResponse
+│   ├── update_request.py      # UpdateRequest + UpdateRequestBuilder
+│   ├── update_request_body.py # UpdateRequestBody + UpdateRequestBodyBuilder
+│   ├── update_response.py     # UpdateResponse
+│   ├── delete_request.py      # DeleteRequest + DeleteRequestBuilder (DELETE)
+│   ├── delete_response.py     # DeleteResponse
+│   ├── retrieve_request.py    # RetrieveRequest + RetrieveRequestBuilder
+│   ├── retrieve_request_body.py # RetrieveRequestBody + RetrieveRequestBodyBuilder
+│   ├── retrieve_response.py   # RetrieveResponse
 │   ├── list_request.py
 │   ├── list_response.py
 │   ├── get_request.py
@@ -171,33 +282,178 @@ model/
 
 ### Resource Class Structure
 ```python
-# Example: metadata resource
-class Metadata:
-    def __init__(self, transport: Transport):
-        self._transport = transport
+# Example: dataset resource
+class Dataset:
+    def __init__(self, config: Config):
+        self.config = config
     
-    def create(self, request: MetadataCreateRequest, request_option: RequestOption) -> MetadataCreateResponse:
-        # Implementation
+    def create(self, request: CreateRequest, request_option: RequestOption) -> CreateResponse:
+        return Transport.execute(self.config, request, unmarshal_as=CreateResponse, option=request_option)
     
-    async def acreate(self, request: MetadataCreateRequest, request_option: RequestOption) -> MetadataCreateResponse:
-        # Async implementation
+    async def acreate(self, request: CreateRequest, request_option: RequestOption) -> CreateResponse:
+        return await ATransport.aexecute(self.config, request, unmarshal_as=CreateResponse, option=request_option)
 ```
 
-### Model Class Pattern
+### Complete Code Style Examples
+
+#### POST Request Pattern (with RequestBody)
 ```python
-# Example: shared common model
-@dataclass
-class RetrievalModel:
-    search_method: str
-    reranking_enable: Optional[bool] = None
-    reranking_model: Optional[RerankingModel] = None
-    top_k: Optional[int] = None
-    score_threshold_enabled: Optional[bool] = None
-    score_threshold: Optional[float] = None
+# create_request.py
+from dify_oapi.core.enum import HttpMethod
+from dify_oapi.core.model.base_request import BaseRequest
+from .create_request_body import CreateRequestBody
+
+class CreateRequest(BaseRequest):
+    def __init__(self):
+        super().__init__()
+        self.request_body: CreateRequestBody | None = None
+
+    @staticmethod
+    def builder() -> CreateRequestBuilder:
+        return CreateRequestBuilder()
+
+class CreateRequestBuilder:
+    def __init__(self):
+        create_request = CreateRequest()
+        create_request.http_method = HttpMethod.POST
+        create_request.uri = "/v1/datasets"
+        self._create_request = create_request
+
+    def build(self) -> CreateRequest:
+        return self._create_request
+
+    def request_body(self, request_body: CreateRequestBody) -> CreateRequestBuilder:
+        self._create_request.request_body = request_body
+        self._create_request.body = request_body.model_dump(exclude_none=True, mode="json")
+        return self
+```
+
+```python
+# create_request_body.py
+from typing import Optional
+from pydantic import BaseModel
+from .retrieval_model import RetrievalModel
+
+class CreateRequestBody(BaseModel):
+    name: str | None = None
+    description: Optional[str] = None
+    retrieval_model: Optional[RetrievalModel] = None
     
-    @classmethod
-    def builder(cls) -> "RetrievalModelBuilder":
-        return RetrievalModelBuilder()
+    @staticmethod
+    def builder() -> CreateRequestBodyBuilder:
+        return CreateRequestBodyBuilder()
+
+class CreateRequestBodyBuilder:
+    def __init__(self):
+        create_request_body = CreateRequestBody()
+        self._create_request_body = create_request_body
+
+    def build(self) -> CreateRequestBody:
+        return self._create_request_body
+
+    def name(self, name: str) -> CreateRequestBodyBuilder:
+        self._create_request_body.name = name
+        return self
+
+    def description(self, description: str) -> CreateRequestBodyBuilder:
+        self._create_request_body.description = description
+        return self
+```
+
+#### GET Request Pattern (with query parameters)
+```python
+# list_request.py
+from typing import List
+from dify_oapi.core.enum import HttpMethod
+from dify_oapi.core.model.base_request import BaseRequest
+
+class ListRequest(BaseRequest):
+    def __init__(self):
+        super().__init__()
+
+    @staticmethod
+    def builder() -> ListRequestBuilder:
+        return ListRequestBuilder()
+
+class ListRequestBuilder:
+    def __init__(self):
+        list_request = ListRequest()
+        list_request.http_method = HttpMethod.GET
+        list_request.uri = "/v1/datasets"
+        self._list_request = list_request
+
+    def build(self) -> ListRequest:
+        return self._list_request
+
+    def keyword(self, keyword: str) -> ListRequestBuilder:
+        self._list_request.add_query("keyword", keyword)
+        return self
+
+    def page(self, page: int) -> ListRequestBuilder:
+        self._list_request.add_query("page", page)
+        return self
+```
+
+#### GET Request Pattern (with path parameters)
+```python
+# get_request.py
+from dify_oapi.core.enum import HttpMethod
+from dify_oapi.core.model.base_request import BaseRequest
+
+class GetRequest(BaseRequest):
+    def __init__(self):
+        super().__init__()
+        self.dataset_id: str | None = None
+
+    @staticmethod
+    def builder() -> GetRequestBuilder:
+        return GetRequestBuilder()
+
+class GetRequestBuilder:
+    def __init__(self):
+        get_request = GetRequest()
+        get_request.http_method = HttpMethod.GET
+        get_request.uri = "/v1/datasets/:dataset_id"
+        self._get_request = get_request
+
+    def build(self) -> GetRequest:
+        return self._get_request
+
+    def dataset_id(self, dataset_id: str) -> GetRequestBuilder:
+        self._get_request.dataset_id = dataset_id
+        self._get_request.paths["dataset_id"] = dataset_id
+        return self
+```
+
+#### DELETE Request Pattern
+```python
+# delete_request.py
+from dify_oapi.core.enum import HttpMethod
+from dify_oapi.core.model.base_request import BaseRequest
+
+class DeleteRequest(BaseRequest):
+    def __init__(self):
+        super().__init__()
+        self.dataset_id: str | None = None
+
+    @staticmethod
+    def builder() -> DeleteRequestBuilder:
+        return DeleteRequestBuilder()
+
+class DeleteRequestBuilder:
+    def __init__(self):
+        delete_request = DeleteRequest()
+        delete_request.http_method = HttpMethod.DELETE
+        delete_request.uri = "/v1/datasets/:dataset_id"
+        self._delete_request = delete_request
+
+    def build(self) -> DeleteRequest:
+        return self._delete_request
+
+    def dataset_id(self, dataset_id: str) -> DeleteRequestBuilder:
+        self._delete_request.dataset_id = dataset_id
+        self._delete_request.paths["dataset_id"] = dataset_id
+        return self
 ```
 
 ### Version Integration

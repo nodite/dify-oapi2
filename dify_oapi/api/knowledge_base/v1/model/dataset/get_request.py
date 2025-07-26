@@ -1,23 +1,30 @@
 from __future__ import annotations
 
-from pydantic import BaseModel
+from dify_oapi.core.enum import HttpMethod
+from dify_oapi.core.model.base_request import BaseRequest
 
 
-class GetDatasetRequest(BaseModel):
-    dataset_id: str
+class GetRequest(BaseRequest):
+    def __init__(self):
+        super().__init__()
+        self.dataset_id: str | None = None
 
     @staticmethod
-    def builder() -> GetDatasetRequestBuilder:
-        return GetDatasetRequestBuilder()
+    def builder() -> GetRequestBuilder:
+        return GetRequestBuilder()
 
 
-class GetDatasetRequestBuilder:
+class GetRequestBuilder:
     def __init__(self):
-        self._request = GetDatasetRequest(dataset_id="")
+        get_request = GetRequest()
+        get_request.http_method = HttpMethod.GET
+        get_request.uri = "/v1/datasets/:dataset_id"
+        self._get_request = get_request
 
-    def build(self) -> GetDatasetRequest:
-        return self._request
+    def build(self) -> GetRequest:
+        return self._get_request
 
-    def dataset_id(self, dataset_id: str) -> GetDatasetRequestBuilder:
-        self._request.dataset_id = dataset_id
+    def dataset_id(self, dataset_id: str) -> GetRequestBuilder:
+        self._get_request.dataset_id = dataset_id
+        self._get_request.paths["dataset_id"] = dataset_id
         return self

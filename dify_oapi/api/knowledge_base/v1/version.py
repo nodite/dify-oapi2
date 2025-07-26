@@ -1,6 +1,6 @@
 from dify_oapi.core.model.config import Config
 
-from .resource import Dataset, Document, Metadata, Segment
+from .resource import Dataset, Document, Metadata, Segment, Tag
 
 
 class V1:
@@ -9,3 +9,4 @@ class V1:
         self.document: Document = Document(config)
         self.metadata: Metadata = Metadata(config)
         self.segment: Segment = Segment(config)
+        self.tag: Tag = Tag(config)

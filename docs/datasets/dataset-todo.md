@@ -110,10 +110,10 @@ This document tracks the implementation progress of the dataset management funct
 ### Phase 5: Integration and Version Updates
 
 #### Step 15: Update Version Integration
-- [ ] Update `dify_oapi/api/knowledge_base/v1/version.py`
+- [x] Update `dify_oapi/api/knowledge_base/v1/version.py`
 
 #### Step 16: Test Version Integration
-- [ ] Create `tests/knowledge_base/v1/integration/test_version_integration.py`
+- [x] Create `tests/knowledge_base/v1/integration/test_version_integration.py`
 
 ### Phase 6: Documentation and Examples
 

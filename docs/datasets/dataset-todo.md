@@ -119,32 +119,32 @@ This document tracks the implementation progress of the dataset management funct
 
 #### Step 17: Create Usage Examples
 **Dataset Examples** (`examples/knowledge_base/dataset/`):
-- [ ] Create `examples/knowledge_base/dataset/create.py`
-- [ ] Create `examples/knowledge_base/dataset/list.py`
-- [ ] Create `examples/knowledge_base/dataset/get.py`
-- [ ] Create `examples/knowledge_base/dataset/update.py`
-- [ ] Create `examples/knowledge_base/dataset/delete.py`
-- [ ] Create `examples/knowledge_base/dataset/retrieve.py`
+- [x] Create `examples/knowledge_base/dataset/create.py`
+- [x] Create `examples/knowledge_base/dataset/list.py`
+- [x] Create `examples/knowledge_base/dataset/get.py`
+- [x] Create `examples/knowledge_base/dataset/update.py`
+- [x] Create `examples/knowledge_base/dataset/delete.py`
+- [x] Create `examples/knowledge_base/dataset/retrieve.py`
 
 **Metadata Examples** (`examples/knowledge_base/metadata/`):
-- [ ] Create `examples/knowledge_base/metadata/create.py`
-- [ ] Create `examples/knowledge_base/metadata/list.py`
-- [ ] Create `examples/knowledge_base/metadata/update.py`
-- [ ] Create `examples/knowledge_base/metadata/delete.py`
-- [ ] Create `examples/knowledge_base/metadata/toggle_builtin.py`
-- [ ] Create `examples/knowledge_base/metadata/update_document.py`
+- [x] Create `examples/knowledge_base/metadata/create.py`
+- [x] Create `examples/knowledge_base/metadata/list.py`
+- [x] Create `examples/knowledge_base/metadata/update.py`
+- [x] Create `examples/knowledge_base/metadata/delete.py`
+- [x] Create `examples/knowledge_base/metadata/toggle_builtin.py`
+- [x] Create `examples/knowledge_base/metadata/update_document.py`
 
 **Tag Examples** (`examples/knowledge_base/tag/`):
-- [ ] Create `examples/knowledge_base/tag/create.py`
-- [ ] Create `examples/knowledge_base/tag/list.py`
-- [ ] Create `examples/knowledge_base/tag/update.py`
-- [ ] Create `examples/knowledge_base/tag/delete.py`
-- [ ] Create `examples/knowledge_base/tag/bind.py`
-- [ ] Create `examples/knowledge_base/tag/unbind.py`
-- [ ] Create `examples/knowledge_base/tag/query_bound.py`
+- [x] Create `examples/knowledge_base/tag/create.py`
+- [x] Create `examples/knowledge_base/tag/list.py`
+- [x] Create `examples/knowledge_base/tag/update.py`
+- [x] Create `examples/knowledge_base/tag/delete.py`
+- [x] Create `examples/knowledge_base/tag/bind.py`
+- [x] Create `examples/knowledge_base/tag/unbind.py`
+- [x] Create `examples/knowledge_base/tag/query_bound.py`
 
 **Documentation**:
-- [ ] Create `examples/knowledge_base/README.md`
+- [x] Create `examples/knowledge_base/README.md`
 
 #### Step 18: Test Examples
 - [ ] Create `tests/knowledge_base/v1/integration/test_examples_validation.py`

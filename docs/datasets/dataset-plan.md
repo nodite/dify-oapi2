@@ -16,7 +16,7 @@ The implementation covers 19 dataset-related APIs organized into three main reso
 #### Step 1: Create Shared Common Models
 **Prompt:**
 ```
-Create the shared common models for the dataset API implementation in `dify_oapi/api/knowledge_base/v1/model/common/`. 
+Create the shared common models for the dataset API implementation in `dify_oapi/api/knowledge_base/v1/model/dataset/`. 
 
 Implement the following model files with proper type hints, builder patterns, and Pydantic validation:
 
@@ -50,11 +50,11 @@ Implement the following model files with proper type hints, builder patterns, an
    - comparison_operator: str
    - value: Optional[Union[str, int, float]]
 
-6. `dataset_info.py` - DatasetInfo class with comprehensive dataset fields
+6. `dataset_info.py` - DatasetInfo class with comprehensive dataset fields based on API response structure
 7. `tag_info.py` - TagInfo class for tag information
 8. `metadata_info.py` - MetadataInfo class for metadata information
 
-Follow the existing project patterns and ensure all models have builder methods and proper serialization support.
+Migrate existing models from `dataset.py` and follow the existing project patterns in dify_oapi, ensure all models have builder methods and proper serialization support using Pydantic.
 ```
 
 #### Step 2: Test Common Models
@@ -62,7 +62,7 @@ Follow the existing project patterns and ensure all models have builder methods 
 ```
 Create comprehensive unit tests for all common models created in Step 1. 
 
-Create test file `tests/test_knowledge_base_common_models.py` that covers:
+Create test file `tests/knowledge_base/v1/model/test_dataset_models.py` that covers:
 
 1. Model instantiation and validation
 2. Builder pattern functionality
@@ -71,7 +71,7 @@ Create test file `tests/test_knowledge_base_common_models.py` that covers:
 5. Optional field handling
 6. Nested model relationships
 
-Ensure all tests pass and provide good coverage for the common model functionality.
+Use pytest framework and ensure all tests pass with good coverage for the common model functionality.
 ```
 
 ### Phase 2: Dataset Management APIs (6 APIs)
@@ -81,9 +81,9 @@ Ensure all tests pass and provide good coverage for the common model functionali
 ```
 Create all request and response models for dataset management APIs in `dify_oapi/api/knowledge_base/v1/model/dataset/`.
 
-Implement the following model files:
+Implement the following model files based on the API specifications:
 
-1. `create_request.py` - DatasetCreateRequest with fields:
+1. `create_request.py` - CreateDatasetRequest with fields:
    - name: str (required)
    - description: Optional[str]
    - indexing_technique: Optional[str]
@@ -95,17 +95,17 @@ Implement the following model files:
    - embedding_model_provider: Optional[str]
    - retrieval_model: Optional[RetrievalModel]
 
-2. `create_response.py` - DatasetCreateResponse using DatasetInfo
-3. `list_request.py` - DatasetListRequest with pagination and filtering
-4. `list_response.py` - DatasetListResponse with data array and pagination
-5. `get_request.py` - DatasetGetRequest with dataset_id
-6. `get_response.py` - DatasetGetResponse with full dataset details
-7. `update_request.py` - DatasetUpdateRequest with partial update fields
-8. `update_response.py` - DatasetUpdateResponse using DatasetInfo
-9. `delete_request.py` - DatasetDeleteRequest with dataset_id
-10. `delete_response.py` - DatasetDeleteResponse (empty for 204 response)
-11. `retrieve_request.py` - DatasetRetrieveRequest with query and retrieval config
-12. `retrieve_response.py` - DatasetRetrieveResponse with query and records
+2. `create_response.py` - CreateDatasetResponse using DatasetInfo
+3. `list_request.py` - ListDatasetsRequest with pagination and filtering
+4. `list_response.py` - ListDatasetsResponse with data array and pagination
+5. `get_request.py` - GetDatasetRequest with dataset_id
+6. `get_response.py` - GetDatasetResponse with full dataset details
+7. `update_request.py` - UpdateDatasetRequest with partial update fields
+8. `update_response.py` - UpdateDatasetResponse using DatasetInfo
+9. `delete_request.py` - DeleteDatasetRequest with dataset_id
+10. `delete_response.py` - DeleteDatasetResponse (empty for 204 response)
+11. `retrieve_request.py` - RetrieveDatasetRequest with query and retrieval config
+12. `retrieve_response.py` - RetrieveDatasetResponse with query and records
 
 Use the common models created in Step 1 and follow existing project patterns for builder methods and validation.
 ```
@@ -113,7 +113,7 @@ Use the common models created in Step 1 and follow existing project patterns for
 #### Step 4: Test Dataset Models
 **Prompt:**
 ```
-Create comprehensive unit tests for dataset request/response models in `tests/test_dataset_models.py`.
+Update the comprehensive unit tests in `tests/knowledge_base/v1/model/test_dataset_models.py` to include all dataset models.
 
 Test all models created in Step 3, covering:
 1. Model validation and required fields
@@ -122,7 +122,7 @@ Test all models created in Step 3, covering:
 4. Integration with common models
 5. Edge cases and error handling
 
-Ensure all tests pass with good coverage.
+Use pytest framework and ensure all tests pass with good coverage.
 ```
 
 #### Step 5: Dataset Resource Implementation
@@ -130,27 +130,35 @@ Ensure all tests pass with good coverage.
 ```
 Implement the Dataset resource class in `dify_oapi/api/knowledge_base/v1/resource/dataset.py`.
 
-Create a Dataset class with the following methods:
-1. `create(request: DatasetCreateRequest, request_option: RequestOption) -> DatasetCreateResponse`
-2. `acreate(request: DatasetCreateRequest, request_option: RequestOption) -> DatasetCreateResponse`
-3. `list(request: DatasetListRequest, request_option: RequestOption) -> DatasetListResponse`
-4. `alist(request: DatasetListRequest, request_option: RequestOption) -> DatasetListResponse`
-5. `get(request: DatasetGetRequest, request_option: RequestOption) -> DatasetGetResponse`
-6. `aget(request: DatasetGetRequest, request_option: RequestOption) -> DatasetGetResponse`
-7. `update(request: DatasetUpdateRequest, request_option: RequestOption) -> DatasetUpdateResponse`
-8. `aupdate(request: DatasetUpdateRequest, request_option: RequestOption) -> DatasetUpdateResponse`
-9. `delete(request: DatasetDeleteRequest, request_option: RequestOption) -> DatasetDeleteResponse`
-10. `adelete(request: DatasetDeleteRequest, request_option: RequestOption) -> DatasetDeleteResponse`
-11. `retrieve(request: DatasetRetrieveRequest, request_option: RequestOption) -> DatasetRetrieveResponse`
-12. `aretrieve(request: DatasetRetrieveRequest, request_option: RequestOption) -> DatasetRetrieveResponse`
+Create a Dataset class with the following methods based on the API endpoints:
+1. `create(request: CreateDatasetRequest, request_option: RequestOption) -> CreateDatasetResponse`
+2. `acreate(request: CreateDatasetRequest, request_option: RequestOption) -> CreateDatasetResponse`
+3. `list(request: ListDatasetsRequest, request_option: RequestOption) -> ListDatasetsResponse`
+4. `alist(request: ListDatasetsRequest, request_option: RequestOption) -> ListDatasetsResponse`
+5. `get(request: GetDatasetRequest, request_option: RequestOption) -> GetDatasetResponse`
+6. `aget(request: GetDatasetRequest, request_option: RequestOption) -> GetDatasetResponse`
+7. `update(request: UpdateDatasetRequest, request_option: RequestOption) -> UpdateDatasetResponse`
+8. `aupdate(request: UpdateDatasetRequest, request_option: RequestOption) -> UpdateDatasetResponse`
+9. `delete(request: DeleteDatasetRequest, request_option: RequestOption) -> DeleteDatasetResponse`
+10. `adelete(request: DeleteDatasetRequest, request_option: RequestOption) -> DeleteDatasetResponse`
+11. `retrieve(request: RetrieveDatasetRequest, request_option: RequestOption) -> RetrieveDatasetResponse`
+12. `aretrieve(request: RetrieveDatasetRequest, request_option: RequestOption) -> RetrieveDatasetResponse`
 
-Follow the existing transport patterns and HTTP method mappings. Ensure proper error handling and response parsing.
+Follow the existing transport patterns and HTTP method mappings. Map to correct endpoints:
+- POST /v1/datasets (create)
+- GET /v1/datasets (list)
+- GET /v1/datasets/:dataset_id (get)
+- PATCH /v1/datasets/:dataset_id (update)
+- DELETE /v1/datasets/:dataset_id (delete)
+- POST /v1/datasets/:dataset_id/retrieve (retrieve)
+
+Ensure proper error handling and response parsing.
 ```
 
 #### Step 6: Test Dataset Resource
 **Prompt:**
 ```
-Create comprehensive integration tests for the Dataset resource in `tests/test_dataset_resource.py`.
+Create comprehensive integration tests for the Dataset resource in `tests/knowledge_base/v1/resource/test_dataset_resource.py`.
 
 Test all methods implemented in Step 5, including:
 1. HTTP method and URL mapping verification
@@ -169,20 +177,20 @@ Use pytest fixtures and mock responses to simulate API interactions. Ensure all 
 ```
 Create all request and response models for metadata management APIs in `dify_oapi/api/knowledge_base/v1/model/metadata/`.
 
-Implement the following model files:
+Implement the following model files based on the API specifications:
 
-1. `create_request.py` - MetadataCreateRequest with dataset_id, type, name
-2. `create_response.py` - MetadataCreateResponse using MetadataInfo
-3. `list_request.py` - MetadataListRequest with dataset_id
-4. `list_response.py` - MetadataListResponse with doc_metadata array and built_in_field_enabled
-5. `update_request.py` - MetadataUpdateRequest with dataset_id, metadata_id, name
-6. `update_response.py` - MetadataUpdateResponse using MetadataInfo
-7. `delete_request.py` - MetadataDeleteRequest with dataset_id, metadata_id
-8. `delete_response.py` - MetadataDeleteResponse (empty for 204)
-9. `toggle_builtin_request.py` - MetadataToggleBuiltinRequest with dataset_id, action
-10. `toggle_builtin_response.py` - MetadataToggleBuiltinResponse with result field
-11. `update_document_request.py` - MetadataUpdateDocumentRequest with operation_data
-12. `update_document_response.py` - MetadataUpdateDocumentResponse with result field
+1. `create_metadata_request.py` - CreateMetadataRequest with dataset_id, type, name
+2. `create_metadata_response.py` - CreateMetadataResponse using MetadataInfo
+3. `list_metadata_request.py` - ListMetadataRequest with dataset_id
+4. `list_metadata_response.py` - ListMetadataResponse with doc_metadata array and built_in_field_enabled
+5. `update_metadata_request.py` - UpdateMetadataRequest with dataset_id, metadata_id, name
+6. `update_metadata_response.py` - UpdateMetadataResponse using MetadataInfo
+7. `delete_metadata_request.py` - DeleteMetadataRequest with dataset_id, metadata_id
+8. `delete_metadata_response.py` - DeleteMetadataResponse (empty for 204)
+9. `toggle_builtin_metadata_request.py` - ToggleBuiltinMetadataRequest with dataset_id, action
+10. `toggle_builtin_metadata_response.py` - ToggleBuiltinMetadataResponse with result field
+11. `update_document_metadata_request.py` - UpdateDocumentMetadataRequest with operation_data
+12. `update_document_metadata_response.py` - UpdateDocumentMetadataResponse with result field
 
 Include proper validation and use common models where applicable.
 ```
@@ -190,7 +198,7 @@ Include proper validation and use common models where applicable.
 #### Step 8: Test Metadata Models
 **Prompt:**
 ```
-Create comprehensive unit tests for metadata request/response models in `tests/test_metadata_models.py`.
+Create comprehensive unit tests for metadata request/response models in `tests/knowledge_base/v1/model/test_metadata_models.py`.
 
 Test all models created in Step 7, covering:
 1. Model validation and required fields
@@ -199,7 +207,7 @@ Test all models created in Step 7, covering:
 4. Complex nested structures (operation_data)
 5. Edge cases and error handling
 
-Ensure all tests pass with good coverage.
+Use pytest framework and ensure all tests pass with good coverage.
 ```
 
 #### Step 9: Metadata Resource Implementation
@@ -207,19 +215,27 @@ Ensure all tests pass with good coverage.
 ```
 Implement the Metadata resource class in `dify_oapi/api/knowledge_base/v1/resource/metadata.py`.
 
-Create a Metadata class with the following methods:
-1. `create(request: MetadataCreateRequest, request_option: RequestOption) -> MetadataCreateResponse`
-2. `acreate(request: MetadataCreateRequest, request_option: RequestOption) -> MetadataCreateResponse`
-3. `list(request: MetadataListRequest, request_option: RequestOption) -> MetadataListResponse`
-4. `alist(request: MetadataListRequest, request_option: RequestOption) -> MetadataListResponse`
-5. `update(request: MetadataUpdateRequest, request_option: RequestOption) -> MetadataUpdateResponse`
-6. `aupdate(request: MetadataUpdateRequest, request_option: RequestOption) -> MetadataUpdateResponse`
-7. `delete(request: MetadataDeleteRequest, request_option: RequestOption) -> MetadataDeleteResponse`
-8. `adelete(request: MetadataDeleteRequest, request_option: RequestOption) -> MetadataDeleteResponse`
-9. `toggle_builtin(request: MetadataToggleBuiltinRequest, request_option: RequestOption) -> MetadataToggleBuiltinResponse`
-10. `atoggle_builtin(request: MetadataToggleBuiltinRequest, request_option: RequestOption) -> MetadataToggleBuiltinResponse`
-11. `update_document(request: MetadataUpdateDocumentRequest, request_option: RequestOption) -> MetadataUpdateDocumentResponse`
-12. `aupdate_document(request: MetadataUpdateDocumentRequest, request_option: RequestOption) -> MetadataUpdateDocumentResponse`
+Create a Metadata class with the following methods based on the API endpoints:
+1. `create(request: CreateMetadataRequest, request_option: RequestOption) -> CreateMetadataResponse`
+2. `acreate(request: CreateMetadataRequest, request_option: RequestOption) -> CreateMetadataResponse`
+3. `list(request: ListMetadataRequest, request_option: RequestOption) -> ListMetadataResponse`
+4. `alist(request: ListMetadataRequest, request_option: RequestOption) -> ListMetadataResponse`
+5. `update(request: UpdateMetadataRequest, request_option: RequestOption) -> UpdateMetadataResponse`
+6. `aupdate(request: UpdateMetadataRequest, request_option: RequestOption) -> UpdateMetadataResponse`
+7. `delete(request: DeleteMetadataRequest, request_option: RequestOption) -> DeleteMetadataResponse`
+8. `adelete(request: DeleteMetadataRequest, request_option: RequestOption) -> DeleteMetadataResponse`
+9. `toggle_builtin(request: ToggleBuiltinMetadataRequest, request_option: RequestOption) -> ToggleBuiltinMetadataResponse`
+10. `atoggle_builtin(request: ToggleBuiltinMetadataRequest, request_option: RequestOption) -> ToggleBuiltinMetadataResponse`
+11. `update_document(request: UpdateDocumentMetadataRequest, request_option: RequestOption) -> UpdateDocumentMetadataResponse`
+12. `aupdate_document(request: UpdateDocumentMetadataRequest, request_option: RequestOption) -> UpdateDocumentMetadataResponse`
+
+Map to correct endpoints:
+- POST /datasets/{dataset_id}/metadata (create)
+- GET /datasets/{dataset_id}/metadata (list)
+- PATCH /datasets/{dataset_id}/metadata/{metadata_id} (update)
+- DELETE /datasets/{dataset_id}/metadata/{metadata_id} (delete)
+- POST /datasets/{dataset_id}/metadata/built-in/{action} (toggle_builtin)
+- POST /datasets/{dataset_id}/documents/metadata (update_document)
 
 Handle path parameters correctly and follow existing patterns.
 ```
@@ -227,7 +243,7 @@ Handle path parameters correctly and follow existing patterns.
 #### Step 10: Test Metadata Resource
 **Prompt:**
 ```
-Create comprehensive integration tests for the Metadata resource in `tests/test_metadata_resource.py`.
+Create comprehensive integration tests for the Metadata resource in `tests/knowledge_base/v1/resource/test_metadata_resource.py`.
 
 Test all methods implemented in Step 9, including:
 1. HTTP method and URL mapping verification (including path parameters)
@@ -246,22 +262,22 @@ Use pytest fixtures and mock responses. Ensure all tests pass.
 ```
 Create all request and response models for tag management APIs in `dify_oapi/api/knowledge_base/v1/model/tag/`.
 
-Implement the following model files:
+Implement the following model files based on the API specifications:
 
-1. `create_request.py` - TagCreateRequest with name field
-2. `create_response.py` - TagCreateResponse using TagInfo
-3. `list_request.py` - TagListRequest (no parameters)
-4. `list_response.py` - TagListResponse with array of TagInfo
-5. `update_request.py` - TagUpdateRequest with name and tag_id
-6. `update_response.py` - TagUpdateResponse using TagInfo
-7. `delete_request.py` - TagDeleteRequest with tag_id
-8. `delete_response.py` - TagDeleteResponse with result field
-9. `bind_request.py` - TagBindRequest with tag_ids array and target_id
-10. `bind_response.py` - TagBindResponse with result field
-11. `unbind_request.py` - TagUnbindRequest with tag_id and target_id
-12. `unbind_response.py` - TagUnbindResponse with result field
-13. `query_bound_request.py` - TagQueryBoundRequest with dataset_id
-14. `query_bound_response.py` - TagQueryBoundResponse with data array and total
+1. `create_tag_request.py` - CreateTagRequest with name field
+2. `create_tag_response.py` - CreateTagResponse using TagInfo
+3. `list_tags_request.py` - ListTagsRequest (no parameters)
+4. `list_tags_response.py` - ListTagsResponse with array of TagInfo
+5. `update_tag_request.py` - UpdateTagRequest with name and tag_id
+6. `update_tag_response.py` - UpdateTagResponse using TagInfo
+7. `delete_tag_request.py` - DeleteTagRequest with tag_id
+8. `delete_tag_response.py` - DeleteTagResponse with result field
+9. `bind_tags_request.py` - BindTagsRequest with tag_ids array and target_id
+10. `bind_tags_response.py` - BindTagsResponse with result field
+11. `unbind_tag_request.py` - UnbindTagRequest with tag_id and target_id
+12. `unbind_tag_response.py` - UnbindTagResponse with result field
+13. `query_bound_tags_request.py` - QueryBoundTagsRequest with dataset_id
+14. `query_bound_tags_response.py` - QueryBoundTagsResponse with data array and total
 
 Include proper validation and use TagInfo from common models.
 ```
@@ -269,7 +285,7 @@ Include proper validation and use TagInfo from common models.
 #### Step 12: Test Tag Models
 **Prompt:**
 ```
-Create comprehensive unit tests for tag request/response models in `tests/test_tag_models.py`.
+Create comprehensive unit tests for tag request/response models in `tests/knowledge_base/v1/model/test_tag_models.py`.
 
 Test all models created in Step 11, covering:
 1. Model validation and required fields
@@ -278,7 +294,7 @@ Test all models created in Step 11, covering:
 4. Array field handling (tag_ids)
 5. Edge cases and error handling
 
-Ensure all tests pass with good coverage.
+Use pytest framework and ensure all tests pass with good coverage.
 ```
 
 #### Step 13: Tag Resource Implementation
@@ -286,21 +302,30 @@ Ensure all tests pass with good coverage.
 ```
 Implement the Tag resource class in `dify_oapi/api/knowledge_base/v1/resource/tag.py`.
 
-Create a Tag class with the following methods:
-1. `create(request: TagCreateRequest, request_option: RequestOption) -> TagCreateResponse`
-2. `acreate(request: TagCreateRequest, request_option: RequestOption) -> TagCreateResponse`
-3. `list(request: TagListRequest, request_option: RequestOption) -> TagListResponse`
-4. `alist(request: TagListRequest, request_option: RequestOption) -> TagListResponse`
-5. `update(request: TagUpdateRequest, request_option: RequestOption) -> TagUpdateResponse`
-6. `aupdate(request: TagUpdateRequest, request_option: RequestOption) -> TagUpdateResponse`
-7. `delete(request: TagDeleteRequest, request_option: RequestOption) -> TagDeleteResponse`
-8. `adelete(request: TagDeleteRequest, request_option: RequestOption) -> TagDeleteResponse`
-9. `bind_tags(request: TagBindRequest, request_option: RequestOption) -> TagBindResponse`
-10. `abind_tags(request: TagBindRequest, request_option: RequestOption) -> TagBindResponse`
-11. `unbind_tags(request: TagUnbindRequest, request_option: RequestOption) -> TagUnbindResponse`
-12. `aunbind_tags(request: TagUnbindRequest, request_option: RequestOption) -> TagUnbindResponse`
-13. `query_bound(request: TagQueryBoundRequest, request_option: RequestOption) -> TagQueryBoundResponse`
-14. `aquery_bound(request: TagQueryBoundRequest, request_option: RequestOption) -> TagQueryBoundResponse`
+Create a Tag class with the following methods based on the API endpoints:
+1. `create(request: CreateTagRequest, request_option: RequestOption) -> CreateTagResponse`
+2. `acreate(request: CreateTagRequest, request_option: RequestOption) -> CreateTagResponse`
+3. `list(request: ListTagsRequest, request_option: RequestOption) -> ListTagsResponse`
+4. `alist(request: ListTagsRequest, request_option: RequestOption) -> ListTagsResponse`
+5. `update(request: UpdateTagRequest, request_option: RequestOption) -> UpdateTagResponse`
+6. `aupdate(request: UpdateTagRequest, request_option: RequestOption) -> UpdateTagResponse`
+7. `delete(request: DeleteTagRequest, request_option: RequestOption) -> DeleteTagResponse`
+8. `adelete(request: DeleteTagRequest, request_option: RequestOption) -> DeleteTagResponse`
+9. `bind_tags(request: BindTagsRequest, request_option: RequestOption) -> BindTagsResponse`
+10. `abind_tags(request: BindTagsRequest, request_option: RequestOption) -> BindTagsResponse`
+11. `unbind_tag(request: UnbindTagRequest, request_option: RequestOption) -> UnbindTagResponse`
+12. `aunbind_tag(request: UnbindTagRequest, request_option: RequestOption) -> UnbindTagResponse`
+13. `query_bound(request: QueryBoundTagsRequest, request_option: RequestOption) -> QueryBoundTagsResponse`
+14. `aquery_bound(request: QueryBoundTagsRequest, request_option: RequestOption) -> QueryBoundTagsResponse`
+
+Map to correct endpoints:
+- POST /datasets/tags (create)
+- GET /datasets/tags (list)
+- PATCH /datasets/tags (update)
+- DELETE /datasets/tags (delete)
+- POST /datasets/tags/binding (bind_tags)
+- POST /datasets/tags/unbinding (unbind_tag)
+- POST /datasets/{dataset_id}/tags (query_bound)
 
 Handle different URL patterns correctly (global vs dataset-specific endpoints).
 ```
@@ -308,7 +333,7 @@ Handle different URL patterns correctly (global vs dataset-specific endpoints).
 #### Step 14: Test Tag Resource
 **Prompt:**
 ```
-Create comprehensive integration tests for the Tag resource in `tests/test_tag_resource.py`.
+Create comprehensive integration tests for the Tag resource in `tests/knowledge_base/v1/resource/test_tag_resource.py`.
 
 Test all methods implemented in Step 13, including:
 1. HTTP method and URL mapping verification
@@ -332,7 +357,7 @@ Modify `dify_oapi/api/knowledge_base/v1/version.py` to:
 1. Import the new Metadata and Tag resource classes
 2. Add metadata and tag properties to the V1 class
 3. Initialize them with the transport instance
-4. Ensure backward compatibility with existing resources
+4. Ensure backward compatibility with existing resources (document, segment)
 
 Update any necessary import statements and maintain the existing API structure.
 ```
@@ -340,12 +365,12 @@ Update any necessary import statements and maintain the existing API structure.
 #### Step 16: Test Version Integration
 **Prompt:**
 ```
-Create integration tests for the updated V1 version class in `tests/test_knowledge_base_v1_integration.py`.
+Create integration tests for the updated V1 version class in `tests/knowledge_base/v1/integration/test_version_integration.py`.
 
 Test:
 1. All resources are properly initialized
 2. Transport is correctly passed to all resources
-3. New resources (metadata, tag) are accessible
+3. New resources (dataset, metadata, tag) are accessible
 4. Existing resources still work correctly
 5. Client integration works end-to-end
 
@@ -371,6 +396,7 @@ Each example should include:
 - Clear comments explaining each step
 - Real-world use cases
 - Both sync and async variants where applicable
+- Follow the existing example patterns in the project
 ```
 
 #### Step 18: Test Examples
@@ -378,14 +404,14 @@ Each example should include:
 ```
 Create validation tests for all examples created in Step 17.
 
-Create `tests/test_examples_validation.py` that:
+Create `tests/knowledge_base/v1/integration/test_examples_validation.py` that:
 1. Validates example code syntax and imports
 2. Mocks API calls to test example logic
 3. Ensures examples follow best practices
 4. Verifies error handling works correctly
 5. Tests both sync and async example variants
 
-Ensure all examples are functional and educational.
+Use pytest framework and ensure all examples are functional and educational.
 ```
 
 ### Phase 7: Final Integration and Quality Assurance
@@ -393,17 +419,27 @@ Ensure all examples are functional and educational.
 #### Step 19: Comprehensive Integration Testing
 **Prompt:**
 ```
-Create comprehensive end-to-end integration tests in `tests/test_dataset_api_integration.py`.
+Create comprehensive end-to-end integration tests for all resources:
 
-Test complete workflows:
-1. Dataset lifecycle (create → update → retrieve → delete)
-2. Metadata management workflow
-3. Tag management and binding workflow
-4. Cross-resource interactions
-5. Error scenarios and edge cases
-6. Performance considerations for large datasets
+1. **`tests/knowledge_base/v1/integration/test_dataset_api_integration.py`**:
+   - Dataset lifecycle (create → update → retrieve → delete)
+   - Error scenarios and edge cases
 
-Use realistic test data and scenarios. Ensure all 19 APIs work together correctly.
+2. **`tests/knowledge_base/v1/integration/test_metadata_api_integration.py`**:
+   - Metadata management workflow
+   - Built-in metadata operations
+   - Document metadata updates
+
+3. **`tests/knowledge_base/v1/integration/test_tag_api_integration.py`**:
+   - Tag management and binding workflow
+   - Global tag operations
+
+4. **`tests/knowledge_base/v1/integration/test_comprehensive_integration.py`**:
+   - Complete workflows combining all resources
+   - Cross-resource interactions and dependencies
+   - End-to-end scenarios (create dataset → add metadata → bind tags → retrieve)
+
+Use realistic test data and scenarios. Ensure all 19 APIs work together correctly with proper mocking.
 ```
 
 #### Step 20: Final Quality Assurance and Documentation
@@ -424,7 +460,7 @@ Tasks:
    - Async/sync parity is maintained
    - Documentation is complete
 
-Create a final validation report confirming all requirements are met.
+Create a final validation report confirming all requirements are met and all 19 dataset APIs are fully functional.
 ```
 
 ## Success Criteria
@@ -440,6 +476,33 @@ Each step should meet the following criteria:
 - ✅ Documentation and examples provided
 - ✅ Backward compatibility maintained where possible
 
+## API Coverage Summary
+
+### Dataset Management (6 APIs)
+1. POST /v1/datasets - Create empty dataset
+2. GET /v1/datasets - List datasets
+3. GET /v1/datasets/:dataset_id - Get dataset details
+4. PATCH /v1/datasets/:dataset_id - Update dataset details
+5. DELETE /v1/datasets/:dataset_id - Delete dataset
+6. POST /v1/datasets/:dataset_id/retrieve - Dataset retrieval
+
+### Metadata Management (7 APIs)
+7. POST /v1/datasets/:dataset_id/metadata - Create metadata
+8. GET /v1/datasets/:dataset_id/metadata - List dataset metadata
+9. PATCH /v1/datasets/:dataset_id/metadata/:metadata_id - Update metadata
+10. DELETE /v1/datasets/:dataset_id/metadata/:metadata_id - Delete metadata
+11. POST /v1/datasets/:dataset_id/metadata/built-in/:action - Toggle built-in metadata
+12. POST /v1/datasets/:dataset_id/documents/metadata - Update document metadata
+
+### Tag Management (7 APIs)
+13. POST /v1/datasets/tags - Create knowledge type tag
+14. GET /v1/datasets/tags - Get knowledge type tags
+15. PATCH /v1/datasets/tags - Update knowledge type tag name
+16. DELETE /v1/datasets/tags - Delete knowledge type tag
+17. POST /v1/datasets/tags/binding - Bind dataset and knowledge type tags
+18. POST /v1/datasets/tags/unbinding - Unbind dataset and knowledge type tag
+19. POST /v1/datasets/:dataset_id/tags - Query knowledge base bound tags
+
 ## Notes
 
 - Each implementation step should be followed immediately by its corresponding test step
@@ -447,3 +510,5 @@ Each step should meet the following criteria:
 - Ensure all 19 dataset APIs are fully functional and well-tested
 - Prioritize type safety and developer experience throughout the implementation
 - Follow the established directory structure and naming conventions
+- All models should use Pydantic with builder patterns following existing project conventions
+- Use `:parameter_name` format for path parameters to match existing patterns

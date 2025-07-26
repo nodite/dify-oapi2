@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document outlines the design for implementing comprehensive dataset management functionality in the dify-oapi knowledge_base module. The implementation will support 19 dataset-related APIs covering dataset CRUD operations, metadata management, tag management, and retrieval functionality.
+This document outlines the design for implementing comprehensive dataset management functionality in the dify-oapi knowledge_base module. The implementation will support all 19 dataset-related APIs covering dataset CRUD operations, metadata management, tag management, and retrieval functionality.
 
 ## Design Decisions
 
@@ -13,14 +13,14 @@ This document outlines the design for implementing comprehensive dataset managem
 - Leverage existing infrastructure and patterns
 
 ### 2. Resource Structure
-**Decision**: Create new resource classes within knowledge_base module
+**Decision**: Create comprehensive resource classes within knowledge_base module
+
+**Extended Existing Resources**:
+- `dataset` - Extend existing resource with get, update, retrieve methods (3 new APIs)
 
 **New Resource Classes**:
 - `metadata` - Dataset metadata management (7 APIs)
 - `tag` - Knowledge base type tag management (7 APIs)
-
-**Extended Existing Resources**:
-- `dataset` - Add get, update, retrieve methods (3 new APIs)
 
 ### 3. Response Model Strategy
 **Decision**: Create dedicated Response models for every API
@@ -114,15 +114,15 @@ model/
 
 ### Dataset Management APIs (6 APIs)
 
-#### Core CRUD Operations
-1. **POST /datasets** → `dataset.create()`
-2. **GET /datasets** → `dataset.list()`
-3. **GET /datasets/{dataset_id}** → `dataset.get()`
-4. **PATCH /datasets/{dataset_id}** → `dataset.update()`
-5. **DELETE /datasets/{dataset_id}** → `dataset.delete()`
+#### Existing Methods (Mixed Approach)
+1. **POST /datasets** → `dataset.create()` - Keep existing, verify compliance
+2. **GET /datasets** → `dataset.list()` - Keep existing, verify compliance  
+3. **DELETE /datasets/{dataset_id}** → `dataset.delete()` - Keep existing, verify compliance
 
-#### Retrieval Operations
-6. **POST /datasets/{dataset_id}/retrieve** → `dataset.retrieve()`
+#### New Methods to Add
+4. **GET /datasets/{dataset_id}** → `dataset.get()` - New implementation
+5. **PATCH /datasets/{dataset_id}** → `dataset.update()` - New implementation
+6. **POST /datasets/{dataset_id}/retrieve** → `dataset.retrieve()` - Replace existing hit_test
 
 ### Metadata Management APIs (7 APIs)
 
@@ -190,12 +190,12 @@ class RetrievalModel:
 Update `v1/version.py` to include new resources:
 ```python
 class V1:
-    def __init__(self, transport: Transport):
-        self.dataset = Dataset(transport)
-        self.document = Document(transport)
-        self.segment = Segment(transport)
-        self.metadata = Metadata(transport)  # New
-        self.tag = Tag(transport)            # New
+    def __init__(self, config: Config):
+        self.dataset = Dataset(config)
+        self.document = Document(config)
+        self.segment = Segment(config)
+        self.metadata = Metadata(config)  # New
+        self.tag = Tag(config)            # New
 ```
 
 ## Quality Assurance
@@ -215,12 +215,36 @@ class V1:
 - Integration tests with mock API responses
 - Validation tests for all model classes
 
+### Test Directory Structure
+```
+tests/
+└── knowledge_base/
+    └── v1/
+        ├── model/
+        │   ├── test_dataset_models.py
+        │   ├── test_metadata_models.py
+        │   └── test_tag_models.py
+        ├── resource/
+        │   ├── test_dataset_resource.py
+        │   ├── test_metadata_resource.py
+        │   └── test_tag_resource.py
+        ├── integration/
+        │   ├── test_dataset_api_integration.py
+        │   ├── test_metadata_api_integration.py
+        │   ├── test_tag_api_integration.py
+        │   ├── test_comprehensive_integration.py
+        │   ├── test_examples_validation.py
+        │   └── test_version_integration.py
+        └── __init__.py
+```
+
 ## Migration Impact
 
 ### Breaking Changes
 - Complete rewrite of existing dataset-related functionality
 - New model structure requires import path updates
 - Method signature changes for existing APIs
+- New retrieve method replaces hit_test method
 
 ### Benefits
 - Full API coverage with 19 dataset management endpoints

@@ -29,16 +29,17 @@ This document outlines the design for implementing comprehensive dataset managem
 - Ensure comprehensive IDE support and validation
 
 ### 4. Nested Object Handling
-**Decision**: Define all nested objects as independent model class files
+**Decision**: Define all nested objects as independent model class files within their respective functional domains
 - Create separate model files regardless of complexity
-- Place shared nested objects in `common/` directory for reuse
-- Ensure maintainability and cross-model compatibility
+- Place models within their respective functional domain directories
+- Create domain-specific variants for cross-domain models
+- Use consistent naming without domain prefixes
 
-**Shared Common Models**:
-- `retrieval_model.py` - Used across dataset and document APIs
-- `reranking_model.py` - Nested within retrieval_model
-- `external_knowledge_info.py` - Dataset external knowledge configuration
-- `metadata_filtering_conditions.py` - Search filtering configuration
+**Model Distribution Strategy**:
+- Each functional domain contains its own version of shared models
+- Models maintain consistent naming across domains (e.g., `RetrievalModel`)
+- Domain-specific customizations are handled through separate variants
+- No central `common/` directory - models belong to their primary use domain
 
 ### 5. Method Naming Convention
 **Decision**: Use descriptive method names for clarity
@@ -69,7 +70,14 @@ model/
 │   ├── delete_request.py
 │   ├── delete_response.py
 │   ├── retrieve_request.py
-│   └── retrieve_response.py
+│   ├── retrieve_response.py
+│   ├── retrieval_model.py
+│   ├── reranking_model.py
+│   ├── filter_condition.py
+│   ├── metadata_filtering_conditions.py
+│   ├── external_knowledge_info.py
+│   ├── dataset_info.py
+│   └── tag_info.py
 ├── metadata/         # Metadata management models
 │   ├── create_request.py
 │   ├── create_response.py
@@ -82,30 +90,24 @@ model/
 │   ├── toggle_builtin_request.py
 │   ├── toggle_builtin_response.py
 │   ├── update_document_request.py
-│   └── update_document_response.py
-├── tag/             # Tag management models
-│   ├── create_request.py
-│   ├── create_response.py
-│   ├── list_request.py
-│   ├── list_response.py
-│   ├── update_request.py
-│   ├── update_response.py
-│   ├── delete_request.py
-│   ├── delete_response.py
-│   ├── bind_request.py
-│   ├── bind_response.py
-│   ├── unbind_request.py
-│   ├── unbind_response.py
-│   ├── query_bound_request.py
-│   └── query_bound_response.py
-└── common/          # Shared models
-    ├── retrieval_model.py
-    ├── reranking_model.py
-    ├── external_knowledge_info.py
-    ├── metadata_filtering_conditions.py
-    ├── dataset_info.py
-    ├── tag_info.py
-    └── metadata_info.py
+│   ├── update_document_response.py
+│   └── metadata_info.py
+└── tag/             # Tag management models
+    ├── create_request.py
+    ├── create_response.py
+    ├── list_request.py
+    ├── list_response.py
+    ├── update_request.py
+    ├── update_response.py
+    ├── delete_request.py
+    ├── delete_response.py
+    ├── bind_request.py
+    ├── bind_response.py
+    ├── unbind_request.py
+    ├── unbind_response.py
+    ├── query_bound_request.py
+    ├── query_bound_response.py
+    └── tag_info.py
 ```
 
 ## API Implementation Plan

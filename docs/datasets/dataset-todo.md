@@ -145,6 +145,7 @@ This document tracks the implementation progress of the dataset management funct
 
 **Documentation**:
 - [x] Create `examples/knowledge_base/README.md`
+- [x] Update `examples/README.md` to include new knowledge base examples
 
 #### Step 18: Test Examples
 - [x] Create `tests/knowledge_base/v1/integration/test_examples_validation.py`

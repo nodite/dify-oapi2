@@ -435,6 +435,7 @@ Each example file should include:
 - Realistic but simple test data
 - Educational value for developers
 - Follow the existing example patterns in the project
+- **Update main examples README**: Always update `examples/README.md` to include new examples with proper categorization and descriptions
 ```
 
 #### Step 18: Test Examples

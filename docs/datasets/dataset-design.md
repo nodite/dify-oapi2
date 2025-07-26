@@ -319,6 +319,7 @@ examples/knowledge_base/
 - **Real-world Data**: Use realistic but simple test data
 - **Integration Reference**: Examples can serve as integration test references
 - **Documentation Support**: Examples complement API documentation
+- **Main README Update**: Always update `examples/README.md` to include new examples with proper categorization and descriptions
 
 ## Summary
 

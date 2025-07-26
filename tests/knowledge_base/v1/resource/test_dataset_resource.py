@@ -18,9 +18,7 @@ from dify_oapi.api.knowledge_base.v1.model.dataset.delete_response import Delete
 from dify_oapi.api.knowledge_base.v1.model.dataset.retrieve_request import RetrieveDatasetRequest
 from dify_oapi.api.knowledge_base.v1.model.dataset.retrieve_response import RetrieveDatasetResponse
 
-# Import legacy models for compatibility testing
-from dify_oapi.api.knowledge_base.v1.model.hit_test_request import HitTestRequest
-from dify_oapi.api.knowledge_base.v1.model.hit_test_response import HitTestResponse
+
 
 
 class TestDatasetResource:
@@ -224,35 +222,7 @@ class TestDatasetResource:
             dataset_resource.config, request, unmarshal_as=RetrieveDatasetResponse, option=request_option
         )
 
-    # Legacy compatibility tests
-    def test_hit_test_legacy_compatibility(self, dataset_resource, request_option, monkeypatch):
-        # Mock Transport.execute
-        mock_response = HitTestResponse()
-        mock_execute = Mock(return_value=mock_response)
-        monkeypatch.setattr("dify_oapi.core.http.transport.Transport.execute", mock_execute)
 
-        request = HitTestRequest()
-        response = dataset_resource.hit_test(request, request_option)
-
-        assert isinstance(response, HitTestResponse)
-        mock_execute.assert_called_once_with(
-            dataset_resource.config, request, unmarshal_as=HitTestResponse, option=request_option
-        )
-
-    @pytest.mark.asyncio
-    async def test_ahit_test_legacy_compatibility(self, dataset_resource, request_option, monkeypatch):
-        # Mock ATransport.aexecute
-        mock_response = HitTestResponse()
-        mock_aexecute = AsyncMock(return_value=mock_response)
-        monkeypatch.setattr("dify_oapi.core.http.transport.ATransport.aexecute", mock_aexecute)
-
-        request = HitTestRequest()
-        response = await dataset_resource.ahit_test(request, request_option)
-
-        assert isinstance(response, HitTestResponse)
-        mock_aexecute.assert_called_once_with(
-            dataset_resource.config, request, unmarshal_as=HitTestResponse, option=request_option
-        )
 
     def test_config_initialization(self, config):
         dataset = Dataset(config)

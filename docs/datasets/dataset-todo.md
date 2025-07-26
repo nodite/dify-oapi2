@@ -49,11 +49,11 @@ This document tracks the implementation progress of the dataset management funct
 
 #### Step 6: Test Dataset Resource and Migration Cleanup
 - [x] Create `tests/knowledge_base/v1/resource/test_dataset_resource.py`
-- [ ] Run migration verification tests
-- [ ] Remove old dataset model files after validation
-- [ ] Remove old `hit_test` method and related models
-- [ ] Update import statements throughout codebase
-- [ ] Remove old test files for migrated functionality
+- [x] Run migration verification tests
+- [x] Remove old dataset model files after validation
+- [x] Remove old `hit_test` method and related models
+- [x] Update import statements throughout codebase
+- [x] Remove old test files for migrated functionality
 
 ### Phase 3: Metadata Management APIs (7 APIs)
 

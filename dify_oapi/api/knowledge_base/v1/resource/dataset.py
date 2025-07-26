@@ -16,9 +16,7 @@ from ..model.dataset.delete_response import DeleteDatasetResponse
 from ..model.dataset.retrieve_request import RetrieveDatasetRequest
 from ..model.dataset.retrieve_response import RetrieveDatasetResponse
 
-# Legacy imports for backward compatibility
-from ..model.hit_test_request import HitTestRequest
-from ..model.hit_test_response import HitTestResponse
+
 
 
 class Dataset:
@@ -65,9 +63,3 @@ class Dataset:
     async def aretrieve(self, request: RetrieveDatasetRequest, option: RequestOption | None = None) -> RetrieveDatasetResponse:
         return await ATransport.aexecute(self.config, request, unmarshal_as=RetrieveDatasetResponse, option=option)
 
-    # Legacy method for backward compatibility - will be removed after migration
-    def hit_test(self, request: HitTestRequest, option: RequestOption | None = None) -> HitTestResponse:
-        return Transport.execute(self.config, request, unmarshal_as=HitTestResponse, option=option)
-
-    async def ahit_test(self, request: HitTestRequest, option: RequestOption | None = None) -> HitTestResponse:
-        return await ATransport.aexecute(self.config, request, unmarshal_as=HitTestResponse, option=option)

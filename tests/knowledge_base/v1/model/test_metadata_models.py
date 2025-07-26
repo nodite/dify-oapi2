@@ -31,14 +31,17 @@ class TestCreateMetadataRequest:
         )
         
         assert request.dataset_id == "dataset-123"
-        assert request.type == "string"
-        assert request.name == "test-metadata"
+        assert request.request_body.type == "string"
+        assert request.request_body.name == "test-metadata"
 
     def test_required_fields(self):
-        request = CreateMetadataRequest(dataset_id="dataset-123", type="string", name="test-metadata")
+        request = CreateMetadataRequest()
+        request.dataset_id = "dataset-123"
+        from dify_oapi.api.knowledge_base.v1.model.metadata.create_request import CreateMetadataRequestBody
+        request.request_body = CreateMetadataRequestBody(type="string", name="test-metadata")
         assert request.dataset_id == "dataset-123"
-        assert request.type == "string"
-        assert request.name == "test-metadata"
+        assert request.request_body.type == "string"
+        assert request.request_body.name == "test-metadata"
 
 
 class TestCreateMetadataResponse:
@@ -76,7 +79,8 @@ class TestListMetadataRequest:
         assert request.dataset_id == "dataset-123"
 
     def test_required_field(self):
-        request = ListMetadataRequest(dataset_id="dataset-123")
+        request = ListMetadataRequest()
+        request.dataset_id = "dataset-123"
         assert request.dataset_id == "dataset-123"
 
 
@@ -112,17 +116,17 @@ class TestUpdateMetadataRequest:
         
         assert request.dataset_id == "dataset-123"
         assert request.metadata_id == "meta-123"
-        assert request.name == "updated-name"
+        assert request.request_body.name == "updated-name"
 
     def test_required_fields(self):
-        request = UpdateMetadataRequest(
-            dataset_id="dataset-123",
-            metadata_id="meta-123",
-            name="updated-name"
-        )
+        request = UpdateMetadataRequest()
+        request.dataset_id = "dataset-123"
+        request.metadata_id = "meta-123"
+        from dify_oapi.api.knowledge_base.v1.model.metadata.update_request import UpdateMetadataRequestBody
+        request.request_body = UpdateMetadataRequestBody(name="updated-name")
         assert request.dataset_id == "dataset-123"
         assert request.metadata_id == "meta-123"
-        assert request.name == "updated-name"
+        assert request.request_body.name == "updated-name"
 
 
 class TestUpdateMetadataResponse:
@@ -162,7 +166,9 @@ class TestDeleteMetadataRequest:
         assert request.metadata_id == "meta-123"
 
     def test_required_fields(self):
-        request = DeleteMetadataRequest(dataset_id="dataset-123", metadata_id="meta-123")
+        request = DeleteMetadataRequest()
+        request.dataset_id = "dataset-123"
+        request.metadata_id = "meta-123"
         assert request.dataset_id == "dataset-123"
         assert request.metadata_id == "meta-123"
 
@@ -270,8 +276,8 @@ class TestUpdateDocumentMetadataRequest:
         )
         
         assert request.dataset_id == "dataset-123"
-        assert len(request.operation_data) == 1
-        assert request.operation_data[0].document_id == "doc-123"
+        assert len(request.request_body.operation_data) == 1
+        assert request.request_body.operation_data[0].document_id == "doc-123"
 
     def test_complex_nested_structure(self):
         metadata1 = DocumentMetadata(id="meta-1", value="value-1", name="name-1")
@@ -280,20 +286,23 @@ class TestUpdateDocumentMetadataRequest:
         operation_data1 = OperationData(document_id="doc-1", metadata_list=[metadata1])
         operation_data2 = OperationData(document_id="doc-2", metadata_list=[metadata2])
         
-        request = UpdateDocumentMetadataRequest(
-            dataset_id="dataset-123",
-            operation_data=[operation_data1, operation_data2]
-        )
+        request = UpdateDocumentMetadataRequest()
+        request.dataset_id = "dataset-123"
+        from dify_oapi.api.knowledge_base.v1.model.metadata.update_document_request import UpdateDocumentMetadataRequestBody
+        request.request_body = UpdateDocumentMetadataRequestBody(operation_data=[operation_data1, operation_data2])
         
         assert request.dataset_id == "dataset-123"
-        assert len(request.operation_data) == 2
-        assert request.operation_data[0].document_id == "doc-1"
-        assert request.operation_data[1].document_id == "doc-2"
+        assert len(request.request_body.operation_data) == 2
+        assert request.request_body.operation_data[0].document_id == "doc-1"
+        assert request.request_body.operation_data[1].document_id == "doc-2"
 
     def test_empty_operation_data(self):
-        request = UpdateDocumentMetadataRequest(dataset_id="dataset-123", operation_data=[])
+        request = UpdateDocumentMetadataRequest()
+        request.dataset_id = "dataset-123"
+        from dify_oapi.api.knowledge_base.v1.model.metadata.update_document_request import UpdateDocumentMetadataRequestBody
+        request.request_body = UpdateDocumentMetadataRequestBody(operation_data=[])
         assert request.dataset_id == "dataset-123"
-        assert request.operation_data == []
+        assert request.request_body.operation_data == []
 
 
 class TestUpdateDocumentMetadataResponse:
@@ -357,7 +366,7 @@ class TestMetadataModelsIntegration:
         )
         
         assert request.dataset_id == "dataset-123"
-        assert len(request.operation_data) == 1
-        assert request.operation_data[0].document_id == "doc-123"
-        assert len(request.operation_data[0].metadata_list) == 1
-        assert request.operation_data[0].metadata_list[0].id == "meta-123"
+        assert len(request.request_body.operation_data) == 1
+        assert request.request_body.operation_data[0].document_id == "doc-123"
+        assert len(request.request_body.operation_data[0].metadata_list) == 1
+        assert request.request_body.operation_data[0].metadata_list[0].id == "meta-123"

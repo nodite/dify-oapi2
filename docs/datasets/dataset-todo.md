@@ -105,7 +105,7 @@ This document tracks the implementation progress of the dataset management funct
 - [x] Implement `dify_oapi/api/knowledge_base/v1/resource/tag.py`
 
 #### Step 14: Test Tag Resource
-- [ ] Create `tests/knowledge_base/v1/resource/test_tag_resource.py`
+- [x] Create `tests/knowledge_base/v1/resource/test_tag_resource.py`
 
 ### Phase 5: Integration and Version Updates
 

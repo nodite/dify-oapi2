@@ -8,6 +8,20 @@ from dify_oapi.api.knowledge_base.v1.model.dataset.dataset_info import DatasetIn
 from dify_oapi.api.knowledge_base.v1.model.dataset.tag_info import TagInfo
 from dify_oapi.api.knowledge_base.v1.model.dataset.metadata_info import MetadataInfo
 
+# Import new dataset request/response models
+from dify_oapi.api.knowledge_base.v1.model.dataset.create_request import CreateDatasetRequest
+from dify_oapi.api.knowledge_base.v1.model.dataset.create_response import CreateDatasetResponse
+from dify_oapi.api.knowledge_base.v1.model.dataset.list_request import ListDatasetsRequest
+from dify_oapi.api.knowledge_base.v1.model.dataset.list_response import ListDatasetsResponse
+from dify_oapi.api.knowledge_base.v1.model.dataset.get_request import GetDatasetRequest
+from dify_oapi.api.knowledge_base.v1.model.dataset.get_response import GetDatasetResponse
+from dify_oapi.api.knowledge_base.v1.model.dataset.update_request import UpdateDatasetRequest
+from dify_oapi.api.knowledge_base.v1.model.dataset.update_response import UpdateDatasetResponse
+from dify_oapi.api.knowledge_base.v1.model.dataset.delete_request import DeleteDatasetRequest
+from dify_oapi.api.knowledge_base.v1.model.dataset.delete_response import DeleteDatasetResponse
+from dify_oapi.api.knowledge_base.v1.model.dataset.retrieve_request import RetrieveDatasetRequest
+from dify_oapi.api.knowledge_base.v1.model.dataset.retrieve_response import RetrieveDatasetResponse
+
 
 class TestRerankingModel:
     def test_builder_pattern(self):
@@ -243,3 +257,259 @@ class TestDatasetInfo:
         assert new_dataset.name == "test_name"
         assert new_dataset.description == "test_desc"
         assert new_dataset.app_count == 5
+
+
+# New tests for dataset request/response models
+class TestCreateDatasetRequest:
+    def test_builder_pattern(self):
+        retrieval_model = RetrievalModel(search_method="semantic_search")
+        request = (
+            CreateDatasetRequest.builder()
+            .name("test_dataset")
+            .description("test description")
+            .indexing_technique("high_quality")
+            .permission("only_me")
+            .provider("vendor")
+            .embedding_model("text-embedding-3")
+            .embedding_model_provider("openai")
+            .retrieval_model(retrieval_model)
+            .build()
+        )
+        assert request.name == "test_dataset"
+        assert request.description == "test description"
+        assert request.indexing_technique == "high_quality"
+        assert request.permission == "only_me"
+        assert request.provider == "vendor"
+        assert request.embedding_model == "text-embedding-3"
+        assert request.embedding_model_provider == "openai"
+        assert request.retrieval_model.search_method == "semantic_search"
+
+    def test_required_fields_only(self):
+        request = CreateDatasetRequest(name="test_dataset")
+        assert request.name == "test_dataset"
+        assert request.description is None
+        assert request.indexing_technique is None
+
+    def test_serialization(self):
+        request = CreateDatasetRequest(name="test", description="desc")
+        data = request.model_dump(exclude_none=True)
+        assert data["name"] == "test"
+        assert data["description"] == "desc"
+        assert "indexing_technique" not in data
+
+
+class TestCreateDatasetResponse:
+    def test_inheritance(self):
+        response = CreateDatasetResponse(id="test_id", name="test_name")
+        assert response.id == "test_id"
+        assert response.name == "test_name"
+        assert hasattr(response, 'description')
+        assert hasattr(response, 'provider')
+
+
+class TestListDatasetsRequest:
+    def test_builder_pattern(self):
+        request = (
+            ListDatasetsRequest.builder()
+            .keyword("test")
+            .tag_ids(["tag1", "tag2"])
+            .page(2)
+            .limit("10")
+            .include_all(True)
+            .build()
+        )
+        assert request.keyword == "test"
+        assert request.tag_ids == ["tag1", "tag2"]
+        assert request.page == 2
+        assert request.limit == "10"
+        assert request.include_all is True
+
+    def test_empty_request(self):
+        request = ListDatasetsRequest.builder().build()
+        assert request.keyword is None
+        assert request.tag_ids is None
+        assert request.page is None
+        assert request.limit is None
+        assert request.include_all is None
+
+
+class TestListDatasetsResponse:
+    def test_builder_pattern(self):
+        dataset1 = DatasetInfo(id="id1", name="name1")
+        dataset2 = DatasetInfo(id="id2", name="name2")
+        
+        response = (
+            ListDatasetsResponse.builder()
+            .data([dataset1, dataset2])
+            .has_more(True)
+            .limit(20)
+            .total(50)
+            .page(1)
+            .build()
+        )
+        assert len(response.data) == 2
+        assert response.data[0].id == "id1"
+        assert response.data[1].id == "id2"
+        assert response.has_more is True
+        assert response.limit == 20
+        assert response.total == 50
+        assert response.page == 1
+
+    def test_default_values(self):
+        response = ListDatasetsResponse.builder().build()
+        assert response.data == []
+        assert response.has_more is False
+        assert response.limit == 20
+        assert response.total == 0
+        assert response.page == 1
+
+
+class TestGetDatasetRequest:
+    def test_builder_pattern(self):
+        request = GetDatasetRequest.builder().dataset_id("test_id").build()
+        assert request.dataset_id == "test_id"
+
+    def test_required_field(self):
+        request = GetDatasetRequest(dataset_id="test_id")
+        assert request.dataset_id == "test_id"
+
+
+class TestGetDatasetResponse:
+    def test_inheritance(self):
+        response = GetDatasetResponse(id="test_id", name="test_name")
+        assert response.id == "test_id"
+        assert response.name == "test_name"
+        assert hasattr(response, 'description')
+        assert hasattr(response, 'provider')
+
+
+class TestUpdateDatasetRequest:
+    def test_builder_pattern(self):
+        retrieval_model = RetrievalModel(search_method="hybrid_search")
+        request = (
+            UpdateDatasetRequest.builder()
+            .dataset_id("test_id")
+            .name("updated_name")
+            .indexing_technique("economy")
+            .permission("all_team_members")
+            .embedding_model("new_model")
+            .retrieval_model(retrieval_model)
+            .partial_member_list(["user1", "user2"])
+            .build()
+        )
+        assert request.dataset_id == "test_id"
+        assert request.name == "updated_name"
+        assert request.indexing_technique == "economy"
+        assert request.permission == "all_team_members"
+        assert request.embedding_model == "new_model"
+        assert request.retrieval_model.search_method == "hybrid_search"
+        assert request.partial_member_list == ["user1", "user2"]
+
+    def test_partial_update(self):
+        request = UpdateDatasetRequest.builder().dataset_id("test_id").name("new_name").build()
+        assert request.dataset_id == "test_id"
+        assert request.name == "new_name"
+        assert request.indexing_technique is None
+        assert request.permission is None
+
+
+class TestUpdateDatasetResponse:
+    def test_inheritance(self):
+        response = UpdateDatasetResponse(id="test_id", name="test_name")
+        assert response.id == "test_id"
+        assert response.name == "test_name"
+        assert hasattr(response, 'description')
+        assert hasattr(response, 'provider')
+
+
+class TestDeleteDatasetRequest:
+    def test_builder_pattern(self):
+        request = DeleteDatasetRequest.builder().dataset_id("test_id").build()
+        assert request.dataset_id == "test_id"
+
+    def test_required_field(self):
+        request = DeleteDatasetRequest(dataset_id="test_id")
+        assert request.dataset_id == "test_id"
+
+
+class TestDeleteDatasetResponse:
+    def test_empty_response(self):
+        response = DeleteDatasetResponse()
+        # Should be able to instantiate without any fields
+        assert isinstance(response, DeleteDatasetResponse)
+
+
+class TestRetrieveDatasetRequest:
+    def test_builder_pattern(self):
+        retrieval_model = RetrievalModel(search_method="full_text_search", top_k=5)
+        request = (
+            RetrieveDatasetRequest.builder()
+            .dataset_id("test_id")
+            .query("test query")
+            .retrieval_model(retrieval_model)
+            .external_retrieval_model({"key": "value"})
+            .build()
+        )
+        assert request.dataset_id == "test_id"
+        assert request.query == "test query"
+        assert request.retrieval_model.search_method == "full_text_search"
+        assert request.retrieval_model.top_k == 5
+        assert request.external_retrieval_model == {"key": "value"}
+
+    def test_required_fields_only(self):
+        request = RetrieveDatasetRequest(dataset_id="test_id", query="test query")
+        assert request.dataset_id == "test_id"
+        assert request.query == "test query"
+        assert request.retrieval_model is None
+        assert request.external_retrieval_model is None
+
+
+class TestRetrieveDatasetResponse:
+    def test_builder_pattern(self):
+        from dify_oapi.api.knowledge_base.v1.model.dataset.retrieve_response import (
+            QueryInfo, RetrievalRecord, SegmentInfo, DocumentInfo
+        )
+        
+        query = QueryInfo(content="test query")
+        document = DocumentInfo(id="doc_id", data_source_type="upload_file", name="test.txt")
+        segment = SegmentInfo(
+            id="seg_id", position=1, document_id="doc_id", content="test content",
+            word_count=10, tokens=5, keywords=["test"], index_node_id="node_id",
+            index_node_hash="hash", hit_count=1, enabled=True, status="completed",
+            created_by="user", created_at=1234567890, indexing_at=1234567890,
+            completed_at=1234567890, document=document
+        )
+        record = RetrievalRecord(segment=segment, score=0.95)
+        
+        response = (
+            RetrieveDatasetResponse.builder()
+            .query(query)
+            .records([record])
+            .build()
+        )
+        assert response.query.content == "test query"
+        assert len(response.records) == 1
+        assert response.records[0].segment.id == "seg_id"
+        assert response.records[0].score == 0.95
+        assert response.records[0].segment.document.name == "test.txt"
+
+    def test_empty_records(self):
+        from dify_oapi.api.knowledge_base.v1.model.dataset.retrieve_response import QueryInfo
+        
+        query = QueryInfo(content="test query")
+        response = RetrieveDatasetResponse(query=query, records=[])
+        assert response.query.content == "test query"
+        assert response.records == []
+
+    def test_nested_builders(self):
+        from dify_oapi.api.knowledge_base.v1.model.dataset.retrieve_response import (
+            QueryInfo, DocumentInfo
+        )
+        
+        query = QueryInfo.builder().content("test").build()
+        document = DocumentInfo.builder().id("doc_id").data_source_type("upload").name("file.txt").build()
+        
+        assert query.content == "test"
+        assert document.id == "doc_id"
+        assert document.data_source_type == "upload"
+        assert document.name == "file.txt"

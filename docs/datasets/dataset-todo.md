@@ -26,21 +26,21 @@ This document tracks the implementation progress of the dataset management funct
 ### Phase 2: Dataset Management APIs (6 APIs)
 
 #### Step 3: Dataset Request/Response Models
-- [ ] Create `create_request.py`
-- [ ] Create `create_response.py`
-- [ ] Create `list_request.py`
-- [ ] Create `list_response.py`
-- [ ] Create `get_request.py`
-- [ ] Create `get_response.py`
-- [ ] Create `update_request.py`
-- [ ] Create `update_response.py`
-- [ ] Create `delete_request.py`
-- [ ] Create `delete_response.py`
-- [ ] Create `retrieve_request.py`
-- [ ] Create `retrieve_response.py`
+- [x] Create `create_request.py`
+- [x] Create `create_response.py`
+- [x] Create `list_request.py`
+- [x] Create `list_response.py`
+- [x] Create `get_request.py`
+- [x] Create `get_response.py`
+- [x] Create `update_request.py`
+- [x] Create `update_response.py`
+- [x] Create `delete_request.py`
+- [x] Create `delete_response.py`
+- [x] Create `retrieve_request.py`
+- [x] Create `retrieve_response.py`
 
 #### Step 4: Test Dataset Models
-- [ ] Update `tests/knowledge_base/v1/model/test_dataset_models.py`
+- [x] Update `tests/knowledge_base/v1/model/test_dataset_models.py`
 
 #### Step 5: Dataset Resource Implementation
 - [ ] Implement `dify_oapi/api/knowledge_base/v1/resource/dataset.py`

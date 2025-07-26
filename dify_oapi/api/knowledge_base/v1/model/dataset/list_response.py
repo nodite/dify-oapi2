@@ -7,7 +7,7 @@ from pydantic import BaseModel
 from .dataset_info import DatasetInfo
 
 
-class ListDatasetsResponse(BaseModel):
+class ListResponse(BaseModel):
     data: List[DatasetInfo]
     has_more: bool
     limit: int
@@ -15,13 +15,13 @@ class ListDatasetsResponse(BaseModel):
     page: int
 
     @staticmethod
-    def builder() -> ListDatasetsResponseBuilder:
-        return ListDatasetsResponseBuilder()
+    def builder() -> ListResponseBuilder:
+        return ListResponseBuilder()
 
 
-class ListDatasetsResponseBuilder:
+class ListResponseBuilder:
     def __init__(self):
-        self._response = ListDatasetsResponse(
+        self._response = ListResponse(
             data=[],
             has_more=False,
             limit=20,
@@ -29,25 +29,25 @@ class ListDatasetsResponseBuilder:
             page=1
         )
 
-    def build(self) -> ListDatasetsResponse:
+    def build(self) -> ListResponse:
         return self._response
 
-    def data(self, data: List[DatasetInfo]) -> ListDatasetsResponseBuilder:
+    def data(self, data: List[DatasetInfo]) -> ListResponseBuilder:
         self._response.data = data
         return self
 
-    def has_more(self, has_more: bool) -> ListDatasetsResponseBuilder:
+    def has_more(self, has_more: bool) -> ListResponseBuilder:
         self._response.has_more = has_more
         return self
 
-    def limit(self, limit: int) -> ListDatasetsResponseBuilder:
+    def limit(self, limit: int) -> ListResponseBuilder:
         self._response.limit = limit
         return self
 
-    def total(self, total: int) -> ListDatasetsResponseBuilder:
+    def total(self, total: int) -> ListResponseBuilder:
         self._response.total = total
         return self
 
-    def page(self, page: int) -> ListDatasetsResponseBuilder:
+    def page(self, page: int) -> ListResponseBuilder:
         self._response.page = page
         return self

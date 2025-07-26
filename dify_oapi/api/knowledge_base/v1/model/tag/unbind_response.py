@@ -3,21 +3,21 @@ from __future__ import annotations
 from pydantic import BaseModel
 
 
-class UnbindTagResponse(BaseModel):
+class UnbindResponse(BaseModel):
     result: str
 
     @staticmethod
-    def builder() -> UnbindTagResponseBuilder:
-        return UnbindTagResponseBuilder()
+    def builder() -> UnbindResponseBuilder:
+        return UnbindResponseBuilder()
 
 
-class UnbindTagResponseBuilder:
+class UnbindResponseBuilder:
     def __init__(self):
-        self._response = UnbindTagResponse(result="")
+        self._response = UnbindResponse(result="")
 
-    def build(self) -> UnbindTagResponse:
+    def build(self) -> UnbindResponse:
         return self._response
 
-    def result(self, result: str) -> UnbindTagResponseBuilder:
+    def result(self, result: str) -> UnbindResponseBuilder:
         self._response.result = result
         return self

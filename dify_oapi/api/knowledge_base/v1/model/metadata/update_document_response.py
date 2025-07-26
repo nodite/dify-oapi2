@@ -3,21 +3,21 @@ from __future__ import annotations
 from pydantic import BaseModel
 
 
-class UpdateDocumentMetadataResponse(BaseModel):
+class UpdateDocumentResponse(BaseModel):
     result: str
 
     @staticmethod
-    def builder() -> UpdateDocumentMetadataResponseBuilder:
-        return UpdateDocumentMetadataResponseBuilder()
+    def builder() -> UpdateDocumentResponseBuilder:
+        return UpdateDocumentResponseBuilder()
 
 
-class UpdateDocumentMetadataResponseBuilder:
+class UpdateDocumentResponseBuilder:
     def __init__(self):
-        self._response = UpdateDocumentMetadataResponse(result="")
+        self._response = UpdateDocumentResponse(result="")
 
-    def build(self) -> UpdateDocumentMetadataResponse:
+    def build(self) -> UpdateDocumentResponse:
         return self._response
 
-    def result(self, result: str) -> UpdateDocumentMetadataResponseBuilder:
+    def result(self, result: str) -> UpdateDocumentResponseBuilder:
         self._response.result = result
         return self

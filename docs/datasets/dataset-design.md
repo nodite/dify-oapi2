@@ -114,22 +114,20 @@ This document outlines the design for implementing comprehensive dataset managem
 - `build()` method returns the RequestBody object
 - No body serialization in RequestBody builder
 
-#### Class Naming Convention (STRICT)
-**File-to-Class Mapping**:
-- `create_request.py` → `CreateRequest` and `CreateRequestBuilder`
-- `create_request_body.py` → `CreateRequestBody` and `CreateRequestBodyBuilder`
-- `list_request.py` → `ListRequest` and `ListRequestBuilder`
-- `get_request.py` → `GetRequest` and `GetRequestBuilder`
-- `update_request.py` → `UpdateRequest` and `UpdateRequestBuilder`
-- `update_request_body.py` → `UpdateRequestBody` and `UpdateRequestBodyBuilder`
-- `delete_request.py` → `DeleteRequest` and `DeleteRequestBuilder`
-- `retrieve_request.py` → `RetrieveRequest` and `RetrieveRequestBuilder`
-- `retrieve_request_body.py` → `RetrieveRequestBody` and `RetrieveRequestBodyBuilder`
+#### Class Naming Convention (MANDATORY - ZERO TOLERANCE)
+**Universal Naming Pattern**:
+- File names determine class names exactly (e.g., `create_request.py` → `CreateRequest`)
+- Each class has corresponding Builder (e.g., `CreateRequest` + `CreateRequestBuilder`)
+- Pattern applies to all model types: Request, RequestBody, Response
 
-**Naming Rules**:
+**STRICT Naming Rules (NO EXCEPTIONS)**:
 - Remove ALL module/domain prefixes from class names
-- Class names MUST match file names exactly
-- NO exceptions to this rule across any resource (dataset, metadata, tag)
+- Class names MUST match file names exactly (case-sensitive)
+- Apply uniformly across ALL resources: dataset, metadata, tag
+- Use operation-based names: `CreateRequest`, `ListResponse`, `UpdateRequestBody`
+- NEVER use domain-specific names: `CreateDatasetRequest`, `CreateMetadataResponse`
+- NO legacy naming patterns allowed
+- Consistent across all HTTP methods and operation types
 
 #### URI and HTTP Method Configuration
 **Dataset APIs**:
@@ -164,6 +162,9 @@ This document outlines the design for implementing comprehensive dataset managem
 - Builder patterns MUST use pydantic's `model_dump()` method directly
 - All fields MUST have proper type hints
 - Optional fields MUST use `Optional[Type]` or `Type | None`
+- Response classes MUST follow same naming convention as Request classes (no module prefixes)
+- ALL classes (Request, RequestBody, Response) must have consistent naming across all resources
+- Builder classes must follow same naming pattern as their corresponding model classes
 
 ### 8. Model File Organization
 **Decision**: Organize models by resource grouping with shared common models

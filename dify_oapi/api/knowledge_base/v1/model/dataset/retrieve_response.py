@@ -5,13 +5,13 @@ from typing import List, Optional
 from pydantic import BaseModel
 
 
-class RetrieveDatasetResponse(BaseModel):
+class RetrieveResponse(BaseModel):
     query: QueryInfo
     records: List[RetrievalRecord]
 
     @staticmethod
-    def builder() -> RetrieveDatasetResponseBuilder:
-        return RetrieveDatasetResponseBuilder()
+    def builder() -> RetrieveResponseBuilder:
+        return RetrieveResponseBuilder()
 
 
 class QueryInfo(BaseModel):
@@ -72,21 +72,21 @@ class DocumentInfo(BaseModel):
 
 
 # Builder classes
-class RetrieveDatasetResponseBuilder:
+class RetrieveResponseBuilder:
     def __init__(self):
-        self._response = RetrieveDatasetResponse(
+        self._response = RetrieveResponse(
             query=QueryInfo(content=""),
             records=[]
         )
 
-    def build(self) -> RetrieveDatasetResponse:
+    def build(self) -> RetrieveResponse:
         return self._response
 
-    def query(self, query: QueryInfo) -> RetrieveDatasetResponseBuilder:
+    def query(self, query: QueryInfo) -> RetrieveResponseBuilder:
         self._response.query = query
         return self
 
-    def records(self, records: List[RetrievalRecord]) -> RetrieveDatasetResponseBuilder:
+    def records(self, records: List[RetrievalRecord]) -> RetrieveResponseBuilder:
         self._response.records = records
         return self
 

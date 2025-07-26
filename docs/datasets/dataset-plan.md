@@ -628,22 +628,36 @@ Each step should meet the following criteria:
 - Examples: DeleteRequest
 
 #### Class Naming Convention (ZERO TOLERANCE)
-**Mandatory File-to-Class Mapping**:
-- `create_request.py` → `CreateRequest` + `CreateRequestBuilder`
-- `create_request_body.py` → `CreateRequestBody` + `CreateRequestBodyBuilder`
-- `list_request.py` → `ListRequest` + `ListRequestBuilder`
-- `get_request.py` → `GetRequest` + `GetRequestBuilder`
-- `update_request.py` → `UpdateRequest` + `UpdateRequestBuilder`
-- `update_request_body.py` → `UpdateRequestBody` + `UpdateRequestBodyBuilder`
-- `delete_request.py` → `DeleteRequest` + `DeleteRequestBuilder`
-- `retrieve_request.py` → `RetrieveRequest` + `RetrieveRequestBuilder`
-- `retrieve_request_body.py` → `RetrieveRequestBody` + `RetrieveRequestBodyBuilder`
+**Universal Naming Pattern**:
+- File names determine class names exactly (e.g., `create_request.py` → `CreateRequest`)
+- Each class has corresponding Builder (e.g., `CreateRequest` + `CreateRequestBuilder`)
+- Pattern applies to all model types: Request, RequestBody, Response
 
-**Naming Rules**:
+**STRICT Naming Rules (NO EXCEPTIONS)**:
 - Remove ALL module/domain prefixes from class names
-- Class names MUST match file names exactly
-- Apply to ALL resources: dataset, metadata, tag
-- NO exceptions allowed
+- Class names MUST match file names exactly (case-sensitive)
+- Apply uniformly across ALL resources: dataset, metadata, tag
+- Use operation-based names: `CreateRequest`, `ListResponse`, `UpdateRequestBody`
+- NEVER use domain-specific names: `CreateDatasetRequest`, `CreateMetadataResponse`
+- NO legacy naming patterns allowed
+- Consistent across all HTTP methods and operation types
+
+#### Pydantic BaseModel Rules
+- All RequestBody and Response models MUST inherit from `pydantic.BaseModel`
+- NO custom `model_dump()` methods allowed
+- Use pydantic's built-in serialization, validation, and type checking
+- All fields MUST have proper type hints
+- Optional fields MUST use `Optional[Type]` or `Type | None`
+- Builder patterns MUST use pydantic's `model_dump()` method directly
+- Use `:parameter_name` format for path parameters to match existing patterns
+- ALL classes (Request, RequestBody, Response, Builder) must follow universal naming convention
+- Response classes MUST follow same naming convention as Request classes (no module prefixes)
+- Consistent naming across ALL resources and operation types
+- **Test Code Quality Requirements**:
+  - All test method parameters must include proper type annotations
+  - All test methods must include return type annotations (typically `-> None`)
+  - Import necessary typing modules (`typing.Any` for complex objects like `monkeypatch`)
+  - Follow consistent typing patterns across all test files
 
 #### Builder Pattern Implementation (EXACT SPECIFICATION)
 **Request Builder Pattern**:
@@ -720,6 +734,7 @@ model/
 - Optional fields MUST use `Optional[Type]` or `Type | None`
 - Builder patterns MUST use pydantic's `model_dump()` method directly
 - Use `:parameter_name` format for path parameters to match existing patterns
+- Response classes MUST follow same naming convention as Request classes (no module prefixes)
 - **Test Code Quality Requirements**:
   - All test method parameters must include proper type annotations
   - All test methods must include return type annotations (typically `-> None`)

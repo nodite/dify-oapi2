@@ -3,21 +3,21 @@ from __future__ import annotations
 from pydantic import BaseModel
 
 
-class DeleteTagResponse(BaseModel):
+class DeleteResponse(BaseModel):
     result: str
 
     @staticmethod
-    def builder() -> DeleteTagResponseBuilder:
-        return DeleteTagResponseBuilder()
+    def builder() -> DeleteResponseBuilder:
+        return DeleteResponseBuilder()
 
 
-class DeleteTagResponseBuilder:
+class DeleteResponseBuilder:
     def __init__(self):
-        self._response = DeleteTagResponse(result="")
+        self._response = DeleteResponse(result="")
 
-    def build(self) -> DeleteTagResponse:
+    def build(self) -> DeleteResponse:
         return self._response
 
-    def result(self, result: str) -> DeleteTagResponseBuilder:
+    def result(self, result: str) -> DeleteResponseBuilder:
         self._response.result = result
         return self

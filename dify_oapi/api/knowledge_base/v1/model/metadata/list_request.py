@@ -4,27 +4,27 @@ from dify_oapi.core.enum import HttpMethod
 from dify_oapi.core.model.base_request import BaseRequest
 
 
-class ListMetadataRequest(BaseRequest):
+class ListRequest(BaseRequest):
     def __init__(self):
         super().__init__()
         self.dataset_id: str | None = None
 
     @staticmethod
-    def builder() -> ListMetadataRequestBuilder:
-        return ListMetadataRequestBuilder()
+    def builder() -> ListRequestBuilder:
+        return ListRequestBuilder()
 
 
-class ListMetadataRequestBuilder:
+class ListRequestBuilder:
     def __init__(self):
-        list_metadata_request = ListMetadataRequest()
-        list_metadata_request.http_method = HttpMethod.GET
-        list_metadata_request.uri = "/v1/datasets/:dataset_id/metadata"
-        self._request = list_metadata_request
+        list_request = ListRequest()
+        list_request.http_method = HttpMethod.GET
+        list_request.uri = "/v1/datasets/:dataset_id/metadata"
+        self._list_request = list_request
 
-    def build(self) -> ListMetadataRequest:
-        return self._request
+    def build(self) -> ListRequest:
+        return self._list_request
 
-    def dataset_id(self, dataset_id: str) -> ListMetadataRequestBuilder:
-        self._request.dataset_id = dataset_id
-        self._request.paths["dataset_id"] = dataset_id
+    def dataset_id(self, dataset_id: str) -> ListRequestBuilder:
+        self._list_request.dataset_id = dataset_id
+        self._list_request.paths["dataset_id"] = dataset_id
         return self

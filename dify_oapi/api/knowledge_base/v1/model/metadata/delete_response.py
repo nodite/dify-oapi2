@@ -3,17 +3,17 @@ from __future__ import annotations
 from pydantic import BaseModel
 
 
-class DeleteMetadataResponse(BaseModel):
+class DeleteResponse(BaseModel):
     """Empty response for 204 No Content"""
 
     @staticmethod
-    def builder() -> DeleteMetadataResponseBuilder:
-        return DeleteMetadataResponseBuilder()
+    def builder() -> DeleteResponseBuilder:
+        return DeleteResponseBuilder()
 
 
-class DeleteMetadataResponseBuilder:
+class DeleteResponseBuilder:
     def __init__(self):
-        self._response = DeleteMetadataResponse()
+        self._response = DeleteResponse()
 
-    def build(self) -> DeleteMetadataResponse:
+    def build(self) -> DeleteResponse:
         return self._response

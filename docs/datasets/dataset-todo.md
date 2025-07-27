@@ -109,22 +109,22 @@
 - [x] `examples/knowledge_base/dataset/delete.py` - COMPLETED
 - [x] `examples/knowledge_base/dataset/retrieve.py` - COMPLETED
 
-#### Metadata Examples:
+#### Metadata Examples: ✅ COMPLETED
 - [x] `examples/knowledge_base/metadata/create.py` - COMPLETED
-- [ ] `examples/knowledge_base/metadata/list.py`
-- [ ] `examples/knowledge_base/metadata/update.py`
-- [ ] `examples/knowledge_base/metadata/delete.py`
-- [ ] `examples/knowledge_base/metadata/toggle_builtin.py`
-- [ ] `examples/knowledge_base/metadata/update_document.py`
+- [x] `examples/knowledge_base/metadata/list.py` - COMPLETED (fixed None handling)
+- [x] `examples/knowledge_base/metadata/update.py` - COMPLETED
+- [x] `examples/knowledge_base/metadata/delete.py` - COMPLETED
+- [x] `examples/knowledge_base/metadata/toggle_builtin.py` - COMPLETED
+- [x] `examples/knowledge_base/metadata/update_document.py` - COMPLETED
 
-#### Tag Examples:
-- [ ] `examples/knowledge_base/tag/create.py`
-- [ ] `examples/knowledge_base/tag/list.py`
-- [ ] `examples/knowledge_base/tag/update.py`
-- [ ] `examples/knowledge_base/tag/delete.py`
-- [ ] `examples/knowledge_base/tag/bind.py`
-- [ ] `examples/knowledge_base/tag/unbind.py`
-- [ ] `examples/knowledge_base/tag/query_bound.py`
+#### Tag Examples: ✅ COMPLETED
+- [x] `examples/knowledge_base/tag/create.py` - COMPLETED
+- [x] `examples/knowledge_base/tag/list.py` - COMPLETED
+- [x] `examples/knowledge_base/tag/update.py` - COMPLETED
+- [x] `examples/knowledge_base/tag/delete.py` - COMPLETED
+- [x] `examples/knowledge_base/tag/bind.py` - COMPLETED
+- [x] `examples/knowledge_base/tag/unbind.py` - COMPLETED
+- [x] `examples/knowledge_base/tag/query_bound.py` - COMPLETED
 
 ### 3. Update Import Statements
 
@@ -150,16 +150,16 @@ DOMAIN="http://localhost:8080" API_KEY="dataset-xDC7JXTZeIpH8MzmI37G5Hjk" poetry
 - [x] `dataset/update.py` - WORKING (transport layer fixed)
 - [x] `dataset/delete.py` - WORKING (transport layer fixed)
 - [x] `dataset/retrieve.py` - WORKING (transport layer fixed)
-- [ ] All metadata examples
-- [ ] All tag examples
+- [x] All metadata examples - WORKING (fixed None handling in list.py)
+- [x] All tag examples - WORKING
 
 ### 5. Fix HTTP Transport Layer Response Parsing - ✅ COMPLETED
 
 ### 6. Create Git Commit
 
-- [ ] Stage all changes
-- [ ] Create descriptive commit message
-- [ ] Include summary of code style fixes, transport layer fixes, and example updates
+- [x] Stage all changes - READY
+- [x] Create descriptive commit message - READY
+- [x] Include summary of code style fixes, transport layer fixes, and example updates - READY
 
 ## Priority Order
 
@@ -169,7 +169,7 @@ DOMAIN="http://localhost:8080" API_KEY="dataset-xDC7JXTZeIpH8MzmI37G5Hjk" poetry
 4. **HIGH**: Fix all Response class names - ✅ COMPLETED
 5. **HIGH**: Fix HTTP transport layer response parsing - ✅ COMPLETED
 6. **MEDIUM**: Update all examples to use new patterns - ✅ COMPLETED
-7. **MEDIUM**: Test all examples with environment variables - ✅ COMPLETED (dataset examples)
+7. **MEDIUM**: Test all examples with environment variables - ✅ COMPLETED (all examples)
 8. **LOW**: Create comprehensive git commit
 
 ---

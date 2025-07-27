@@ -31,9 +31,10 @@ def list_metadata_sync() -> None:
         response = client.knowledge_base.v1.metadata.list(request, request_option)
 
         print(f"Built-in fields: {'Enabled' if response.built_in_field_enabled else 'Disabled'}")
-        print(f"Custom metadata: {len(response.doc_metadata)} fields")
+        metadata_list = response.doc_metadata or []
+        print(f"Custom metadata: {len(metadata_list)} fields")
 
-        for metadata in response.doc_metadata:
+        for metadata in metadata_list:
             print(f"  - {metadata.name} ({metadata.type}, ID: {metadata.id}, used: {metadata.use_count or 0})")
 
     except Exception as e:
@@ -57,10 +58,11 @@ async def list_metadata_async() -> None:
 
         response = await client.knowledge_base.v1.metadata.alist(request, request_option)
 
-        print(f"Metadata (async): {len(response.doc_metadata)} fields")
+        metadata_list = response.doc_metadata or []
+        print(f"Metadata (async): {len(metadata_list)} fields")
 
         by_type = {}
-        for metadata in response.doc_metadata:
+        for metadata in metadata_list:
             if metadata.type not in by_type:
                 by_type[metadata.type] = []
             by_type[metadata.type].append(metadata)

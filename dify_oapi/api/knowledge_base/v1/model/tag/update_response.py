@@ -1,43 +1,21 @@
 from __future__ import annotations
 
-from pydantic import BaseModel
+from typing import Optional, Union
 
-from dify_oapi.api.knowledge_base.v1.model.dataset.tag_info import TagInfo
+from dify_oapi.api.knowledge_base.v1.model.tag.tag_info import TagInfo
+from dify_oapi.core.model.base_response import BaseResponse
 
 
-class UpdateResponse(BaseModel):
-    id: str
-    name: str
-    type: str
-    binding_count: int
-
-    @staticmethod
-    def builder() -> UpdateResponseBuilder:
-        return UpdateResponseBuilder()
+class UpdateResponse(BaseResponse):
+    id: Optional[str] = None
+    name: Optional[str] = None
+    type: Optional[str] = None
+    binding_count: Optional[Union[int, str]] = None
 
     def to_tag_info(self) -> TagInfo:
-        return TagInfo(id=self.id, name=self.name, type=self.type, binding_count=self.binding_count)
-
-
-class UpdateResponseBuilder:
-    def __init__(self):
-        self._response = UpdateResponse(id="", name="", type="", binding_count=0)
-
-    def build(self) -> UpdateResponse:
-        return self._response
-
-    def id(self, id: str) -> UpdateResponseBuilder:
-        self._response.id = id
-        return self
-
-    def name(self, name: str) -> UpdateResponseBuilder:
-        self._response.name = name
-        return self
-
-    def type(self, type: str) -> UpdateResponseBuilder:
-        self._response.type = type
-        return self
-
-    def binding_count(self, binding_count: int) -> UpdateResponseBuilder:
-        self._response.binding_count = binding_count
-        return self
+        return TagInfo(
+            id=self.id or "",
+            name=self.name or "",
+            type=self.type or "",
+            binding_count=self.binding_count or 0,
+        )

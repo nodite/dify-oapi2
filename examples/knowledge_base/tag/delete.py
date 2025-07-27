@@ -8,78 +8,148 @@ This example demonstrates how to delete knowledge type tags using the Dify API.
 import asyncio
 import os
 
-from dify_oapi.api.knowledge_base.v1.model.tag.delete_request import DeleteTagRequest
+from dify_oapi.api.knowledge_base.v1.model.tag.delete_request import DeleteRequest
+from dify_oapi.api.knowledge_base.v1.model.tag.delete_request_body import (
+    DeleteRequestBody,
+)
 from dify_oapi.client import Client
 from dify_oapi.core.model.request_option import RequestOption
 
 
 def delete_tag_sync() -> None:
-    """Delete tag synchronously."""
+    """Delete tag synchronously (only [Example] prefixed tags)."""
     try:
+        api_key = os.getenv("API_KEY")
+        if not api_key:
+            raise ValueError("API_KEY environment variable is required")
+
+        tag_id = os.getenv("TAG_ID")
+        if not tag_id:
+            raise ValueError("TAG_ID environment variable is required")
+
         client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
-        
-        tag_id = os.getenv("TAG_ID", "your-tag-id-here")
-        request = DeleteTagRequest.builder().tag_id(tag_id).build()
-        
-        print(f"Are you sure you want to delete tag {tag_id}? (y/N): ", end="")
-        if input().strip().lower() != 'y':
-            print("Deletion cancelled.")
+        request_option = RequestOption.builder().api_key(api_key).build()
+
+        from dify_oapi.api.knowledge_base.v1.model.tag.list_request import ListRequest
+
+        list_request = ListRequest.builder().build()
+        list_response = client.knowledge_base.v1.tag.list(list_request, request_option)
+
+        target_tag = None
+        if list_response.data:
+            target_tag = next(
+                (tag for tag in list_response.data if tag.id == tag_id), None
+            )
+
+        if not target_tag:
+            print(f"Tag {tag_id} not found")
             return
-        
-        request_option = RequestOption.builder().api_key(os.getenv("API_KEY")).build()
-        response = client.knowledge_base.v1.tag.delete(request, request_option)
-        
-        print(f"Tag {tag_id} deleted successfully!")
-        print(f"Result: {response.result}")
-        
+
+        if not target_tag.name or not target_tag.name.startswith("[Example]"):
+            print(f"Skipping '{target_tag.name}' - not an example tag")
+            return
+
+        request_body = DeleteRequestBody.builder().tag_id(tag_id).build()
+        request = DeleteRequest.builder().request_body(request_body).build()
+        client.knowledge_base.v1.tag.delete(request, request_option)
+        print(f"Deleted: {target_tag.name}")
+
     except Exception as e:
         print(f"Error deleting tag: {e}")
 
 
 async def delete_tag_async() -> None:
-    """Delete tag asynchronously."""
+    """Delete tag asynchronously (only [Example] prefixed tags)."""
     try:
+        api_key = os.getenv("API_KEY")
+        if not api_key:
+            raise ValueError("API_KEY environment variable is required")
+
+        tag_id = os.getenv("TAG_ID")
+        if not tag_id:
+            raise ValueError("TAG_ID environment variable is required")
+
         client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
-        
-        tag_id = os.getenv("TAG_ID_ASYNC", "your-async-tag-id-here")
-        request = DeleteTagRequest.builder().tag_id(tag_id).build()
-        
-        print(f"Are you sure you want to delete tag {tag_id} (async)? (y/N): ", end="")
-        if input().strip().lower() != 'y':
-            print("Async deletion cancelled.")
+        request_option = RequestOption.builder().api_key(api_key).build()
+
+        from dify_oapi.api.knowledge_base.v1.model.tag.list_request import ListRequest
+
+        list_request = ListRequest.builder().build()
+        list_response = await client.knowledge_base.v1.tag.alist(list_request, request_option)
+
+        target_tag = None
+        if list_response.data:
+            target_tag = next(
+                (tag for tag in list_response.data if tag.id == tag_id), None
+            )
+
+        if not target_tag:
+            print(f"Tag {tag_id} not found")
             return
-        
-        request_option = RequestOption.builder().api_key(os.getenv("API_KEY")).build()
-        response = await client.knowledge_base.v1.tag.adelete(request, request_option)
-        
-        print(f"Tag {tag_id} deleted successfully (async)!")
-        print(f"Result: {response.result}")
-        
+
+        if not target_tag.name or not target_tag.name.startswith("[Example]"):
+            print(f"Skipping '{target_tag.name}' - not an example tag")
+            return
+
+        request_body = DeleteRequestBody.builder().tag_id(tag_id).build()
+        request = DeleteRequest.builder().request_body(request_body).build()
+        await client.knowledge_base.v1.tag.adelete(request, request_option)
+        print(f"Deleted (async): {target_tag.name}")
+
     except Exception as e:
         print(f"Error deleting tag (async): {e}")
+
+
+def delete_example_tags() -> None:
+    """Delete all tags with [Example] prefix."""
+    try:
+        api_key = os.getenv("API_KEY")
+        if not api_key:
+            raise ValueError("API_KEY environment variable is required")
+
+        client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
+        request_option = RequestOption.builder().api_key(api_key).build()
+
+        from dify_oapi.api.knowledge_base.v1.model.tag.list_request import ListRequest
+
+        list_request = ListRequest.builder().build()
+        list_response = client.knowledge_base.v1.tag.list(list_request, request_option)
+
+        example_tags = [
+            t for t in list_response.data if t.name and t.name.startswith("[Example]")
+        ]
+
+        if not example_tags:
+            print("No example tags found")
+            return
+
+        print(f"Deleting {len(example_tags)} example tags...")
+        
+        for tag in example_tags:
+            try:
+                request_body = DeleteRequestBody.builder().tag_id(tag.id).build()
+                request = DeleteRequest.builder().request_body(request_body).build()
+                client.knowledge_base.v1.tag.delete(request, request_option)
+                print(f"✓ {tag.name}")
+            except Exception as e:
+                print(f"✗ {tag.name}: {e}")
+
+    except Exception as e:
+        print(f"Error in cleanup: {e}")
 
 
 def main() -> None:
     """Main function to run examples."""
     print("=== Tag Delete Examples ===\n")
     
-    if not os.getenv("API_KEY"):
-        print("Please set the API_KEY environment variable")
-        return
+    print("1. Deleting specific tag synchronously...")
+    delete_tag_sync()
     
-    print("WARNING: Tag deletion is irreversible!")
+    print("\n2. Deleting specific tag asynchronously...")
+    asyncio.run(delete_tag_async())
     
-    if os.getenv("TAG_ID"):
-        print("1. Deleting tag synchronously...")
-        delete_tag_sync()
-    else:
-        print("1. Skipping sync deletion (TAG_ID not set)")
-    
-    if os.getenv("TAG_ID_ASYNC"):
-        print("\n2. Deleting tag asynchronously...")
-        asyncio.run(delete_tag_async())
-    else:
-        print("\n2. Skipping async deletion (TAG_ID_ASYNC not set)")
+    print("\n3. Cleaning up all example tags...")
+    delete_example_tags()
 
 
 if __name__ == "__main__":

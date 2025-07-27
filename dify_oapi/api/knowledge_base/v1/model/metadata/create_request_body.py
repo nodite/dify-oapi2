@@ -1,10 +1,11 @@
 from __future__ import annotations
 
+from typing import Literal
 from pydantic import BaseModel
 
 
 class CreateRequestBody(BaseModel):
-    type: str | None = None
+    type: Literal["string", "number", "time"] | None = None
     name: str | None = None
 
     @staticmethod

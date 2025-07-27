@@ -1,26 +1,54 @@
 import pytest
 from dify_oapi.api.knowledge_base.v1.model.dataset.retrieval_model import RetrievalModel
 from dify_oapi.api.knowledge_base.v1.model.dataset.reranking_model import RerankingModel
-from dify_oapi.api.knowledge_base.v1.model.dataset.external_knowledge_info import ExternalKnowledgeInfo
-from dify_oapi.api.knowledge_base.v1.model.dataset.metadata_filtering_conditions import MetadataFilteringConditions
-from dify_oapi.api.knowledge_base.v1.model.dataset.filter_condition import FilterCondition
+from dify_oapi.api.knowledge_base.v1.model.dataset.external_knowledge_info import (
+    ExternalKnowledgeInfo,
+)
+from dify_oapi.api.knowledge_base.v1.model.dataset.metadata_filtering_conditions import (
+    MetadataFilteringConditions,
+)
+from dify_oapi.api.knowledge_base.v1.model.dataset.filter_condition import (
+    FilterCondition,
+)
 from dify_oapi.api.knowledge_base.v1.model.dataset.dataset_info import DatasetInfo
-from dify_oapi.api.knowledge_base.v1.model.dataset.tag_info import TagInfo
-from dify_oapi.api.knowledge_base.v1.model.dataset.metadata_info import MetadataInfo
+from dify_oapi.api.knowledge_base.v1.model.tag.tag_info import TagInfo
+from dify_oapi.api.knowledge_base.v1.model.metadata.metadata_info import MetadataInfo
 
 # Import new dataset request/response models
-from dify_oapi.api.knowledge_base.v1.model.dataset.create_request import CreateDatasetRequest
-from dify_oapi.api.knowledge_base.v1.model.dataset.create_response import CreateDatasetResponse
-from dify_oapi.api.knowledge_base.v1.model.dataset.list_request import ListDatasetsRequest
-from dify_oapi.api.knowledge_base.v1.model.dataset.list_response import ListDatasetsResponse
+from dify_oapi.api.knowledge_base.v1.model.dataset.create_request import (
+    CreateDatasetRequest,
+)
+from dify_oapi.api.knowledge_base.v1.model.dataset.create_response import (
+    CreateDatasetResponse,
+)
+from dify_oapi.api.knowledge_base.v1.model.dataset.list_request import (
+    ListDatasetsRequest,
+)
+from dify_oapi.api.knowledge_base.v1.model.dataset.list_response import (
+    ListDatasetsResponse,
+)
 from dify_oapi.api.knowledge_base.v1.model.dataset.get_request import GetDatasetRequest
-from dify_oapi.api.knowledge_base.v1.model.dataset.get_response import GetDatasetResponse
-from dify_oapi.api.knowledge_base.v1.model.dataset.update_request import UpdateDatasetRequest
-from dify_oapi.api.knowledge_base.v1.model.dataset.update_response import UpdateDatasetResponse
-from dify_oapi.api.knowledge_base.v1.model.dataset.delete_request import DeleteDatasetRequest
-from dify_oapi.api.knowledge_base.v1.model.dataset.delete_response import DeleteDatasetResponse
-from dify_oapi.api.knowledge_base.v1.model.dataset.retrieve_request import RetrieveDatasetRequest
-from dify_oapi.api.knowledge_base.v1.model.dataset.retrieve_response import RetrieveDatasetResponse
+from dify_oapi.api.knowledge_base.v1.model.dataset.get_response import (
+    GetDatasetResponse,
+)
+from dify_oapi.api.knowledge_base.v1.model.dataset.update_request import (
+    UpdateDatasetRequest,
+)
+from dify_oapi.api.knowledge_base.v1.model.dataset.update_response import (
+    UpdateDatasetResponse,
+)
+from dify_oapi.api.knowledge_base.v1.model.dataset.delete_request import (
+    DeleteDatasetRequest,
+)
+from dify_oapi.api.knowledge_base.v1.model.dataset.delete_response import (
+    DeleteDatasetResponse,
+)
+from dify_oapi.api.knowledge_base.v1.model.dataset.retrieve_request import (
+    RetrieveDatasetRequest,
+)
+from dify_oapi.api.knowledge_base.v1.model.dataset.retrieve_response import (
+    RetrieveDatasetResponse,
+)
 
 
 class TestRerankingModel:
@@ -35,7 +63,9 @@ class TestRerankingModel:
         assert model.reranking_model_name == "test_model"
 
     def test_serialization(self):
-        model = RerankingModel(reranking_provider_name="provider", reranking_model_name="model")
+        model = RerankingModel(
+            reranking_provider_name="provider", reranking_model_name="model"
+        )
         data = model.model_dump()
         assert data["reranking_provider_name"] == "provider"
         assert data["reranking_model_name"] == "model"
@@ -68,9 +98,11 @@ class TestFilterCondition:
 
 class TestMetadataFilteringConditions:
     def test_builder_pattern(self):
-        condition1 = FilterCondition(name="field1", comparison_operator="contains", value="value1")
+        condition1 = FilterCondition(
+            name="field1", comparison_operator="contains", value="value1"
+        )
         condition2 = FilterCondition(name="field2", comparison_operator="=", value=42)
-        
+
         filtering = (
             MetadataFilteringConditions.builder()
             .logical_operator("or")
@@ -83,11 +115,11 @@ class TestMetadataFilteringConditions:
         assert filtering.conditions[1].value == 42
 
     def test_add_condition(self):
-        condition = FilterCondition(name="field", comparison_operator="is", value="test")
+        condition = FilterCondition(
+            name="field", comparison_operator="is", value="test"
+        )
         filtering = (
-            MetadataFilteringConditions.builder()
-            .add_condition(condition)
-            .build()
+            MetadataFilteringConditions.builder().add_condition(condition).build()
         )
         assert len(filtering.conditions) == 1
         assert filtering.conditions[0].name == "field"
@@ -95,9 +127,11 @@ class TestMetadataFilteringConditions:
 
 class TestRetrievalModel:
     def test_builder_pattern(self):
-        reranking = RerankingModel(reranking_provider_name="provider", reranking_model_name="model")
+        reranking = RerankingModel(
+            reranking_provider_name="provider", reranking_model_name="model"
+        )
         filtering = MetadataFilteringConditions(logical_operator="and", conditions=[])
-        
+
         model = (
             RetrievalModel.builder()
             .search_method("hybrid_search")
@@ -194,7 +228,7 @@ class TestDatasetInfo:
         tag = TagInfo(id="tag_id", name="tag_name")
         external_info = ExternalKnowledgeInfo(external_knowledge_id="ext_id")
         retrieval_model = RetrievalModel(search_method="semantic_search")
-        
+
         dataset = (
             DatasetInfo.builder()
             .id("dataset_id")
@@ -240,17 +274,14 @@ class TestDatasetInfo:
 
     def test_serialization_deserialization(self):
         dataset = DatasetInfo(
-            id="test_id",
-            name="test_name",
-            description="test_desc",
-            app_count=5
+            id="test_id", name="test_name", description="test_desc", app_count=5
         )
         data = dataset.model_dump()
         assert data["id"] == "test_id"
         assert data["name"] == "test_name"
         assert data["description"] == "test_desc"
         assert data["app_count"] == 5
-        
+
         # Test deserialization
         new_dataset = DatasetInfo.model_validate(data)
         assert new_dataset.id == "test_id"
@@ -303,8 +334,8 @@ class TestCreateDatasetResponse:
         response = CreateDatasetResponse(id="test_id", name="test_name")
         assert response.id == "test_id"
         assert response.name == "test_name"
-        assert hasattr(response, 'description')
-        assert hasattr(response, 'provider')
+        assert hasattr(response, "description")
+        assert hasattr(response, "provider")
 
 
 class TestListDatasetsRequest:
@@ -337,7 +368,7 @@ class TestListDatasetsResponse:
     def test_builder_pattern(self):
         dataset1 = DatasetInfo(id="id1", name="name1")
         dataset2 = DatasetInfo(id="id2", name="name2")
-        
+
         response = (
             ListDatasetsResponse.builder()
             .data([dataset1, dataset2])
@@ -379,8 +410,8 @@ class TestGetDatasetResponse:
         response = GetDatasetResponse(id="test_id", name="test_name")
         assert response.id == "test_id"
         assert response.name == "test_name"
-        assert hasattr(response, 'description')
-        assert hasattr(response, 'provider')
+        assert hasattr(response, "description")
+        assert hasattr(response, "provider")
 
 
 class TestUpdateDatasetRequest:
@@ -406,7 +437,12 @@ class TestUpdateDatasetRequest:
         assert request.partial_member_list == ["user1", "user2"]
 
     def test_partial_update(self):
-        request = UpdateDatasetRequest.builder().dataset_id("test_id").name("new_name").build()
+        request = (
+            UpdateDatasetRequest.builder()
+            .dataset_id("test_id")
+            .name("new_name")
+            .build()
+        )
         assert request.dataset_id == "test_id"
         assert request.name == "new_name"
         assert request.indexing_technique is None
@@ -418,8 +454,8 @@ class TestUpdateDatasetResponse:
         response = UpdateDatasetResponse(id="test_id", name="test_name")
         assert response.id == "test_id"
         assert response.name == "test_name"
-        assert hasattr(response, 'description')
-        assert hasattr(response, 'provider')
+        assert hasattr(response, "description")
+        assert hasattr(response, "provider")
 
 
 class TestDeleteDatasetRequest:
@@ -467,25 +503,39 @@ class TestRetrieveDatasetRequest:
 class TestRetrieveDatasetResponse:
     def test_builder_pattern(self):
         from dify_oapi.api.knowledge_base.v1.model.dataset.retrieve_response import (
-            QueryInfo, RetrievalRecord, SegmentInfo, DocumentInfo
+            QueryInfo,
+            RetrievalRecord,
+            SegmentInfo,
+            DocumentInfo,
         )
-        
+
         query = QueryInfo(content="test query")
-        document = DocumentInfo(id="doc_id", data_source_type="upload_file", name="test.txt")
+        document = DocumentInfo(
+            id="doc_id", data_source_type="upload_file", name="test.txt"
+        )
         segment = SegmentInfo(
-            id="seg_id", position=1, document_id="doc_id", content="test content",
-            word_count=10, tokens=5, keywords=["test"], index_node_id="node_id",
-            index_node_hash="hash", hit_count=1, enabled=True, status="completed",
-            created_by="user", created_at=1234567890, indexing_at=1234567890,
-            completed_at=1234567890, document=document
+            id="seg_id",
+            position=1,
+            document_id="doc_id",
+            content="test content",
+            word_count=10,
+            tokens=5,
+            keywords=["test"],
+            index_node_id="node_id",
+            index_node_hash="hash",
+            hit_count=1,
+            enabled=True,
+            status="completed",
+            created_by="user",
+            created_at=1234567890,
+            indexing_at=1234567890,
+            completed_at=1234567890,
+            document=document,
         )
         record = RetrievalRecord(segment=segment, score=0.95)
-        
+
         response = (
-            RetrieveDatasetResponse.builder()
-            .query(query)
-            .records([record])
-            .build()
+            RetrieveDatasetResponse.builder().query(query).records([record]).build()
         )
         assert response.query.content == "test query"
         assert len(response.records) == 1
@@ -494,8 +544,10 @@ class TestRetrieveDatasetResponse:
         assert response.records[0].segment.document.name == "test.txt"
 
     def test_empty_records(self):
-        from dify_oapi.api.knowledge_base.v1.model.dataset.retrieve_response import QueryInfo
-        
+        from dify_oapi.api.knowledge_base.v1.model.dataset.retrieve_response import (
+            QueryInfo,
+        )
+
         query = QueryInfo(content="test query")
         response = RetrieveDatasetResponse(query=query, records=[])
         assert response.query.content == "test query"
@@ -503,12 +555,19 @@ class TestRetrieveDatasetResponse:
 
     def test_nested_builders(self):
         from dify_oapi.api.knowledge_base.v1.model.dataset.retrieve_response import (
-            QueryInfo, DocumentInfo
+            QueryInfo,
+            DocumentInfo,
         )
-        
+
         query = QueryInfo.builder().content("test").build()
-        document = DocumentInfo.builder().id("doc_id").data_source_type("upload").name("file.txt").build()
-        
+        document = (
+            DocumentInfo.builder()
+            .id("doc_id")
+            .data_source_type("upload")
+            .name("file.txt")
+            .build()
+        )
+
         assert query.content == "test"
         assert document.id == "doc_id"
         assert document.data_source_type == "upload"

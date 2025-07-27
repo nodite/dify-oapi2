@@ -11,63 +11,136 @@ from dify_oapi.core.type import T
 
 
 def _build_url(domain: str | None, uri: str | None, paths: dict[str, str] | None) -> str:
-    if domain is None:
+    if not domain:
         raise RuntimeError("domain is required")
-    if uri is None:
+    if not uri:
         raise RuntimeError("uri is required")
+    
+    # Replace path parameters
     for key, value in (paths or {}).items():
-        uri = uri.replace(":" + key, value)
-    if domain.endswith("/") and uri.startswith("/"):
-        domain = domain[:-1]
-    return domain + uri
+        uri = uri.replace(f":{key}", value)
+    
+    # Normalize URL joining
+    return f"{domain.rstrip('/')}{uri}" if not uri.startswith('/') else f"{domain.rstrip('/')}{uri}"
 
 
 def _build_header(request: BaseRequest, option: RequestOption) -> dict[str, str]:
-    headers = request.headers
-    # 附加header
-    if option.headers is not None:
-        for key in option.headers:
-            headers[key] = option.headers[key]
-    if option.api_key is not None:
-        headers[AUTHORIZATION] = HiddenText(f"Bearer {option.api_key}", redacted="****")
+    headers = request.headers.copy()
+    
+    # Merge option headers
+    if option.headers:
+        headers.update(option.headers)
+    
+    # Add authorization header
+    if option.api_key:
+        hidden_text = HiddenText(f"Bearer {option.api_key}", redacted="****")
+        headers[AUTHORIZATION] = hidden_text.secret
+    
     return headers
 
 
-def _merge_dicts(*dicts):
-    res = {}
-    for d in dicts:
-        if d is not None:
-            res.update(d)
-    return res
+def _merge_dicts(*dicts) -> dict:
+    """Merge multiple dictionaries, ignoring None values."""
+    result = {}
+    for d in filter(None, dicts):
+        result.update(d)
+    return result
 
 
-def _unmarshaller(raw_resp: RawResponse, unmarshal_as: type[T]) -> T:
-    if raw_resp.status_code is None:
-        raise RuntimeError("status_code is required")
-    if raw_resp.content is None:
-        raise RuntimeError("status_code is required")
-    resp = unmarshal_as()
-    if raw_resp.content_type is not None and raw_resp.content_type.startswith(APPLICATION_JSON):
-        content = str(raw_resp.content, UTF_8)
-        if content != "":
+def _create_no_content_response(unmarshal_as: type[T]) -> T:
+    """Create response for 204 No Content status."""
+    try:
+        if hasattr(unmarshal_as, '__annotations__') and 'result' in unmarshal_as.__annotations__:
+            return unmarshal_as(result="success")
+        return unmarshal_as()
+    except Exception:
+        resp = unmarshal_as.__new__(unmarshal_as)
+        if hasattr(resp, 'result'):
             try:
-                resp = JSON.unmarshal(content, unmarshal_as)
-            except Exception as e:
-                logger.error(f"Failed to unmarshal to {unmarshal_as} from {content}")
-                raise e
-    resp.raw = raw_resp
-    # if 200 <= raw_resp.status_code < 300:
-    #     resp.code = "success"
+                object.__setattr__(resp, 'result', "success")
+            except Exception:
+                pass
+        return resp
+
+
+def _handle_json_response(content: str, unmarshal_as: type[T]) -> T:
+    """Handle JSON response content."""
+    import json
+    parsed_json = json.loads(content)
+    
+    if isinstance(parsed_json, list):
+        return _handle_array_response(parsed_json, unmarshal_as)
+    elif isinstance(parsed_json, dict):
+        return JSON.unmarshal(content, unmarshal_as)
+    else:
+        return _handle_primitive_response(parsed_json, unmarshal_as)
+
+
+def _handle_array_response(data: list, unmarshal_as: type[T]) -> T:
+    """Handle array JSON responses."""
+    if hasattr(unmarshal_as, '__annotations__') and 'data' in unmarshal_as.__annotations__:
+        return unmarshal_as(data=data)
+    return unmarshal_as(data=data)
+
+
+def _handle_primitive_response(value, unmarshal_as: type[T]) -> T:
+    """Handle primitive JSON responses."""
+    if not hasattr(unmarshal_as, '__annotations__'):
+        return unmarshal_as()
+    
+    annotations = unmarshal_as.__annotations__
+    if 'result' in annotations:
+        return unmarshal_as(result=str(value))
+    elif 'data' in annotations:
+        return unmarshal_as(data=value)
+    else:
+        return unmarshal_as()
+
+
+def _set_raw_response(resp: T, raw_resp: RawResponse) -> T:
+    """Set raw response on the response object."""
+    try:
+        object.__setattr__(resp, 'raw', raw_resp)
+    except Exception:
+        try:
+            resp.raw = raw_resp
+        except Exception:
+            if hasattr(resp, 'model_copy'):
+                resp = resp.model_copy(update={'raw': raw_resp})
     return resp
 
 
-def _get_sleep_time(retry_count: int):
-    sleep_time = SLEEP_BASE_TIME * math.pow(2, retry_count - 1)
-    # if sleep_time > 60:
-    #     sleep_time = 60
-    # if raw_resp and (raw_resp.status_code == 429 or raw_resp.status_code == 503) and 'retry-after' in raw_resp.headers:
-    #     try:
-    #         sleep_time = max(int(raw_resp.headers['retry-after']), sleep_time)
-    #     except Exception as e:
-    #         logger.warning('try to parse retry-after from headers error: {}'.format(e))
-    return sleep_time
+def _unmarshaller(raw_resp: RawResponse, unmarshal_as: type[T]) -> T:
+    """Unmarshal raw response to typed response object."""
+    if not raw_resp.status_code:
+        raise RuntimeError("status_code is required")
+    if raw_resp.content is None:
+        raise RuntimeError("content is required")
+
+    # Handle 204 No Content
+    if raw_resp.status_code == 204:
+        resp = _create_no_content_response(unmarshal_as)
+    # Handle JSON content
+    elif raw_resp.content_type and raw_resp.content_type.startswith(APPLICATION_JSON):
+        content = str(raw_resp.content, UTF_8)
+        if content:
+            try:
+                resp = _handle_json_response(content, unmarshal_as)
+            except Exception as e:
+                logger.error(f"Failed to unmarshal to {unmarshal_as} from {content}")
+                raise e
+        else:
+            resp = unmarshal_as()
+    else:
+        # Fallback for non-JSON content
+        try:
+            resp = unmarshal_as()
+        except Exception:
+            resp = unmarshal_as.__new__(unmarshal_as)
+
+    return _set_raw_response(resp, raw_resp)
+
+
+def _get_sleep_time(retry_count: int) -> float:
+    """Calculate exponential backoff sleep time for retries."""
+    return SLEEP_BASE_TIME * (2 ** (retry_count - 1))

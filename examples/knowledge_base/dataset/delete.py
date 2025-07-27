@@ -2,157 +2,125 @@
 """
 Dataset Delete Example
 
-This example demonstrates how to delete a dataset using the Dify API.
+This example demonstrates how to delete datasets using the Dify API.
+Only deletes datasets with "[Example]" prefix for safety.
 """
 
 import asyncio
 import os
 
 from dify_oapi.api.knowledge_base.v1.model.dataset.delete_request import DeleteRequest
+from dify_oapi.api.knowledge_base.v1.model.dataset.get_request import GetRequest
+from dify_oapi.api.knowledge_base.v1.model.dataset.list_request import ListRequest
 from dify_oapi.client import Client
 from dify_oapi.core.model.request_option import RequestOption
 
 
 def delete_dataset_sync() -> None:
-    """Delete dataset synchronously."""
+    """Delete dataset synchronously (only [Example] prefixed datasets)."""
     try:
-        # Initialize client
+        api_key = os.getenv("API_KEY")
+        if not api_key:
+            raise ValueError("API_KEY environment variable is required")
+
+        dataset_id = os.getenv("DATASET_ID")
+        if not dataset_id:
+            raise ValueError("DATASET_ID environment variable is required")
+
         client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
-        
-        # Build delete request
-        dataset_id = os.getenv("DATASET_ID", "your-dataset-id-here")
-        request = DeleteRequest.builder().dataset_id(dataset_id).build()
-        
-        # Set up request options
-        request_option = RequestOption.builder().api_key(os.getenv("API_KEY")).build()
-        
-        # Confirm deletion
-        print(f"Are you sure you want to delete dataset {dataset_id}? (y/N): ", end="")
-        confirmation = input().strip().lower()
-        
-        if confirmation != 'y':
-            print("Deletion cancelled.")
+        request_option = RequestOption.builder().api_key(api_key).build()
+
+        get_request = GetRequest.builder().dataset_id(dataset_id).build()
+        dataset_info = client.knowledge_base.v1.dataset.get(get_request, request_option)
+
+        if not dataset_info.name or not dataset_info.name.startswith("[Example]"):
+            print(f"Skipping '{dataset_info.name}' - not an example dataset")
             return
-        
-        # Delete dataset
-        response = client.knowledge_base.v1.dataset.delete(request, request_option)
-        
-        print(f"Dataset {dataset_id} deleted successfully!")
-        print("Note: This operation is irreversible.")
-        
+
+        request = DeleteRequest.builder().dataset_id(dataset_id).build()
+        client.knowledge_base.v1.dataset.delete(request, request_option)
+        print(f"Deleted: {dataset_info.name}")
+
     except Exception as e:
         print(f"Error deleting dataset: {e}")
 
 
 async def delete_dataset_async() -> None:
-    """Delete dataset asynchronously."""
+    """Delete dataset asynchronously (only [Example] prefixed datasets)."""
     try:
-        # Initialize client
+        api_key = os.getenv("API_KEY")
+        if not api_key:
+            raise ValueError("API_KEY environment variable is required")
+
+        dataset_id = os.getenv("DATASET_ID")
+        if not dataset_id:
+            raise ValueError("DATASET_ID environment variable is required")
+
         client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
-        
-        # Build delete request
-        dataset_id = os.getenv("DATASET_ID_ASYNC", "your-async-dataset-id-here")
-        request = DeleteRequest.builder().dataset_id(dataset_id).build()
-        
-        # Set up request options
-        request_option = RequestOption.builder().api_key(os.getenv("API_KEY")).build()
-        
-        # Confirm deletion
-        print(f"Are you sure you want to delete dataset {dataset_id} (async)? (y/N): ", end="")
-        confirmation = input().strip().lower()
-        
-        if confirmation != 'y':
-            print("Async deletion cancelled.")
+        request_option = RequestOption.builder().api_key(api_key).build()
+
+        get_request = GetRequest.builder().dataset_id(dataset_id).build()
+        dataset_info = await client.knowledge_base.v1.dataset.aget(get_request, request_option)
+
+        if not dataset_info.name or not dataset_info.name.startswith("[Example]"):
+            print(f"Skipping '{dataset_info.name}' - not an example dataset")
             return
-        
-        # Delete dataset asynchronously
-        response = await client.knowledge_base.v1.dataset.adelete(request, request_option)
-        
-        print(f"Dataset {dataset_id} deleted successfully (async)!")
-        print("Note: This operation is irreversible.")
-        
+
+        request = DeleteRequest.builder().dataset_id(dataset_id).build()
+        await client.knowledge_base.v1.dataset.adelete(request, request_option)
+        print(f"Deleted (async): {dataset_info.name}")
+
     except Exception as e:
         print(f"Error deleting dataset (async): {e}")
 
 
-def delete_multiple_datasets() -> None:
-    """Delete multiple datasets with confirmation."""
+def delete_example_datasets() -> None:
+    """Delete all datasets with [Example] prefix."""
     try:
-        # Initialize client
+        api_key = os.getenv("API_KEY")
+        if not api_key:
+            raise ValueError("API_KEY environment variable is required")
+
         client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
-        
-        # List of dataset IDs to delete
-        dataset_ids = [
-            os.getenv("DATASET_ID_1", "dataset-id-1"),
-            os.getenv("DATASET_ID_2", "dataset-id-2"),
-            os.getenv("DATASET_ID_3", "dataset-id-3")
+        request_option = RequestOption.builder().api_key(api_key).build()
+
+        list_request = ListRequest.builder().limit(100).build()
+        list_response = client.knowledge_base.v1.dataset.list(list_request, request_option)
+
+        example_datasets = [
+            d for d in list_response.data if d.name and d.name.startswith("[Example]")
         ]
-        
-        # Set up request options
-        request_option = RequestOption.builder().api_key(os.getenv("API_KEY")).build()
-        
-        print(f"About to delete {len(dataset_ids)} datasets:")
-        for dataset_id in dataset_ids:
-            print(f"  - {dataset_id}")
-        
-        print(f"\nAre you sure you want to delete all these datasets? (y/N): ", end="")
-        confirmation = input().strip().lower()
-        
-        if confirmation != 'y':
-            print("Bulk deletion cancelled.")
+
+        if not example_datasets:
+            print("No example datasets found")
             return
+
+        print(f"Deleting {len(example_datasets)} example datasets...")
         
-        # Delete each dataset
-        deleted_count = 0
-        failed_count = 0
-        
-        for dataset_id in dataset_ids:
+        for dataset in example_datasets:
             try:
-                request = DeleteRequest.builder().dataset_id(dataset_id).build()
-                response = client.knowledge_base.v1.dataset.delete(request, request_option)
-                print(f"✓ Deleted dataset: {dataset_id}")
-                deleted_count += 1
+                request = DeleteRequest.builder().dataset_id(dataset.id).build()
+                client.knowledge_base.v1.dataset.delete(request, request_option)
+                print(f"✓ {dataset.name}")
             except Exception as e:
-                print(f"✗ Failed to delete dataset {dataset_id}: {e}")
-                failed_count += 1
-        
-        print(f"\nDeletion summary:")
-        print(f"  Successfully deleted: {deleted_count}")
-        print(f"  Failed to delete: {failed_count}")
-        
+                print(f"✗ {dataset.name}: {e}")
+
     except Exception as e:
-        print(f"Error in bulk deletion: {e}")
+        print(f"Error in cleanup: {e}")
 
 
 def main() -> None:
     """Main function to run examples."""
     print("=== Dataset Delete Examples ===\n")
     
-    # Check for required environment variables
-    if not os.getenv("API_KEY"):
-        print("Please set the API_KEY environment variable")
-        return
+    print("1. Deleting specific dataset synchronously...")
+    delete_dataset_sync()
     
-    print("WARNING: Dataset deletion is irreversible!")
-    print("Make sure you have the correct dataset IDs set in environment variables.\n")
+    print("\n2. Deleting specific dataset asynchronously...")
+    asyncio.run(delete_dataset_async())
     
-    if os.getenv("DATASET_ID"):
-        print("1. Deleting dataset synchronously...")
-        delete_dataset_sync()
-    else:
-        print("1. Skipping sync deletion (DATASET_ID not set)")
-    
-    if os.getenv("DATASET_ID_ASYNC"):
-        print("\n2. Deleting dataset asynchronously...")
-        asyncio.run(delete_dataset_async())
-    else:
-        print("\n2. Skipping async deletion (DATASET_ID_ASYNC not set)")
-    
-    if any(os.getenv(f"DATASET_ID_{i}") for i in range(1, 4)):
-        print("\n3. Bulk deletion example...")
-        delete_multiple_datasets()
-    else:
-        print("\n3. Skipping bulk deletion (DATASET_ID_1, DATASET_ID_2, DATASET_ID_3 not set)")
+    print("\n3. Cleaning up all example datasets...")
+    delete_example_datasets()
 
 
 if __name__ == "__main__":

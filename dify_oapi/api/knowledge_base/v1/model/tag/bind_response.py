@@ -1,23 +1,8 @@
 from __future__ import annotations
 
-from pydantic import BaseModel
+from typing import Optional
+from dify_oapi.core.model.base_response import BaseResponse
 
 
-class BindResponse(BaseModel):
-    result: str
-
-    @staticmethod
-    def builder() -> BindResponseBuilder:
-        return BindResponseBuilder()
-
-
-class BindResponseBuilder:
-    def __init__(self):
-        self._response = BindResponse(result="")
-
-    def build(self) -> BindResponse:
-        return self._response
-
-    def result(self, result: str) -> BindResponseBuilder:
-        self._response.result = result
-        return self
+class BindResponse(BaseResponse):
+    result: Optional[str] = None

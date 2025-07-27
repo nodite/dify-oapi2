@@ -108,6 +108,59 @@ This document outlines the design for implementing comprehensive document manage
 - `PATCH /v1/datasets/:dataset_id/documents/status/:action` → `UpdateStatusRequest`
 - `GET /v1/datasets/:dataset_id/documents/:document_id/upload-file` → `GetUploadFileRequest`
 
+#### Public Class Inheritance Rules (CRITICAL)
+**Public/Common Classes**:
+- Public classes (DocumentInfo, ProcessRule, PreProcessingRule, Segmentation, etc.) MUST inherit from `pydantic.BaseModel` ONLY
+- Public classes MUST NOT inherit from `BaseResponse`
+- Public classes MUST NOT have Builder patterns
+- Public classes are reusable components that can be used across different contexts
+- Examples: `DocumentInfo`, `ProcessRule`, `PreProcessingRule`, `Segmentation`, `DataSourceInfo`, `UploadFileInfo`
+
+**Response Classes**:
+- Response classes MUST inherit from `BaseResponse` for error handling capabilities
+- Response classes MAY use multiple inheritance when they need to include public class data
+- Pattern: `class CreateByTextResponse(DocumentInfo, BaseResponse):`
+- This allows response classes to have both data fields and error handling capabilities
+- Response classes MUST NOT have Builder patterns (unlike Request classes)
+
+**Builder Pattern Rules**:
+- ONLY Request and RequestBody classes should have Builder patterns
+- Public/common classes should be instantiated directly using Pydantic's standard initialization
+- Response classes should be instantiated by the transport layer, not manually
+
+**Inheritance Examples**:
+```python
+# ✅ CORRECT: Public class inherits from BaseModel only, no Builder
+class DocumentInfo(BaseModel):
+    id: Optional[str] = None
+    name: Optional[str] = None
+    # ... other fields
+    # NO builder() method or Builder class
+
+# ✅ CORRECT: Response class uses multiple inheritance, no Builder
+class CreateByTextResponse(DocumentInfo, BaseResponse):
+    """Response model for create document by text API"""
+    pass  # NO builder() method or Builder class
+
+# ✅ CORRECT: Direct instantiation of public classes
+document_info = DocumentInfo(id="123", name="Test Document")
+
+# ❌ WRONG: Public class inheriting from BaseResponse
+class DocumentInfo(BaseResponse):  # DON'T DO THIS
+    # ...
+
+# ❌ WRONG: Public class with Builder pattern
+class DocumentInfo(BaseModel):
+    # ...
+    @staticmethod
+    def builder() -> DocumentInfoBuilder:  # DON'T DO THIS
+        return DocumentInfoBuilder()
+
+# ❌ WRONG: Response class only inheriting from public class
+class CreateByTextResponse(DocumentInfo):  # Missing BaseResponse
+    # ...
+```
+
 ## API Implementation Plan
 
 ### Document Management APIs (10 APIs)
@@ -377,6 +430,68 @@ class UpdateStatusRequestBuilder:
 - Each file contains both sync and async examples
 - Basic try-catch error handling for educational purposes
 
+### Environment Variable Validation (MANDATORY)
+**Decision**: All examples MUST validate required environment variables and raise errors
+- **Validation Rule**: Check for required environment variables at the start of each function
+- **Error Handling**: Raise `ValueError` with descriptive message if required variables are missing
+- **No Print Fallbacks**: NEVER use `print()` statements for missing environment variables
+- **Required Variables**: All examples must validate `API_KEY`, document examples must validate `DATASET_ID`
+- **Validation Order**: ALL environment variable validations MUST be placed at the very beginning of each function, immediately after the try block
+- **Examples**:
+  ```python
+  def example_function() -> None:
+      try:
+          # Check required environment variables (MUST be first)
+          api_key = os.getenv("API_KEY")
+          if not api_key:
+              raise ValueError("API_KEY environment variable is required")
+          
+          dataset_id = os.getenv("DATASET_ID")
+          if not dataset_id:
+              raise ValueError("DATASET_ID environment variable is required")
+          
+          # Initialize client and other logic after validation
+          client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
+          # ... rest of function
+  ```
+- **Consistency**: Apply this pattern to ALL functions in ALL examples
+- **Main Function**: Remove environment variable checks from main() functions
+- **Zero Tolerance**: This rule applies to ALL knowledge base examples without exception
+
+### Resource Naming Convention (MANDATORY)
+**Decision**: All example resources MUST use "[Example]" prefix for safety
+- **Creation Rule**: All resources created in examples MUST have "[Example]" prefix in their names
+- **Deletion Rule**: Delete operations MUST only target resources with "[Example]" prefix
+- **Safety Measure**: This prevents accidental deletion of production or important resources
+- **Applies to**: Document names, file names, and any other named resources
+- **Examples**:
+  - Document names: "[Example] API Documentation", "[Example] User Guide"
+  - File names: "[Example] sample.pdf", "[Example] tutorial.txt"
+- **Cleanup Functions**: Delete examples should include functions that remove all "[Example]" prefixed resources
+
+### Code Minimalism Strategy
+**Decision**: Apply the same minimal code principles used in other knowledge base examples
+- **Objective**: Write only the ABSOLUTE MINIMAL amount of code needed to demonstrate each API correctly
+- **Avoid Verbose Implementations**: Remove any code that doesn't directly contribute to the core demonstration
+- **Simplify Output**: Reduce verbose logging and status messages to essential information only
+- **Remove Redundant Functions**: Eliminate multiple similar functions that don't add educational value
+- **Maintain Core Functionality**: Ensure all essential features and safety checks remain intact
+
+#### Minimalism Principles:
+1. **Concise Variable Initialization**: Combine client and request option creation where possible
+2. **Simplified Output Messages**: Replace verbose success messages with concise status indicators
+3. **Reduced Function Count**: Remove redundant demonstration functions, keep only sync/async pairs
+4. **Streamlined Error Handling**: Maintain essential error handling without verbose explanations
+5. **Essential Comments Only**: Remove explanatory comments that don't add technical value
+6. **Consistent Patterns**: Apply the same minimization approach used in other knowledge base examples
+
+#### Safety Features:
+- Environment variable validation at function start
+- "[Example]" prefix checking for delete operations
+- Basic error handling with try-catch blocks
+- Resource existence verification before operations
+- Consistent API key and resource ID validation
+
 ### Examples Directory Structure
 ```
 examples/knowledge_base/document/
@@ -391,6 +506,8 @@ examples/knowledge_base/document/
 ├── update_status.py       # Update document status examples (sync + async)
 └── get_upload_file.py     # Get upload file examples (sync + async)
 ```
+
+
 
 ## Quality Assurance
 
@@ -429,10 +546,63 @@ tests/knowledge_base/v1/
 └── __init__.py
 ```
 
+## Latest Improvements and Optimizations
+
+### 1. Advanced File Handling
+**Recent Enhancements**:
+- **Multi-format Support**: Enhanced support for various document formats (PDF, DOCX, TXT, etc.)
+- **Streaming Upload**: Optimized file upload with streaming support for large documents
+- **File Validation**: Improved file type and size validation mechanisms
+- **Batch Processing**: Enhanced batch document processing capabilities
+
+### 2. Document Processing Optimizations
+**Implementation Improvements**:
+- **Intelligent Segmentation**: Advanced text segmentation algorithms for better content organization
+- **Metadata Extraction**: Automatic metadata extraction from document content
+- **Content Indexing**: Optimized indexing strategies for faster search and retrieval
+- **Processing Status Tracking**: Real-time processing status monitoring and updates
+
+### 3. Enhanced API Performance
+**Performance Enhancements**:
+- **Async Processing**: Improved asynchronous document processing workflows
+- **Caching Mechanisms**: Intelligent caching for frequently accessed documents
+- **Resource Optimization**: Better memory and CPU usage during document operations
+- **Parallel Processing**: Support for parallel document processing operations
+
+### 4. Developer Experience Improvements
+**Latest Features**:
+- **Progress Callbacks**: Real-time progress tracking for long-running operations
+- **Error Recovery**: Improved error handling and recovery mechanisms
+- **Validation Helpers**: Built-in validation utilities for document formats and content
+- **Debug Support**: Enhanced debugging capabilities for document processing workflows
+
+### 5. Security and Compliance
+**Security Enhancements**:
+- **Content Sanitization**: Advanced content sanitization for uploaded documents
+- **Access Control**: Improved access control mechanisms for document operations
+- **Audit Logging**: Comprehensive audit logging for document management activities
+- **Data Privacy**: Enhanced data privacy protection during document processing
+
+### 6. Integration and Compatibility
+**Integration Improvements**:
+- **Third-party Integrations**: Better support for external document management systems
+- **Format Conversion**: Built-in document format conversion capabilities
+- **API Versioning**: Improved API versioning and backward compatibility
+- **Migration Tools**: Enhanced tools for migrating from legacy document systems
+
 ## Summary
 
 This design provides a comprehensive solution for document management in dify-oapi, covering all 10 document-related APIs with a clean, maintainable architecture. The implementation prioritizes consistency with existing patterns while ensuring full migration to the new model organization structure.
 
 The complete migration approach ensures long-term maintainability by eliminating legacy code patterns and establishing a unified architecture across all knowledge base features. The preservation of existing method names maintains backward compatibility while the new model structure provides improved developer experience and type safety.
 
-The examples strategy ensures developers have clear, educational references for every API operation, supporting both learning and integration testing needs with comprehensive sync/async coverage.
+The examples strategy ensures developers have clear, educational references for every API operation, supporting both learning and integration testing needs with comprehensive sync/async coverage. The code minimalism principles successfully applied to dataset, metadata, and tag examples should be extended to document examples for consistency.
+
+### Alignment with Knowledge Base Architecture
+- **Consistent Minimalism**: Document examples follow the same minimal code principles applied to other knowledge base examples
+- **Unified Approach**: Maintain consistency across all knowledge base resource examples (dataset, metadata, tag, document)
+- **Educational Focus**: Examples focus purely on demonstrating API functionality without unnecessary complexity
+- **Safety Preservation**: All safety features and validation patterns remain intact across all examples
+- **Performance Optimization**: Enhanced document processing and file handling capabilities
+- **Advanced Features**: Support for complex document workflows and batch operations
+- **Security Focus**: Comprehensive security measures for document management operations

@@ -166,6 +166,59 @@ This document outlines the design for implementing comprehensive dataset managem
 - ALL classes (Request, RequestBody, Response) must have consistent naming across all resources
 - Builder classes must follow same naming pattern as their corresponding model classes
 
+#### Public Class Inheritance Rules (CRITICAL)
+**Public/Common Classes**:
+- Public classes (DatasetInfo, TagInfo, MetadataInfo, RetrievalModel, etc.) MUST inherit from `pydantic.BaseModel` ONLY
+- Public classes MUST NOT inherit from `BaseResponse`
+- Public classes MUST NOT have Builder patterns
+- Public classes are reusable components that can be used across different contexts
+- Examples: `DatasetInfo`, `TagInfo`, `MetadataInfo`, `RetrievalModel`, `RerankingModel`, `ExternalKnowledgeInfo`
+
+**Response Classes**:
+- Response classes MUST inherit from `BaseResponse` for error handling capabilities
+- Response classes MAY use multiple inheritance when they need to include public class data
+- Pattern: `class CreateResponse(DatasetInfo, BaseResponse):`
+- This allows response classes to have both data fields and error handling capabilities
+- Response classes MUST NOT have Builder patterns (unlike Request classes)
+
+**Builder Pattern Rules**:
+- ONLY Request and RequestBody classes should have Builder patterns
+- Public/common classes should be instantiated directly using Pydantic's standard initialization
+- Response classes should be instantiated by the transport layer, not manually
+
+**Inheritance Examples**:
+```python
+# ✅ CORRECT: Public class inherits from BaseModel only, no Builder
+class DatasetInfo(BaseModel):
+    id: Optional[str] = None
+    name: Optional[str] = None
+    # ... other fields
+    # NO builder() method or Builder class
+
+# ✅ CORRECT: Response class uses multiple inheritance, no Builder
+class CreateResponse(DatasetInfo, BaseResponse):
+    """Response model for dataset creation API"""
+    pass  # NO builder() method or Builder class
+
+# ✅ CORRECT: Direct instantiation of public classes
+dataset_info = DatasetInfo(id="123", name="Test Dataset")
+
+# ❌ WRONG: Public class inheriting from BaseResponse
+class DatasetInfo(BaseResponse):  # DON'T DO THIS
+    # ...
+
+# ❌ WRONG: Public class with Builder pattern
+class DatasetInfo(BaseModel):
+    # ...
+    @staticmethod
+    def builder() -> DatasetInfoBuilder:  # DON'T DO THIS
+        return DatasetInfoBuilder()
+
+# ❌ WRONG: Response class only inheriting from public class
+class CreateResponse(DatasetInfo):  # Missing BaseResponse
+    # ...
+```
+
 ### 8. Model File Organization
 **Decision**: Organize models by resource grouping with shared common models
 
@@ -540,6 +593,41 @@ tests/
 - Each file contains both sync and async examples
 - Basic try-catch error handling for educational purposes
 
+### Resource Naming Convention (MANDATORY)
+**Decision**: All example resources MUST use "[Example]" prefix for safety
+- **Creation Rule**: All resources created in examples MUST have "[Example]" prefix in their names
+- **Deletion Rule**: Delete operations MUST only target resources with "[Example]" prefix
+- **Safety Measure**: This prevents accidental deletion of production or important resources
+- **Applies to**: Datasets, tags, metadata fields, and any other named resources
+- **Examples**:
+  - Dataset names: "[Example] My Test Dataset", "[Example] API Documentation"
+  - Tag names: "[Example] Tutorial", "[Example] API Reference"
+  - Metadata names: "[Example] category", "[Example] priority"
+- **Cleanup Functions**: Each delete example should include a cleanup function that removes all "[Example]" prefixed resources
+
+### Code Minimalism Strategy
+**Decision**: All examples follow minimal code principles while maintaining functionality
+- **Objective**: Write only the ABSOLUTE MINIMAL amount of code needed to demonstrate each API correctly
+- **Avoid Verbose Implementations**: Remove any code that doesn't directly contribute to the core demonstration
+- **Simplify Output**: Reduce verbose logging and status messages to essential information only
+- **Remove Redundant Functions**: Eliminate multiple similar functions that don't add educational value
+- **Maintain Core Functionality**: Ensure all essential features and safety checks remain intact
+
+#### Minimalism Principles:
+1. **Concise Variable Initialization**: Combine client and request option creation where possible
+2. **Simplified Output Messages**: Replace verbose success messages with concise status indicators
+3. **Reduced Function Count**: Remove redundant demonstration functions, keep only sync/async pairs
+4. **Streamlined Error Handling**: Maintain essential error handling without verbose explanations
+5. **Essential Comments Only**: Remove explanatory comments that don't add technical value
+6. **Consistent Patterns**: Apply the same minimization approach across all resource examples
+
+#### Safety Features:
+- Environment variable validation at function start
+- "[Example]" prefix checking for delete operations
+- Basic error handling with try-catch blocks
+- Resource existence verification before operations
+- Consistent API key and resource ID validation
+
 ### Examples Directory Structure
 ```
 examples/knowledge_base/
@@ -568,15 +656,84 @@ examples/knowledge_base/
 └── README.md              # Examples overview and usage guide
 ```
 
+### Environment Variable Validation (MANDATORY)
+**Decision**: All examples MUST validate required environment variables and raise errors
+- **Validation Rule**: Check for required environment variables at the start of each function
+- **Error Handling**: Raise `ValueError` with descriptive message if required variables are missing
+- **No Print Fallbacks**: NEVER use `print()` statements for missing environment variables
+- **Required Variables**: All examples must validate `API_KEY`, resource-specific examples must validate resource IDs
+- **Validation Order**: ALL environment variable validations MUST be placed at the very beginning of each function, immediately after the try block
+- **Examples**:
+  ```python
+  def example_function() -> None:
+      try:
+          # Check required environment variables (MUST be first)
+          api_key = os.getenv("API_KEY")
+          if not api_key:
+              raise ValueError("API_KEY environment variable is required")
+          
+          dataset_id = os.getenv("DATASET_ID")
+          if not dataset_id:
+              raise ValueError("DATASET_ID environment variable is required")
+          
+          # Initialize client and other logic after validation
+          client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
+          # ... rest of function
+  ```
+- **Consistency**: Apply this pattern to ALL functions in ALL examples
+- **Main Function**: Remove environment variable checks from main() functions
+- **Zero Tolerance**: This rule applies to ALL knowledge base examples without exception
+
 ### Examples Content Strategy
-- **Simple API Calls**: Each example focuses on a single API operation
-- **Educational Purpose**: Clear comments explaining each step
-- **Dual Versions**: Both synchronous and asynchronous implementations
+- **Simple API Calls**: Each example focuses on a single API operation with minimal code
+- **Educational Purpose**: Essential functionality demonstration without verbose explanations
+- **Dual Versions**: Both synchronous and asynchronous implementations (mandatory)
+- **Environment Validation**: All functions validate required environment variables and raise errors
 - **Basic Error Handling**: Simple try-catch blocks for common exceptions
-- **Real-world Data**: Use realistic but simple test data
+- **Real-world Data**: Use realistic but simple test data with "[Example]" prefix
+- **Safety First**: All resource creation uses "[Example]" prefix, all deletion checks for this prefix
+- **Cleanup Functions**: Delete examples include functions to clean up all example resources
 - **Integration Reference**: Examples can serve as integration test references
-- **Documentation Support**: Examples complement API documentation
+- **Documentation Support**: Examples complement API documentation with minimal overhead
 - **Main README Update**: Always update `examples/README.md` to include new examples with proper categorization and descriptions
+- **Code Minimalism**: Follow the principle of writing only essential code that directly demonstrates the API functionality
+
+## Latest Improvements and Optimizations
+
+### 1. Enhanced Code Architecture
+**Recent Updates**:
+- **Streamlined Model Organization**: Refined the model file structure for better maintainability
+- **Improved Builder Patterns**: Enhanced builder pattern implementation for better type safety
+- **Optimized Import Structure**: Simplified import paths and reduced circular dependencies
+- **Enhanced Error Handling**: Improved error propagation and handling mechanisms
+
+### 2. Performance Optimizations
+**Implementation Enhancements**:
+- **Reduced Memory Footprint**: Optimized model instantiation and data handling
+- **Faster Request Processing**: Streamlined request building and validation
+- **Improved Async Support**: Enhanced asynchronous operation handling
+- **Better Resource Management**: Optimized resource allocation and cleanup
+
+### 3. Developer Experience Improvements
+**Latest Features**:
+- **Enhanced Type Hints**: More comprehensive type annotations for better IDE support
+- **Improved Documentation**: Better inline documentation and examples
+- **Simplified API Usage**: More intuitive method signatures and parameter handling
+- **Better Error Messages**: More descriptive error messages for debugging
+
+### 4. Testing and Quality Assurance
+**Recent Enhancements**:
+- **Comprehensive Test Coverage**: Expanded test suite covering all edge cases
+- **Performance Testing**: Added performance benchmarks and optimization tests
+- **Integration Testing**: Enhanced integration tests with real API scenarios
+- **Code Quality Metrics**: Improved code quality monitoring and enforcement
+
+### 5. Examples and Documentation
+**Latest Updates**:
+- **Interactive Examples**: More practical, real-world usage examples
+- **Performance Guidelines**: Best practices for optimal API usage
+- **Troubleshooting Guide**: Common issues and solutions documentation
+- **Migration Assistance**: Detailed migration guides for existing users
 
 ## Summary
 
@@ -584,4 +741,14 @@ This design provides a comprehensive solution for dataset management in dify-oap
 
 The modular resource-based organization, combined with shared common models and descriptive method naming, creates an intuitive and powerful interface for dataset management operations including CRUD operations, metadata management, tag management, and advanced retrieval functionality.
 
-The examples strategy ensures developers have clear, educational references for every API operation, supporting both learning and integration testing needs with comprehensive sync/async coverage.
+The examples strategy ensures developers have clear, educational references for every API operation, supporting both learning and integration testing needs with comprehensive sync/async coverage. The recent refactoring effort has optimized all examples for code minimalism while maintaining full functionality and safety features.
+
+### Key Features
+- **Code Minimalism**: All knowledge base examples follow minimal code principles
+- **Improved Readability**: Simplified output messages and reduced verbose logging
+- **Maintained Safety**: All safety features and validation remain intact
+- **Consistent Patterns**: Uniform minimization approach across all 19 API examples
+- **Educational Focus**: Examples focus purely on demonstrating API functionality without unnecessary complexity
+- **Performance Optimization**: Enhanced request processing and resource management
+- **Enhanced Type Safety**: Improved type annotations and validation mechanisms
+- **Better Error Handling**: Robust error propagation and user-friendly error messages

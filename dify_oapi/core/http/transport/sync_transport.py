@@ -166,6 +166,12 @@ class Transport:
                 files=files,
                 http_method=req.http_method,
             )
+        # Set NO_PROXY for localhost to avoid proxy issues
+        import os
+        original_no_proxy = os.environ.get('NO_PROXY', '')
+        if 'localhost' not in original_no_proxy:
+            os.environ['NO_PROXY'] = f"{original_no_proxy},localhost,127.0.0.1".strip(',')
+        
         with httpx.Client() as client:
             # 通过变量赋值，防止动态调整 max_retry_count 出现并发问题
             retry_count = conf.max_retry_count

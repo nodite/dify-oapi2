@@ -2,30 +2,21 @@ from __future__ import annotations
 
 from typing import List
 
-from pydantic import BaseModel
+from dify_oapi.core.model.base_response import BaseResponse
 
-from dify_oapi.api.knowledge_base.v1.model.dataset.tag_info import TagInfo
+from dify_oapi.api.knowledge_base.v1.model.tag.tag_info import TagInfo
 
 
-class ListResponse(BaseModel):
+class ListResponse(BaseResponse):
+    # For tag list API, the response is directly an array
+    # We'll handle this in the transport layer by wrapping the array
     data: List[TagInfo] = []
 
-    @staticmethod
-    def builder() -> ListResponseBuilder:
-        return ListResponseBuilder()
+    def __iter__(self):
+        return iter(self.data)
 
+    def __getitem__(self, item):
+        return self.data[item]
 
-class ListResponseBuilder:
-    def __init__(self):
-        self._response = ListResponse()
-
-    def build(self) -> ListResponse:
-        return self._response
-
-    def data(self, data: List[TagInfo]) -> ListResponseBuilder:
-        self._response.data = data
-        return self
-
-    def add_tag(self, tag: TagInfo) -> ListResponseBuilder:
-        self._response.data.append(tag)
-        return self
+    def __len__(self):
+        return len(self.data)

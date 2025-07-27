@@ -8,7 +8,7 @@ This example demonstrates how to list knowledge type tags using the Dify API.
 import asyncio
 import os
 
-from dify_oapi.api.knowledge_base.v1.model.tag.list_request import ListTagsRequest
+from dify_oapi.api.knowledge_base.v1.model.tag.list_request import ListRequest
 from dify_oapi.client import Client
 from dify_oapi.core.model.request_option import RequestOption
 
@@ -16,15 +16,19 @@ from dify_oapi.core.model.request_option import RequestOption
 def list_tags_sync() -> None:
     """List tags synchronously."""
     try:
+        api_key = os.getenv("API_KEY")
+        if not api_key:
+            raise ValueError("API_KEY environment variable is required")
+        
         client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
-        request = ListTagsRequest.builder().build()
-        request_option = RequestOption.builder().api_key(os.getenv("API_KEY")).build()
+        request = ListRequest.builder().build()
+        request_option = RequestOption.builder().api_key(api_key).build()
         
         response = client.knowledge_base.v1.tag.list(request, request_option)
         
         print(f"Found {len(response.data)} tags:")
         for tag in response.data:
-            print(f"  - {tag.name} (ID: {tag.id}, Bindings: {tag.binding_count})")
+            print(f"  - {tag.name} (Bindings: {tag.binding_count})")
         
     except Exception as e:
         print(f"Error listing tags: {e}")
@@ -33,9 +37,13 @@ def list_tags_sync() -> None:
 async def list_tags_async() -> None:
     """List tags asynchronously."""
     try:
+        api_key = os.getenv("API_KEY")
+        if not api_key:
+            raise ValueError("API_KEY environment variable is required")
+        
         client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
-        request = ListTagsRequest.builder().build()
-        request_option = RequestOption.builder().api_key(os.getenv("API_KEY")).build()
+        request = ListRequest.builder().build()
+        request_option = RequestOption.builder().api_key(api_key).build()
         
         response = await client.knowledge_base.v1.tag.alist(request, request_option)
         
@@ -50,10 +58,6 @@ async def list_tags_async() -> None:
 def main() -> None:
     """Main function to run examples."""
     print("=== Tag List Examples ===\n")
-    
-    if not os.getenv("API_KEY"):
-        print("Please set the API_KEY environment variable")
-        return
     
     print("1. Listing tags synchronously...")
     list_tags_sync()

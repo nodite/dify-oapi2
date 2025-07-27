@@ -11,13 +11,13 @@ from .get_response import GetResponse
 from .list_request import ListRequest
 from .list_response import ListResponse
 from .metadata_filtering_conditions import MetadataFilteringConditions
-from .metadata_info import MetadataInfo
+from ..metadata.metadata_info import MetadataInfo
 from .reranking_model import RerankingModel
 from .retrieve_request import RetrieveRequest
 from .retrieve_request_body import RetrieveRequestBody
 from .retrieve_response import RetrieveResponse
 from .retrieval_model import RetrievalModel
-from .tag_info import TagInfo
+from ..tag.tag_info import TagInfo
 from .update_request import UpdateRequest
 from .update_request_body import UpdateRequestBody
 from .update_response import UpdateResponse

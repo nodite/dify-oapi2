@@ -8,7 +8,8 @@ This example demonstrates how to update knowledge type tag names using the Dify 
 import asyncio
 import os
 
-from dify_oapi.api.knowledge_base.v1.model.tag.update_request import UpdateTagRequest
+from dify_oapi.api.knowledge_base.v1.model.tag.update_request import UpdateRequest
+from dify_oapi.api.knowledge_base.v1.model.tag.update_request_body import UpdateRequestBody
 from dify_oapi.client import Client
 from dify_oapi.core.model.request_option import RequestOption
 
@@ -16,22 +17,28 @@ from dify_oapi.core.model.request_option import RequestOption
 def update_tag_sync() -> None:
     """Update tag synchronously."""
     try:
+        api_key = os.getenv("API_KEY")
+        if not api_key:
+            raise ValueError("API_KEY environment variable is required")
+        
+        tag_id = os.getenv("TAG_ID")
+        if not tag_id:
+            raise ValueError("TAG_ID environment variable is required")
+        
         client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
         
-        request = (
-            UpdateTagRequest.builder()
-            .tag_id(os.getenv("TAG_ID", "your-tag-id-here"))
-            .name("Updated Tag Name")
+        request_body = (
+            UpdateRequestBody.builder()
+            .tag_id(tag_id)
+            .name("[Example] Updated Tag Name")
             .build()
         )
         
-        request_option = RequestOption.builder().api_key(os.getenv("API_KEY")).build()
+        request = UpdateRequest.builder().request_body(request_body).build()
+        request_option = RequestOption.builder().api_key(api_key).build()
         response = client.knowledge_base.v1.tag.update(request, request_option)
         
-        print(f"Tag updated successfully!")
-        print(f"ID: {response.id}")
-        print(f"Name: {response.name}")
-        print(f"Binding count: {response.binding_count}")
+        print(f"Tag updated: {response.name} (Bindings: {response.binding_count})")
         
     except Exception as e:
         print(f"Error updating tag: {e}")
@@ -40,20 +47,28 @@ def update_tag_sync() -> None:
 async def update_tag_async() -> None:
     """Update tag asynchronously."""
     try:
+        api_key = os.getenv("API_KEY")
+        if not api_key:
+            raise ValueError("API_KEY environment variable is required")
+        
+        tag_id = os.getenv("TAG_ID")
+        if not tag_id:
+            raise ValueError("TAG_ID environment variable is required")
+        
         client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
         
-        request = (
-            UpdateTagRequest.builder()
-            .tag_id(os.getenv("TAG_ID_ASYNC", "your-async-tag-id-here"))
-            .name("Async Updated Tag")
+        request_body = (
+            UpdateRequestBody.builder()
+            .tag_id(tag_id)
+            .name("[Example] Async Updated Tag")
             .build()
         )
         
-        request_option = RequestOption.builder().api_key(os.getenv("API_KEY")).build()
+        request = UpdateRequest.builder().request_body(request_body).build()
+        request_option = RequestOption.builder().api_key(api_key).build()
         response = await client.knowledge_base.v1.tag.aupdate(request, request_option)
         
-        print(f"Tag updated successfully (async)!")
-        print(f"Name: {response.name}")
+        print(f"Tag updated (async): {response.name}")
         
     except Exception as e:
         print(f"Error updating tag (async): {e}")
@@ -63,21 +78,11 @@ def main() -> None:
     """Main function to run examples."""
     print("=== Tag Update Examples ===\n")
     
-    if not os.getenv("API_KEY"):
-        print("Please set the API_KEY environment variable")
-        return
+    print("1. Updating tag synchronously...")
+    update_tag_sync()
     
-    if os.getenv("TAG_ID"):
-        print("1. Updating tag synchronously...")
-        update_tag_sync()
-    else:
-        print("1. Skipping sync update (TAG_ID not set)")
-    
-    if os.getenv("TAG_ID_ASYNC"):
-        print("\n2. Updating tag asynchronously...")
-        asyncio.run(update_tag_async())
-    else:
-        print("\n2. Skipping async update (TAG_ID_ASYNC not set)")
+    print("\n2. Updating tag asynchronously...")
+    asyncio.run(update_tag_async())
 
 
 if __name__ == "__main__":

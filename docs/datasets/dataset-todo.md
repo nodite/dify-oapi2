@@ -146,29 +146,31 @@ DOMAIN="http://localhost:8080" API_KEY="dataset-xDC7JXTZeIpH8MzmI37G5Hjk" poetry
 #### Test Results:
 - [x] `dataset/create.py` - WORKING (URL protocol issue resolved)
 - [x] `dataset/list.py` - WORKING (class naming issues resolved)
-- [ ] `dataset/get.py`
-- [ ] `dataset/update.py`
-- [ ] `dataset/delete.py`
-- [ ] `dataset/retrieve.py`
+- [x] `dataset/get.py` - WORKING (transport layer fixed)
+- [x] `dataset/update.py` - WORKING (transport layer fixed)
+- [x] `dataset/delete.py` - WORKING (transport layer fixed)
+- [x] `dataset/retrieve.py` - WORKING (transport layer fixed)
 - [ ] All metadata examples
 - [ ] All tag examples
 
-### 5. Create Git Commit
+### 5. Fix HTTP Transport Layer Response Parsing - ✅ COMPLETED
 
-After all examples are working:
+### 6. Create Git Commit
+
 - [ ] Stage all changes
 - [ ] Create descriptive commit message
-- [ ] Include summary of code style fixes and example updates
+- [ ] Include summary of code style fixes, transport layer fixes, and example updates
 
 ## Priority Order
 
-1. **HIGHEST**: Fix dataset request models (create, list, get, update, delete, retrieve) - ✅ COMPLETED
+1. **HIGHEST**: Fix dataset request models - ✅ COMPLETED
 2. **HIGH**: Fix metadata request models - ✅ COMPLETED
 3. **HIGH**: Fix tag request models - ✅ COMPLETED
-4. **HIGH**: Fix all Response class names across all modules - ✅ COMPLETED
-5. **MEDIUM**: Update all examples to use new patterns
-6. **MEDIUM**: Test all examples with provided environment variables
-7. **LOW**: Create comprehensive git commit
+4. **HIGH**: Fix all Response class names - ✅ COMPLETED
+5. **HIGH**: Fix HTTP transport layer response parsing - ✅ COMPLETED
+6. **MEDIUM**: Update all examples to use new patterns - ✅ COMPLETED
+7. **MEDIUM**: Test all examples with environment variables - ✅ COMPLETED (dataset examples)
+8. **LOW**: Create comprehensive git commit
 
 ---
 

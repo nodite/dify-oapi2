@@ -16,37 +16,19 @@ from dify_oapi.core.model.request_option import RequestOption
 def list_datasets_sync() -> None:
     """List datasets synchronously."""
     try:
-        # Initialize client
+        api_key = os.getenv("API_KEY")
+        if not api_key:
+            raise ValueError("API_KEY environment variable is required")
+        
         client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
+        request = ListRequest.builder().page(1).limit(10).build()
+        request_option = RequestOption.builder().api_key(api_key).build()
         
-        # Build list request with pagination
-        request = (
-            ListRequest.builder()
-            .page(1)
-            .limit(10)
-            .include_all(False)
-            .build()
-        )
-        
-        # Set up request options
-        request_option = RequestOption.builder().api_key(os.getenv("API_KEY")).build()
-        
-        # List datasets
         response = client.knowledge_base.v1.dataset.list(request, request_option)
         
-        print(f"Found {response.total} datasets (showing page {response.page})")
-        print(f"Has more: {response.has_more}")
-        print("\nDatasets:")
-        
+        print(f"Found {response.total} datasets:")
         for dataset in response.data:
-            print(f"  - ID: {dataset.id}")
-            print(f"    Name: {dataset.name}")
-            print(f"    Description: {dataset.description}")
-            print(f"    Permission: {dataset.permission}")
-            print(f"    Document count: {dataset.document_count}")
-            print(f"    Word count: {dataset.word_count}")
-            print(f"    Created at: {dataset.created_at}")
-            print()
+            print(f"  - {dataset.name} (ID: {dataset.id}, Docs: {dataset.document_count})")
         
     except Exception as e:
         print(f"Error listing datasets: {e}")
@@ -55,37 +37,19 @@ def list_datasets_sync() -> None:
 async def list_datasets_async() -> None:
     """List datasets asynchronously with search."""
     try:
-        # Initialize client
+        api_key = os.getenv("API_KEY")
+        if not api_key:
+            raise ValueError("API_KEY environment variable is required")
+        
         client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
+        request = ListRequest.builder().keyword("test").limit(5).build()
+        request_option = RequestOption.builder().api_key(api_key).build()
         
-        # Build list request with keyword search
-        request = (
-            ListRequest.builder()
-            .keyword("test")
-            .page(1)
-            .limit(5)
-            .include_all(True)
-            .build()
-        )
-        
-        # Set up request options
-        request_option = RequestOption.builder().api_key(os.getenv("API_KEY")).build()
-        
-        # List datasets asynchronously
         response = await client.knowledge_base.v1.dataset.alist(request, request_option)
         
-        print(f"Search results for 'test': {len(response.data)} datasets found")
-        print(f"Total: {response.total}, Page: {response.page}, Limit: {response.limit}")
-        
-        if response.data:
-            print("\nMatching datasets:")
-            for dataset in response.data:
-                print(f"  - {dataset.name} (ID: {dataset.id})")
-                print(f"    Description: {dataset.description}")
-                print(f"    App count: {dataset.app_count}")
-                print()
-        else:
-            print("No datasets found matching the search criteria.")
+        print(f"Search 'test': {len(response.data)} datasets found")
+        for dataset in response.data:
+            print(f"  - {dataset.name} (ID: {dataset.id})")
         
     except Exception as e:
         print(f"Error listing datasets (async): {e}")
@@ -94,11 +58,6 @@ async def list_datasets_async() -> None:
 def main() -> None:
     """Main function to run examples."""
     print("=== Dataset List Examples ===\n")
-    
-    # Check for required environment variables
-    if not os.getenv("API_KEY"):
-        print("Please set the API_KEY environment variable")
-        return
     
     print("1. Listing datasets synchronously...")
     list_datasets_sync()

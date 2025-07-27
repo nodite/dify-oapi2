@@ -8,7 +8,8 @@ This example demonstrates how to create metadata for a dataset using the Dify AP
 import asyncio
 import os
 
-from dify_oapi.api.knowledge_base.v1.model.metadata.create_request import CreateMetadataRequest
+from dify_oapi.api.knowledge_base.v1.model.metadata.create_request import CreateRequest
+from dify_oapi.api.knowledge_base.v1.model.metadata.create_request_body import CreateRequestBody
 from dify_oapi.client import Client
 from dify_oapi.core.model.request_option import RequestOption
 
@@ -19,13 +20,20 @@ def create_metadata_sync() -> None:
         # Initialize client
         client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
         
+        # Build create metadata request body
+        request_body = (
+            CreateRequestBody.builder()
+            .type("string")
+            .name("category")
+            .build()
+        )
+        
         # Build create metadata request
         dataset_id = os.getenv("DATASET_ID", "your-dataset-id-here")
         request = (
-            CreateMetadataRequest.builder()
+            CreateRequest.builder()
             .dataset_id(dataset_id)
-            .type("string")
-            .name("category")
+            .request_body(request_body)
             .build()
         )
         
@@ -50,13 +58,20 @@ async def create_metadata_async() -> None:
         # Initialize client
         client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
         
-        # Build create metadata request for number type
-        dataset_id = os.getenv("DATASET_ID", "your-dataset-id-here")
-        request = (
-            CreateMetadataRequest.builder()
-            .dataset_id(dataset_id)
+        # Build create metadata request body for number type
+        request_body = (
+            CreateRequestBody.builder()
             .type("number")
             .name("priority")
+            .build()
+        )
+        
+        # Build create metadata request
+        dataset_id = os.getenv("DATASET_ID", "your-dataset-id-here")
+        request = (
+            CreateRequest.builder()
+            .dataset_id(dataset_id)
+            .request_body(request_body)
             .build()
         )
         
@@ -100,11 +115,17 @@ def create_multiple_metadata() -> None:
         
         for field in metadata_fields:
             try:
-                request = (
-                    CreateMetadataRequest.builder()
-                    .dataset_id(dataset_id)
+                request_body = (
+                    CreateRequestBody.builder()
                     .type(field["type"])
                     .name(field["name"])
+                    .build()
+                )
+                
+                request = (
+                    CreateRequest.builder()
+                    .dataset_id(dataset_id)
+                    .request_body(request_body)
                     .build()
                 )
                 

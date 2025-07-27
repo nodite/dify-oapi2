@@ -101,7 +101,7 @@
 
 ### 2. Update All Examples to Use New Patterns
 
-#### Dataset Examples:
+#### Dataset Examples: ✅ COMPLETED
 - [x] `examples/knowledge_base/dataset/create.py` - COMPLETED
 - [x] `examples/knowledge_base/dataset/list.py` - COMPLETED
 - [x] `examples/knowledge_base/dataset/get.py` - COMPLETED
@@ -110,7 +110,7 @@
 - [x] `examples/knowledge_base/dataset/retrieve.py` - COMPLETED
 
 #### Metadata Examples:
-- [ ] `examples/knowledge_base/metadata/create.py`
+- [x] `examples/knowledge_base/metadata/create.py` - COMPLETED
 - [ ] `examples/knowledge_base/metadata/list.py`
 - [ ] `examples/knowledge_base/metadata/update.py`
 - [ ] `examples/knowledge_base/metadata/delete.py`

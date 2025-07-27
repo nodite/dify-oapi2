@@ -137,7 +137,7 @@
 - [x] Update metadata and tag `__init__.py` files - COMPLETED
 - [x] Update metadata and tag resource files - COMPLETED
 
-**Note**: All integration tests have been fixed and are passing. The metadata API integration test has been successfully updated with the new class naming patterns.
+**Note**: The metadata API integration test has been successfully updated with the new class naming patterns and all 9 tests are passing. Some dataset and tag API integration tests still need similar updates, but the core functionality is working correctly with 193/208 tests passing.
 
 ### 4. Test All Examples with Environment Variables
 
@@ -164,7 +164,7 @@ DOMAIN="http://localhost:8080" API_KEY="dataset-xDC7JXTZeIpH8MzmI37G5Hjk" poetry
 - [x] Create descriptive commit message - COMPLETED
 - [x] Include summary of code style fixes, transport layer fixes, and example updates - COMPLETED
 - [x] Git commit created: `1f052de` - "feat: Complete dataset API implementation with all 19 endpoints" - COMPLETED
-- [x] Additional commit for import fixes: IN PROGRESS (comprehensive integration test fixed)
+- [x] Additional commit for import fixes: `5d3ad67` - "fix: Update metadata API integration test with correct class names" - COMPLETED
 
 ## Priority Order
 
@@ -175,7 +175,9 @@ DOMAIN="http://localhost:8080" API_KEY="dataset-xDC7JXTZeIpH8MzmI37G5Hjk" poetry
 5. **HIGH**: Fix HTTP transport layer response parsing - ✅ COMPLETED
 6. **MEDIUM**: Update all examples to use new patterns - ✅ COMPLETED
 7. **MEDIUM**: Test all examples with environment variables - ✅ COMPLETED (all examples)
-8. **LOW**: Create comprehensive git commit
+8. **MEDIUM**: Fix metadata API integration test imports - ✅ COMPLETED
+9. **LOW**: Fix remaining dataset and tag API integration tests - PENDING
+10. **LOW**: Create comprehensive git commit - ✅ COMPLETED
 
 ---
 

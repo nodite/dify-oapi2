@@ -481,11 +481,17 @@ class TestComprehensiveIntegration:
         from dify_oapi.api.knowledge_base.v1.model.tag.delete_request import (
             DeleteRequest as DeleteTagRequest,
         )
+        from dify_oapi.api.knowledge_base.v1.model.tag.delete_request_body import (
+            DeleteRequestBody as DeleteTagRequestBody,
+        )
         from dify_oapi.api.knowledge_base.v1.model.tag.delete_response import (
             DeleteResponse as DeleteTagResponse,
         )
         from dify_oapi.api.knowledge_base.v1.model.tag.unbind_request import (
             UnbindRequest as UnbindTagRequest,
+        )
+        from dify_oapi.api.knowledge_base.v1.model.tag.unbind_request_body import (
+            UnbindRequestBody as UnbindTagRequestBody,
         )
         from dify_oapi.api.knowledge_base.v1.model.tag.unbind_response import (
             UnbindResponse as UnbindTagResponse,
@@ -503,7 +509,8 @@ class TestComprehensiveIntegration:
         monkeypatch.setattr("dify_oapi.core.http.transport.Transport.execute", mock_execute)
 
         # 1. Unbind tag from dataset
-        unbind_request = UnbindTagRequest.builder().tag_id(tag_id).target_id(dataset_id).build()
+        unbind_request_body = UnbindTagRequestBody.builder().tag_id(tag_id).target_id(dataset_id).build()
+        unbind_request = UnbindTagRequest.builder().request_body(unbind_request_body).build()
         unbind_result = tag_resource.unbind_tag(unbind_request, request_option)
         assert unbind_result.result == "success"
 
@@ -518,7 +525,8 @@ class TestComprehensiveIntegration:
         dataset_resource.delete(delete_dataset_request, request_option)
 
         # 4. Delete tag
-        delete_tag_request = DeleteTagRequest.builder().tag_id(tag_id).build()
+        delete_tag_request_body = DeleteTagRequestBody.builder().tag_id(tag_id).build()
+        delete_tag_request = DeleteTagRequest.builder().request_body(delete_tag_request_body).build()
         delete_result = tag_resource.delete(delete_tag_request, request_option)
         assert delete_result.result == "success"
 

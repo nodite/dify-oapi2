@@ -1,20 +1,18 @@
 from __future__ import annotations
 
-from typing import Optional, List
-
 from pydantic import BaseModel
 
 from .retrieval_model import RetrievalModel
 
 
 class UpdateRequestBody(BaseModel):
-    name: Optional[str] = None
-    indexing_technique: Optional[str] = None
-    permission: Optional[str] = None
-    embedding_model_provider: Optional[str] = None
-    embedding_model: Optional[str] = None
-    retrieval_model: Optional[RetrievalModel] = None
-    partial_member_list: Optional[List[str]] = None
+    name: str | None = None
+    indexing_technique: str | None = None
+    permission: str | None = None
+    embedding_model_provider: str | None = None
+    embedding_model: str | None = None
+    retrieval_model: RetrievalModel | None = None
+    partial_member_list: list[str] | None = None
 
     @staticmethod
     def builder() -> UpdateRequestBodyBuilder:
@@ -53,6 +51,6 @@ class UpdateRequestBodyBuilder:
         self._update_request_body.retrieval_model = retrieval_model
         return self
 
-    def partial_member_list(self, partial_member_list: List[str]) -> UpdateRequestBodyBuilder:
+    def partial_member_list(self, partial_member_list: list[str]) -> UpdateRequestBodyBuilder:
         self._update_request_body.partial_member_list = partial_member_list
         return self

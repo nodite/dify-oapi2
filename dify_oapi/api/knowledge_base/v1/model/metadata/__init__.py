@@ -8,7 +8,7 @@ from .list_response import ListResponse
 from .toggle_builtin_request import ToggleBuiltinRequest
 from .toggle_builtin_response import ToggleBuiltinResponse
 from .update_document_request import UpdateDocumentRequest
-from .update_document_request_body import UpdateDocumentRequestBody, DocumentMetadata, OperationData
+from .update_document_request_body import DocumentMetadata, OperationData, UpdateDocumentRequestBody
 from .update_document_response import UpdateDocumentResponse
 from .update_request import UpdateRequest
 from .update_request_body import UpdateRequestBody

@@ -38,9 +38,7 @@ def delete_metadata_sync() -> None:
 
         target_metadata = None
         if list_response.doc_metadata:
-            target_metadata = next(
-                (meta for meta in list_response.doc_metadata if meta.id == metadata_id), None
-            )
+            target_metadata = next((meta for meta in list_response.doc_metadata if meta.id == metadata_id), None)
 
         if not target_metadata:
             print(f"Metadata {metadata_id} not found")
@@ -50,12 +48,7 @@ def delete_metadata_sync() -> None:
             print(f"Skipping '{target_metadata.name}' - not an example metadata")
             return
 
-        request = (
-            DeleteRequest.builder()
-            .dataset_id(dataset_id)
-            .metadata_id(metadata_id)
-            .build()
-        )
+        request = DeleteRequest.builder().dataset_id(dataset_id).metadata_id(metadata_id).build()
         client.knowledge_base.v1.metadata.delete(request, request_option)
         print(f"Deleted: {target_metadata.name}")
 
@@ -88,9 +81,7 @@ async def delete_metadata_async() -> None:
 
         target_metadata = None
         if list_response.doc_metadata:
-            target_metadata = next(
-                (meta for meta in list_response.doc_metadata if meta.id == metadata_id), None
-            )
+            target_metadata = next((meta for meta in list_response.doc_metadata if meta.id == metadata_id), None)
 
         if not target_metadata:
             print(f"Metadata {metadata_id} not found")
@@ -100,12 +91,7 @@ async def delete_metadata_async() -> None:
             print(f"Skipping '{target_metadata.name}' - not an example metadata")
             return
 
-        request = (
-            DeleteRequest.builder()
-            .dataset_id(dataset_id)
-            .metadata_id(metadata_id)
-            .build()
-        )
+        request = DeleteRequest.builder().dataset_id(dataset_id).metadata_id(metadata_id).build()
         await client.knowledge_base.v1.metadata.adelete(request, request_option)
         print(f"Deleted (async): {target_metadata.name}")
 
@@ -132,24 +118,17 @@ def delete_example_metadata() -> None:
         list_request = ListRequest.builder().dataset_id(dataset_id).build()
         list_response = client.knowledge_base.v1.metadata.list(list_request, request_option)
 
-        example_metadata = [
-            m for m in list_response.doc_metadata if m.name and m.name.startswith("[Example]")
-        ]
+        example_metadata = [m for m in list_response.doc_metadata if m.name and m.name.startswith("[Example]")]
 
         if not example_metadata:
             print("No example metadata found")
             return
 
         print(f"Deleting {len(example_metadata)} example metadata...")
-        
+
         for metadata in example_metadata:
             try:
-                request = (
-                    DeleteRequest.builder()
-                    .dataset_id(dataset_id)
-                    .metadata_id(metadata.id)
-                    .build()
-                )
+                request = DeleteRequest.builder().dataset_id(dataset_id).metadata_id(metadata.id).build()
                 client.knowledge_base.v1.metadata.delete(request, request_option)
                 print(f"✓ {metadata.name}")
             except Exception as e:
@@ -162,13 +141,13 @@ def delete_example_metadata() -> None:
 def main() -> None:
     """Main function to run examples."""
     print("=== Metadata Delete Examples ===\n")
-    
+
     print("1. Deleting specific metadata synchronously...")
     delete_metadata_sync()
-    
+
     print("\n2. Deleting specific metadata asynchronously...")
     asyncio.run(delete_metadata_async())
-    
+
     print("\n3. Cleaning up all example metadata...")
     delete_example_metadata()
 

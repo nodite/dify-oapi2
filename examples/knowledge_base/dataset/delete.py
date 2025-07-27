@@ -87,16 +87,14 @@ def delete_example_datasets() -> None:
         list_request = ListRequest.builder().limit(100).build()
         list_response = client.knowledge_base.v1.dataset.list(list_request, request_option)
 
-        example_datasets = [
-            d for d in list_response.data if d.name and d.name.startswith("[Example]")
-        ]
+        example_datasets = [d for d in list_response.data if d.name and d.name.startswith("[Example]")]
 
         if not example_datasets:
             print("No example datasets found")
             return
 
         print(f"Deleting {len(example_datasets)} example datasets...")
-        
+
         for dataset in example_datasets:
             try:
                 request = DeleteRequest.builder().dataset_id(dataset.id).build()
@@ -112,13 +110,13 @@ def delete_example_datasets() -> None:
 def main() -> None:
     """Main function to run examples."""
     print("=== Dataset Delete Examples ===\n")
-    
+
     print("1. Deleting specific dataset synchronously...")
     delete_dataset_sync()
-    
+
     print("\n2. Deleting specific dataset asynchronously...")
     asyncio.run(delete_dataset_async())
-    
+
     print("\n3. Cleaning up all example datasets...")
     delete_example_datasets()
 

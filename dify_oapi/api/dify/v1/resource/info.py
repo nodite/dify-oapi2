@@ -11,9 +11,9 @@ class Info:
         self.config: Config = config
 
     def get(self, request: GetInfoRequest, option: RequestOption | None = None) -> GetInfoResponse:
-        # 发起请求
+        # Send request
         return Transport.execute(self.config, request, unmarshal_as=GetInfoResponse, option=option)
 
     async def aget(self, request: GetInfoRequest, option: RequestOption | None = None) -> GetInfoResponse:
-        # 发起请求
+        # Send request
         return await ATransport.aexecute(self.config, request, unmarshal_as=GetInfoResponse, option=option)

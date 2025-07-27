@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import Optional, List
-
 from dify_oapi.core.enum import HttpMethod
 from dify_oapi.core.model.base_request import BaseRequest
 
@@ -29,7 +27,7 @@ class ListRequestBuilder:
         self._list_request.add_query("keyword", keyword)
         return self
 
-    def tag_ids(self, tag_ids: List[str]) -> ListRequestBuilder:
+    def tag_ids(self, tag_ids: list[str]) -> ListRequestBuilder:
         for tag_id in tag_ids:
             self._list_request.add_query("tag_ids", tag_id)
         return self

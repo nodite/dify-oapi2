@@ -1,5 +1,7 @@
-from .dataset import *  # noqa 403
-from .document import *  # noqa 403
-from .metadata import *  # noqa 403
-from .segment import *  # noqa 403
-from .tag import *  # noqa 403
+from .dataset import Dataset
+from .document import Document
+from .metadata import Metadata
+from .segment import Segment
+from .tag import Tag
+
+__all__ = ["Dataset", "Document", "Metadata", "Segment", "Tag"]

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Optional
+from typing import Any
 
 from pydantic import BaseModel
 
@@ -9,8 +9,8 @@ from .retrieval_model import RetrievalModel
 
 class RetrieveRequestBody(BaseModel):
     query: str | None = None
-    retrieval_model: Optional[RetrievalModel] = None
-    external_retrieval_model: Optional[dict] = None
+    retrieval_model: RetrievalModel | None = None
+    external_retrieval_model: dict[str, Any] | None = None
 
     @staticmethod
     def builder() -> RetrieveRequestBodyBuilder:
@@ -33,6 +33,6 @@ class RetrieveRequestBodyBuilder:
         self._retrieve_request_body.retrieval_model = retrieval_model
         return self
 
-    def external_retrieval_model(self, external_retrieval_model: dict) -> RetrieveRequestBodyBuilder:
+    def external_retrieval_model(self, external_retrieval_model: dict[str, Any]) -> RetrieveRequestBodyBuilder:
         self._retrieve_request_body.external_retrieval_model = external_retrieval_model
         return self

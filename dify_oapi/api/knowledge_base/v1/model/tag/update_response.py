@@ -1,16 +1,14 @@
 from __future__ import annotations
 
-from typing import Optional, Union
-
 from dify_oapi.api.knowledge_base.v1.model.tag.tag_info import TagInfo
 from dify_oapi.core.model.base_response import BaseResponse
 
 
 class UpdateResponse(BaseResponse):
-    id: Optional[str] = None
-    name: Optional[str] = None
-    type: Optional[str] = None
-    binding_count: Optional[Union[int, str]] = None
+    id: str | None = None
+    name: str | None = None
+    type: str | None = None
+    binding_count: int | str | None = None
 
     def to_tag_info(self) -> TagInfo:
         return TagInfo(

@@ -1,4 +1,5 @@
 import json
+import os
 import time
 from collections.abc import Generator
 from typing import Literal, overload
@@ -18,6 +19,29 @@ from dify_oapi.core.type import T
 from ._misc import _build_header, _build_url, _get_sleep_time, _merge_dicts, _unmarshaller
 
 
+def _format_log_details(method: str, url: str, headers: dict, queries: dict, body_data: dict | None) -> str:
+    """Format log details"""
+    details = [f"{method} {url}"]
+    if headers:
+        details.append(f"headers: {JSON.marshal(headers)}")
+    if queries:
+        details.append(f"params: {JSON.marshal(queries)}")
+    if body_data:
+        details.append(f"body: {JSON.marshal(body_data)}")
+    return ", ".join(details)
+
+
+def _handle_stream_error(response: httpx.Response) -> bytes:
+    """Handle streaming response errors"""
+    try:
+        error_detail = response.read()
+        error_message = error_detail.decode("utf-8", errors="ignore").strip()
+    except Exception:
+        error_message = f"Error response with status code {response.status_code}"
+    logger.warning(f"Streaming request failed: {response.status_code}, detail: {error_message}")
+    return f"data: [ERROR] {error_message}\n\n".encode()
+
+
 def _stream_generator(
     conf: Config,
     req: BaseRequest,
@@ -29,71 +53,52 @@ def _stream_generator(
     files: dict | None,
     http_method: HttpMethod,
 ) -> Generator[bytes, None, None]:
-    http_method_name = str(http_method.name)
-    stream_retry_count = conf.max_retry_count
-    for stream_retry in range(0, stream_retry_count + 1):
-        # 采用指数避让策略
-        if stream_retry != 0:
-            stream_sleep_time = _get_sleep_time(stream_retry)
-            logger.info(f"in-request: sleep {stream_sleep_time}s")
-            time.sleep(stream_sleep_time)
+    method_name = http_method.name
+    body_data = _merge_dicts(json_, files, data)
+
+    for retry in range(conf.max_retry_count + 1):
+        if retry > 0:
+            sleep_time = _get_sleep_time(retry)
+            logger.info(f"in-request: sleep {sleep_time}s")
+            time.sleep(sleep_time)
+
         try:
-            with (
-                httpx.Client() as _client,
-                _client.stream(
-                    http_method_name,
-                    url,
-                    headers=headers,
-                    params=tuple(req.queries),
-                    json=json_,
-                    data=data,
-                    files=files,
-                    timeout=conf.timeout,
-                ) as sync_response,
-            ):
+            with httpx.Client() as client, client.stream(
+                method_name,
+                url,
+                headers=headers,
+                params=tuple(req.queries),
+                json=json_,
+                data=data,
+                files=files,
+                timeout=conf.timeout,
+            ) as response:
                 logger.debug(
-                    f"{http_method_name} {url} {sync_response.status_code}, "
-                    f"headers: {JSON.marshal(headers)}, "
-                    f"params: {JSON.marshal(req.queries)}, "
-                    f"stream response"
+                    f"{_format_log_details(method_name, url, headers, req.queries, body_data)}, stream response"
                 )
-                if sync_response.status_code != 200:
-                    try:
-                        error_detail = sync_response.read()
-                        error_message = error_detail.decode("utf-8", errors="ignore")
-                    except Exception:
-                        error_message = f"Error response with status code {sync_response.status_code}"
-                    error_message = error_message.strip()
-                    logger.warning(f"Streaming request failed: {sync_response.status_code}, detail: {error_message}")
-                    yield f"data: [ERROR] {error_message}\n\n".encode()
+
+                if response.status_code != 200:
+                    yield _handle_stream_error(response)
                     return
+
                 try:
-                    yield from sync_response.iter_bytes()
-                except Exception as chunk_e:
+                    yield from response.iter_bytes()
+                except Exception as e:
                     logger.exception("Streaming failed during chunk reading")
-                    yield f"data: [ERROR] Stream interrupted: {str(chunk_e)}\n\n".encode()
+                    yield f"data: [ERROR] Stream interrupted: {str(e)}\n\n".encode()
                 return
-        except httpx.RequestError as r_e:
-            err_msg = f"{r_e.__class__.__name__}: {r_e!r}"
-            if stream_retry < stream_retry_count:
-                logger.info(
-                    f"in-request: retrying ({stream_retry+1}/{stream_retry_count}) "
-                    f"{http_method_name} {url}"
-                    f"{f', headers: {JSON.marshal(headers)}' if headers else ''}"
-                    f"{f', params: {JSON.marshal(req.queries)}' if req.queries else ''}"
-                    f"{f', body: {JSON.marshal(_merge_dicts(json_, files, data))}' if json_ or files or data else ''}"
-                    f"{f', exp: {err_msg}'}"
-                )
+
+        except httpx.RequestError as e:
+            err_msg = f"{e.__class__.__name__}: {e!r}"
+            log_details = _format_log_details(method_name, url, headers, req.queries, body_data)
+
+            if retry < conf.max_retry_count:
+                logger.info(f"in-request: retrying ({retry+1}/{conf.max_retry_count}) {log_details}, exp: {err_msg}")
                 continue
             logger.info(
-                f"in-request: request failed, retried ({stream_retry}/{stream_retry_count})"
-                f"{http_method_name} {url}"
-                f"{f', headers: {JSON.marshal(headers)}' if headers else ''}"
-                f"{f', params: {JSON.marshal(req.queries)}' if req.queries else ''}"
-                f"{f', body: {JSON.marshal(_merge_dicts(json_, files, data))}' if json_ or files or data else ''}"
-                f"{f', exp: {err_msg}'}"
+                f"in-request: request failed, retried ({retry}/{conf.max_retry_count}) {log_details}, exp: {err_msg}"
             )
-            raise r_e
+            raise
 
 
 class Transport:
@@ -134,56 +139,47 @@ class Transport:
         unmarshal_as: type[T] | type[BaseResponse] | None = None,
         option: RequestOption | None = None,
     ):
-        if unmarshal_as is None:
-            unmarshal_as = BaseResponse
-        if option is None:
-            option = RequestOption()
-        # 拼接url
-        url: str = _build_url(conf.domain, req.uri, req.paths)
-        # 组装header
-        headers: dict[str, str] = _build_header(req, option)
+        unmarshal_as = unmarshal_as or BaseResponse
+        option = option or RequestOption()
+
+        if req.http_method is None:
+            raise RuntimeError("HTTP method is required")
+
+        url = _build_url(conf.domain, req.uri, req.paths)
+        headers = _build_header(req, option)
+
+        # Prepare request body
         json_, files, data = None, None, None
         if req.files:
-            # multipart/form-data
             files = req.files
             if req.body is not None:
                 data = json.loads(JSON.marshal(req.body))
         elif req.body is not None:
-            # application/json
             json_ = json.loads(JSON.marshal(req.body))
 
-        if req.http_method is None:
-            raise RuntimeError("HTTP method is required")
-        http_method_name = str(req.http_method.name)
         if stream:
             return _stream_generator(
-                conf=conf,
-                req=req,
-                url=url,
-                headers=headers,
-                json_=json_,
-                data=data,
-                files=files,
-                http_method=req.http_method,
+                conf, req, url=url, headers=headers, json_=json_, data=data, files=files, http_method=req.http_method
             )
-        # Set NO_PROXY for localhost to avoid proxy issues
-        import os
-        original_no_proxy = os.environ.get('NO_PROXY', '')
-        if 'localhost' not in original_no_proxy:
-            os.environ['NO_PROXY'] = f"{original_no_proxy},localhost,127.0.0.1".strip(',')
-        
+
+        # Set local proxy
+        original_no_proxy = os.environ.get("NO_PROXY", "")
+        if "localhost" not in original_no_proxy:
+            os.environ["NO_PROXY"] = f"{original_no_proxy},localhost,127.0.0.1".strip(",")
+
+        method_name = req.http_method.name
+        body_data = _merge_dicts(json_, files, data)
+
         with httpx.Client() as client:
-            # 通过变量赋值，防止动态调整 max_retry_count 出现并发问题
-            retry_count = conf.max_retry_count
-            for i in range(0, retry_count + 1):
-                # 采用指数避让策略
-                if i != 0:
-                    sleep_time = _get_sleep_time(i)
+            for retry in range(conf.max_retry_count + 1):
+                if retry > 0:
+                    sleep_time = _get_sleep_time(retry)
                     logger.info(f"in-request: sleep {sleep_time}s")
                     time.sleep(sleep_time)
+
                 try:
                     response = client.request(
-                        http_method_name,
+                        method_name,
                         url,
                         headers=headers,
                         params=tuple(req.queries),
@@ -195,30 +191,20 @@ class Transport:
                     break
                 except httpx.RequestError as e:
                     err_msg = f"{e.__class__.__name__}: {e!r}"
-                    if i < retry_count:
+                    log_details = _format_log_details(method_name, url, headers, req.queries, body_data)
+
+                    if retry < conf.max_retry_count:
                         logger.info(
-                            f"in-request: retrying ({i+1}/{retry_count}) "
-                            f"{http_method_name} {url}"
-                            f"{f', headers: {JSON.marshal(headers)}' if headers else ''}"
-                            f"{f', params: {JSON.marshal(req.queries)}' if req.queries else ''}"
-                            f"{f', body: {JSON.marshal(_merge_dicts(json_, files, data))}' if json_ or files or data else ''}"
-                            f"{f', exp: {err_msg}'}"
+                            f"in-request: retrying ({retry+1}/{conf.max_retry_count}) {log_details}, exp: {err_msg}"
                         )
                         continue
                     logger.info(
-                        f"in-request: request failed, retried ({i}/{retry_count}) "
-                        f"{http_method_name} {url}"
-                        f"{f', headers: {JSON.marshal(headers)}' if headers else ''}"
-                        f"{f', params: {JSON.marshal(req.queries)}' if req.queries else ''}"
-                        f"{f', body: {JSON.marshal(_merge_dicts(json_, files, data))}' if json_ or files or data else ''}"
-                        f"{f', exp: {err_msg}'}"
+                        f"in-request: request failed, retried ({retry}/{conf.max_retry_count}) {log_details}, exp: {err_msg}"
                     )
-                    raise e
+                    raise
+
             logger.debug(
-                f"{http_method_name} {url} {response.status_code}"
-                f"{f', headers: {JSON.marshal(headers)}' if headers else ''}"
-                f"{f', params: {JSON.marshal(req.queries)}' if req.queries else ''}"
-                f"{f', body: {JSON.marshal(_merge_dicts(json_, files, data))}' if json_ or files or data else ''}"
+                f"{_format_log_details(method_name, url, headers, req.queries, body_data)} {response.status_code}"
             )
 
             raw_resp = RawResponse()

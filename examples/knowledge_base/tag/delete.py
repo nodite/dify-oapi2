@@ -37,9 +37,7 @@ def delete_tag_sync() -> None:
 
         target_tag = None
         if list_response.data:
-            target_tag = next(
-                (tag for tag in list_response.data if tag.id == tag_id), None
-            )
+            target_tag = next((tag for tag in list_response.data if tag.id == tag_id), None)
 
         if not target_tag:
             print(f"Tag {tag_id} not found")
@@ -79,9 +77,7 @@ async def delete_tag_async() -> None:
 
         target_tag = None
         if list_response.data:
-            target_tag = next(
-                (tag for tag in list_response.data if tag.id == tag_id), None
-            )
+            target_tag = next((tag for tag in list_response.data if tag.id == tag_id), None)
 
         if not target_tag:
             print(f"Tag {tag_id} not found")
@@ -115,16 +111,14 @@ def delete_example_tags() -> None:
         list_request = ListRequest.builder().build()
         list_response = client.knowledge_base.v1.tag.list(list_request, request_option)
 
-        example_tags = [
-            t for t in list_response.data if t.name and t.name.startswith("[Example]")
-        ]
+        example_tags = [t for t in list_response.data if t.name and t.name.startswith("[Example]")]
 
         if not example_tags:
             print("No example tags found")
             return
 
         print(f"Deleting {len(example_tags)} example tags...")
-        
+
         for tag in example_tags:
             try:
                 request_body = DeleteRequestBody.builder().tag_id(tag.id).build()
@@ -141,13 +135,13 @@ def delete_example_tags() -> None:
 def main() -> None:
     """Main function to run examples."""
     print("=== Tag Delete Examples ===\n")
-    
+
     print("1. Deleting specific tag synchronously...")
     delete_tag_sync()
-    
+
     print("\n2. Deleting specific tag asynchronously...")
     asyncio.run(delete_tag_async())
-    
+
     print("\n3. Cleaning up all example tags...")
     delete_example_tags()
 

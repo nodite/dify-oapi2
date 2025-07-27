@@ -20,30 +20,25 @@ def unbind_tag_sync() -> None:
         api_key = os.getenv("API_KEY")
         if not api_key:
             raise ValueError("API_KEY environment variable is required")
-        
+
         dataset_id = os.getenv("DATASET_ID")
         if not dataset_id:
             raise ValueError("DATASET_ID environment variable is required")
-        
+
         tag_id = os.getenv("TAG_ID")
         if not tag_id:
             raise ValueError("TAG_ID environment variable is required")
-        
+
         client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
-        
-        request_body = (
-            UnbindRequestBody.builder()
-            .target_id(dataset_id)
-            .tag_id(tag_id)
-            .build()
-        )
-        
+
+        request_body = UnbindRequestBody.builder().target_id(dataset_id).tag_id(tag_id).build()
+
         request = UnbindRequest.builder().request_body(request_body).build()
         request_option = RequestOption.builder().api_key(api_key).build()
-        response = client.knowledge_base.v1.tag.unbind_tag(request, request_option)
-        
-        print(f"Tag unbound from dataset")
-        
+        client.knowledge_base.v1.tag.unbind_tag(request, request_option)
+
+        print("Tag unbound from dataset")
+
     except Exception as e:
         print(f"Error unbinding tag: {e}")
 
@@ -54,30 +49,25 @@ async def unbind_tag_async() -> None:
         api_key = os.getenv("API_KEY")
         if not api_key:
             raise ValueError("API_KEY environment variable is required")
-        
+
         dataset_id = os.getenv("DATASET_ID")
         if not dataset_id:
             raise ValueError("DATASET_ID environment variable is required")
-        
+
         tag_id = os.getenv("TAG_ID")
         if not tag_id:
             raise ValueError("TAG_ID environment variable is required")
-        
+
         client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
-        
-        request_body = (
-            UnbindRequestBody.builder()
-            .target_id(dataset_id)
-            .tag_id(tag_id)
-            .build()
-        )
-        
+
+        request_body = UnbindRequestBody.builder().target_id(dataset_id).tag_id(tag_id).build()
+
         request = UnbindRequest.builder().request_body(request_body).build()
         request_option = RequestOption.builder().api_key(api_key).build()
-        response = await client.knowledge_base.v1.tag.aunbind_tag(request, request_option)
-        
-        print(f"Tag unbound from dataset (async)")
-        
+        await client.knowledge_base.v1.tag.aunbind_tag(request, request_option)
+
+        print("Tag unbound from dataset (async)")
+
     except Exception as e:
         print(f"Error unbinding tag (async): {e}")
 
@@ -85,10 +75,10 @@ async def unbind_tag_async() -> None:
 def main() -> None:
     """Main function to run examples."""
     print("=== Tag Unbind Examples ===\n")
-    
+
     print("1. Unbinding tag synchronously...")
     unbind_tag_sync()
-    
+
     print("\n2. Unbinding tag asynchronously...")
     asyncio.run(unbind_tag_async())
 

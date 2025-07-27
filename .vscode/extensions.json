@@ -1,5 +1,16 @@
 {
-  "recommendations": [
-    "ms-python.black-formatter",
-  ]
+    "recommendations": [
+        "charliermarsh.ruff",
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "ms-vscode.vscode-json",
+        "redhat.vscode-yaml",
+        "ms-vscode.vscode-typescript-next",
+        "esbenp.prettier-vscode"
+    ],
+    "unwantedRecommendations": [
+        "ms-python.flake8",
+        "ms-python.pylint",
+        "ms-python.black-formatter"
+    ]
 }

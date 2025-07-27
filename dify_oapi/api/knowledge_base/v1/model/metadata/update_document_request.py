@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from dify_oapi.core.enum import HttpMethod
 from dify_oapi.core.model.base_request import BaseRequest
+
 from .update_document_request_body import UpdateDocumentRequestBody
 
 

@@ -1,5 +1,3 @@
-import math
-
 from dify_oapi.core.const import APPLICATION_JSON, AUTHORIZATION, SLEEP_BASE_TIME, UTF_8
 from dify_oapi.core.json import JSON
 from dify_oapi.core.log import logger
@@ -15,33 +13,33 @@ def _build_url(domain: str | None, uri: str | None, paths: dict[str, str] | None
         raise RuntimeError("domain is required")
     if not uri:
         raise RuntimeError("uri is required")
-    
+
     # Replace path parameters
     for key, value in (paths or {}).items():
         uri = uri.replace(f":{key}", value)
-    
+
     # Normalize URL joining
-    return f"{domain.rstrip('/')}{uri}" if not uri.startswith('/') else f"{domain.rstrip('/')}{uri}"
+    return f"{domain.rstrip('/')}{uri}" if not uri.startswith("/") else f"{domain.rstrip('/')}{uri}"
 
 
 def _build_header(request: BaseRequest, option: RequestOption) -> dict[str, str]:
     headers = request.headers.copy()
-    
+
     # Merge option headers
     if option.headers:
         headers.update(option.headers)
-    
+
     # Add authorization header
     if option.api_key:
         hidden_text = HiddenText(f"Bearer {option.api_key}", redacted="****")
         headers[AUTHORIZATION] = hidden_text.secret
-    
+
     return headers
 
 
-def _merge_dicts(*dicts) -> dict:
+def _merge_dicts(*dicts: dict | None) -> dict:
     """Merge multiple dictionaries, ignoring None values."""
-    result = {}
+    result: dict = {}
     for d in filter(None, dicts):
         result.update(d)
     return result
@@ -50,14 +48,14 @@ def _merge_dicts(*dicts) -> dict:
 def _create_no_content_response(unmarshal_as: type[T]) -> T:
     """Create response for 204 No Content status."""
     try:
-        if hasattr(unmarshal_as, '__annotations__') and 'result' in unmarshal_as.__annotations__:
+        if hasattr(unmarshal_as, "__annotations__") and "result" in unmarshal_as.__annotations__:
             return unmarshal_as(result="success")
         return unmarshal_as()
     except Exception:
         resp = unmarshal_as.__new__(unmarshal_as)
-        if hasattr(resp, 'result'):
+        if hasattr(resp, "result"):
             try:
-                object.__setattr__(resp, 'result', "success")
+                object.__setattr__(resp, "result", "success")
             except Exception:
                 pass
         return resp
@@ -66,8 +64,9 @@ def _create_no_content_response(unmarshal_as: type[T]) -> T:
 def _handle_json_response(content: str, unmarshal_as: type[T]) -> T:
     """Handle JSON response content."""
     import json
+
     parsed_json = json.loads(content)
-    
+
     if isinstance(parsed_json, list):
         return _handle_array_response(parsed_json, unmarshal_as)
     elif isinstance(parsed_json, dict):
@@ -78,20 +77,20 @@ def _handle_json_response(content: str, unmarshal_as: type[T]) -> T:
 
 def _handle_array_response(data: list, unmarshal_as: type[T]) -> T:
     """Handle array JSON responses."""
-    if hasattr(unmarshal_as, '__annotations__') and 'data' in unmarshal_as.__annotations__:
+    if hasattr(unmarshal_as, "__annotations__") and "data" in unmarshal_as.__annotations__:
         return unmarshal_as(data=data)
     return unmarshal_as(data=data)
 
 
 def _handle_primitive_response(value, unmarshal_as: type[T]) -> T:
     """Handle primitive JSON responses."""
-    if not hasattr(unmarshal_as, '__annotations__'):
+    if not hasattr(unmarshal_as, "__annotations__"):
         return unmarshal_as()
-    
+
     annotations = unmarshal_as.__annotations__
-    if 'result' in annotations:
+    if "result" in annotations:
         return unmarshal_as(result=str(value))
-    elif 'data' in annotations:
+    elif "data" in annotations:
         return unmarshal_as(data=value)
     else:
         return unmarshal_as()
@@ -100,13 +99,13 @@ def _handle_primitive_response(value, unmarshal_as: type[T]) -> T:
 def _set_raw_response(resp: T, raw_resp: RawResponse) -> T:
     """Set raw response on the response object."""
     try:
-        object.__setattr__(resp, 'raw', raw_resp)
+        object.__setattr__(resp, "raw", raw_resp)
     except Exception:
         try:
             resp.raw = raw_resp
         except Exception:
-            if hasattr(resp, 'model_copy'):
-                resp = resp.model_copy(update={'raw': raw_resp})
+            if hasattr(resp, "model_copy"):
+                resp = resp.model_copy(update={"raw": raw_resp})
     return resp
 
 
@@ -143,4 +142,4 @@ def _unmarshaller(raw_resp: RawResponse, unmarshal_as: type[T]) -> T:
 
 def _get_sleep_time(retry_count: int) -> float:
     """Calculate exponential backoff sleep time for retries."""
-    return SLEEP_BASE_TIME * (2 ** (retry_count - 1))
+    return float(SLEEP_BASE_TIME * (2 ** (retry_count - 1)))

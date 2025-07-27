@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import Literal
+
 from pydantic import BaseModel
 
 
@@ -21,7 +22,7 @@ class CreateRequestBodyBuilder:
     def build(self) -> CreateRequestBody:
         return self._create_request_body
 
-    def type(self, type: str) -> CreateRequestBodyBuilder:
+    def type(self, type: Literal["string", "number", "time"]) -> CreateRequestBodyBuilder:
         self._create_request_body.type = type
         return self
 

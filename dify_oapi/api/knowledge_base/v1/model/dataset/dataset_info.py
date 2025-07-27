@@ -1,37 +1,33 @@
 from __future__ import annotations
 
-from typing import Optional, List
-
 from pydantic import BaseModel
 
+from ..tag.tag_info import TagInfo
 from .external_knowledge_info import ExternalKnowledgeInfo
 from .retrieval_model import RetrievalModel
-from ..tag.tag_info import TagInfo
 
 
 class DatasetInfo(BaseModel):
-    id: Optional[str] = None
-    name: Optional[str] = None
-    description: Optional[str] = None
-    provider: Optional[str] = None
-    permission: Optional[str] = None
-    data_source_type: Optional[str] = None
-    indexing_technique: Optional[str] = None
-    app_count: Optional[int] = None
-    document_count: Optional[int] = None
-    word_count: Optional[int] = None
-    created_by: Optional[str] = None
-    created_at: Optional[int] = None
-    updated_by: Optional[str] = None
-    updated_at: Optional[int] = None
-    embedding_model: Optional[str] = None
-    embedding_model_provider: Optional[str] = None
-    embedding_available: Optional[bool] = None
-    retrieval_model_dict: Optional[RetrievalModel] = None
-    tags: Optional[List[TagInfo]] = None
-    doc_form: Optional[str] = None
-    external_knowledge_info: Optional[ExternalKnowledgeInfo] = None
-    external_retrieval_model: Optional[RetrievalModel] = None
-    partial_member_list: Optional[List[str]] = None
-
-
+    id: str | None = None
+    name: str | None = None
+    description: str | None = None
+    provider: str | None = None
+    permission: str | None = None
+    data_source_type: str | None = None
+    indexing_technique: str | None = None
+    app_count: int | None = None
+    document_count: int | None = None
+    word_count: int | None = None
+    created_by: str | None = None
+    created_at: int | None = None
+    updated_by: str | None = None
+    updated_at: int | None = None
+    embedding_model: str | None = None
+    embedding_model_provider: str | None = None
+    embedding_available: bool | None = None
+    retrieval_model_dict: RetrievalModel | None = None
+    tags: list[TagInfo] | None = None
+    doc_form: str | None = None
+    external_knowledge_info: ExternalKnowledgeInfo | None = None
+    external_retrieval_model: RetrievalModel | None = None
+    partial_member_list: list[str] | None = None

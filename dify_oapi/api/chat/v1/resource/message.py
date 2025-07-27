@@ -15,21 +15,21 @@ class Message:
     def suggested(
         self, request: MessageSuggestedRequest, option: RequestOption | None = None
     ) -> MessageSuggestedResponse:
-        # 发起请求
+        # Send request
         return Transport.execute(self.config, request, unmarshal_as=MessageSuggestedResponse, option=option)
 
     async def asuggested(
         self, request: MessageSuggestedRequest, option: RequestOption | None = None
     ) -> MessageSuggestedResponse:
-        # 发起请求
+        # Send request
         return await ATransport.aexecute(self.config, request, unmarshal_as=MessageSuggestedResponse, option=option)
 
     def history(self, request: MessageHistoryRequest, option: RequestOption | None = None) -> MessageHistoryResponse:
-        # 发起请求
+        # Send request
         return Transport.execute(self.config, request, unmarshal_as=MessageHistoryResponse, option=option)
 
     async def ahistory(
         self, request: MessageHistoryRequest, option: RequestOption | None = None
     ) -> MessageHistoryResponse:
-        # 发起请求
+        # Send request
         return await ATransport.aexecute(self.config, request, unmarshal_as=MessageHistoryResponse, option=option)

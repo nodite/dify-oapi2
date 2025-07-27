@@ -20,26 +20,21 @@ def update_tag_sync() -> None:
         api_key = os.getenv("API_KEY")
         if not api_key:
             raise ValueError("API_KEY environment variable is required")
-        
+
         tag_id = os.getenv("TAG_ID")
         if not tag_id:
             raise ValueError("TAG_ID environment variable is required")
-        
+
         client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
-        
-        request_body = (
-            UpdateRequestBody.builder()
-            .tag_id(tag_id)
-            .name("[Example] Updated Tag Name")
-            .build()
-        )
-        
+
+        request_body = UpdateRequestBody.builder().tag_id(tag_id).name("[Example] Updated Tag Name").build()
+
         request = UpdateRequest.builder().request_body(request_body).build()
         request_option = RequestOption.builder().api_key(api_key).build()
         response = client.knowledge_base.v1.tag.update(request, request_option)
-        
+
         print(f"Tag updated: {response.name} (Bindings: {response.binding_count})")
-        
+
     except Exception as e:
         print(f"Error updating tag: {e}")
 
@@ -50,26 +45,21 @@ async def update_tag_async() -> None:
         api_key = os.getenv("API_KEY")
         if not api_key:
             raise ValueError("API_KEY environment variable is required")
-        
+
         tag_id = os.getenv("TAG_ID")
         if not tag_id:
             raise ValueError("TAG_ID environment variable is required")
-        
+
         client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
-        
-        request_body = (
-            UpdateRequestBody.builder()
-            .tag_id(tag_id)
-            .name("[Example] Async Updated Tag")
-            .build()
-        )
-        
+
+        request_body = UpdateRequestBody.builder().tag_id(tag_id).name("[Example] Async Updated Tag").build()
+
         request = UpdateRequest.builder().request_body(request_body).build()
         request_option = RequestOption.builder().api_key(api_key).build()
         response = await client.knowledge_base.v1.tag.aupdate(request, request_option)
-        
+
         print(f"Tag updated (async): {response.name}")
-        
+
     except Exception as e:
         print(f"Error updating tag (async): {e}")
 
@@ -77,10 +67,10 @@ async def update_tag_async() -> None:
 def main() -> None:
     """Main function to run examples."""
     print("=== Tag Update Examples ===\n")
-    
+
     print("1. Updating tag synchronously...")
     update_tag_sync()
-    
+
     print("\n2. Updating tag asynchronously...")
     asyncio.run(update_tag_async())
 

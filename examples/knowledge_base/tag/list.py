@@ -19,17 +19,17 @@ def list_tags_sync() -> None:
         api_key = os.getenv("API_KEY")
         if not api_key:
             raise ValueError("API_KEY environment variable is required")
-        
+
         client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
         request = ListRequest.builder().build()
         request_option = RequestOption.builder().api_key(api_key).build()
-        
+
         response = client.knowledge_base.v1.tag.list(request, request_option)
-        
+
         print(f"Found {len(response.data)} tags:")
         for tag in response.data:
-            print(f"  - {tag.name} (Bindings: {tag.binding_count})")
-        
+            print(f"  - {tag.name} (ID: {tag.id}, Bindings: {tag.binding_count})")
+
     except Exception as e:
         print(f"Error listing tags: {e}")
 
@@ -40,17 +40,17 @@ async def list_tags_async() -> None:
         api_key = os.getenv("API_KEY")
         if not api_key:
             raise ValueError("API_KEY environment variable is required")
-        
+
         client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
         request = ListRequest.builder().build()
         request_option = RequestOption.builder().api_key(api_key).build()
-        
+
         response = await client.knowledge_base.v1.tag.alist(request, request_option)
-        
+
         print(f"Tags (async): {len(response.data)} found")
         for tag in response.data:
-            print(f"  • {tag.name} - {tag.binding_count} bindings")
-        
+            print(f"  • {tag.name} (ID: {tag.id}) - {tag.binding_count} bindings")
+
     except Exception as e:
         print(f"Error listing tags (async): {e}")
 
@@ -58,10 +58,10 @@ async def list_tags_async() -> None:
 def main() -> None:
     """Main function to run examples."""
     print("=== Tag List Examples ===\n")
-    
+
     print("1. Listing tags synchronously...")
     list_tags_sync()
-    
+
     print("\n2. Listing tags asynchronously...")
     asyncio.run(list_tags_async())
 

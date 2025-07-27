@@ -149,8 +149,8 @@ For detailed examples and usage patterns, see the [examples README](./examples/R
 git clone https://github.com/QiMington/dify-oapi.git
 cd dify-oapi
 
-# Install dependencies
-poetry install --with dev,format
+# Setup development environment (installs dependencies and pre-commit hooks)
+make dev-setup
 ```
 
 ### Code Quality Tools
@@ -164,14 +164,14 @@ This project uses modern Python tooling:
 
 ```bash
 # Format and lint
-poetry run ruff format
-poetry run ruff check --fix
+make format
+make fix
 
 # Type checking
-poetry run mypy .
+make check
 
-# Install pre-commit hooks
-poetry run pre-commit install
+# Install pre-commit hooks (if not already installed)
+make install-hooks
 ```
 
 ### Testing

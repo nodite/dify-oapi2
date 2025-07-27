@@ -1,23 +1,70 @@
 {
-    // python
-    "notebook.formatOnSave.enabled": true,
-    "notebook.codeActionsOnSave": {
-        "source.organizeImports": "explicit"
+    // Python 解释器配置
+    "python.defaultInterpreterPath": ".venv/bin/python",
+    // 格式化配置
+    "editor.formatOnSave": true,
+    "editor.formatOnType": false,
+    "editor.formatOnPaste": false,
+    "editor.codeActionsOnSave": {
+        "source.organizeImports": "explicit",
+        "source.fixAll": "explicit"
     },
-    "jupyter.notebookFileRoot": "${workspaceFolder}",
+    // Python 格式化器配置 - 使用 Ruff
     "[python]": {
-        "editor.codeActionsOnSave": {
-          "source.organizeImports": "explicit"
-        },
-        "editor.defaultFormatter": "ms-python.black-formatter",
+        "editor.defaultFormatter": "charliermarsh.ruff",
         "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+            "source.organizeImports.ruff": "explicit",
+            "source.fixAll.ruff": "explicit"
+        }
     },
-    "isort.args": [
-        "--multi-line=3",
-        "--trailing-comma",
-        "--force-grid-wrap=0",
-        "--use-parentheses",
-        "--line-width=88",
+    // Ruff 扩展配置
+    "ruff.enable": true,
+    "ruff.organizeImports": true,
+    "ruff.fixAll": true,
+    "ruff.showNotifications": "onError",
+    // 禁用其他 Python 格式化器以避免冲突
+    "python.formatting.provider": "none",
+    "python.linting.enabled": false,
+    "python.linting.pylintEnabled": false,
+    "python.linting.flake8Enabled": false,
+    // 文件关联
+    "files.associations": {
+        "*.py": "python"
+    },
+    // 编辑器配置
+    "editor.rulers": [
+        120
     ],
-    "python.REPL.enableREPLSmartSend": false,
+    "editor.tabSize": 4,
+    "editor.insertSpaces": true,
+    "editor.trimAutoWhitespace": true,
+    "files.trimTrailingWhitespace": true,
+    "files.insertFinalNewline": true,
+    "files.trimFinalNewlines": true,
+    // 排除文件和目录
+    "files.exclude": {
+        "**/__pycache__": true,
+        "**/*.pyc": true,
+        "**/.pytest_cache": true,
+        "**/.mypy_cache": true,
+        "**/.ruff_cache": true,
+        "**/build": true,
+        "**/dist": true,
+        "**/.venv": true,
+        "**/venv": true
+    },
+    // 搜索排除
+    "search.exclude": {
+        "**/__pycache__": true,
+        "**/*.pyc": true,
+        "**/.pytest_cache": true,
+        "**/.mypy_cache": true,
+        "**/.ruff_cache": true,
+        "**/build": true,
+        "**/dist": true,
+        "**/.venv": true,
+        "**/venv": true,
+        "**/poetry.lock": true
+    }
 }

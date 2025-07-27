@@ -1,12 +1,10 @@
 from __future__ import annotations
 
-from typing import List
-
 from pydantic import BaseModel
 
 
 class BindRequestBody(BaseModel):
-    tag_ids: List[str] = []
+    tag_ids: list[str] = []
     target_id: str = ""
 
     @staticmethod
@@ -22,7 +20,7 @@ class BindRequestBodyBuilder:
     def build(self) -> BindRequestBody:
         return self._request_body
 
-    def tag_ids(self, tag_ids: List[str]) -> BindRequestBodyBuilder:
+    def tag_ids(self, tag_ids: list[str]) -> BindRequestBodyBuilder:
         self._request_body.tag_ids = tag_ids
         return self
 

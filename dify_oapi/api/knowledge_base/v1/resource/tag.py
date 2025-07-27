@@ -2,20 +2,20 @@ from dify_oapi.core.http.transport import ATransport, Transport
 from dify_oapi.core.model.config import Config
 from dify_oapi.core.model.request_option import RequestOption
 
-from ..model.tag.create_request import CreateRequest
-from ..model.tag.create_response import CreateResponse
-from ..model.tag.list_request import ListRequest
-from ..model.tag.list_response import ListResponse
-from ..model.tag.update_request import UpdateRequest
-from ..model.tag.update_response import UpdateResponse
-from ..model.tag.delete_request import DeleteRequest
-from ..model.tag.delete_response import DeleteResponse
 from ..model.tag.bind_request import BindRequest
 from ..model.tag.bind_response import BindResponse
-from ..model.tag.unbind_request import UnbindRequest
-from ..model.tag.unbind_response import UnbindResponse
+from ..model.tag.create_request import CreateRequest
+from ..model.tag.create_response import CreateResponse
+from ..model.tag.delete_request import DeleteRequest
+from ..model.tag.delete_response import DeleteResponse
+from ..model.tag.list_request import ListRequest
+from ..model.tag.list_response import ListResponse
 from ..model.tag.query_bound_request import QueryBoundRequest
 from ..model.tag.query_bound_response import QueryBoundResponse
+from ..model.tag.unbind_request import UnbindRequest
+from ..model.tag.unbind_response import UnbindResponse
+from ..model.tag.update_request import UpdateRequest
+from ..model.tag.update_response import UpdateResponse
 
 
 class Tag:

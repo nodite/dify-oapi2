@@ -11,11 +11,11 @@ class Message:
         self.config: Config = config
 
     def feedback(self, request: MessageFeedbackRequest, option: RequestOption | None = None) -> MessageFeedbackResponse:
-        # 发起请求
+        # Send request
         return Transport.execute(self.config, request, unmarshal_as=MessageFeedbackResponse, option=option)
 
     async def afeedback(
         self, request: MessageFeedbackRequest, option: RequestOption | None = None
     ) -> MessageFeedbackResponse:
-        # 发起请求
+        # Send request
         return await ATransport.aexecute(self.config, request, unmarshal_as=MessageFeedbackResponse, option=option)

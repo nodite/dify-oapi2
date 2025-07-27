@@ -82,10 +82,10 @@ class ClientBuilder:
         client: Client = Client()
         client._config = self._config
 
-        # 初始化日志
+        # Initialize logger
         self._init_logger()
 
-        # 初始化 服务
+        # Initialize services
         client._chat = ChatService(self._config)
         client._completion = CompletionService(self._config)
         client._dify = DifyService(self._config)

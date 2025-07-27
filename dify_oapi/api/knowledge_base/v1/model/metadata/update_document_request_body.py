@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import List
-
 from pydantic import BaseModel
 
 
@@ -37,7 +35,7 @@ class DocumentMetadataBuilder:
 
 class OperationData(BaseModel):
     document_id: str
-    metadata_list: List[DocumentMetadata]
+    metadata_list: list[DocumentMetadata]
 
     @staticmethod
     def builder() -> OperationDataBuilder:
@@ -55,13 +53,13 @@ class OperationDataBuilder:
         self._operation_data.document_id = document_id
         return self
 
-    def metadata_list(self, metadata_list: List[DocumentMetadata]) -> OperationDataBuilder:
+    def metadata_list(self, metadata_list: list[DocumentMetadata]) -> OperationDataBuilder:
         self._operation_data.metadata_list = metadata_list
         return self
 
 
 class UpdateDocumentRequestBody(BaseModel):
-    operation_data: List[OperationData] | None = None
+    operation_data: list[OperationData] | None = None
 
     @staticmethod
     def builder() -> UpdateDocumentRequestBodyBuilder:
@@ -76,6 +74,6 @@ class UpdateDocumentRequestBodyBuilder:
     def build(self) -> UpdateDocumentRequestBody:
         return self._update_document_request_body
 
-    def operation_data(self, operation_data: List[OperationData]) -> UpdateDocumentRequestBodyBuilder:
+    def operation_data(self, operation_data: list[OperationData]) -> UpdateDocumentRequestBodyBuilder:
         self._update_document_request_body.operation_data = operation_data
         return self

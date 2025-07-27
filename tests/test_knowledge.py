@@ -4,7 +4,6 @@ import unittest
 from io import BytesIO
 from pathlib import Path
 
-from dify_oapi.api.knowledge_base.v1.model.dataset.create_request import CreateDatasetRequest
 from dify_oapi.api.knowledge_base.v1.model.create_document_by_file_request import CreateDocumentByFileRequest
 from dify_oapi.api.knowledge_base.v1.model.create_document_by_file_request_body import CreateDocumentByFileRequestBody
 from dify_oapi.api.knowledge_base.v1.model.create_document_by_file_request_body_data import (
@@ -15,13 +14,14 @@ from dify_oapi.api.knowledge_base.v1.model.create_document_by_text_request_body 
 from dify_oapi.api.knowledge_base.v1.model.create_segment_request import CreateSegmentRequest
 from dify_oapi.api.knowledge_base.v1.model.create_segment_request_body import CreateSegmentRequestBody
 from dify_oapi.api.knowledge_base.v1.model.create_segment_request_body_segment import CreateSegmentRequestBodySegment
+from dify_oapi.api.knowledge_base.v1.model.dataset.create_request import CreateDatasetRequest
 from dify_oapi.api.knowledge_base.v1.model.dataset.delete_request import DeleteDatasetRequest
+from dify_oapi.api.knowledge_base.v1.model.dataset.list_request import ListDatasetsRequest
+from dify_oapi.api.knowledge_base.v1.model.dataset.retrieve_request import RetrieveDatasetRequest
 from dify_oapi.api.knowledge_base.v1.model.delete_document_request import DeleteDocumentRequest
 from dify_oapi.api.knowledge_base.v1.model.delete_segment_request import DeleteSegmentRequest
 from dify_oapi.api.knowledge_base.v1.model.document_request_process_rule import DocumentRequestProcessRule
-from dify_oapi.api.knowledge_base.v1.model.dataset.retrieve_request import RetrieveDatasetRequest
 from dify_oapi.api.knowledge_base.v1.model.index_status_request import IndexStatusRequest
-from dify_oapi.api.knowledge_base.v1.model.dataset.list_request import ListDatasetsRequest
 from dify_oapi.api.knowledge_base.v1.model.list_document_request import ListDocumentRequest
 from dify_oapi.api.knowledge_base.v1.model.list_segment_request import ListSegmentRequest
 from dify_oapi.api.knowledge_base.v1.model.update_document_by_text_request import UpdateDocumentByTextRequest

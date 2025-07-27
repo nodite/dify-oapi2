@@ -4,6 +4,7 @@ from dify_oapi.api.chat.v1.model.chat_request_file import ChatRequestFile
 from dify_oapi.client import Client
 from dify_oapi.core.model.request_option import RequestOption
 
+
 def main():
     client = Client.builder().domain("https://api.dify.ai").build()
     req_file = (

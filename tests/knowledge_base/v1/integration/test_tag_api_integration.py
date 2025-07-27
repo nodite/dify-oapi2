@@ -1,23 +1,16 @@
-import pytest
-from unittest.mock import Mock, AsyncMock
 from typing import Any
+from unittest.mock import AsyncMock, Mock
 
-from dify_oapi.core.model.config import Config
-from dify_oapi.core.model.request_option import RequestOption
-from dify_oapi.api.knowledge_base.v1.resource.tag import Tag
+import pytest
 
-from dify_oapi.api.knowledge_base.v1.model.tag.create_request import CreateTagRequest
-from dify_oapi.api.knowledge_base.v1.model.tag.create_response import CreateTagResponse
-from dify_oapi.api.knowledge_base.v1.model.tag.list_request import ListTagsRequest
-from dify_oapi.api.knowledge_base.v1.model.tag.list_response import ListTagsResponse
-from dify_oapi.api.knowledge_base.v1.model.tag.update_request import UpdateTagRequest
-from dify_oapi.api.knowledge_base.v1.model.tag.update_response import UpdateTagResponse
-from dify_oapi.api.knowledge_base.v1.model.tag.delete_request import DeleteTagRequest
-from dify_oapi.api.knowledge_base.v1.model.tag.delete_response import DeleteTagResponse
 from dify_oapi.api.knowledge_base.v1.model.tag.bind_request import BindTagsRequest
 from dify_oapi.api.knowledge_base.v1.model.tag.bind_response import BindTagsResponse
-from dify_oapi.api.knowledge_base.v1.model.tag.unbind_request import UnbindTagRequest
-from dify_oapi.api.knowledge_base.v1.model.tag.unbind_response import UnbindTagResponse
+from dify_oapi.api.knowledge_base.v1.model.tag.create_request import CreateTagRequest
+from dify_oapi.api.knowledge_base.v1.model.tag.create_response import CreateTagResponse
+from dify_oapi.api.knowledge_base.v1.model.tag.delete_request import DeleteTagRequest
+from dify_oapi.api.knowledge_base.v1.model.tag.delete_response import DeleteTagResponse
+from dify_oapi.api.knowledge_base.v1.model.tag.list_request import ListTagsRequest
+from dify_oapi.api.knowledge_base.v1.model.tag.list_response import ListTagsResponse
 from dify_oapi.api.knowledge_base.v1.model.tag.query_bound_request import (
     QueryBoundTagsRequest,
 )
@@ -25,6 +18,13 @@ from dify_oapi.api.knowledge_base.v1.model.tag.query_bound_response import (
     QueryBoundTagsResponse,
 )
 from dify_oapi.api.knowledge_base.v1.model.tag.tag_info import TagInfo
+from dify_oapi.api.knowledge_base.v1.model.tag.unbind_request import UnbindTagRequest
+from dify_oapi.api.knowledge_base.v1.model.tag.unbind_response import UnbindTagResponse
+from dify_oapi.api.knowledge_base.v1.model.tag.update_request import UpdateTagRequest
+from dify_oapi.api.knowledge_base.v1.model.tag.update_response import UpdateTagResponse
+from dify_oapi.api.knowledge_base.v1.resource.tag import Tag
+from dify_oapi.core.model.config import Config
+from dify_oapi.core.model.request_option import RequestOption
 
 
 class TestTagAPIIntegration:
@@ -48,14 +48,10 @@ class TestTagAPIIntegration:
         dataset_id = "test-dataset-id"
 
         # Mock create tag
-        create_response = CreateTagResponse(
-            id=tag_id, name="Test Tag", type="knowledge", binding_count=0
-        )
+        create_response = CreateTagResponse(id=tag_id, name="Test Tag", type="knowledge", binding_count=0)
 
         # Mock list tags
-        tag_list = [
-            TagInfo(id=tag_id, name="Test Tag", type="knowledge", binding_count=0)
-        ]
+        tag_list = [TagInfo(id=tag_id, name="Test Tag", type="knowledge", binding_count=0)]
         list_response = ListTagsResponse(data=tag_list)
 
         # Mock bind tags
@@ -69,9 +65,7 @@ class TestTagAPIIntegration:
         unbind_response = UnbindTagResponse(result="success")
 
         # Mock update tag
-        update_response = UpdateTagResponse(
-            id=tag_id, name="Updated Tag", type="knowledge", binding_count=0
-        )
+        update_response = UpdateTagResponse(id=tag_id, name="Updated Tag", type="knowledge", binding_count=0)
 
         # Mock delete tag
         delete_response = DeleteTagResponse(result="success")
@@ -87,9 +81,7 @@ class TestTagAPIIntegration:
             update_response,
             delete_response,
         ]
-        monkeypatch.setattr(
-            "dify_oapi.core.http.transport.Transport.execute", mock_execute
-        )
+        monkeypatch.setattr("dify_oapi.core.http.transport.Transport.execute", mock_execute)
 
         # 1. Create tag
         create_request = CreateTagRequest.builder().name("Test Tag").build()
@@ -106,9 +98,7 @@ class TestTagAPIIntegration:
         assert tag_list_result.data[0].id == tag_id
 
         # 3. Bind tag to dataset
-        bind_request = (
-            BindTagsRequest.builder().tag_ids([tag_id]).target_id(dataset_id).build()
-        )
+        bind_request = BindTagsRequest.builder().tag_ids([tag_id]).target_id(dataset_id).build()
         bind_result = tag_resource.bind_tags(bind_request, request_option)
         assert bind_result.result == "success"
 
@@ -120,16 +110,12 @@ class TestTagAPIIntegration:
         assert query_result.total == 1
 
         # 5. Unbind tag
-        unbind_request = (
-            UnbindTagRequest.builder().tag_id(tag_id).target_id(dataset_id).build()
-        )
+        unbind_request = UnbindTagRequest.builder().tag_id(tag_id).target_id(dataset_id).build()
         unbind_result = tag_resource.unbind_tag(unbind_request, request_option)
         assert unbind_result.result == "success"
 
         # 6. Update tag
-        update_request = (
-            UpdateTagRequest.builder().name("Updated Tag").tag_id(tag_id).build()
-        )
+        update_request = UpdateTagRequest.builder().name("Updated Tag").tag_id(tag_id).build()
         updated = tag_resource.update(update_request, request_option)
         assert updated.id == tag_id
         assert updated.name == "Updated Tag"
@@ -151,22 +137,12 @@ class TestTagAPIIntegration:
         dataset_id = "async-dataset-id"
 
         # Mock responses
-        create_response = CreateTagResponse(
-            id=tag_id, name="Async Tag", type="knowledge", binding_count=0
-        )
-        list_response = ListTagsResponse(
-            data=[
-                TagInfo(id=tag_id, name="Async Tag", type="knowledge", binding_count=0)
-            ]
-        )
+        create_response = CreateTagResponse(id=tag_id, name="Async Tag", type="knowledge", binding_count=0)
+        list_response = ListTagsResponse(data=[TagInfo(id=tag_id, name="Async Tag", type="knowledge", binding_count=0)])
         bind_response = BindTagsResponse(result="success")
-        query_response = QueryBoundTagsResponse(
-            data=[TagInfo(id=tag_id, name="Async Tag")], total=1
-        )
+        query_response = QueryBoundTagsResponse(data=[TagInfo(id=tag_id, name="Async Tag")], total=1)
         unbind_response = UnbindTagResponse(result="success")
-        update_response = UpdateTagResponse(
-            id=tag_id, name="Updated Async Tag", type="knowledge", binding_count=0
-        )
+        update_response = UpdateTagResponse(id=tag_id, name="Updated Async Tag", type="knowledge", binding_count=0)
         delete_response = DeleteTagResponse(result="success")
 
         mock_aexecute = AsyncMock()
@@ -179,9 +155,7 @@ class TestTagAPIIntegration:
             update_response,
             delete_response,
         ]
-        monkeypatch.setattr(
-            "dify_oapi.core.http.transport.ATransport.aexecute", mock_aexecute
-        )
+        monkeypatch.setattr("dify_oapi.core.http.transport.ATransport.aexecute", mock_aexecute)
 
         # Execute async workflow
         create_request = CreateTagRequest.builder().name("Async Tag").build()
@@ -192,9 +166,7 @@ class TestTagAPIIntegration:
         listed = await tag_resource.alist(list_request, request_option)
         assert len(listed.data) == 1
 
-        bind_request = (
-            BindTagsRequest.builder().tag_ids([tag_id]).target_id(dataset_id).build()
-        )
+        bind_request = BindTagsRequest.builder().tag_ids([tag_id]).target_id(dataset_id).build()
         bind_result = await tag_resource.abind_tags(bind_request, request_option)
         assert bind_result.result == "success"
 
@@ -202,15 +174,11 @@ class TestTagAPIIntegration:
         query_result = await tag_resource.aquery_bound(query_request, request_option)
         assert len(query_result.data) == 1
 
-        unbind_request = (
-            UnbindTagRequest.builder().tag_id(tag_id).target_id(dataset_id).build()
-        )
+        unbind_request = UnbindTagRequest.builder().tag_id(tag_id).target_id(dataset_id).build()
         unbind_result = await tag_resource.aunbind_tag(unbind_request, request_option)
         assert unbind_result.result == "success"
 
-        update_request = (
-            UpdateTagRequest.builder().name("Updated Async Tag").tag_id(tag_id).build()
-        )
+        update_request = UpdateTagRequest.builder().name("Updated Async Tag").tag_id(tag_id).build()
         updated = await tag_resource.aupdate(update_request, request_option)
         assert updated.name == "Updated Async Tag"
 
@@ -220,9 +188,7 @@ class TestTagAPIIntegration:
 
         assert mock_aexecute.call_count == 7
 
-    def test_multiple_tag_binding(
-        self, tag_resource: Tag, request_option: RequestOption, monkeypatch: Any
-    ) -> None:
+    def test_multiple_tag_binding(self, tag_resource: Tag, request_option: RequestOption, monkeypatch: Any) -> None:
         """Test binding multiple tags to a single dataset"""
         dataset_id = "multi-tag-dataset"
         tag_ids = ["tag1", "tag2", "tag3"]
@@ -230,13 +196,9 @@ class TestTagAPIIntegration:
         # Mock bind multiple tags
         bind_response = BindTagsResponse(result="success")
         mock_execute = Mock(return_value=bind_response)
-        monkeypatch.setattr(
-            "dify_oapi.core.http.transport.Transport.execute", mock_execute
-        )
+        monkeypatch.setattr("dify_oapi.core.http.transport.Transport.execute", mock_execute)
 
-        bind_request = (
-            BindTagsRequest.builder().tag_ids(tag_ids).target_id(dataset_id).build()
-        )
+        bind_request = BindTagsRequest.builder().tag_ids(tag_ids).target_id(dataset_id).build()
         result = tag_resource.bind_tags(bind_request, request_option)
         assert result.result == "success"
 
@@ -261,19 +223,13 @@ class TestTagAPIIntegration:
         tag_id = "binding-count-tag"
 
         # Mock tag with different binding counts
-        initial_tag = TagInfo(
-            id=tag_id, name="Binding Count Tag", type="knowledge", binding_count=0
-        )
-        after_bind_tag = TagInfo(
-            id=tag_id, name="Binding Count Tag", type="knowledge", binding_count=1
-        )
+        initial_tag = TagInfo(id=tag_id, name="Binding Count Tag", type="knowledge", binding_count=0)
+        after_bind_tag = TagInfo(id=tag_id, name="Binding Count Tag", type="knowledge", binding_count=1)
 
         # Mock list with initial count
         list_response = ListTagsResponse(data=[initial_tag])
         mock_execute = Mock(return_value=list_response)
-        monkeypatch.setattr(
-            "dify_oapi.core.http.transport.Transport.execute", mock_execute
-        )
+        monkeypatch.setattr("dify_oapi.core.http.transport.Transport.execute", mock_execute)
 
         list_request = ListTagsRequest.builder().build()
         result = tag_resource.list(list_request, request_option)
@@ -294,23 +250,15 @@ class TestTagAPIIntegration:
         dataset_id = "specific-dataset"
 
         # Global operations (create, list, update, delete)
-        create_response = CreateTagResponse(
-            id=tag_id, name="Global Tag", type="knowledge", binding_count=0
-        )
+        create_response = CreateTagResponse(id=tag_id, name="Global Tag", type="knowledge", binding_count=0)
         list_response = ListTagsResponse(
-            data=[
-                TagInfo(id=tag_id, name="Global Tag", type="knowledge", binding_count=0)
-            ]
+            data=[TagInfo(id=tag_id, name="Global Tag", type="knowledge", binding_count=0)]
         )
-        update_response = UpdateTagResponse(
-            id=tag_id, name="Updated Global Tag", type="knowledge", binding_count=0
-        )
+        update_response = UpdateTagResponse(id=tag_id, name="Updated Global Tag", type="knowledge", binding_count=0)
         delete_response = DeleteTagResponse(result="success")
 
         # Dataset-specific operations (query_bound)
-        query_response = QueryBoundTagsResponse(
-            data=[TagInfo(id=tag_id, name="Global Tag")], total=1
-        )
+        query_response = QueryBoundTagsResponse(data=[TagInfo(id=tag_id, name="Global Tag")], total=1)
 
         mock_execute = Mock()
         mock_execute.side_effect = [
@@ -320,9 +268,7 @@ class TestTagAPIIntegration:
             query_response,
             delete_response,
         ]
-        monkeypatch.setattr(
-            "dify_oapi.core.http.transport.Transport.execute", mock_execute
-        )
+        monkeypatch.setattr("dify_oapi.core.http.transport.Transport.execute", mock_execute)
 
         # Test global operations
         create_request = CreateTagRequest.builder().name("Global Tag").build()
@@ -333,9 +279,7 @@ class TestTagAPIIntegration:
         listed = tag_resource.list(list_request, request_option)
         assert len(listed.data) == 1
 
-        update_request = (
-            UpdateTagRequest.builder().name("Updated Global Tag").tag_id(tag_id).build()
-        )
+        update_request = UpdateTagRequest.builder().name("Updated Global Tag").tag_id(tag_id).build()
         updated = tag_resource.update(update_request, request_option)
         assert updated.name == "Updated Global Tag"
 
@@ -348,15 +292,11 @@ class TestTagAPIIntegration:
         delete_result = tag_resource.delete(delete_request, request_option)
         assert delete_result.result == "success"
 
-    def test_error_scenarios(
-        self, tag_resource: Tag, request_option: RequestOption, monkeypatch: Any
-    ) -> None:
+    def test_error_scenarios(self, tag_resource: Tag, request_option: RequestOption, monkeypatch: Any) -> None:
         """Test error handling scenarios"""
         # Mock error response
         mock_execute = Mock(side_effect=Exception("Tag API Error"))
-        monkeypatch.setattr(
-            "dify_oapi.core.http.transport.Transport.execute", mock_execute
-        )
+        monkeypatch.setattr("dify_oapi.core.http.transport.Transport.execute", mock_execute)
 
         create_request = CreateTagRequest.builder().name("Error Tag").build()
 
@@ -365,16 +305,12 @@ class TestTagAPIIntegration:
 
         assert str(exc_info.value) == "Tag API Error"
 
-    def test_edge_cases(
-        self, tag_resource: Tag, request_option: RequestOption, monkeypatch: Any
-    ) -> None:
+    def test_edge_cases(self, tag_resource: Tag, request_option: RequestOption, monkeypatch: Any) -> None:
         """Test edge cases and boundary conditions"""
         # Test empty tag list
         empty_list_response = ListTagsResponse(data=[])
         mock_execute = Mock(return_value=empty_list_response)
-        monkeypatch.setattr(
-            "dify_oapi.core.http.transport.Transport.execute", mock_execute
-        )
+        monkeypatch.setattr("dify_oapi.core.http.transport.Transport.execute", mock_execute)
 
         list_request = ListTagsRequest.builder().build()
         result = tag_resource.list(list_request, request_option)
@@ -384,18 +320,14 @@ class TestTagAPIIntegration:
         empty_query_response = QueryBoundTagsResponse(data=[], total=0)
         mock_execute.return_value = empty_query_response
 
-        query_request = (
-            QueryBoundTagsRequest.builder().dataset_id("empty-dataset").build()
-        )
+        query_request = QueryBoundTagsRequest.builder().dataset_id("empty-dataset").build()
         query_result = tag_resource.query_bound(query_request, request_option)
         assert len(query_result.data) == 0
         assert query_result.total == 0
 
         # Test tag with maximum length name (50 characters)
         long_name = "A" * 50
-        create_response = CreateTagResponse(
-            id="long-name-tag", name=long_name, type="knowledge", binding_count=0
-        )
+        create_response = CreateTagResponse(id="long-name-tag", name=long_name, type="knowledge", binding_count=0)
         mock_execute.return_value = create_response
 
         create_request = CreateTagRequest.builder().name(long_name).build()
@@ -418,13 +350,9 @@ class TestTagAPIIntegration:
         ]
 
         for name in valid_names:
-            create_response = CreateTagResponse(
-                id=f"tag-{hash(name)}", name=name, type="knowledge", binding_count=0
-            )
+            create_response = CreateTagResponse(id=f"tag-{hash(name)}", name=name, type="knowledge", binding_count=0)
             mock_execute = Mock(return_value=create_response)
-            monkeypatch.setattr(
-                "dify_oapi.core.http.transport.Transport.execute", mock_execute
-            )
+            monkeypatch.setattr("dify_oapi.core.http.transport.Transport.execute", mock_execute)
 
             create_request = CreateTagRequest.builder().name(name).build()
             result = tag_resource.create(create_request, request_option)

@@ -20,26 +20,23 @@ def bind_tags_sync() -> None:
         api_key = os.getenv("API_KEY")
         if not api_key:
             raise ValueError("API_KEY environment variable is required")
-        
+
         dataset_id = os.getenv("DATASET_ID")
         if not dataset_id:
             raise ValueError("DATASET_ID environment variable is required")
-        
+
         client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
-        
+
         request_body = (
-            BindRequestBody.builder()
-            .target_id(dataset_id)
-            .tag_ids([os.getenv("TAG_ID", "tag-id-1")])
-            .build()
+            BindRequestBody.builder().target_id(dataset_id).tag_ids([os.getenv("TAG_ID", "tag-id-1")]).build()
         )
-        
+
         request = BindRequest.builder().request_body(request_body).build()
         request_option = RequestOption.builder().api_key(api_key).build()
-        response = client.knowledge_base.v1.tag.bind_tags(request, request_option)
-        
-        print(f"Tags bound to dataset")
-        
+        client.knowledge_base.v1.tag.bind_tags(request, request_option)
+
+        print("Tags bound to dataset")
+
     except Exception as e:
         print(f"Error binding tags: {e}")
 
@@ -50,26 +47,23 @@ async def bind_tags_async() -> None:
         api_key = os.getenv("API_KEY")
         if not api_key:
             raise ValueError("API_KEY environment variable is required")
-        
+
         dataset_id = os.getenv("DATASET_ID")
         if not dataset_id:
             raise ValueError("DATASET_ID environment variable is required")
-        
+
         client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
-        
+
         request_body = (
-            BindRequestBody.builder()
-            .target_id(dataset_id)
-            .tag_ids([os.getenv("TAG_ID", "tag-id-1")])
-            .build()
+            BindRequestBody.builder().target_id(dataset_id).tag_ids([os.getenv("TAG_ID", "tag-id-1")]).build()
         )
-        
+
         request = BindRequest.builder().request_body(request_body).build()
         request_option = RequestOption.builder().api_key(api_key).build()
-        response = await client.knowledge_base.v1.tag.abind_tags(request, request_option)
-        
-        print(f"Tags bound to dataset (async)")
-        
+        await client.knowledge_base.v1.tag.abind_tags(request, request_option)
+
+        print("Tags bound to dataset (async)")
+
     except Exception as e:
         print(f"Error binding tags (async): {e}")
 
@@ -77,10 +71,10 @@ async def bind_tags_async() -> None:
 def main() -> None:
     """Main function to run examples."""
     print("=== Tag Bind Examples ===\n")
-    
+
     print("1. Binding tags synchronously...")
     bind_tags_sync()
-    
+
     print("\n2. Binding tags asynchronously...")
     asyncio.run(bind_tags_async())
 

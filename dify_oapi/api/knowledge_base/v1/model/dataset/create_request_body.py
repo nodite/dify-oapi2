@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import Optional
-
 from pydantic import BaseModel
 
 from .retrieval_model import RetrievalModel
@@ -9,15 +7,15 @@ from .retrieval_model import RetrievalModel
 
 class CreateRequestBody(BaseModel):
     name: str | None = None
-    description: Optional[str] = None
-    indexing_technique: Optional[str] = None
-    permission: Optional[str] = None
-    provider: Optional[str] = None
-    external_knowledge_api_id: Optional[str] = None
-    external_knowledge_id: Optional[str] = None
-    embedding_model: Optional[str] = None
-    embedding_model_provider: Optional[str] = None
-    retrieval_model: Optional[RetrievalModel] = None
+    description: str | None = None
+    indexing_technique: str | None = None
+    permission: str | None = None
+    provider: str | None = None
+    external_knowledge_api_id: str | None = None
+    external_knowledge_id: str | None = None
+    embedding_model: str | None = None
+    embedding_model_provider: str | None = None
+    retrieval_model: RetrievalModel | None = None
 
     @staticmethod
     def builder() -> CreateRequestBodyBuilder:

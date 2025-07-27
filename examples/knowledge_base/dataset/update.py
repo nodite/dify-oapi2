@@ -8,7 +8,8 @@ This example demonstrates how to update dataset configuration using the Dify API
 import asyncio
 import os
 
-from dify_oapi.api.knowledge_base.v1.model.dataset.update_request import UpdateDatasetRequest
+from dify_oapi.api.knowledge_base.v1.model.dataset.update_request import UpdateRequest
+from dify_oapi.api.knowledge_base.v1.model.dataset.update_request_body import UpdateRequestBody
 from dify_oapi.api.knowledge_base.v1.model.dataset.retrieval_model import RetrievalModel
 from dify_oapi.api.knowledge_base.v1.model.dataset.reranking_model import RerankingModel
 from dify_oapi.client import Client
@@ -40,17 +41,24 @@ def update_dataset_sync() -> None:
             .build()
         )
         
-        # Build update request
-        dataset_id = os.getenv("DATASET_ID", "your-dataset-id-here")
-        request = (
-            UpdateDatasetRequest.builder()
-            .dataset_id(dataset_id)
+        # Build update request body
+        request_body = (
+            UpdateRequestBody.builder()
             .name("Updated Dataset Name")
             .indexing_technique("high_quality")
             .permission("all_team_members")
             .embedding_model_provider("openai")
             .embedding_model("text-embedding-3-large")
             .retrieval_model(retrieval_model)
+            .build()
+        )
+        
+        # Build update request
+        dataset_id = os.getenv("DATASET_ID", "your-dataset-id-here")
+        request = (
+            UpdateRequest.builder()
+            .dataset_id(dataset_id)
+            .request_body(request_body)
             .build()
         )
         
@@ -98,14 +106,21 @@ async def update_dataset_async() -> None:
             .build()
         )
         
-        # Build update request with minimal changes
-        dataset_id = os.getenv("DATASET_ID", "your-dataset-id-here")
-        request = (
-            UpdateDatasetRequest.builder()
-            .dataset_id(dataset_id)
+        # Build update request body with minimal changes
+        request_body = (
+            UpdateRequestBody.builder()
             .name("Async Updated Dataset")
             .permission("only_me")
             .retrieval_model(retrieval_model)
+            .build()
+        )
+        
+        # Build update request
+        dataset_id = os.getenv("DATASET_ID", "your-dataset-id-here")
+        request = (
+            UpdateRequest.builder()
+            .dataset_id(dataset_id)
+            .request_body(request_body)
             .build()
         )
         
@@ -139,13 +154,20 @@ def update_partial_members() -> None:
         # Initialize client
         client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
         
-        # Build update request for partial members
-        dataset_id = os.getenv("DATASET_ID", "your-dataset-id-here")
-        request = (
-            UpdateDatasetRequest.builder()
-            .dataset_id(dataset_id)
+        # Build update request body for partial members
+        request_body = (
+            UpdateRequestBody.builder()
             .permission("partial_members")
             .partial_member_list(["user-id-1", "user-id-2", "user-id-3"])
+            .build()
+        )
+        
+        # Build update request
+        dataset_id = os.getenv("DATASET_ID", "your-dataset-id-here")
+        request = (
+            UpdateRequest.builder()
+            .dataset_id(dataset_id)
+            .request_body(request_body)
             .build()
         )
         

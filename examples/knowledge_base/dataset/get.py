@@ -8,7 +8,7 @@ This example demonstrates how to get detailed information about a specific datas
 import asyncio
 import os
 
-from dify_oapi.api.knowledge_base.v1.model.dataset.get_request import GetDatasetRequest
+from dify_oapi.api.knowledge_base.v1.model.dataset.get_request import GetRequest
 from dify_oapi.client import Client
 from dify_oapi.core.model.request_option import RequestOption
 
@@ -21,7 +21,7 @@ def get_dataset_sync() -> None:
         
         # Build get request
         dataset_id = os.getenv("DATASET_ID", "your-dataset-id-here")
-        request = GetDatasetRequest.builder().dataset_id(dataset_id).build()
+        request = GetRequest.builder().dataset_id(dataset_id).build()
         
         # Set up request options
         request_option = RequestOption.builder().api_key(os.getenv("API_KEY")).build()
@@ -84,7 +84,7 @@ async def get_dataset_async() -> None:
         
         # Build get request
         dataset_id = os.getenv("DATASET_ID", "your-dataset-id-here")
-        request = GetDatasetRequest.builder().dataset_id(dataset_id).build()
+        request = GetRequest.builder().dataset_id(dataset_id).build()
         
         # Set up request options
         request_option = RequestOption.builder().api_key(os.getenv("API_KEY")).build()

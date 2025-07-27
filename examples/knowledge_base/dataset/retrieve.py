@@ -8,7 +8,8 @@ This example demonstrates how to perform retrieval search in a dataset using the
 import asyncio
 import os
 
-from dify_oapi.api.knowledge_base.v1.model.dataset.retrieve_request import RetrieveDatasetRequest
+from dify_oapi.api.knowledge_base.v1.model.dataset.retrieve_request import RetrieveRequest
+from dify_oapi.api.knowledge_base.v1.model.dataset.retrieve_request_body import RetrieveRequestBody
 from dify_oapi.api.knowledge_base.v1.model.dataset.retrieval_model import RetrievalModel
 from dify_oapi.api.knowledge_base.v1.model.dataset.reranking_model import RerankingModel
 from dify_oapi.api.knowledge_base.v1.model.dataset.metadata_filtering_conditions import MetadataFilteringConditions
@@ -34,13 +35,20 @@ def retrieve_basic_sync() -> None:
             .build()
         )
         
+        # Build retrieve request body
+        request_body = (
+            RetrieveRequestBody.builder()
+            .query("What is artificial intelligence?")
+            .retrieval_model(retrieval_model)
+            .build()
+        )
+        
         # Build retrieve request
         dataset_id = os.getenv("DATASET_ID", "your-dataset-id-here")
         request = (
-            RetrieveDatasetRequest.builder()
+            RetrieveRequest.builder()
             .dataset_id(dataset_id)
-            .query("What is artificial intelligence?")
-            .retrieval_model(retrieval_model)
+            .request_body(request_body)
             .build()
         )
         
@@ -95,13 +103,20 @@ async def retrieve_with_reranking_async() -> None:
             .build()
         )
         
+        # Build retrieve request body
+        request_body = (
+            RetrieveRequestBody.builder()
+            .query("machine learning algorithms")
+            .retrieval_model(retrieval_model)
+            .build()
+        )
+        
         # Build retrieve request
         dataset_id = os.getenv("DATASET_ID", "your-dataset-id-here")
         request = (
-            RetrieveDatasetRequest.builder()
+            RetrieveRequest.builder()
             .dataset_id(dataset_id)
-            .query("machine learning algorithms")
-            .retrieval_model(retrieval_model)
+            .request_body(request_body)
             .build()
         )
         
@@ -165,13 +180,20 @@ def retrieve_with_metadata_filtering() -> None:
             .build()
         )
         
+        # Build retrieve request body
+        request_body = (
+            RetrieveRequestBody.builder()
+            .query("API documentation")
+            .retrieval_model(retrieval_model)
+            .build()
+        )
+        
         # Build retrieve request
         dataset_id = os.getenv("DATASET_ID", "your-dataset-id-here")
         request = (
-            RetrieveDatasetRequest.builder()
+            RetrieveRequest.builder()
             .dataset_id(dataset_id)
-            .query("API documentation")
-            .retrieval_model(retrieval_model)
+            .request_body(request_body)
             .build()
         )
         

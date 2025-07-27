@@ -8,7 +8,7 @@ This example demonstrates how to delete a dataset using the Dify API.
 import asyncio
 import os
 
-from dify_oapi.api.knowledge_base.v1.model.dataset.delete_request import DeleteDatasetRequest
+from dify_oapi.api.knowledge_base.v1.model.dataset.delete_request import DeleteRequest
 from dify_oapi.client import Client
 from dify_oapi.core.model.request_option import RequestOption
 
@@ -21,7 +21,7 @@ def delete_dataset_sync() -> None:
         
         # Build delete request
         dataset_id = os.getenv("DATASET_ID", "your-dataset-id-here")
-        request = DeleteDatasetRequest.builder().dataset_id(dataset_id).build()
+        request = DeleteRequest.builder().dataset_id(dataset_id).build()
         
         # Set up request options
         request_option = RequestOption.builder().api_key(os.getenv("API_KEY")).build()
@@ -52,7 +52,7 @@ async def delete_dataset_async() -> None:
         
         # Build delete request
         dataset_id = os.getenv("DATASET_ID_ASYNC", "your-async-dataset-id-here")
-        request = DeleteDatasetRequest.builder().dataset_id(dataset_id).build()
+        request = DeleteRequest.builder().dataset_id(dataset_id).build()
         
         # Set up request options
         request_option = RequestOption.builder().api_key(os.getenv("API_KEY")).build()
@@ -108,7 +108,7 @@ def delete_multiple_datasets() -> None:
         
         for dataset_id in dataset_ids:
             try:
-                request = DeleteDatasetRequest.builder().dataset_id(dataset_id).build()
+                request = DeleteRequest.builder().dataset_id(dataset_id).build()
                 response = client.knowledge_base.v1.dataset.delete(request, request_option)
                 print(f"✓ Deleted dataset: {dataset_id}")
                 deleted_count += 1

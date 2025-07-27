@@ -104,10 +104,10 @@
 #### Dataset Examples:
 - [x] `examples/knowledge_base/dataset/create.py` - COMPLETED
 - [x] `examples/knowledge_base/dataset/list.py` - COMPLETED
-- [ ] `examples/knowledge_base/dataset/get.py`
-- [ ] `examples/knowledge_base/dataset/update.py`
-- [ ] `examples/knowledge_base/dataset/delete.py`
-- [ ] `examples/knowledge_base/dataset/retrieve.py`
+- [x] `examples/knowledge_base/dataset/get.py` - COMPLETED
+- [x] `examples/knowledge_base/dataset/update.py` - COMPLETED
+- [x] `examples/knowledge_base/dataset/delete.py` - COMPLETED
+- [x] `examples/knowledge_base/dataset/retrieve.py` - COMPLETED
 
 #### Metadata Examples:
 - [ ] `examples/knowledge_base/metadata/create.py`

@@ -11,9 +11,9 @@ class Parameter:
         self.config: Config = config
 
     def get(self, request: GetParameterRequest, option: RequestOption | None = None) -> GetParameterResponse:
-        # 发起请求
+        # Send request
         return Transport.execute(self.config, request, unmarshal_as=GetParameterResponse, option=option)
 
     async def aget(self, request: GetParameterRequest, option: RequestOption | None = None) -> GetParameterResponse:
-        # 发起请求
+        # Send request
         return await ATransport.aexecute(self.config, request, unmarshal_as=GetParameterResponse, option=option)

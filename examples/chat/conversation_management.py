@@ -3,6 +3,7 @@ from dify_oapi.api.chat.v1.model.message_history_request import MessageHistoryRe
 from dify_oapi.client import Client
 from dify_oapi.core.model.request_option import RequestOption
 
+
 def main():
     client = Client.builder().domain("https://api.dify.ai").build()
     req_option = RequestOption.builder().api_key("<your-api-key>").build()
@@ -20,6 +21,7 @@ def main():
 
         for message in history_response.data:
             print(f"Role: {message.role}, Content: {message.content}")
+
 
 if __name__ == "__main__":
     main()

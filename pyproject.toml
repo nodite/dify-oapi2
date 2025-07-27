@@ -57,12 +57,6 @@ select = [
     "I", # isort rules
     "UP",   # pyupgrade rules
     "E101", # mixed-spaces-and-tabs
-    "E111", # indentation-with-invalid-multiple
-    "E112", # no-indented-block
-    "E113", # unexpected-indentation
-    "E115", # no-indented-block-comment
-    "E116", # unexpected-indentation-comment
-    "E117", # over-indented
     "RUF019", # unnecessary-key-check
     "RUF100", # unused-noqa
     "RUF101", # redirected-noqa
@@ -71,6 +65,7 @@ select = [
     "W605", # invalid-escape-sequence
 ]
 ignore = [
+    "A002", # argument-is-shadowing-builtin
     "B904", # raise-without-from-inside-except
     "N805", # First argument of a method should be named `self`
     "N806", # Variable in function should be lowercase
@@ -113,16 +108,22 @@ optional = true
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.3.3"
 pytest-env = "^1.1.5"
+pytest-asyncio = "^1.1.0"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"
 
 [tool.poetry.group.format]
 optional = true
 [tool.poetry.group.format.dependencies]
 pre-commit = "^4.0.1"
 mypy = "^1.16.1"
+ruff = "^0.6.0"
+black = "^24.0.0"
 
 [tool.mypy]
-files = ["."] # 指定检查的文件或目录
-exclude = [".venv", "venv"]
+files = ["dify_oapi"] # 只检查主要代码
+exclude = [".venv", "venv", "examples", "tests"]
 
 python_version = "3.10"
 strict_optional = true
@@ -139,4 +140,19 @@ warn_redundant_casts = true
 strict_equality = true
 
 plugins = ["pydantic.mypy"]
+
+[tool.black]
+line-length = 120
+target-version = ['py310']
+include = '\.pyi?$'
+extend-exclude = '''
+# A regex preceded by ^/ will apply only to files and directories
+# in the root of the project.
+(
+  ^/build/          # exclude a directory named build in the root of the project
+  | ^/dist/         # exclude a directory named dist in the root of the project
+  | \.venv/         # exclude .venv directories anywhere in the project
+  | venv/           # exclude venv directories anywhere in the project
+)
+'''
 

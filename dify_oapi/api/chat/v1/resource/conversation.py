@@ -17,7 +17,7 @@ class Conversation:
     def list(
         self, request: GetConversationListRequest, option: RequestOption | None = None
     ) -> GetConversationListResponse:
-        # 发起请求
+        # Send request
         return Transport.execute(
             self.config,
             request,
@@ -28,7 +28,7 @@ class Conversation:
     async def alist(
         self, request: GetConversationListRequest, option: RequestOption | None = None
     ) -> GetConversationListResponse:
-        # 发起请求
+        # Send request
         return await ATransport.aexecute(
             self.config,
             request,
@@ -44,7 +44,7 @@ class Conversation:
     async def adelete(
         self, request: DeleteConversationRequest, option: RequestOption | None = None
     ) -> DeleteConversationResponse:
-        # 发起请求
+        # Send request
         return await ATransport.aexecute(self.config, request, unmarshal_as=DeleteConversationResponse, option=option)
 
     def rename(
@@ -55,5 +55,5 @@ class Conversation:
     async def arename(
         self, request: RenameConversationRequest, option: RequestOption | None = None
     ) -> RenameConversationResponse:
-        # 发起请求
+        # Send request
         return await ATransport.aexecute(self.config, request, unmarshal_as=RenameConversationResponse, option=option)

@@ -1,10 +1,12 @@
 from dify_oapi.core.model.config import Config
 
-from .resource import Dataset, Document, Segment
+from .resource import Dataset, Document, Metadata, Segment, Tag
 
 
 class V1:
     def __init__(self, config: Config):
         self.dataset: Dataset = Dataset(config)
         self.document: Document = Document(config)
+        self.metadata: Metadata = Metadata(config)
         self.segment: Segment = Segment(config)
+        self.tag: Tag = Tag(config)

@@ -133,11 +133,11 @@
 - [x] Update dataset resource files to import correct class names - COMPLETED
 - [x] Update example files to import correct class names - COMPLETED (all examples working)
 - [x] Update comprehensive integration test file - COMPLETED
-- [ ] Update remaining test files to import correct class names - IN PROGRESS
-- [ ] Update metadata and tag `__init__.py` files - PENDING
-- [ ] Update metadata and tag resource files - PENDING
+- [x] Update remaining test files to import correct class names - COMPLETED
+- [x] Update metadata and tag `__init__.py` files - COMPLETED
+- [x] Update metadata and tag resource files - COMPLETED
 
-**Note**: The main comprehensive integration test has been fixed and is passing. Some individual API integration tests still need request building pattern updates, but the core functionality is working correctly.
+**Note**: All integration tests have been fixed and are passing. The metadata API integration test has been successfully updated with the new class naming patterns.
 
 ### 4. Test All Examples with Environment Variables
 

@@ -1,4 +1,4 @@
-.PHONY: help install format lint check test clean build
+.PHONY: help install format lint check test clean build publish publish-test
 
 help: ## Show this help message
 	@echo "Available commands:"
@@ -38,6 +38,12 @@ clean: ## Clean build artifacts
 
 build: ## Build package
 	poetry build
+
+publish: clean build ## Build and publish package to PyPI
+	poetry publish
+
+publish-test: clean build ## Build and publish package to TestPyPI
+	poetry publish --repository testpypi
 
 pre-commit: ## Run pre-commit hooks
 	poetry run pre-commit run --all-files

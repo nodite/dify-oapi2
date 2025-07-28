@@ -13,7 +13,7 @@ This guide covers the development setup and workflow for the dify-oapi project.
 ### 1. Clone and Setup
 
 ```bash
-git clone https://github.com/QiMington/dify-oapi.git
+git clone https://github.com/nodite/dify-oapi.git
 cd dify-oapi
 make dev-setup
 ```

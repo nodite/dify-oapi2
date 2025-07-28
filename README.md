@@ -146,7 +146,7 @@ For detailed examples and usage patterns, see the [examples README](./examples/R
 
 ```bash
 # Clone repository
-git clone https://github.com/QiMington/dify-oapi.git
+git clone https://github.com/nodite/dify-oapi.git
 cd dify-oapi
 
 # Setup development environment (installs dependencies and pre-commit hooks)
@@ -240,7 +240,7 @@ This project is licensed under the MIT License - see the [LICENSE](./LICENSE) fi
 ## 🔗 Links
 
 - **PyPI Package**: https://pypi.org/project/dify-oapi/
-- **Source Code**: https://github.com/QiMington/dify-oapi
+- **Source Code**: https://github.com/nodite/dify-oapi
 - **Dify Platform**: https://dify.ai/
 - **Dify API Docs**: https://docs.dify.ai/
 

@@ -355,5 +355,5 @@ When adding new examples:
 
 For issues with the examples or API:
 1. Check the [Dify API Documentation](https://docs.dify.ai/)
-2. Review the [dify-oapi GitHub repository](https://github.com/QiMington/dify-oapi)
+2. Review the [dify-oapi GitHub repository](https://github.com/nodite/dify-oapi)
 3. Open an issue with detailed error information

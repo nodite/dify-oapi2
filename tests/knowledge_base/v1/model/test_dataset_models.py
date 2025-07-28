@@ -93,15 +93,76 @@ class TestMetadataFilteringConditions:
         assert len(filtering.conditions) == 0
 
 
+class TestKeywordSetting:
+    def test_direct_instantiation(self):
+        from dify_oapi.api.knowledge_base.v1.model.dataset.retrieval_model import KeywordSetting
+
+        setting = KeywordSetting(keyword_weight=0.7)
+        assert setting.keyword_weight == 0.7
+
+    def test_default_values(self):
+        from dify_oapi.api.knowledge_base.v1.model.dataset.retrieval_model import KeywordSetting
+
+        setting = KeywordSetting()
+        assert setting.keyword_weight is None
+
+
+class TestVectorSetting:
+    def test_direct_instantiation(self):
+        from dify_oapi.api.knowledge_base.v1.model.dataset.retrieval_model import VectorSetting
+
+        setting = VectorSetting(
+            vector_weight=0.3, embedding_model_name="text-embedding-3", embedding_provider_name="openai"
+        )
+        assert setting.vector_weight == 0.3
+        assert setting.embedding_model_name == "text-embedding-3"
+        assert setting.embedding_provider_name == "openai"
+
+    def test_default_values(self):
+        from dify_oapi.api.knowledge_base.v1.model.dataset.retrieval_model import VectorSetting
+
+        setting = VectorSetting()
+        assert setting.vector_weight is None
+        assert setting.embedding_model_name is None
+        assert setting.embedding_provider_name is None
+
+
+class TestWeights:
+    def test_direct_instantiation(self):
+        from dify_oapi.api.knowledge_base.v1.model.dataset.retrieval_model import KeywordSetting, VectorSetting, Weights
+
+        keyword_setting = KeywordSetting(keyword_weight=0.7)
+        vector_setting = VectorSetting(vector_weight=0.3, embedding_model_name="text-embedding-3")
+
+        weights = Weights(keyword_setting=keyword_setting, vector_setting=vector_setting)
+        assert weights.keyword_setting.keyword_weight == 0.7
+        assert weights.vector_setting.vector_weight == 0.3
+        assert weights.vector_setting.embedding_model_name == "text-embedding-3"
+
+    def test_default_values(self):
+        from dify_oapi.api.knowledge_base.v1.model.dataset.retrieval_model import Weights
+
+        weights = Weights()
+        assert weights.keyword_setting is None
+        assert weights.vector_setting is None
+
+
 class TestRetrievalModel:
     def test_direct_instantiation(self):
+        from dify_oapi.api.knowledge_base.v1.model.dataset.retrieval_model import KeywordSetting, VectorSetting, Weights
+
         reranking = RerankingModel(reranking_provider_name="provider", reranking_model_name="model")
         filtering = MetadataFilteringConditions(logical_operator="and", conditions=[])
+        keyword_setting = KeywordSetting(keyword_weight=0.7)
+        vector_setting = VectorSetting(vector_weight=0.3)
+        weights = Weights(keyword_setting=keyword_setting, vector_setting=vector_setting)
 
         model = RetrievalModel(
             search_method="hybrid_search",
             reranking_enable=True,
+            reranking_mode="reranking_model",
             reranking_model=reranking,
+            weights=weights,
             top_k=10,
             score_threshold_enabled=True,
             score_threshold=0.8,
@@ -109,11 +170,26 @@ class TestRetrievalModel:
         )
         assert model.search_method == "hybrid_search"
         assert model.reranking_enable is True
+        assert model.reranking_mode == "reranking_model"
+        assert model.weights.keyword_setting.keyword_weight == 0.7
+        assert model.weights.vector_setting.vector_weight == 0.3
         assert model.top_k == 10
         assert model.score_threshold == 0.8
         assert model.metadata_filtering_conditions is not None
 
-    def test_default_search_method(self):
+    def test_default_values(self):
+        model = RetrievalModel()
+        assert model.search_method is None
+        assert model.reranking_enable is None
+        assert model.reranking_mode is None
+        assert model.reranking_model is None
+        assert model.weights is None
+        assert model.top_k is None
+        assert model.score_threshold_enabled is None
+        assert model.score_threshold is None
+        assert model.metadata_filtering_conditions is None
+
+    def test_with_search_method_only(self):
         model = RetrievalModel(search_method="semantic_search")
         assert model.search_method == "semantic_search"
 

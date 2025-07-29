@@ -7,6 +7,7 @@ readme = "README.md"
 license = "MIT"
 keywords = ["dify", "nlp", "ai", "language-processing"]
 homepage = 'https://github.com/nodite/dify-oapi2'
+packages = [{include = "dify_oapi"}]
 
 [build-system]
 requires = ["poetry-core"]

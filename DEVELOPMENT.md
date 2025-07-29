@@ -13,7 +13,7 @@ This guide covers the development setup and workflow for the dify-oapi project.
 ### 1. Clone and Setup
 
 ```bash
-git clone https://github.com/nodite/dify-oapi.git
+git clone https://github.com/nodite/dify-oapi2.git
 cd dify-oapi
 make dev-setup
 ```
@@ -157,7 +157,7 @@ make pre-commit
 git pull origin main
 
 # Install/update dependencies
-poetry install --with dev,format
+make install
 ```
 
 ### 2. During Development
@@ -190,6 +190,20 @@ git commit -m "Your commit message"
 git push origin your-branch
 ```
 
+## Publishing Configuration
+
+### PyPI Token Setup
+
+Before publishing packages, configure Poetry with your PyPI tokens:
+
+```bash
+# Configure TestPyPI token
+poetry config http-basic.testpypi __token__ <your-testpypi-token>
+
+# Configure PyPI token
+poetry config http-basic.pypi __token__ <your-pypi-token>
+```
+
 ## Available Make Commands
 
 Run `make help` to see all available commands:
@@ -200,13 +214,19 @@ make help
 
 Common commands:
 - `make dev-setup` - Setup development environment
-- `make format` - Format code with Ruff
-- `make lint` - Check code with Ruff
-- `make fix` - Fix auto-fixable issues
-- `make check` - Run all checks
+- `make install` - Install dependencies
+- `make format` - Format code with ruff
+- `make lint` - Lint code with ruff
+- `make fix` - Fix linting issues with ruff
+- `make check` - Run all checks (lint + type check)
 - `make test` - Run tests
+- `make test-cov` - Run tests with coverage
 - `make clean` - Clean build artifacts
 - `make build` - Build package
+- `make publish` - Build and publish package to PyPI
+- `make publish-test` - Build and publish package to TestPyPI
+- `make pre-commit` - Run pre-commit hooks
+- `make install-hooks` - Install pre-commit hooks
 
 ## VS Code Configuration
 
@@ -245,7 +265,7 @@ poetry run pre-commit run --all-files
 
 ```bash
 # Reinstall dependencies
-poetry install --with dev,format
+make install
 
 # Check Python path in VS Code
 # Ctrl+Shift+P → "Python: Select Interpreter"

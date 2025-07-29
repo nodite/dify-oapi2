@@ -1,10 +1,12 @@
 # Dify-OAPI
 
-[![PyPI version](https://badge.fury.io/py/dify-oapi.svg)](https://badge.fury.io/py/dify-oapi)
+[![PyPI version](https://badge.fury.io/py/dify-oapi2.svg)](https://badge.fury.io/py/dify-oapi2)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 A Python SDK for interacting with the Dify Service-API. This library provides a fluent, type-safe interface for building AI-powered applications using Dify's API services including chat, completion, knowledge base, and workflow features.
+
+> This project is based on https://github.com/QiMington/dify-oapi, with refactoring and support for the latest Dify API.
 
 ## ✨ Features
 
@@ -19,7 +21,7 @@ A Python SDK for interacting with the Dify Service-API. This library provides a 
 ## 📦 Installation
 
 ```bash
-pip install dify-oapi
+pip install dify-oapi2
 ```
 
 **Requirements**: Python 3.10+
@@ -146,7 +148,7 @@ For detailed examples and usage patterns, see the [examples README](./examples/R
 
 ```bash
 # Clone repository
-git clone https://github.com/nodite/dify-oapi.git
+git clone https://github.com/nodite/dify-oapi2.git
 cd dify-oapi
 
 # Setup development environment (installs dependencies and pre-commit hooks)
@@ -163,15 +165,23 @@ This project uses modern Python tooling:
 - **Pylint**: Additional code analysis
 
 ```bash
-# Format and lint
+# Format code
 make format
+
+# Lint code
+make lint
+
+# Fix linting issues
 make fix
 
-# Type checking
+# Run all checks (lint + type check)
 make check
 
-# Install pre-commit hooks (if not already installed)
+# Install pre-commit hooks
 make install-hooks
+
+# Run pre-commit hooks manually
+make pre-commit
 ```
 
 ### Testing
@@ -182,17 +192,27 @@ export DOMAIN="https://api.dify.ai"
 export CHAT_KEY="your-api-key"
 
 # Run tests
-poetry run pytest tests/
+make test
+
+# Run tests with coverage
+make test-cov
 ```
 
 ### Build & Publish
 
 ```bash
-# Build package
-poetry build
+# Configure PyPI tokens (one-time setup)
+poetry config http-basic.testpypi __token__ <your-testpypi-token>
+poetry config http-basic.pypi __token__ <your-pypi-token>
 
-# Publish (maintainers only)
-./build.sh
+# Build package
+make build
+
+# Publish to TestPyPI (for testing)
+make publish-test
+
+# Publish to PyPI (maintainers only)
+make publish
 ```
 
 ### Project Structure
@@ -239,8 +259,8 @@ This project is licensed under the MIT License - see the [LICENSE](./LICENSE) fi
 
 ## 🔗 Links
 
-- **PyPI Package**: https://pypi.org/project/dify-oapi/
-- **Source Code**: https://github.com/nodite/dify-oapi
+- **PyPI Package**: https://pypi.org/project/dify-oapi2/
+- **Source Code**: https://github.com/nodite/dify-oapi2
 - **Dify Platform**: https://dify.ai/
 - **Dify API Docs**: https://docs.dify.ai/
 

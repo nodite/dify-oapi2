@@ -839,3 +839,71 @@ def test_indexing_status_builder_method_chaining() -> None:
     assert isinstance(request, IndexingStatusRequest)
     assert request.dataset_id == "test"
     assert request.batch == "test-batch"
+
+
+# ===== DELETE API MODELS TESTS =====
+
+
+def test_delete_request_builder() -> None:
+    """Test DeleteRequest builder pattern."""
+    from dify_oapi.api.knowledge_base.v1.model.document.delete_request import DeleteRequest
+    from dify_oapi.core.enum import HttpMethod
+
+    request = DeleteRequest.builder().dataset_id("dataset-123").document_id("doc-456").build()
+
+    assert request.dataset_id == "dataset-123"
+    assert request.document_id == "doc-456"
+    assert request.http_method == HttpMethod.DELETE
+    assert request.uri == "/v1/datasets/:dataset_id/documents/:document_id"
+    assert request.paths["dataset_id"] == "dataset-123"
+    assert request.paths["document_id"] == "doc-456"
+
+
+def test_delete_response_model() -> None:
+    """Test DeleteResponse model for 204 No Content."""
+    from dify_oapi.api.knowledge_base.v1.model.document.delete_response import DeleteResponse
+
+    response = DeleteResponse()
+
+    # Test that response is empty (204 No Content)
+    assert response.model_dump() == {}
+
+
+def test_delete_dual_path_parameters() -> None:
+    """Test dual path parameter handling in DeleteRequest."""
+    from dify_oapi.api.knowledge_base.v1.model.document.delete_request import DeleteRequest
+
+    request = DeleteRequest.builder().dataset_id("test-dataset-delete").document_id("test-document-delete").build()
+
+    assert request.dataset_id == "test-dataset-delete"
+    assert request.document_id == "test-document-delete"
+    assert request.paths["dataset_id"] == "test-dataset-delete"
+    assert request.paths["document_id"] == "test-document-delete"
+
+
+def test_delete_builder_method_chaining() -> None:
+    """Test builder method chaining for DeleteRequest."""
+    from dify_oapi.api.knowledge_base.v1.model.document.delete_request import DeleteRequest
+
+    builder = DeleteRequest.builder()
+
+    # Test that each method returns the builder instance
+    assert builder.dataset_id("test") is builder
+    assert builder.document_id("test-doc") is builder
+
+    # Test final build
+    request = builder.build()
+    assert isinstance(request, DeleteRequest)
+    assert request.dataset_id == "test"
+    assert request.document_id == "test-doc"
+
+
+def test_delete_http_method_configuration() -> None:
+    """Test DELETE method configuration in DeleteRequest."""
+    from dify_oapi.api.knowledge_base.v1.model.document.delete_request import DeleteRequest
+    from dify_oapi.core.enum import HttpMethod
+
+    request = DeleteRequest.builder().dataset_id("dataset-test").document_id("doc-test").build()
+
+    assert request.http_method == HttpMethod.DELETE
+    assert request.uri == "/v1/datasets/:dataset_id/documents/:document_id"

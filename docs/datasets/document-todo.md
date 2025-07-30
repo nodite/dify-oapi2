@@ -119,13 +119,13 @@ This document tracks the implementation progress of the Document API functionali
 ### Phase 5: Clean Up Legacy Models
 
 #### Step 5.1: Remove Legacy Model Files
-- [ ] Remove legacy document model files
-- [ ] Update any remaining import statements
+- [x] Remove legacy document model files
+- [x] Update any remaining import statements
 
 #### Step 5.2: Verify Legacy Cleanup
-- [ ] Search for legacy imports
-- [ ] Run full test suite
-- [ ] Verify functionality
+- [x] Search for legacy imports
+- [x] Run full test suite
+- [x] Verify functionality
 
 ### Phase 6: Create Examples
 
@@ -189,12 +189,12 @@ This document tracks the implementation progress of the Document API functionali
 - [x] Phase 2: Migrate Existing Document APIs (14/14 steps)
 - [x] Phase 3: Implement New Document APIs (6/6 steps)
 - [x] Phase 4: Update Resource Class (2/2 steps)
-- [ ] Phase 5: Clean Up Legacy Models (0/2 steps)
+- [x] Phase 5: Clean Up Legacy Models (2/2 steps)
 - [ ] Phase 6: Create Examples (0/5 steps)
 - [ ] Phase 7: Integration Testing (0/2 steps)
 - [ ] Phase 8: Final Validation (0/2 steps)
 
-### Overall Progress: 22/35 steps completed (63%)
+### Overall Progress: 24/35 steps completed (69%)
 
 ## Notes
 - Each step should be completed and tested before proceeding to the next

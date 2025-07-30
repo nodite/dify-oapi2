@@ -516,3 +516,122 @@ def test_create_by_text_builder_method_chaining() -> None:
     assert request_body.indexing_technique == "high_quality"
     assert request_body.doc_form == "text_model"
     assert request_body.doc_language == "English"
+
+
+# ===== UPDATE BY TEXT API MODELS TESTS =====
+
+
+def test_update_by_text_request_builder() -> None:
+    """Test UpdateByTextRequest builder pattern."""
+    from dify_oapi.api.knowledge_base.v1.model.document.update_by_text_request import UpdateByTextRequest
+    from dify_oapi.api.knowledge_base.v1.model.document.update_by_text_request_body import UpdateByTextRequestBody
+    from dify_oapi.core.enum import HttpMethod
+
+    request_body = UpdateByTextRequestBody.builder().name("Updated Document").text("Updated content").build()
+
+    request = (
+        UpdateByTextRequest.builder()
+        .dataset_id("dataset-123")
+        .document_id("doc-456")
+        .request_body(request_body)
+        .build()
+    )
+
+    assert request.dataset_id == "dataset-123"
+    assert request.document_id == "doc-456"
+    assert request.request_body is not None
+    assert request.request_body.name == "Updated Document"
+    assert request.request_body.text == "Updated content"
+    assert request.http_method == HttpMethod.POST
+    assert request.uri == "/v1/datasets/:dataset_id/documents/:document_id/update-by-text"
+    assert request.paths["dataset_id"] == "dataset-123"
+    assert request.paths["document_id"] == "doc-456"
+
+
+def test_update_by_text_request_body_validation() -> None:
+    """Test UpdateByTextRequestBody validation and builder."""
+    from dify_oapi.api.knowledge_base.v1.model.document.process_rule import ProcessRule
+    from dify_oapi.api.knowledge_base.v1.model.document.update_by_text_request_body import UpdateByTextRequestBody
+
+    process_rule = ProcessRule.builder().mode("custom").rules({"key": "value"}).build()
+
+    request_body = (
+        UpdateByTextRequestBody.builder()
+        .name("Updated Test Document")
+        .text("This is updated text content")
+        .process_rule(process_rule)
+        .build()
+    )
+
+    assert request_body.name == "Updated Test Document"
+    assert request_body.text == "This is updated text content"
+    assert request_body.process_rule is not None
+    assert request_body.process_rule.mode == "custom"
+    assert request_body.process_rule.rules == {"key": "value"}
+
+
+def test_update_by_text_request_body_optional_fields() -> None:
+    """Test UpdateByTextRequestBody with optional fields."""
+    from dify_oapi.api.knowledge_base.v1.model.document.update_by_text_request_body import UpdateByTextRequestBody
+
+    # Test with minimal fields
+    request_body = UpdateByTextRequestBody.builder().name("Minimal Update").build()
+
+    assert request_body.name == "Minimal Update"
+    assert request_body.text is None
+    assert request_body.process_rule is None
+
+    # Test with only text
+    text_only_body = UpdateByTextRequestBody.builder().text("Only text update").build()
+
+    assert text_only_body.name is None
+    assert text_only_body.text == "Only text update"
+    assert text_only_body.process_rule is None
+
+
+def test_update_by_text_response_model() -> None:
+    """Test UpdateByTextResponse model."""
+    from dify_oapi.api.knowledge_base.v1.model.document.document_info import DocumentInfo
+    from dify_oapi.api.knowledge_base.v1.model.document.update_by_text_response import UpdateByTextResponse
+
+    doc_info = DocumentInfo.builder().id("doc-updated").name("Updated Document").enabled(True).build()
+    response = UpdateByTextResponse(document=doc_info, batch="batch-update-123")
+
+    assert response.document is not None
+    assert response.document.id == "doc-updated"
+    assert response.document.name == "Updated Document"
+    assert response.document.enabled is True
+    assert response.batch == "batch-update-123"
+
+
+def test_update_by_text_dual_path_parameters() -> None:
+    """Test dual path parameter handling in UpdateByTextRequest."""
+    from dify_oapi.api.knowledge_base.v1.model.document.update_by_text_request import UpdateByTextRequest
+
+    request = UpdateByTextRequest.builder().dataset_id("test-dataset-789").document_id("test-document-101").build()
+
+    assert request.dataset_id == "test-dataset-789"
+    assert request.document_id == "test-document-101"
+    assert request.paths["dataset_id"] == "test-dataset-789"
+    assert request.paths["document_id"] == "test-document-101"
+
+
+def test_update_by_text_builder_method_chaining() -> None:
+    """Test builder method chaining for UpdateByTextRequestBody."""
+    from dify_oapi.api.knowledge_base.v1.model.document.process_rule import ProcessRule
+    from dify_oapi.api.knowledge_base.v1.model.document.update_by_text_request_body import UpdateByTextRequestBody
+
+    builder = UpdateByTextRequestBody.builder()
+    process_rule = ProcessRule.builder().mode("automatic").build()
+
+    # Test that each method returns the builder instance
+    assert builder.name("test") is builder
+    assert builder.text("test content") is builder
+    assert builder.process_rule(process_rule) is builder
+
+    # Test final build
+    request_body = builder.build()
+    assert isinstance(request_body, UpdateByTextRequestBody)
+    assert request_body.name == "test"
+    assert request_body.text == "test content"
+    assert request_body.process_rule == process_rule

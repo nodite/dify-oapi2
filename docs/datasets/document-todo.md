@@ -44,12 +44,12 @@ This document tracks the implementation progress of the Document API functionali
 - [x] Add Create By File API models tests to test_document_models.py
 
 #### Step 2.5: Create Text Update API Models
-- [ ] update_by_text_request.py
-- [ ] update_by_text_request_body.py
-- [ ] update_by_text_response.py
+- [x] update_by_text_request.py
+- [x] update_by_text_request_body.py
+- [x] update_by_text_response.py
 
 #### Step 2.6: Test Text Update API Models
-- [ ] Add Update By Text API models tests to test_document_models.py
+- [x] Add Update By Text API models tests to test_document_models.py
 
 #### Step 2.7: Create File Update API Models
 - [ ] update_by_file_request.py

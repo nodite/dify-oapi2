@@ -635,3 +635,137 @@ def test_update_by_text_builder_method_chaining() -> None:
     assert request_body.name == "test"
     assert request_body.text == "test content"
     assert request_body.process_rule == process_rule
+
+
+# ===== UPDATE BY FILE API MODELS TESTS =====
+
+
+def test_update_by_file_request_builder() -> None:
+    """Test UpdateByFileRequest builder pattern."""
+    from dify_oapi.api.knowledge_base.v1.model.document.update_by_file_request import UpdateByFileRequest
+    from dify_oapi.api.knowledge_base.v1.model.document.update_by_file_request_body import UpdateByFileRequestBody
+    from dify_oapi.core.enum import HttpMethod
+
+    request_body = UpdateByFileRequestBody.builder().name("Updated File Document").file("updated_file.pdf").build()
+
+    request = (
+        UpdateByFileRequest.builder()
+        .dataset_id("dataset-123")
+        .document_id("doc-456")
+        .request_body(request_body)
+        .build()
+    )
+
+    assert request.dataset_id == "dataset-123"
+    assert request.document_id == "doc-456"
+    assert request.request_body is not None
+    assert request.request_body.name == "Updated File Document"
+    assert request.request_body.file == "updated_file.pdf"
+    assert request.http_method == HttpMethod.POST
+    assert request.uri == "/v1/datasets/:dataset_id/documents/:document_id/update-by-file"
+    assert request.paths["dataset_id"] == "dataset-123"
+    assert request.paths["document_id"] == "doc-456"
+
+
+def test_update_by_file_request_body_validation() -> None:
+    """Test UpdateByFileRequestBody validation and builder."""
+    from dify_oapi.api.knowledge_base.v1.model.document.process_rule import ProcessRule
+    from dify_oapi.api.knowledge_base.v1.model.document.update_by_file_request_body import UpdateByFileRequestBody
+
+    process_rule = ProcessRule.builder().mode("custom").rules({"key": "value"}).build()
+
+    request_body = (
+        UpdateByFileRequestBody.builder()
+        .name("Updated File Test Document")
+        .file("test_file.docx")
+        .process_rule(process_rule)
+        .build()
+    )
+
+    assert request_body.name == "Updated File Test Document"
+    assert request_body.file == "test_file.docx"
+    assert request_body.process_rule is not None
+    assert request_body.process_rule.mode == "custom"
+    assert request_body.process_rule.rules == {"key": "value"}
+
+
+def test_update_by_file_request_body_optional_fields() -> None:
+    """Test UpdateByFileRequestBody with optional fields."""
+    from dify_oapi.api.knowledge_base.v1.model.document.update_by_file_request_body import UpdateByFileRequestBody
+
+    # Test with minimal fields
+    request_body = UpdateByFileRequestBody.builder().name("Minimal File Update").build()
+
+    assert request_body.name == "Minimal File Update"
+    assert request_body.file is None
+    assert request_body.process_rule is None
+
+    # Test with only file
+    file_only_body = UpdateByFileRequestBody.builder().file("only_file.txt").build()
+
+    assert file_only_body.name is None
+    assert file_only_body.file == "only_file.txt"
+    assert file_only_body.process_rule is None
+
+
+def test_update_by_file_response_model() -> None:
+    """Test UpdateByFileResponse model."""
+    from dify_oapi.api.knowledge_base.v1.model.document.document_info import DocumentInfo
+    from dify_oapi.api.knowledge_base.v1.model.document.update_by_file_response import UpdateByFileResponse
+
+    doc_info = DocumentInfo.builder().id("doc-file-updated").name("Updated File Document").enabled(True).build()
+    response = UpdateByFileResponse(document=doc_info, batch="batch-file-update-123")
+
+    assert response.document is not None
+    assert response.document.id == "doc-file-updated"
+    assert response.document.name == "Updated File Document"
+    assert response.document.enabled is True
+    assert response.batch == "batch-file-update-123"
+
+
+def test_update_by_file_dual_path_parameters() -> None:
+    """Test dual path parameter handling in UpdateByFileRequest."""
+    from dify_oapi.api.knowledge_base.v1.model.document.update_by_file_request import UpdateByFileRequest
+
+    request = (
+        UpdateByFileRequest.builder().dataset_id("test-dataset-file-789").document_id("test-document-file-101").build()
+    )
+
+    assert request.dataset_id == "test-dataset-file-789"
+    assert request.document_id == "test-document-file-101"
+    assert request.paths["dataset_id"] == "test-dataset-file-789"
+    assert request.paths["document_id"] == "test-document-file-101"
+
+
+def test_update_by_file_builder_method_chaining() -> None:
+    """Test builder method chaining for UpdateByFileRequestBody."""
+    from dify_oapi.api.knowledge_base.v1.model.document.process_rule import ProcessRule
+    from dify_oapi.api.knowledge_base.v1.model.document.update_by_file_request_body import UpdateByFileRequestBody
+
+    builder = UpdateByFileRequestBody.builder()
+    process_rule = ProcessRule.builder().mode("automatic").build()
+
+    # Test that each method returns the builder instance
+    assert builder.name("test") is builder
+    assert builder.file("test_file.pdf") is builder
+    assert builder.process_rule(process_rule) is builder
+
+    # Test final build
+    request_body = builder.build()
+    assert isinstance(request_body, UpdateByFileRequestBody)
+    assert request_body.name == "test"
+    assert request_body.file == "test_file.pdf"
+    assert request_body.process_rule == process_rule
+
+
+def test_update_by_file_multipart_handling() -> None:
+    """Test multipart/form-data handling for UpdateByFileRequestBody."""
+    from dify_oapi.api.knowledge_base.v1.model.document.update_by_file_request_body import UpdateByFileRequestBody
+
+    request_body = (
+        UpdateByFileRequestBody.builder().name("Multipart Test Document").file("/path/to/test_file.pdf").build()
+    )
+
+    assert request_body.name == "Multipart Test Document"
+    assert request_body.file == "/path/to/test_file.pdf"
+    assert request_body.process_rule is None

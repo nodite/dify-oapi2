@@ -170,7 +170,7 @@ This document outlines the design for implementing comprehensive dataset managem
 **Public/Common Classes**:
 - Public classes (DatasetInfo, TagInfo, MetadataInfo, RetrievalModel, etc.) MUST inherit from `pydantic.BaseModel` ONLY
 - Public classes MUST NOT inherit from `BaseResponse`
-- Public classes MUST NOT have Builder patterns
+- Public classes MUST have Builder patterns for consistency and ease of use
 - Public classes are reusable components that can be used across different contexts
 - Examples: `DatasetInfo`, `TagInfo`, `MetadataInfo`, `RetrievalModel`, `RerankingModel`, `ExternalKnowledgeInfo`
 
@@ -182,44 +182,226 @@ This document outlines the design for implementing comprehensive dataset managem
 - Response classes MUST NOT have Builder patterns (unlike Request classes)
 
 **Builder Pattern Rules**:
-- ONLY Request and RequestBody classes should have Builder patterns
-- Public/common classes should be instantiated directly using Pydantic's standard initialization
+- Request, RequestBody, and Public/Common classes MUST have Builder patterns
+- Public/common classes can be instantiated directly using Pydantic's standard initialization OR via builder pattern
 - Response classes should be instantiated by the transport layer, not manually
+- Builder patterns provide fluent interface for complex object construction
 
 **Inheritance Examples**:
 ```python
-# ✅ CORRECT: Public class inherits from BaseModel only, no Builder
+# ✅ CORRECT: Public class inherits from BaseModel with Builder pattern
 class DatasetInfo(BaseModel):
     id: Optional[str] = None
     name: Optional[str] = None
     # ... other fields
-    # NO builder() method or Builder class
+    
+    @staticmethod
+    def builder() -> DatasetInfoBuilder:
+        return DatasetInfoBuilder()
+
+class DatasetInfoBuilder:
+    def __init__(self):
+        self._dataset_info = DatasetInfo()
+    
+    def build(self) -> DatasetInfo:
+        return self._dataset_info
+    
+    def id(self, id: str) -> DatasetInfoBuilder:
+        self._dataset_info.id = id
+        return self
+    
+    def name(self, name: str) -> DatasetInfoBuilder:
+        self._dataset_info.name = name
+        return self
 
 # ✅ CORRECT: Response class uses multiple inheritance, no Builder
 class CreateResponse(DatasetInfo, BaseResponse):
     """Response model for dataset creation API"""
     pass  # NO builder() method or Builder class
 
-# ✅ CORRECT: Direct instantiation of public classes
+# ✅ CORRECT: Public classes can be instantiated directly OR via builder
 dataset_info = DatasetInfo(id="123", name="Test Dataset")
+# OR
+dataset_info = DatasetInfo.builder().id("123").name("Test Dataset").build()
 
 # ❌ WRONG: Public class inheriting from BaseResponse
 class DatasetInfo(BaseResponse):  # DON'T DO THIS
     # ...
-
-# ❌ WRONG: Public class with Builder pattern
-class DatasetInfo(BaseModel):
-    # ...
-    @staticmethod
-    def builder() -> DatasetInfoBuilder:  # DON'T DO THIS
-        return DatasetInfoBuilder()
 
 # ❌ WRONG: Response class only inheriting from public class
 class CreateResponse(DatasetInfo):  # Missing BaseResponse
     # ...
 ```
 
-### 8. Model File Organization
+### 8. Public Class Builder Pattern Rules (MANDATORY)
+**Decision**: All public classes MUST implement builder patterns for consistency and usability
+
+#### Builder Pattern Implementation Requirements
+**Scope**: All public/common classes that inherit from `pydantic.BaseModel`
+- **Target Classes**: `DatasetInfo`, `TagInfo`, `MetadataInfo`, `RetrievalModel`, `RerankingModel`, `ExternalKnowledgeInfo`, `FilterCondition`, `MetadataFilteringConditions`, `KeywordSetting`, `VectorSetting`, `Weights`, `Document`, `DocumentDataSourceInfo`, `DocumentDataSourceDetailDict`, `DocumentDataSourceDetailDictUploadFile`, `Segment`, and all other public model classes
+- **Exclusions**: Request, RequestBody, and Response classes (which have their own builder rules)
+
+#### Implementation Pattern
+**Standard Builder Structure**:
+```python
+class PublicClass(BaseModel):
+    field1: str | None = None
+    field2: int | None = None
+    # ... other fields
+    
+    @staticmethod
+    def builder() -> PublicClassBuilder:
+        return PublicClassBuilder()
+
+class PublicClassBuilder:
+    def __init__(self):
+        self._public_class = PublicClass()
+    
+    def build(self) -> PublicClass:
+        return self._public_class
+    
+    def field1(self, field1: str) -> PublicClassBuilder:
+        self._public_class.field1 = field1
+        return self
+    
+    def field2(self, field2: int) -> PublicClassBuilder:
+        self._public_class.field2 = field2
+        return self
+```
+
+#### Builder Method Naming Rules
+**Field Method Names**:
+- Method names MUST match field names exactly
+- Use snake_case for method names (matching field names)
+- Handle reserved keywords by using trailing underscore (e.g., `id_()` for `id` field)
+- Complex nested objects should accept the nested object type as parameter
+
+#### Forward Reference Handling
+**Import Requirements**:
+- ALL public class files MUST include `from __future__ import annotations` at the top
+- This prevents forward reference issues when builder methods reference the builder class
+- Essential for proper type hints in `@staticmethod` decorators
+
+#### Usage Flexibility
+**Instantiation Options**:
+- Direct instantiation: `obj = PublicClass(field1="value", field2=123)`
+- Builder pattern: `obj = PublicClass.builder().field1("value").field2(123).build()`
+- Both approaches are valid and should be supported
+- Builder pattern provides fluent interface for complex object construction
+- Direct instantiation is suitable for simple cases
+
+#### Validation and Type Safety
+**Requirements**:
+- All builder methods MUST include proper type hints
+- Builder methods MUST return the builder instance for method chaining
+- `build()` method MUST return the target class instance
+- Leverage Pydantic's built-in validation (no custom validation in builders)
+- Use `Optional[Type]` or `Type | None` for optional fields
+
+#### Testing Requirements
+**Builder Testing**:
+- Unit tests MUST verify builder pattern functionality for all public classes
+- Test both direct instantiation and builder pattern approaches
+- Verify method chaining works correctly
+- Test serialization/deserialization with builder-created objects
+- Validate type hints and return types
+
+#### Benefits of Public Class Builders
+**Developer Experience**:
+- Consistent API across all public classes
+- Fluent interface for complex object construction
+- Better IDE support with method chaining
+- Improved readability for complex object initialization
+- Easier testing and mocking
+- Enhanced maintainability
+
+#### Implementation Examples
+**Simple Public Class**:
+```python
+from __future__ import annotations
+from pydantic import BaseModel
+
+class TagInfo(BaseModel):
+    id: str
+    name: str
+    type: str | None = None
+    binding_count: int | None = None
+
+    @staticmethod
+    def builder() -> TagInfoBuilder:
+        return TagInfoBuilder()
+
+class TagInfoBuilder:
+    def __init__(self):
+        self._tag_info = TagInfo(id="", name="")
+
+    def build(self) -> TagInfo:
+        return self._tag_info
+
+    def id(self, id: str) -> TagInfoBuilder:
+        self._tag_info.id = id
+        return self
+
+    def name(self, name: str) -> TagInfoBuilder:
+        self._tag_info.name = name
+        return self
+
+    def type(self, type: str) -> TagInfoBuilder:
+        self._tag_info.type = type
+        return self
+
+    def binding_count(self, binding_count: int) -> TagInfoBuilder:
+        self._tag_info.binding_count = binding_count
+        return self
+```
+
+**Complex Public Class with Nested Objects**:
+```python
+from __future__ import annotations
+from pydantic import BaseModel
+from .reranking_model import RerankingModel
+from .metadata_filtering_conditions import MetadataFilteringConditions
+
+class RetrievalModel(BaseModel):
+    search_method: str | None = None
+    reranking_enable: bool | None = None
+    reranking_model: RerankingModel | None = None
+    top_k: int | None = None
+    metadata_filtering_conditions: MetadataFilteringConditions | None = None
+
+    @staticmethod
+    def builder() -> RetrievalModelBuilder:
+        return RetrievalModelBuilder()
+
+class RetrievalModelBuilder:
+    def __init__(self):
+        self._retrieval_model = RetrievalModel()
+
+    def build(self) -> RetrievalModel:
+        return self._retrieval_model
+
+    def search_method(self, search_method: str) -> RetrievalModelBuilder:
+        self._retrieval_model.search_method = search_method
+        return self
+
+    def reranking_enable(self, reranking_enable: bool) -> RetrievalModelBuilder:
+        self._retrieval_model.reranking_enable = reranking_enable
+        return self
+
+    def reranking_model(self, reranking_model: RerankingModel) -> RetrievalModelBuilder:
+        self._retrieval_model.reranking_model = reranking_model
+        return self
+
+    def top_k(self, top_k: int) -> RetrievalModelBuilder:
+        self._retrieval_model.top_k = top_k
+        return self
+
+    def metadata_filtering_conditions(self, metadata_filtering_conditions: MetadataFilteringConditions) -> RetrievalModelBuilder:
+        self._retrieval_model.metadata_filtering_conditions = metadata_filtering_conditions
+        return self
+```
+
+### 9. Model File Organization
 **Decision**: Organize models by resource grouping with shared common models
 
 ```

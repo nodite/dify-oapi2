@@ -112,7 +112,7 @@ This document outlines the design for implementing comprehensive document manage
 **Public/Common Classes**:
 - Public classes (DocumentInfo, ProcessRule, PreProcessingRule, Segmentation, etc.) MUST inherit from `pydantic.BaseModel` ONLY
 - Public classes MUST NOT inherit from `BaseResponse`
-- Public classes MUST NOT have Builder patterns
+- Public classes MUST have Builder patterns for consistency and ease of use
 - Public classes are reusable components that can be used across different contexts
 - Examples: `DocumentInfo`, `ProcessRule`, `PreProcessingRule`, `Segmentation`, `DataSourceInfo`, `UploadFileInfo`
 
@@ -124,41 +124,239 @@ This document outlines the design for implementing comprehensive document manage
 - Response classes MUST NOT have Builder patterns (unlike Request classes)
 
 **Builder Pattern Rules**:
-- ONLY Request and RequestBody classes should have Builder patterns
-- Public/common classes should be instantiated directly using Pydantic's standard initialization
+- Request, RequestBody, and Public/Common classes MUST have Builder patterns
+- Public/common classes can be instantiated directly using Pydantic's standard initialization OR via builder pattern
 - Response classes should be instantiated by the transport layer, not manually
+- Builder patterns provide fluent interface for complex object construction
 
 **Inheritance Examples**:
 ```python
-# ✅ CORRECT: Public class inherits from BaseModel only, no Builder
+# ✅ CORRECT: Public class inherits from BaseModel with Builder pattern
 class DocumentInfo(BaseModel):
     id: Optional[str] = None
     name: Optional[str] = None
     # ... other fields
-    # NO builder() method or Builder class
+    
+    @staticmethod
+    def builder() -> DocumentInfoBuilder:
+        return DocumentInfoBuilder()
+
+class DocumentInfoBuilder:
+    def __init__(self):
+        self._document_info = DocumentInfo()
+    
+    def build(self) -> DocumentInfo:
+        return self._document_info
+    
+    def id(self, id: str) -> DocumentInfoBuilder:
+        self._document_info.id = id
+        return self
+    
+    def name(self, name: str) -> DocumentInfoBuilder:
+        self._document_info.name = name
+        return self
 
 # ✅ CORRECT: Response class uses multiple inheritance, no Builder
 class CreateByTextResponse(DocumentInfo, BaseResponse):
     """Response model for create document by text API"""
     pass  # NO builder() method or Builder class
 
-# ✅ CORRECT: Direct instantiation of public classes
+# ✅ CORRECT: Public classes can be instantiated directly OR via builder
 document_info = DocumentInfo(id="123", name="Test Document")
+# OR
+document_info = DocumentInfo.builder().id("123").name("Test Document").build()
 
 # ❌ WRONG: Public class inheriting from BaseResponse
 class DocumentInfo(BaseResponse):  # DON'T DO THIS
     # ...
 
-# ❌ WRONG: Public class with Builder pattern
-class DocumentInfo(BaseModel):
-    # ...
-    @staticmethod
-    def builder() -> DocumentInfoBuilder:  # DON'T DO THIS
-        return DocumentInfoBuilder()
-
 # ❌ WRONG: Response class only inheriting from public class
 class CreateByTextResponse(DocumentInfo):  # Missing BaseResponse
     # ...
+```
+
+### 8. Public Class Builder Pattern Rules (MANDATORY)
+**Decision**: All public classes MUST implement builder patterns for consistency and usability
+
+#### Builder Pattern Implementation Requirements
+**Scope**: All public/common classes that inherit from `pydantic.BaseModel`
+- **Target Classes**: `DocumentInfo`, `ProcessRule`, `PreProcessingRule`, `Segmentation`, `DataSourceInfo`, `UploadFileInfo`, `IndexingStatusInfo`, `Document`, `DocumentDataSourceInfo`, `DocumentDataSourceDetailDict`, `DocumentDataSourceDetailDictUploadFile`, `Segment`, and all other public model classes
+- **Exclusions**: Request, RequestBody, and Response classes (which have their own builder rules)
+
+#### Implementation Pattern
+**Standard Builder Structure**:
+```python
+class PublicClass(BaseModel):
+    field1: str | None = None
+    field2: int | None = None
+    # ... other fields
+    
+    @staticmethod
+    def builder() -> PublicClassBuilder:
+        return PublicClassBuilder()
+
+class PublicClassBuilder:
+    def __init__(self):
+        self._public_class = PublicClass()
+    
+    def build(self) -> PublicClass:
+        return self._public_class
+    
+    def field1(self, field1: str) -> PublicClassBuilder:
+        self._public_class.field1 = field1
+        return self
+    
+    def field2(self, field2: int) -> PublicClassBuilder:
+        self._public_class.field2 = field2
+        return self
+```
+
+#### Builder Method Naming Rules
+**Field Method Names**:
+- Method names MUST match field names exactly
+- Use snake_case for method names (matching field names)
+- Handle reserved keywords by using trailing underscore (e.g., `id_()` for `id` field)
+- Complex nested objects should accept the nested object type as parameter
+
+#### Forward Reference Handling
+**Import Requirements**:
+- ALL public class files MUST include `from __future__ import annotations` at the top
+- This prevents forward reference issues when builder methods reference the builder class
+- Essential for proper type hints in `@staticmethod` decorators
+
+#### Usage Flexibility
+**Instantiation Options**:
+- Direct instantiation: `obj = PublicClass(field1="value", field2=123)`
+- Builder pattern: `obj = PublicClass.builder().field1("value").field2(123).build()`
+- Both approaches are valid and should be supported
+- Builder pattern provides fluent interface for complex object construction
+- Direct instantiation is suitable for simple cases
+
+#### Validation and Type Safety
+**Requirements**:
+- All builder methods MUST include proper type hints
+- Builder methods MUST return the builder instance for method chaining
+- `build()` method MUST return the target class instance
+- Leverage Pydantic's built-in validation (no custom validation in builders)
+- Use `Optional[Type]` or `Type | None` for optional fields
+
+#### Testing Requirements
+**Builder Testing**:
+- Unit tests MUST verify builder pattern functionality for all public classes
+- Test both direct instantiation and builder pattern approaches
+- Verify method chaining works correctly
+- Test serialization/deserialization with builder-created objects
+- Validate type hints and return types
+
+#### Benefits of Public Class Builders
+**Developer Experience**:
+- Consistent API across all public classes
+- Fluent interface for complex object construction
+- Better IDE support with method chaining
+- Improved readability for complex object initialization
+- Easier testing and mocking
+- Enhanced maintainability
+
+#### Document-Specific Implementation Examples
+**Document Processing Rule**:
+```python
+from __future__ import annotations
+from pydantic import BaseModel
+from .segmentation import Segmentation
+from .pre_processing_rule import PreProcessingRule
+
+class ProcessRule(BaseModel):
+    mode: str | None = None
+    pre_processing_rules: list[PreProcessingRule] | None = None
+    segmentation: Segmentation | None = None
+
+    @staticmethod
+    def builder() -> ProcessRuleBuilder:
+        return ProcessRuleBuilder()
+
+class ProcessRuleBuilder:
+    def __init__(self):
+        self._process_rule = ProcessRule()
+
+    def build(self) -> ProcessRule:
+        return self._process_rule
+
+    def mode(self, mode: str) -> ProcessRuleBuilder:
+        self._process_rule.mode = mode
+        return self
+
+    def pre_processing_rules(self, pre_processing_rules: list[PreProcessingRule]) -> ProcessRuleBuilder:
+        self._process_rule.pre_processing_rules = pre_processing_rules
+        return self
+
+    def segmentation(self, segmentation: Segmentation) -> ProcessRuleBuilder:
+        self._process_rule.segmentation = segmentation
+        return self
+```
+
+**Document Information**:
+```python
+from __future__ import annotations
+from pydantic import BaseModel
+from .data_source_info import DataSourceInfo
+
+class DocumentInfo(BaseModel):
+    id: str | None = None
+    name: str | None = None
+    data_source_type: str | None = None
+    data_source_info: DataSourceInfo | None = None
+    tokens: int | None = None
+    indexing_status: str | None = None
+    enabled: bool | None = None
+    word_count: int | None = None
+    hit_count: int | None = None
+
+    @staticmethod
+    def builder() -> DocumentInfoBuilder:
+        return DocumentInfoBuilder()
+
+class DocumentInfoBuilder:
+    def __init__(self):
+        self._document_info = DocumentInfo()
+
+    def build(self) -> DocumentInfo:
+        return self._document_info
+
+    def id(self, id: str) -> DocumentInfoBuilder:
+        self._document_info.id = id
+        return self
+
+    def name(self, name: str) -> DocumentInfoBuilder:
+        self._document_info.name = name
+        return self
+
+    def data_source_type(self, data_source_type: str) -> DocumentInfoBuilder:
+        self._document_info.data_source_type = data_source_type
+        return self
+
+    def data_source_info(self, data_source_info: DataSourceInfo) -> DocumentInfoBuilder:
+        self._document_info.data_source_info = data_source_info
+        return self
+
+    def tokens(self, tokens: int) -> DocumentInfoBuilder:
+        self._document_info.tokens = tokens
+        return self
+
+    def indexing_status(self, indexing_status: str) -> DocumentInfoBuilder:
+        self._document_info.indexing_status = indexing_status
+        return self
+
+    def enabled(self, enabled: bool) -> DocumentInfoBuilder:
+        self._document_info.enabled = enabled
+        return self
+
+    def word_count(self, word_count: int) -> DocumentInfoBuilder:
+        self._document_info.word_count = word_count
+        return self
+
+    def hit_count(self, hit_count: int) -> DocumentInfoBuilder:
+        self._document_info.hit_count = hit_count
+        return self
 ```
 
 ## API Implementation Plan

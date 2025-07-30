@@ -36,12 +36,12 @@ This document tracks the implementation progress of the Document API functionali
 - [x] Add Create By Text API models tests to test_document_models.py
 
 #### Step 2.3: Create File Creation API Models
-- [ ] create_by_file_request.py
-- [ ] create_by_file_request_body.py
-- [ ] create_by_file_response.py
+- [x] create_by_file_request.py
+- [x] create_by_file_request_body.py
+- [x] create_by_file_response.py
 
 #### Step 2.4: Test File Creation API Models
-- [ ] Add Create By File API models tests to test_document_models.py
+- [x] Add Create By File API models tests to test_document_models.py
 
 #### Step 2.5: Create Text Update API Models
 - [ ] update_by_text_request.py
@@ -194,7 +194,7 @@ This document tracks the implementation progress of the Document API functionali
 - [ ] Phase 7: Integration Testing (0/2 steps)
 - [ ] Phase 8: Final Validation (0/2 steps)
 
-### Overall Progress: 4/35 steps completed (11%)
+### Overall Progress: 6/35 steps completed (17%)
 
 ## Notes
 - Each step should be completed and tested before proceeding to the next

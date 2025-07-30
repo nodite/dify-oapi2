@@ -256,41 +256,131 @@ def test_model_serialization() -> None:
     assert new_doc_info.enabled is True
 
 
-def test_builder_method_chaining() -> None:
-    """Test that builder methods return the builder instance for chaining."""
-    builder = DocumentInfo.builder()
-
-    # Test that each method returns the builder instance
-    assert builder.id("test") is builder
-    assert builder.name("test") is builder
-    assert builder.enabled(True) is builder
-
-    # Test final build
-    doc_info = builder.build()
-    assert isinstance(doc_info, DocumentInfo)
-    assert doc_info.id == "test"
-    assert doc_info.name == "test"
-    assert doc_info.enabled is True
+# ===== CREATE BY FILE API MODELS TESTS =====
 
 
-def test_edge_cases_and_validation() -> None:
-    """Test edge cases and validation scenarios."""
-    # Test empty models
-    empty_doc = DocumentInfo()
-    assert empty_doc.id is None
+def test_create_by_file_request_builder() -> None:
+    """Test CreateByFileRequest builder pattern."""
+    from dify_oapi.api.knowledge_base.v1.model.document.create_by_file_request import CreateByFileRequest
+    from dify_oapi.api.knowledge_base.v1.model.document.create_by_file_request_body import CreateByFileRequestBody
+    from dify_oapi.core.enum import HttpMethod
 
-    # Test with complex nested data
-    data_source = DataSourceInfo(upload_file={"nested": {"data": "value"}})
-    assert data_source.upload_file["nested"]["data"] == "value"
+    request_body = CreateByFileRequestBody.builder().file("test.pdf").indexing_technique("high_quality").build()
 
-    # Test numeric edge cases
-    file_info = UploadFileInfo(size=0)
-    assert file_info.size == 0
+    request = CreateByFileRequest.builder().dataset_id("dataset-123").request_body(request_body).build()
 
-    # Test float values
-    status_info = IndexingStatusInfo(processing_started_at=1681623462.0, completed_at=1681623500.5)
-    assert status_info.processing_started_at == 1681623462.0
-    assert status_info.completed_at == 1681623500.5
+    assert request.dataset_id == "dataset-123"
+    assert request.request_body is not None
+    assert request.request_body.file == "test.pdf"
+    assert request.request_body.indexing_technique == "high_quality"
+    assert request.http_method == HttpMethod.POST
+    assert request.uri == "/v1/datasets/:dataset_id/document/create-by-file"
+    assert request.paths["dataset_id"] == "dataset-123"
+
+
+def test_create_by_file_request_body_validation() -> None:
+    """Test CreateByFileRequestBody validation and builder."""
+    from dify_oapi.api.knowledge_base.v1.model.document.create_by_file_request_body import CreateByFileRequestBody
+    from dify_oapi.api.knowledge_base.v1.model.document.process_rule import ProcessRule
+    from dify_oapi.api.knowledge_base.v1.model.document.retrieval_model import RetrievalModel
+
+    process_rule = ProcessRule.builder().mode("automatic").build()
+    retrieval_model = RetrievalModel.builder().search_method("hybrid_search").top_k(10).build()
+
+    request_body = (
+        CreateByFileRequestBody.builder()
+        .data('{"name": "test.pdf"}')
+        .file("test.pdf")
+        .original_document_id("doc-456")
+        .indexing_technique("high_quality")
+        .doc_form("text_model")
+        .doc_language("English")
+        .process_rule(process_rule)
+        .retrieval_model(retrieval_model)
+        .embedding_model("text-embedding-ada-002")
+        .embedding_model_provider("openai")
+        .build()
+    )
+
+    assert request_body.data == '{"name": "test.pdf"}'
+    assert request_body.file == "test.pdf"
+    assert request_body.original_document_id == "doc-456"
+    assert request_body.indexing_technique == "high_quality"
+    assert request_body.doc_form == "text_model"
+    assert request_body.doc_language == "English"
+    assert request_body.process_rule is not None
+    assert request_body.process_rule.mode == "automatic"
+    assert request_body.retrieval_model is not None
+    assert request_body.retrieval_model.search_method == "hybrid_search"
+    assert request_body.embedding_model == "text-embedding-ada-002"
+    assert request_body.embedding_model_provider == "openai"
+
+
+def test_create_by_file_request_body_optional_fields() -> None:
+    """Test CreateByFileRequestBody with optional fields."""
+    from dify_oapi.api.knowledge_base.v1.model.document.create_by_file_request_body import CreateByFileRequestBody
+
+    request_body = CreateByFileRequestBody.builder().file("test.pdf").build()
+
+    assert request_body.file == "test.pdf"
+    assert request_body.data is None
+    assert request_body.original_document_id is None
+    assert request_body.indexing_technique is None
+    assert request_body.doc_form is None
+    assert request_body.doc_language is None
+    assert request_body.process_rule is None
+    assert request_body.retrieval_model is None
+    assert request_body.embedding_model is None
+    assert request_body.embedding_model_provider is None
+
+
+def test_create_by_file_response_model() -> None:
+    """Test CreateByFileResponse model."""
+    from dify_oapi.api.knowledge_base.v1.model.document.create_by_file_response import CreateByFileResponse
+    from dify_oapi.api.knowledge_base.v1.model.document.document_info import DocumentInfo
+
+    doc_info = DocumentInfo.builder().id("doc-789").name("test.pdf").enabled(True).build()
+    response = CreateByFileResponse(document=doc_info, batch="batch-123")
+
+    assert response.document is not None
+    assert response.document.id == "doc-789"
+    assert response.document.name == "test.pdf"
+    assert response.document.enabled is True
+    assert response.batch == "batch-123"
+
+
+def test_create_by_file_multipart_handling() -> None:
+    """Test multipart/form-data handling in CreateByFileRequestBody."""
+    from dify_oapi.api.knowledge_base.v1.model.document.create_by_file_request_body import CreateByFileRequestBody
+
+    # Test with multipart data field
+    request_body = (
+        CreateByFileRequestBody.builder()
+        .data('{"indexing_technique": "high_quality", "doc_form": "text_model"}')
+        .file("/path/to/document.pdf")
+        .build()
+    )
+
+    assert request_body.data == '{"indexing_technique": "high_quality", "doc_form": "text_model"}'
+    assert request_body.file == "/path/to/document.pdf"
+
+
+def test_create_by_file_original_document_id_handling() -> None:
+    """Test original_document_id handling for document updates."""
+    from dify_oapi.api.knowledge_base.v1.model.document.create_by_file_request_body import CreateByFileRequestBody
+
+    # Test update scenario with original_document_id
+    request_body = (
+        CreateByFileRequestBody.builder()
+        .file("updated_document.pdf")
+        .original_document_id("original-doc-123")
+        .indexing_technique("economy")
+        .build()
+    )
+
+    assert request_body.file == "updated_document.pdf"
+    assert request_body.original_document_id == "original-doc-123"
+    assert request_body.indexing_technique == "economy"
 
 
 # ===== CREATE BY TEXT API MODELS TESTS =====

@@ -724,17 +724,29 @@ examples/knowledge_base/document/
 - Integration tests with mock API responses
 - Validation tests for all model classes
 - Migration verification tests to ensure behavioral consistency
+- **Test File Organization**: All model tests MUST follow flat structure in `tests/knowledge_base/v1/model/` directory
+- **Naming Consistency**: Use `test_{resource}_models.py` pattern for all model test files
+- **No Nested Directories**: Avoid creating resource-specific test subdirectories
+- **Consolidated Document Testing**: ALL document model tests MUST be in single `test_document_models.py` file
+- **Comprehensive Coverage**: Single test file covers shared models + all 10 API models with proper organization
+
+### Test File Organization Rules (MANDATORY)
+**Decision**: Test files MUST be organized in a flat structure within the model directory
+- **Flat Structure**: All model test files are placed directly in `tests/knowledge_base/v1/model/` directory
+- **No Subdirectories**: Do NOT create resource-specific subdirectories like `model/document/`
+- **Naming Convention**: Use `test_{resource}_models.py` pattern (e.g., `test_document_models.py`)
+- **Consistency**: Follow the same pattern as existing test files (`test_dataset_models.py`, `test_metadata_models.py`, `test_tag_models.py`)
+- **Consolidated Testing**: ALL document-related model tests MUST be in a single `test_document_models.py` file
+- **Rationale**: Maintains consistency with existing codebase structure and simplifies test discovery
 
 ### Test Directory Structure
 ```
 tests/knowledge_base/v1/
 ├── model/
-│   └── document/
-│       ├── test_create_by_text_models.py
-│       ├── test_create_by_file_models.py
-│       ├── test_update_models.py
-│       ├── test_status_models.py
-│       └── test_shared_models.py
+│   ├── test_dataset_models.py         # Existing dataset model tests
+│   ├── test_metadata_models.py        # Existing metadata model tests
+│   ├── test_tag_models.py             # Existing tag model tests
+│   └── test_document_models.py        # ALL document model tests (shared + API models)
 ├── resource/
 │   └── test_document_resource.py
 ├── integration/
@@ -743,6 +755,22 @@ tests/knowledge_base/v1/
 │   └── test_examples_validation.py
 └── __init__.py
 ```
+
+### Document Model Test Organization (MANDATORY)
+**Decision**: Single consolidated test file for all document models
+- **File**: `tests/knowledge_base/v1/model/test_document_models.py`
+- **Scope**: ALL document-related model tests in one file
+- **Coverage**: 
+  - Shared models (DocumentInfo, ProcessRule, etc.)
+  - All 10 API request/response models
+  - Builder pattern tests for all models
+  - Integration tests between models
+- **Structure**: Organize tests by model type with clear section comments
+- **Benefits**: 
+  - Single source of truth for all document model tests
+  - Easier maintenance and discovery
+  - Consistent with other resource test patterns
+  - Simplified test execution and coverage reporting
 
 ## Latest Improvements and Optimizations
 

@@ -722,6 +722,17 @@ class V1:
 - Integration tests with mock API responses
 - Validation tests for all model classes
 - **Comprehensive typing hints**: All test method parameters and return types must include proper type annotations
+- **Test File Organization**: All model tests MUST follow flat structure in `tests/knowledge_base/v1/model/` directory
+- **Naming Consistency**: Use `test_{resource}_models.py` pattern for all model test files
+- **No Nested Directories**: Avoid creating resource-specific test subdirectories
+
+### Test File Organization Rules (MANDATORY)
+**Decision**: Test files MUST be organized in a flat structure within the model directory
+- **Flat Structure**: All model test files are placed directly in `tests/knowledge_base/v1/model/` directory
+- **No Subdirectories**: Do NOT create resource-specific subdirectories like `model/dataset/`, `model/metadata/`
+- **Naming Convention**: Use `test_{resource}_models.py` pattern (e.g., `test_dataset_models.py`, `test_metadata_models.py`)
+- **Consistency**: Follow the same pattern across all knowledge base resources
+- **Rationale**: Maintains consistency with existing codebase structure and simplifies test discovery
 
 ### Test Directory Structure
 ```
@@ -729,17 +740,20 @@ tests/
 └── knowledge_base/
     └── v1/
         ├── model/
-        │   ├── test_dataset_models.py
-        │   ├── test_metadata_models.py
-        │   └── test_tag_models.py
+        │   ├── test_dataset_models.py     # Dataset model tests (flat structure)
+        │   ├── test_metadata_models.py    # Metadata model tests (flat structure)
+        │   ├── test_tag_models.py         # Tag model tests (flat structure)
+        │   └── test_document_models.py    # Document model tests (flat structure)
         ├── resource/
         │   ├── test_dataset_resource.py
         │   ├── test_metadata_resource.py
-        │   └── test_tag_resource.py
+        │   ├── test_tag_resource.py
+        │   └── test_document_resource.py
         ├── integration/
         │   ├── test_dataset_api_integration.py
         │   ├── test_metadata_api_integration.py
         │   ├── test_tag_api_integration.py
+        │   ├── test_document_api_integration.py
         │   ├── test_comprehensive_integration.py
         │   ├── test_examples_validation.py
         │   └── test_version_integration.py

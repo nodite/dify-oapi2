@@ -109,38 +109,55 @@ Requirements:
 - Use `| None` type hints for optional fields
 - Follow existing dataset model code style patterns
 - Include comprehensive docstrings
-- These shared models do NOT need Builder patterns
+- All public classes MUST implement Builder patterns for consistency
+- Include `from __future__ import annotations` at the top of each file
+- Builder methods must return the builder instance for method chaining
+- Use exact field names as method names in builders
 ```
 
 #### Step 1.2: Test Shared Document Models
 
 **Prompt:**
 ```
-Create comprehensive unit tests for the shared document models created in Step 1.1. Create test file `tests/knowledge_base/v1/model/document/test_shared_models.py`:
+Create comprehensive unit tests for the shared document models created in Step 1.1. Create test file `tests/knowledge_base/v1/model/test_document_models.py`:
 
-Requirements:
-- Test all model classes for correct instantiation
+This file will serve as the SINGLE consolidated test file for ALL document-related models (shared models + all API models).
+
+For Step 1.2, focus on shared model tests:
+- Test all shared model classes for correct instantiation
 - Test field validation and type checking
 - Test optional field handling (None values)
 - Test model serialization/deserialization
+- Test Builder patterns for all public classes
+- Test method chaining in builders
 - Use pytest framework
 - Include proper type hints for all test methods
 - Test edge cases and invalid data
+- Organize tests with clear section comments for shared models
 - Ensure all tests pass before proceeding
 
 Example test structure:
 ```python
+# ===== SHARED DOCUMENT MODELS TESTS =====
+
 def test_document_info_creation() -> None:
     # Test valid document info creation
+    
+def test_document_info_builder_pattern() -> None:
+    # Test builder pattern functionality
     
 def test_document_info_optional_fields() -> None:
     # Test None values
     
 def test_process_rule_validation() -> None:
     # Test process rule validation
+
+# Additional shared model tests...
 ```
 
-Run tests: `poetry run pytest tests/knowledge_base/v1/model/document/test_shared_models.py -v`
+Note: This file will be extended in subsequent steps to include all API model tests.
+
+Run tests: `poetry run pytest tests/knowledge_base/v1/model/test_document_models.py -v`
 ```
 
 ### Phase 2: Migrate Existing Document APIs (7 APIs)
@@ -157,7 +174,7 @@ You are migrating existing Document APIs to the new model structure. Create text
    - HTTP method: POST
    - URI: "/v1/datasets/:dataset_id/document/create-by-text"
    - Builder pattern with methods: dataset_id(), request_body()
-   - Handle dataset_id path parameter
+   - Handle dataset_id path parameter using `self._request.paths["dataset_id"] = dataset_id`
 
 2. **create_by_text_request_body.py** - Request body model:
    - Inherit from `pydantic.BaseModel`
@@ -176,7 +193,7 @@ You are migrating existing Document APIs to the new model structure. Create text
 3. **create_by_text_response.py** - Response model:
    - Inherit from `pydantic.BaseModel`
    - Fields: document (DocumentInfo | None), batch (str | None)
-   - No builder pattern needed
+   - No builder pattern needed for response models
 
 Requirements:
 - Follow design document's mandatory code style rules
@@ -184,15 +201,19 @@ Requirements:
 - Import shared models from same directory
 - Include comprehensive type hints and docstrings
 - Follow existing dataset model patterns
+- Include `from __future__ import annotations` at the top
 ```
 
 #### Step 2.2: Test Text Creation API Models
 
 **Prompt:**
 ```
-Create comprehensive unit tests for text creation API models. Create `tests/knowledge_base/v1/model/document/test_create_by_text_models.py`:
+Add comprehensive unit tests for text creation API models to the existing `tests/knowledge_base/v1/model/test_document_models.py` file:
+
+Add a new section for Create By Text API models:
 
 Requirements:
+- Add tests to the existing consolidated test file
 - Test CreateByTextRequest builder pattern
 - Test CreateByTextRequestBody validation and builder
 - Test CreateByTextResponse model
@@ -201,8 +222,24 @@ Requirements:
 - Verify HTTP method and URI configuration
 - Include edge cases and validation errors
 - All test methods must have proper type hints
+- Test builder method chaining
+- Use clear section comments to organize tests
 
-Run tests: `poetry run pytest tests/knowledge_base/v1/model/document/test_create_by_text_models.py -v`
+Example test structure addition:
+```python
+# ===== CREATE BY TEXT API MODELS TESTS =====
+
+def test_create_by_text_request_builder() -> None:
+    # Test CreateByTextRequest builder pattern
+    
+def test_create_by_text_request_body_validation() -> None:
+    # Test CreateByTextRequestBody validation and builder
+    
+def test_create_by_text_response_model() -> None:
+    # Test CreateByTextResponse model
+```
+
+Run tests: `poetry run pytest tests/knowledge_base/v1/model/test_document_models.py -v`
 ```
 
 #### Step 2.3: Create File Creation API Models
@@ -241,22 +278,36 @@ Requirements:
 - Handle multipart/form-data specifics
 - Follow same patterns as create-by-text models
 - Use exact class naming conventions
+- Include `from __future__ import annotations`
 ```
 
 #### Step 2.4: Test File Creation API Models
 
 **Prompt:**
 ```
-Create unit tests for file creation API models. Create `tests/knowledge_base/v1/model/document/test_create_by_file_models.py`:
+Add unit tests for file creation API models to `tests/knowledge_base/v1/model/test_document_models.py`:
+
+Add a new section for Create By File API models:
 
 Requirements:
+- Add tests to the existing consolidated test file
 - Test multipart/form-data handling
 - Test file upload scenarios
 - Test original_document_id handling for updates
 - Test all builder methods and validation
 - Include proper type hints for all test methods
+- Test builder method chaining
+- Use clear section comments to organize tests
 
-Run tests: `poetry run pytest tests/knowledge_base/v1/model/document/test_create_by_file_models.py -v`
+Example test structure addition:
+```python
+# ===== CREATE BY FILE API MODELS TESTS =====
+
+def test_create_by_file_request_builder() -> None:
+    # Test CreateByFileRequest builder pattern
+```
+
+Run tests: `poetry run pytest tests/knowledge_base/v1/model/test_document_models.py -v`
 ```
 
 #### Step 2.5: Create Text Update API Models
@@ -288,21 +339,35 @@ Requirements:
 - Handle both dataset_id and document_id path parameters
 - Follow established patterns from create models
 - Include comprehensive type hints
+- Include `from __future__ import annotations`
 ```
 
 #### Step 2.6: Test Text Update API Models
 
 **Prompt:**
 ```
-Create unit tests for text update API models. Create `tests/knowledge_base/v1/model/document/test_update_by_text_models.py`:
+Add unit tests for text update API models to `tests/knowledge_base/v1/model/test_document_models.py`:
+
+Add a new section for Update By Text API models:
 
 Requirements:
+- Add tests to the existing consolidated test file
 - Test dual path parameter handling (dataset_id, document_id)
 - Test UpdateByTextRequestBody validation
 - Test optional field handling in updates
 - Include proper type hints for all test methods
+- Test builder patterns
+- Use clear section comments to organize tests
 
-Run tests: `poetry run pytest tests/knowledge_base/v1/model/document/test_update_by_text_models.py -v`
+Example test structure addition:
+```python
+# ===== UPDATE BY TEXT API MODELS TESTS =====
+
+def test_update_by_text_request_builder() -> None:
+    # Test UpdateByTextRequest builder pattern
+```
+
+Run tests: `poetry run pytest tests/knowledge_base/v1/model/test_document_models.py -v`
 ```
 
 #### Step 2.7: Create File Update API Models
@@ -334,21 +399,35 @@ Requirements:
 - Handle multipart/form-data for file updates
 - Support dual path parameters
 - Follow established patterns
+- Include `from __future__ import annotations`
 ```
 
 #### Step 2.8: Test File Update API Models
 
 **Prompt:**
 ```
-Create unit tests for file update API models. Create `tests/knowledge_base/v1/model/document/test_update_by_file_models.py`:
+Add unit tests for file update API models to `tests/knowledge_base/v1/model/test_document_models.py`:
+
+Add a new section for Update By File API models:
 
 Requirements:
+- Add tests to the existing consolidated test file
 - Test multipart/form-data handling for updates
 - Test dual path parameter configuration
 - Test file replacement scenarios
 - Include proper type hints for all test methods
+- Test builder patterns
+- Use clear section comments to organize tests
 
-Run tests: `poetry run pytest tests/knowledge_base/v1/model/document/test_update_by_file_models.py -v`
+Example test structure addition:
+```python
+# ===== UPDATE BY FILE API MODELS TESTS =====
+
+def test_update_by_file_request_builder() -> None:
+    # Test UpdateByFileRequest builder pattern
+```
+
+Run tests: `poetry run pytest tests/knowledge_base/v1/model/test_document_models.py -v`
 ```
 
 #### Step 2.9: Create Indexing Status API Models
@@ -372,21 +451,35 @@ Requirements:
 - Handle batch parameter in path
 - Use IndexingStatusInfo from shared models
 - Follow GET request patterns
+- Include `from __future__ import annotations`
 ```
 
 #### Step 2.10: Test Indexing Status API Models
 
 **Prompt:**
 ```
-Create unit tests for indexing status API models. Create `tests/knowledge_base/v1/model/document/test_indexing_status_models.py`:
+Add unit tests for indexing status API models to `tests/knowledge_base/v1/model/test_document_models.py`:
+
+Add a new section for Indexing Status API models:
 
 Requirements:
+- Add tests to the existing consolidated test file
 - Test batch parameter handling
 - Test response data array structure
 - Test IndexingStatusInfo integration
 - Include proper type hints for all test methods
+- Test builder patterns
+- Use clear section comments to organize tests
 
-Run tests: `poetry run pytest tests/knowledge_base/v1/model/document/test_indexing_status_models.py -v`
+Example test structure addition:
+```python
+# ===== INDEXING STATUS API MODELS TESTS =====
+
+def test_indexing_status_request_builder() -> None:
+    # Test IndexingStatusRequest builder pattern
+```
+
+Run tests: `poetry run pytest tests/knowledge_base/v1/model/test_document_models.py -v`
 ```
 
 #### Step 2.11: Create Delete API Models
@@ -410,21 +503,35 @@ Requirements:
 - Handle DELETE method with dual path parameters
 - Support 204 No Content response
 - Follow established patterns
+- Include `from __future__ import annotations`
 ```
 
 #### Step 2.12: Test Delete API Models
 
 **Prompt:**
 ```
-Create unit tests for delete API models. Create `tests/knowledge_base/v1/model/document/test_delete_models.py`:
+Add unit tests for delete API models to `tests/knowledge_base/v1/model/test_document_models.py`:
+
+Add a new section for Delete API models:
 
 Requirements:
+- Add tests to the existing consolidated test file
 - Test DELETE method configuration
 - Test dual path parameter handling
 - Test empty response handling
 - Include proper type hints for all test methods
+- Test builder patterns
+- Use clear section comments to organize tests
 
-Run tests: `poetry run pytest tests/knowledge_base/v1/model/document/test_delete_models.py -v`
+Example test structure addition:
+```python
+# ===== DELETE API MODELS TESTS =====
+
+def test_delete_request_builder() -> None:
+    # Test DeleteRequest builder pattern
+```
+
+Run tests: `poetry run pytest tests/knowledge_base/v1/model/test_document_models.py -v`
 ```
 
 #### Step 2.13: Create List API Models
@@ -439,7 +546,7 @@ Create list API models in `dify_oapi/api/knowledge_base/v1/model/document/`:
    - HTTP method: GET
    - URI: "/v1/datasets/:dataset_id/documents"
    - Builder with dataset_id(), keyword(), page(), limit() methods
-   - Handle query parameters: keyword, page, limit
+   - Handle query parameters: keyword, page, limit using `self._request.add_query("key", value)`
 
 2. **list_response.py** - Response model:
    - Inherit from `pydantic.BaseModel`
@@ -454,21 +561,35 @@ Requirements:
 - Handle query parameters with add_query()
 - Use DocumentInfo from shared models
 - Follow pagination patterns
+- Include `from __future__ import annotations`
 ```
 
 #### Step 2.14: Test List API Models
 
 **Prompt:**
 ```
-Create unit tests for list API models. Create `tests/knowledge_base/v1/model/document/test_list_models.py`:
+Add unit tests for list API models to `tests/knowledge_base/v1/model/test_document_models.py`:
+
+Add a new section for List API models:
 
 Requirements:
+- Add tests to the existing consolidated test file
 - Test query parameter handling (keyword, page, limit)
 - Test pagination response structure
 - Test DocumentInfo array integration
 - Include proper type hints for all test methods
+- Test builder patterns
+- Use clear section comments to organize tests
 
-Run tests: `poetry run pytest tests/knowledge_base/v1/model/document/test_list_models.py -v`
+Example test structure addition:
+```python
+# ===== LIST API MODELS TESTS =====
+
+def test_list_request_builder() -> None:
+    # Test ListRequest builder pattern
+```
+
+Run tests: `poetry run pytest tests/knowledge_base/v1/model/test_document_models.py -v`
 ```
 
 ### Phase 3: Implement New Document APIs (3 APIs)
@@ -495,22 +616,36 @@ Requirements:
 - Handle metadata query parameter
 - Use multiple inheritance pattern for response
 - Follow GET request patterns with dual path parameters
+- Include `from __future__ import annotations`
 ```
 
 #### Step 3.2: Test Get Document API Models
 
 **Prompt:**
 ```
-Create unit tests for get document API models. Create `tests/knowledge_base/v1/model/document/test_get_models.py`:
+Add unit tests for get document API models to `tests/knowledge_base/v1/model/test_document_models.py`:
+
+Add a new section for Get Document API models:
 
 Requirements:
+- Add tests to the existing consolidated test file
 - Test dual path parameter handling
 - Test metadata query parameter
 - Test multiple inheritance in response model
 - Test DocumentInfo field inheritance
 - Include proper type hints for all test methods
+- Test builder patterns
+- Use clear section comments to organize tests
 
-Run tests: `poetry run pytest tests/knowledge_base/v1/model/document/test_get_models.py -v`
+Example test structure addition:
+```python
+# ===== GET DOCUMENT API MODELS TESTS =====
+
+def test_get_request_builder() -> None:
+    # Test GetRequest builder pattern
+```
+
+Run tests: `poetry run pytest tests/knowledge_base/v1/model/test_document_models.py -v`
 ```
 
 #### Step 3.3: Create Update Status API Models
@@ -539,22 +674,36 @@ Requirements:
 - Handle action path parameter (enable, disable, archive, un_archive)
 - Support batch document ID operations
 - Follow PATCH request patterns
+- Include `from __future__ import annotations`
 ```
 
 #### Step 3.4: Test Update Status API Models
 
 **Prompt:**
 ```
-Create unit tests for update status API models. Create `tests/knowledge_base/v1/model/document/test_update_status_models.py`:
+Add unit tests for update status API models to `tests/knowledge_base/v1/model/test_document_models.py`:
+
+Add a new section for Update Status API models:
 
 Requirements:
+- Add tests to the existing consolidated test file
 - Test action parameter validation
 - Test document_ids array handling
 - Test PATCH method configuration
 - Test batch operation scenarios
 - Include proper type hints for all test methods
+- Test builder patterns
+- Use clear section comments to organize tests
 
-Run tests: `poetry run pytest tests/knowledge_base/v1/model/document/test_update_status_models.py -v`
+Example test structure addition:
+```python
+# ===== UPDATE STATUS API MODELS TESTS =====
+
+def test_update_status_request_builder() -> None:
+    # Test UpdateStatusRequest builder pattern
+```
+
+Run tests: `poetry run pytest tests/knowledge_base/v1/model/test_document_models.py -v`
 ```
 
 #### Step 3.5: Create Get Upload File API Models
@@ -578,21 +727,35 @@ Requirements:
 - Handle dual path parameters
 - Use multiple inheritance pattern for response
 - Use UploadFileInfo from shared models
+- Include `from __future__ import annotations`
 ```
 
 #### Step 3.6: Test Get Upload File API Models
 
 **Prompt:**
 ```
-Create unit tests for get upload file API models. Create `tests/knowledge_base/v1/model/document/test_get_upload_file_models.py`:
+Add unit tests for get upload file API models to `tests/knowledge_base/v1/model/test_document_models.py`:
+
+Add a new section for Get Upload File API models:
 
 Requirements:
+- Add tests to the existing consolidated test file
 - Test dual path parameter handling
 - Test multiple inheritance in response model
 - Test UploadFileInfo field inheritance
 - Include proper type hints for all test methods
+- Test builder patterns
+- Use clear section comments to organize tests
 
-Run tests: `poetry run pytest tests/knowledge_base/v1/model/document/test_get_upload_file_models.py -v`
+Example test structure addition:
+```python
+# ===== GET UPLOAD FILE API MODELS TESTS =====
+
+def test_get_upload_file_request_builder() -> None:
+    # Test GetUploadFileRequest builder pattern
+```
+
+Run tests: `poetry run pytest tests/knowledge_base/v1/model/test_document_models.py -v`
 ```
 
 ### Phase 4: Update Resource Class
@@ -720,7 +883,7 @@ grep -r "import.*document" dify_oapi/api/knowledge_base/
 poetry run pytest tests/knowledge_base/ -v
 
 # Run specific document tests
-poetry run pytest tests/knowledge_base/v1/model/document/ -v
+poetry run pytest tests/knowledge_base/v1/model/test_document_models.py -v
 poetry run pytest tests/knowledge_base/v1/resource/test_document_resource.py -v
 ```
 
@@ -940,7 +1103,7 @@ Commands:
 poetry run pytest tests/knowledge_base/v1/integration/test_document_api_integration.py -v
 
 # Run all document-related tests
-poetry run pytest tests/knowledge_base/v1/model/document/ -v
+poetry run pytest tests/knowledge_base/v1/model/test_document_models.py -v
 poetry run pytest tests/knowledge_base/v1/resource/test_document_resource.py -v
 
 # Run full knowledge base test suite
@@ -999,7 +1162,7 @@ Commands to run:
 poetry run pytest tests/ -v
 
 # Specific document tests
-poetry run pytest tests/knowledge_base/v1/model/document/ -v
+poetry run pytest tests/knowledge_base/v1/model/test_document_models.py -v
 poetry run pytest tests/knowledge_base/v1/resource/test_document_resource.py -v
 poetry run pytest tests/knowledge_base/v1/integration/test_document_api_integration.py -v
 

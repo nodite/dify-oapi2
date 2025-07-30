@@ -130,35 +130,35 @@ This document tracks the implementation progress of the Document API functionali
 ### Phase 6: Create Examples
 
 #### Step 6.1: Create Basic Document Examples
-- [ ] examples/knowledge_base/document/create_by_text.py
-- [ ] examples/knowledge_base/document/create_by_file.py
-- [ ] examples/knowledge_base/document/list.py
-- [ ] examples/knowledge_base/document/get.py
-- [ ] examples/knowledge_base/document/delete.py
+- [x] examples/knowledge_base/document/create_by_text.py
+- [x] examples/knowledge_base/document/create_by_file.py
+- [x] examples/knowledge_base/document/list.py
+- [x] examples/knowledge_base/document/get.py
+- [x] examples/knowledge_base/document/delete.py
 
 #### Step 6.2: Test Basic Document Examples
-- [ ] Test create_by_text.py
-- [ ] Test create_by_file.py
-- [ ] Test list.py
-- [ ] Test get.py
-- [ ] Test delete.py
+- [x] Test create_by_text.py
+- [x] Test create_by_file.py
+- [x] Test list.py
+- [x] Test get.py
+- [x] Test delete.py
 
 #### Step 6.3: Create Advanced Document Examples
-- [ ] examples/knowledge_base/document/update_by_text.py
-- [ ] examples/knowledge_base/document/update_by_file.py
-- [ ] examples/knowledge_base/document/indexing_status.py
-- [ ] examples/knowledge_base/document/update_status.py
-- [ ] examples/knowledge_base/document/get_upload_file.py
+- [x] examples/knowledge_base/document/update_by_text.py
+- [x] examples/knowledge_base/document/update_by_file.py
+- [x] examples/knowledge_base/document/indexing_status.py
+- [x] examples/knowledge_base/document/update_status.py
+- [x] examples/knowledge_base/document/get_upload_file.py
 
 #### Step 6.4: Test Advanced Document Examples
-- [ ] Test update_by_text.py
-- [ ] Test update_by_file.py
-- [ ] Test indexing_status.py
-- [ ] Test update_status.py
-- [ ] Test get_upload_file.py
+- [x] Test update_by_text.py
+- [x] Test update_by_file.py
+- [x] Test indexing_status.py
+- [x] Test update_status.py
+- [x] Test get_upload_file.py
 
 #### Step 6.5: Create Example Documentation
-- [ ] examples/knowledge_base/document/README.md
+- [x] examples/knowledge_base/document/README.md
 
 ### Phase 7: Integration Testing
 
@@ -190,11 +190,11 @@ This document tracks the implementation progress of the Document API functionali
 - [x] Phase 3: Implement New Document APIs (6/6 steps)
 - [x] Phase 4: Update Resource Class (2/2 steps)
 - [x] Phase 5: Clean Up Legacy Models (2/2 steps)
-- [ ] Phase 6: Create Examples (0/5 steps)
+- [x] Phase 6: Create Examples (5/5 steps)
 - [ ] Phase 7: Integration Testing (0/2 steps)
 - [ ] Phase 8: Final Validation (0/2 steps)
 
-### Overall Progress: 24/35 steps completed (69%)
+### Overall Progress: 29/35 steps completed (83%)
 
 ## Notes
 - Each step should be completed and tested before proceeding to the next

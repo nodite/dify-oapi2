@@ -114,7 +114,7 @@ This document tracks the implementation progress of the Document API functionali
 - [x] Update all import statements
 
 #### Step 4.2: Test Updated Document Resource Class
-- [ ] tests/knowledge_base/v1/resource/test_document_resource.py
+- [x] tests/knowledge_base/v1/resource/test_document_resource.py
 
 ### Phase 5: Clean Up Legacy Models
 
@@ -188,13 +188,13 @@ This document tracks the implementation progress of the Document API functionali
 - [x] Phase 1: Create Shared Document Models (2/2 steps)
 - [x] Phase 2: Migrate Existing Document APIs (14/14 steps)
 - [x] Phase 3: Implement New Document APIs (6/6 steps)
-- [ ] Phase 4: Update Resource Class (1/2 steps)
+- [x] Phase 4: Update Resource Class (2/2 steps)
 - [ ] Phase 5: Clean Up Legacy Models (0/2 steps)
 - [ ] Phase 6: Create Examples (0/5 steps)
 - [ ] Phase 7: Integration Testing (0/2 steps)
 - [ ] Phase 8: Final Validation (0/2 steps)
 
-### Overall Progress: 21/35 steps completed (60%)
+### Overall Progress: 22/35 steps completed (63%)
 
 ## Notes
 - Each step should be completed and tested before proceeding to the next

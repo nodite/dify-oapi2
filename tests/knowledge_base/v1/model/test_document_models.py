@@ -1188,3 +1188,130 @@ def test_update_status_request_body_builder_chaining() -> None:
     request_body = builder.build()
     assert isinstance(request_body, UpdateStatusRequestBody)
     assert request_body.document_ids == ["doc-1", "doc-2"]
+
+
+# ===== GET UPLOAD FILE API MODELS TESTS =====
+
+
+def test_get_upload_file_request_builder() -> None:
+    """Test GetUploadFileRequest builder pattern."""
+    from dify_oapi.api.knowledge_base.v1.model.document.get_upload_file_request import GetUploadFileRequest
+    from dify_oapi.core.enum import HttpMethod
+
+    request = GetUploadFileRequest.builder().dataset_id("dataset-123").document_id("doc-456").build()
+
+    assert request.dataset_id == "dataset-123"
+    assert request.document_id == "doc-456"
+    assert request.http_method == HttpMethod.GET
+    assert request.uri == "/v1/datasets/:dataset_id/documents/:document_id/upload-file"
+    assert request.paths["dataset_id"] == "dataset-123"
+    assert request.paths["document_id"] == "doc-456"
+
+
+def test_get_upload_file_response_model() -> None:
+    """Test GetUploadFileResponse model with multiple inheritance."""
+    from dify_oapi.api.knowledge_base.v1.model.document.get_upload_file_response import GetUploadFileResponse
+
+    response = GetUploadFileResponse(
+        id="file-123",
+        name="test.pdf",
+        size=2048,
+        extension="pdf",
+        mime_type="application/pdf",
+        created_by="user-123",
+        created_at=1681623639
+    )
+
+    # Test UploadFileInfo fields
+    assert response.id == "file-123"
+    assert response.name == "test.pdf"
+    assert response.size == 2048
+    assert response.extension == "pdf"
+    assert response.mime_type == "application/pdf"
+    assert response.created_by == "user-123"
+    assert response.created_at == 1681623639
+
+    # Test that it's also a BaseResponse (has error handling capabilities)
+    assert hasattr(response, "model_dump")
+
+
+def test_get_upload_file_dual_path_parameters() -> None:
+    """Test dual path parameter handling in GetUploadFileRequest."""
+    from dify_oapi.api.knowledge_base.v1.model.document.get_upload_file_request import GetUploadFileRequest
+
+    request = GetUploadFileRequest.builder().dataset_id("test-dataset-upload").document_id("test-document-upload").build()
+
+    assert request.dataset_id == "test-dataset-upload"
+    assert request.document_id == "test-document-upload"
+    assert request.paths["dataset_id"] == "test-dataset-upload"
+    assert request.paths["document_id"] == "test-document-upload"
+
+
+def test_get_upload_file_builder_method_chaining() -> None:
+    """Test builder method chaining for GetUploadFileRequest."""
+    from dify_oapi.api.knowledge_base.v1.model.document.get_upload_file_request import GetUploadFileRequest
+
+    builder = GetUploadFileRequest.builder()
+
+    # Test that each method returns the builder instance
+    assert builder.dataset_id("test") is builder
+    assert builder.document_id("test-doc") is builder
+
+    # Test final build
+    request = builder.build()
+    assert isinstance(request, GetUploadFileRequest)
+    assert request.dataset_id == "test"
+    assert request.document_id == "test-doc"
+
+
+def test_get_upload_file_response_inheritance() -> None:
+    """Test multiple inheritance in GetUploadFileResponse."""
+    from dify_oapi.api.knowledge_base.v1.model.document.get_upload_file_response import GetUploadFileResponse
+    from dify_oapi.api.knowledge_base.v1.model.document.upload_file_info import UploadFileInfo
+    from dify_oapi.core.model.base_response import BaseResponse
+
+    response = GetUploadFileResponse(id="file-test", name="test.docx")
+
+    # Test that it inherits from both UploadFileInfo and BaseResponse
+    assert isinstance(response, UploadFileInfo)
+    assert isinstance(response, BaseResponse)
+    assert isinstance(response, GetUploadFileResponse)
+
+
+def test_get_upload_file_response_optional_fields() -> None:
+    """Test GetUploadFileResponse with optional fields."""
+    from dify_oapi.api.knowledge_base.v1.model.document.get_upload_file_response import GetUploadFileResponse
+
+    # Test with minimal fields
+    response = GetUploadFileResponse(id="file-minimal")
+    assert response.id == "file-minimal"
+    assert response.name is None
+    assert response.size is None
+    assert response.extension is None
+    assert response.url is None
+    assert response.download_url is None
+    assert response.mime_type is None
+    assert response.created_by is None
+    assert response.created_at is None
+
+    # Test with all fields
+    full_response = GetUploadFileResponse(
+        id="file-full",
+        name="complete.pdf",
+        size=4096,
+        extension="pdf",
+        url="https://example.com/preview",
+        download_url="https://example.com/download",
+        mime_type="application/pdf",
+        created_by="user-456",
+        created_at=1681623640
+    )
+    assert full_response.id == "file-full"
+    assert full_response.name == "complete.pdf"
+    assert full_response.size == 4096
+    assert full_response.extension == "pdf"
+    assert full_response.url == "https://example.com/preview"
+    assert full_response.download_url == "https://example.com/download"
+    assert full_response.mime_type == "application/pdf"
+    assert full_response.created_by == "user-456"
+    assert full_response.created_at == 1681623640

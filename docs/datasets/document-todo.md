@@ -98,11 +98,11 @@ This document tracks the implementation progress of the Document API functionali
 - [x] Add Update Status API models tests to test_document_models.py
 
 #### Step 3.5: Create Get Upload File API Models
-- [ ] get_upload_file_request.py
-- [ ] get_upload_file_response.py
+- [x] get_upload_file_request.py
+- [x] get_upload_file_response.py
 
 #### Step 3.6: Test Get Upload File API Models
-- [ ] Add Get Upload File API models tests to test_document_models.py
+- [x] Add Get Upload File API models tests to test_document_models.py
 
 ### Phase 4: Update Resource Class
 
@@ -187,14 +187,14 @@ This document tracks the implementation progress of the Document API functionali
 ### Completion Status
 - [x] Phase 1: Create Shared Document Models (2/2 steps)
 - [x] Phase 2: Migrate Existing Document APIs (14/14 steps)
-- [ ] Phase 3: Implement New Document APIs (0/6 steps)
+- [x] Phase 3: Implement New Document APIs (6/6 steps)
 - [ ] Phase 4: Update Resource Class (0/2 steps)
 - [ ] Phase 5: Clean Up Legacy Models (0/2 steps)
 - [ ] Phase 6: Create Examples (0/5 steps)
 - [ ] Phase 7: Integration Testing (0/2 steps)
 - [ ] Phase 8: Final Validation (0/2 steps)
 
-### Overall Progress: 18/35 steps completed (51%)
+### Overall Progress: 20/35 steps completed (57%)
 
 ## Notes
 - Each step should be completed and tested before proceeding to the next

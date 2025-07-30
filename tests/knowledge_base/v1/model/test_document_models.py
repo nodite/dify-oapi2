@@ -769,3 +769,73 @@ def test_update_by_file_multipart_handling() -> None:
     assert request_body.name == "Multipart Test Document"
     assert request_body.file == "/path/to/test_file.pdf"
     assert request_body.process_rule is None
+
+
+# ===== INDEXING STATUS API MODELS TESTS =====
+
+
+def test_indexing_status_request_builder() -> None:
+    """Test IndexingStatusRequest builder pattern."""
+    from dify_oapi.api.knowledge_base.v1.model.document.indexing_status_request import IndexingStatusRequest
+    from dify_oapi.core.enum import HttpMethod
+
+    request = IndexingStatusRequest.builder().dataset_id("dataset-123").batch("batch-456").build()
+
+    assert request.dataset_id == "dataset-123"
+    assert request.batch == "batch-456"
+    assert request.http_method == HttpMethod.GET
+    assert request.uri == "/v1/datasets/:dataset_id/documents/:batch/indexing-status"
+    assert request.paths["dataset_id"] == "dataset-123"
+    assert request.paths["batch"] == "batch-456"
+
+
+def test_indexing_status_response_model() -> None:
+    """Test IndexingStatusResponse model."""
+    from dify_oapi.api.knowledge_base.v1.model.document.indexing_status_info import IndexingStatusInfo
+    from dify_oapi.api.knowledge_base.v1.model.document.indexing_status_response import IndexingStatusResponse
+
+    status_info = (
+        IndexingStatusInfo.builder()
+        .id("doc-123")
+        .indexing_status("indexing")
+        .completed_segments(24)
+        .total_segments(100)
+        .build()
+    )
+    response = IndexingStatusResponse(data=[status_info])
+
+    assert response.data is not None
+    assert len(response.data) == 1
+    assert response.data[0].id == "doc-123"
+    assert response.data[0].indexing_status == "indexing"
+    assert response.data[0].completed_segments == 24
+    assert response.data[0].total_segments == 100
+
+
+def test_indexing_status_batch_parameter_handling() -> None:
+    """Test batch parameter handling in IndexingStatusRequest."""
+    from dify_oapi.api.knowledge_base.v1.model.document.indexing_status_request import IndexingStatusRequest
+
+    request = IndexingStatusRequest.builder().dataset_id("test-dataset-789").batch("test-batch-101").build()
+
+    assert request.dataset_id == "test-dataset-789"
+    assert request.batch == "test-batch-101"
+    assert request.paths["dataset_id"] == "test-dataset-789"
+    assert request.paths["batch"] == "test-batch-101"
+
+
+def test_indexing_status_builder_method_chaining() -> None:
+    """Test builder method chaining for IndexingStatusRequest."""
+    from dify_oapi.api.knowledge_base.v1.model.document.indexing_status_request import IndexingStatusRequest
+
+    builder = IndexingStatusRequest.builder()
+
+    # Test that each method returns the builder instance
+    assert builder.dataset_id("test") is builder
+    assert builder.batch("test-batch") is builder
+
+    # Test final build
+    request = builder.build()
+    assert isinstance(request, IndexingStatusRequest)
+    assert request.dataset_id == "test"
+    assert request.batch == "test-batch"

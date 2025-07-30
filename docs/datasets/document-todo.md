@@ -60,11 +60,11 @@ This document tracks the implementation progress of the Document API functionali
 - [x] Add Update By File API models tests to test_document_models.py
 
 #### Step 2.9: Create Indexing Status API Models
-- [ ] indexing_status_request.py
-- [ ] indexing_status_response.py
+- [x] indexing_status_request.py
+- [x] indexing_status_response.py
 
 #### Step 2.10: Test Indexing Status API Models
-- [ ] Add Indexing Status API models tests to test_document_models.py
+- [x] Add Indexing Status API models tests to test_document_models.py
 
 #### Step 2.11: Create Delete API Models
 - [ ] delete_request.py
@@ -186,7 +186,7 @@ This document tracks the implementation progress of the Document API functionali
 
 ### Completion Status
 - [x] Phase 1: Create Shared Document Models (2/2 steps)
-- [ ] Phase 2: Migrate Existing Document APIs (2/14 steps)
+- [ ] Phase 2: Migrate Existing Document APIs (10/14 steps)
 - [ ] Phase 3: Implement New Document APIs (0/6 steps)
 - [ ] Phase 4: Update Resource Class (0/2 steps)
 - [ ] Phase 5: Clean Up Legacy Models (0/2 steps)
@@ -194,7 +194,7 @@ This document tracks the implementation progress of the Document API functionali
 - [ ] Phase 7: Integration Testing (0/2 steps)
 - [ ] Phase 8: Final Validation (0/2 steps)
 
-### Overall Progress: 8/35 steps completed (23%)
+### Overall Progress: 12/35 steps completed (34%)
 
 ## Notes
 - Each step should be completed and tested before proceeding to the next

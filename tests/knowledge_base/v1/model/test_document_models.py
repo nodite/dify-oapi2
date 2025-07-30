@@ -1074,3 +1074,117 @@ def test_get_dual_path_parameters() -> None:
     assert request.document_id == "test-document-get"
     assert request.paths["dataset_id"] == "test-dataset-get"
     assert request.paths["document_id"] == "test-document-get"
+
+
+# ===== UPDATE STATUS API MODELS TESTS =====
+
+
+def test_update_status_request_builder() -> None:
+    """Test UpdateStatusRequest builder pattern."""
+    from dify_oapi.api.knowledge_base.v1.model.document.update_status_request import UpdateStatusRequest
+    from dify_oapi.api.knowledge_base.v1.model.document.update_status_request_body import UpdateStatusRequestBody
+    from dify_oapi.core.enum import HttpMethod
+
+    request_body = UpdateStatusRequestBody.builder().document_ids(["doc-123", "doc-456"]).build()
+
+    request = (
+        UpdateStatusRequest.builder().dataset_id("dataset-123").action("enable").request_body(request_body).build()
+    )
+
+    assert request.dataset_id == "dataset-123"
+    assert request.action == "enable"
+    assert request.request_body is not None
+    assert request.request_body.document_ids == ["doc-123", "doc-456"]
+    assert request.http_method == HttpMethod.PATCH
+    assert request.uri == "/v1/datasets/:dataset_id/documents/status/:action"
+    assert request.paths["dataset_id"] == "dataset-123"
+    assert request.paths["action"] == "enable"
+
+
+def test_update_status_request_body_validation() -> None:
+    """Test UpdateStatusRequestBody validation and builder."""
+    from dify_oapi.api.knowledge_base.v1.model.document.update_status_request_body import UpdateStatusRequestBody
+
+    request_body = UpdateStatusRequestBody.builder().document_ids(["doc-1", "doc-2", "doc-3"]).build()
+
+    assert request_body.document_ids == ["doc-1", "doc-2", "doc-3"]
+
+
+def test_update_status_request_body_empty_list() -> None:
+    """Test UpdateStatusRequestBody with empty document list."""
+    from dify_oapi.api.knowledge_base.v1.model.document.update_status_request_body import UpdateStatusRequestBody
+
+    request_body = UpdateStatusRequestBody.builder().document_ids([]).build()
+
+    assert request_body.document_ids == []
+
+
+def test_update_status_response_model() -> None:
+    """Test UpdateStatusResponse model."""
+    from dify_oapi.api.knowledge_base.v1.model.document.update_status_response import UpdateStatusResponse
+
+    response = UpdateStatusResponse(result="success")
+
+    assert response.result == "success"
+
+
+def test_update_status_action_parameter_validation() -> None:
+    """Test action parameter validation in UpdateStatusRequest."""
+    from dify_oapi.api.knowledge_base.v1.model.document.update_status_request import UpdateStatusRequest
+
+    # Test different action types
+    actions = ["enable", "disable", "archive", "un_archive"]
+
+    for action in actions:
+        request = UpdateStatusRequest.builder().dataset_id("test-dataset").action(action).build()
+        assert request.action == action
+        assert request.paths["action"] == action
+
+
+def test_update_status_batch_operations() -> None:
+    """Test batch document operations in UpdateStatusRequestBody."""
+    from dify_oapi.api.knowledge_base.v1.model.document.update_status_request_body import UpdateStatusRequestBody
+
+    # Test large batch
+    large_batch = [f"doc-{i}" for i in range(100)]
+    request_body = UpdateStatusRequestBody.builder().document_ids(large_batch).build()
+
+    assert len(request_body.document_ids) == 100
+    assert request_body.document_ids[0] == "doc-0"
+    assert request_body.document_ids[99] == "doc-99"
+
+
+def test_update_status_builder_method_chaining() -> None:
+    """Test builder method chaining for UpdateStatusRequest."""
+    from dify_oapi.api.knowledge_base.v1.model.document.update_status_request import UpdateStatusRequest
+    from dify_oapi.api.knowledge_base.v1.model.document.update_status_request_body import UpdateStatusRequestBody
+
+    builder = UpdateStatusRequest.builder()
+    request_body = UpdateStatusRequestBody.builder().document_ids(["doc-test"]).build()
+
+    # Test that each method returns the builder instance
+    assert builder.dataset_id("test") is builder
+    assert builder.action("enable") is builder
+    assert builder.request_body(request_body) is builder
+
+    # Test final build
+    request = builder.build()
+    assert isinstance(request, UpdateStatusRequest)
+    assert request.dataset_id == "test"
+    assert request.action == "enable"
+    assert request.request_body == request_body
+
+
+def test_update_status_request_body_builder_chaining() -> None:
+    """Test builder method chaining for UpdateStatusRequestBody."""
+    from dify_oapi.api.knowledge_base.v1.model.document.update_status_request_body import UpdateStatusRequestBody
+
+    builder = UpdateStatusRequestBody.builder()
+
+    # Test that method returns the builder instance
+    assert builder.document_ids(["doc-1", "doc-2"]) is builder
+
+    # Test final build
+    request_body = builder.build()
+    assert isinstance(request_body, UpdateStatusRequestBody)
+    assert request_body.document_ids == ["doc-1", "doc-2"]

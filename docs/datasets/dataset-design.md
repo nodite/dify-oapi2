@@ -194,7 +194,7 @@ class DatasetInfo(BaseModel):
     id: Optional[str] = None
     name: Optional[str] = None
     # ... other fields
-    
+
     @staticmethod
     def builder() -> DatasetInfoBuilder:
         return DatasetInfoBuilder()
@@ -202,14 +202,14 @@ class DatasetInfo(BaseModel):
 class DatasetInfoBuilder:
     def __init__(self):
         self._dataset_info = DatasetInfo()
-    
+
     def build(self) -> DatasetInfo:
         return self._dataset_info
-    
+
     def id(self, id: str) -> DatasetInfoBuilder:
         self._dataset_info.id = id
         return self
-    
+
     def name(self, name: str) -> DatasetInfoBuilder:
         self._dataset_info.name = name
         return self
@@ -248,7 +248,7 @@ class PublicClass(BaseModel):
     field1: str | None = None
     field2: int | None = None
     # ... other fields
-    
+
     @staticmethod
     def builder() -> PublicClassBuilder:
         return PublicClassBuilder()
@@ -256,14 +256,14 @@ class PublicClass(BaseModel):
 class PublicClassBuilder:
     def __init__(self):
         self._public_class = PublicClass()
-    
+
     def build(self) -> PublicClass:
         return self._public_class
-    
+
     def field1(self, field1: str) -> PublicClassBuilder:
         self._public_class.field1 = field1
         return self
-    
+
     def field2(self, field2: int) -> PublicClassBuilder:
         self._public_class.field2 = field2
         return self
@@ -477,7 +477,7 @@ model/
 
 #### Existing Methods (Mixed Approach)
 1. **POST /datasets** → `dataset.create()` - Keep existing, verify compliance
-2. **GET /datasets** → `dataset.list()` - Keep existing, verify compliance  
+2. **GET /datasets** → `dataset.list()` - Keep existing, verify compliance
 3. **DELETE /datasets/{dataset_id}** → `dataset.delete()` - Keep existing, verify compliance
 
 #### New Methods to Add
@@ -522,10 +522,10 @@ model/
 class Dataset:
     def __init__(self, config: Config):
         self.config = config
-    
+
     def create(self, request: CreateRequest, request_option: RequestOption) -> CreateResponse:
         return Transport.execute(self.config, request, unmarshal_as=CreateResponse, option=request_option)
-    
+
     async def acreate(self, request: CreateRequest, request_option: RequestOption) -> CreateResponse:
         return await ATransport.aexecute(self.config, request, unmarshal_as=CreateResponse, option=request_option)
 ```
@@ -574,7 +574,7 @@ class CreateRequestBody(BaseModel):
     name: str | None = None
     description: Optional[str] = None
     retrieval_model: Optional[RetrievalModel] = None
-    
+
     @staticmethod
     def builder() -> CreateRequestBodyBuilder:
         return CreateRequestBodyBuilder()
@@ -867,11 +867,11 @@ examples/knowledge_base/
           api_key = os.getenv("API_KEY")
           if not api_key:
               raise ValueError("API_KEY environment variable is required")
-          
+
           dataset_id = os.getenv("DATASET_ID")
           if not dataset_id:
               raise ValueError("DATASET_ID environment variable is required")
-          
+
           # Initialize client and other logic after validation
           client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
           # ... rest of function

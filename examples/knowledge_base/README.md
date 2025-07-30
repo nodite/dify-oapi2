@@ -1,12 +1,13 @@
 # Knowledge Base Examples
 
-This directory contains comprehensive examples for using the Dify Knowledge Base API, covering all dataset management, metadata management, and tag management functionality.
+This directory contains comprehensive examples for using the Dify Knowledge Base API, covering all dataset management, document management, metadata management, and tag management functionality.
 
 ## Overview
 
-The Knowledge Base API provides 19 endpoints organized into three main categories:
+The Knowledge Base API provides 29 endpoints organized into four main categories:
 
 - **Dataset Management** (6 APIs): Create, list, get, update, delete, and retrieve datasets
+- **Document Management** (10 APIs): Create, update, list, delete documents, check indexing status, and manage document files
 - **Metadata Management** (7 APIs): Create, list, update, delete metadata, toggle built-in fields, and update document metadata
 - **Tag Management** (7 APIs): Create, list, update, delete tags, bind/unbind tags to datasets, and query bound tags
 
@@ -21,6 +22,17 @@ knowledge_base/
 │   ├── update.py         # Update dataset configuration
 │   ├── delete.py         # Delete datasets
 │   └── retrieve.py       # Perform retrieval search
+├── document/             # Document management examples
+│   ├── create_by_text.py # Create document using text content
+│   ├── create_by_file.py # Create document using file upload
+│   ├── update_by_text.py # Update document using text content
+│   ├── update_by_file.py # Update document using file upload
+│   ├── list.py           # List documents in a dataset
+│   ├── get.py            # Get document details
+│   ├── delete.py         # Delete document
+│   ├── indexing_status.py # Check document indexing status
+│   ├── update_status.py  # Update document status (enable/disable/archive)
+│   └── get_upload_file.py # Get upload file information
 ├── metadata/             # Metadata management examples
 │   ├── create.py         # Create metadata fields
 │   ├── list.py           # List metadata configuration
@@ -57,6 +69,9 @@ export DATASET_ID="your-dataset-id"
 export METADATA_ID="your-metadata-id"
 export TAG_ID="your-tag-id"
 export DOCUMENT_ID="your-document-id"
+export BATCH_ID="your-batch-id"         # For document indexing status
+export DOCUMENT_IDS="id1,id2,id3"       # For batch document status updates
+export ACTION="enable"                  # For document status updates (enable, disable, archive)
 ```
 
 ### Dependencies
@@ -124,6 +139,100 @@ Performs search and retrieval operations with various configurations:
 - Reranking options
 - Metadata filtering
 - Score thresholds
+
+### Document Management
+
+#### Create Document by Text
+```bash
+export DATASET_ID="your-dataset-id"
+python examples/knowledge_base/document/create_by_text.py
+```
+
+Creates a new document using text content with configurable settings:
+- Document name and content
+- Indexing technique (high_quality/economy)
+- Document form (text_model/hierarchical_model/qa_model)
+- Processing rules for segmentation
+
+#### Create Document by File
+```bash
+export DATASET_ID="your-dataset-id"
+python examples/knowledge_base/document/create_by_file.py
+```
+
+Creates a new document by uploading a file (PDF, DOCX, TXT, etc.) with configurable settings.
+
+#### List Documents
+```bash
+export DATASET_ID="your-dataset-id"
+python examples/knowledge_base/document/list.py
+```
+
+Lists all documents in a dataset with pagination, filtering, and sorting options.
+
+#### Get Document Details
+```bash
+export DATASET_ID="your-dataset-id"
+export DOCUMENT_ID="your-document-id"
+python examples/knowledge_base/document/get.py
+```
+
+Retrieves comprehensive information about a specific document including processing status and metadata.
+
+#### Update Document by Text
+```bash
+export DATASET_ID="your-dataset-id"
+export DOCUMENT_ID="your-document-id"
+python examples/knowledge_base/document/update_by_text.py
+```
+
+Updates an existing document with new text content while maintaining its configuration.
+
+#### Update Document by File
+```bash
+export DATASET_ID="your-dataset-id"
+export DOCUMENT_ID="your-document-id"
+python examples/knowledge_base/document/update_by_file.py
+```
+
+Updates an existing document by uploading a new file while maintaining its configuration.
+
+#### Delete Document
+```bash
+export DATASET_ID="your-dataset-id"
+export DOCUMENT_ID="your-document-id"
+python examples/knowledge_base/document/delete.py
+```
+
+Deletes a document from a dataset (irreversible operation with confirmation prompts).
+
+#### Check Indexing Status
+```bash
+export DATASET_ID="your-dataset-id"
+export BATCH_ID="your-batch-id"
+python examples/knowledge_base/document/indexing_status.py
+```
+
+Checks the progress and status of document indexing operations.
+
+#### Update Document Status
+```bash
+export DATASET_ID="your-dataset-id"
+export DOCUMENT_IDS="id1,id2,id3"
+export ACTION="enable"  # or "disable", "archive"
+python examples/knowledge_base/document/update_status.py
+```
+
+Batch updates document status (enable, disable, or archive) for multiple documents.
+
+#### Get Upload File Information
+```bash
+export DATASET_ID="your-dataset-id"
+export DOCUMENT_ID="your-document-id"
+python examples/knowledge_base/document/get_upload_file.py
+```
+
+Retrieves detailed information about the original uploaded file for a document.
 
 ### Metadata Management
 

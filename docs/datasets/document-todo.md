@@ -158,7 +158,7 @@ This document tracks the implementation progress of the Document API functionali
 - [x] Test get_upload_file.py
 
 #### Step 6.5: Create Example Documentation
-- [x] examples/knowledge_base/document/README.md
+- [x] examples/knowledge_base/README.md
 
 ### Phase 7: Integration Testing
 
@@ -190,11 +190,11 @@ This document tracks the implementation progress of the Document API functionali
 - [x] Phase 3: Implement New Document APIs (6/6 steps)
 - [x] Phase 4: Update Resource Class (2/2 steps)
 - [x] Phase 5: Clean Up Legacy Models (2/2 steps)
-- [x] Phase 6: Create Examples (5/5 steps)
+- [x] Phase 6: Create Examples (6/6 steps)
 - [ ] Phase 7: Integration Testing (0/2 steps)
 - [ ] Phase 8: Final Validation (0/2 steps)
 
-### Overall Progress: 29/35 steps completed (83%)
+### Overall Progress: 30/35 steps completed (86%)
 
 ## Notes
 - Each step should be completed and tested before proceeding to the next

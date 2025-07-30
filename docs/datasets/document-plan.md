@@ -21,7 +21,7 @@ You are implementing Document API for the dify-oapi Python SDK. Create the follo
 
 1. **document_info.py** - Document information model with fields:
    - id: str | None
-   - position: int | None  
+   - position: int | None
    - data_source_type: str | None
    - data_source_info: dict | None
    - dataset_process_rule_id: str | None
@@ -142,13 +142,13 @@ Example test structure:
 
 def test_document_info_creation() -> None:
     # Test valid document info creation
-    
+
 def test_document_info_builder_pattern() -> None:
     # Test builder pattern functionality
-    
+
 def test_document_info_optional_fields() -> None:
     # Test None values
-    
+
 def test_process_rule_validation() -> None:
     # Test process rule validation
 
@@ -231,10 +231,10 @@ Example test structure addition:
 
 def test_create_by_text_request_builder() -> None:
     # Test CreateByTextRequest builder pattern
-    
+
 def test_create_by_text_request_body_validation() -> None:
     # Test CreateByTextRequestBody validation and builder
-    
+
 def test_create_by_text_response_model() -> None:
     # Test CreateByTextResponse model
 ```
@@ -769,7 +769,7 @@ Update the document resource class in `dify_oapi/api/knowledge_base/v1/resource/
 1. **Update Imports**: Replace all old model imports with new document model imports
 2. **Add New Methods**: Implement the 3 missing methods:
    - get() - Get document details
-   - update_status() - Batch update document status  
+   - update_status() - Batch update document status
    - get_upload_file() - Get upload file information
 3. **Update Existing Methods**: Update all existing method implementations to use new models
 
@@ -925,11 +925,11 @@ def create_document_by_text_sync() -> None:
         api_key = os.getenv("API_KEY")
         if not api_key:
             raise ValueError("API_KEY environment variable is required")
-        
+
         dataset_id = os.getenv("DATASET_ID")
         if not dataset_id:
             raise ValueError("DATASET_ID environment variable is required")
-        
+
         # Initialize client and continue...
 ```
 ```
@@ -1029,7 +1029,7 @@ Requirements:
 
 **Prompt:**
 ```
-Create documentation for document examples in `examples/knowledge_base/document/README.md`:
+Create documentation for document examples in `examples/knowledge_base/README.md`:
 
 Include:
 1. **Overview** - Brief description of document management capabilities

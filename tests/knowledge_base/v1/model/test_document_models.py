@@ -907,3 +907,94 @@ def test_delete_http_method_configuration() -> None:
 
     assert request.http_method == HttpMethod.DELETE
     assert request.uri == "/v1/datasets/:dataset_id/documents/:document_id"
+
+
+# ===== LIST API MODELS TESTS =====
+
+
+def test_list_request_builder() -> None:
+    """Test ListRequest builder pattern."""
+    from dify_oapi.api.knowledge_base.v1.model.document.list_request import ListRequest
+    from dify_oapi.core.enum import HttpMethod
+
+    request = ListRequest.builder().dataset_id("dataset-123").build()
+
+    assert request.dataset_id == "dataset-123"
+    assert request.http_method == HttpMethod.GET
+    assert request.uri == "/v1/datasets/:dataset_id/documents"
+    assert request.paths["dataset_id"] == "dataset-123"
+
+
+def test_list_response_model() -> None:
+    """Test ListResponse model."""
+    from dify_oapi.api.knowledge_base.v1.model.document.document_info import DocumentInfo
+    from dify_oapi.api.knowledge_base.v1.model.document.list_response import ListResponse
+
+    doc_info = DocumentInfo.builder().id("doc-123").name("Test Document").enabled(True).build()
+    response = ListResponse(data=[doc_info], has_more=False, limit=20, total=1, page=1)
+
+    assert response.data is not None
+    assert len(response.data) == 1
+    assert response.data[0].id == "doc-123"
+    assert response.data[0].name == "Test Document"
+    assert response.data[0].enabled is True
+    assert response.has_more is False
+    assert response.limit == 20
+    assert response.total == 1
+    assert response.page == 1
+
+
+def test_list_query_parameters() -> None:
+    """Test query parameter handling in ListRequest."""
+    from dify_oapi.api.knowledge_base.v1.model.document.list_request import ListRequest
+
+    request = ListRequest.builder().dataset_id("test-dataset-789").keyword("search-term").page("2").limit("50").build()
+
+    assert request.dataset_id == "test-dataset-789"
+    assert request.paths["dataset_id"] == "test-dataset-789"
+    # Query parameters are stored in the request's queries list
+    query_keys = [q[0] for q in request.queries]
+    assert "keyword" in query_keys
+    assert "page" in query_keys
+    assert "limit" in query_keys
+    # Verify query values
+    query_dict = dict(request.queries)
+    assert query_dict["keyword"] == "search-term"
+    assert query_dict["page"] == "2"
+    assert query_dict["limit"] == "50"
+
+
+def test_list_builder_method_chaining() -> None:
+    """Test builder method chaining for ListRequest."""
+    from dify_oapi.api.knowledge_base.v1.model.document.list_request import ListRequest
+
+    builder = ListRequest.builder()
+
+    # Test that each method returns the builder instance
+    assert builder.dataset_id("test") is builder
+    assert builder.keyword("search") is builder
+    assert builder.page("1") is builder
+    assert builder.limit("20") is builder
+
+    # Test final build
+    request = builder.build()
+    assert isinstance(request, ListRequest)
+    assert request.dataset_id == "test"
+
+
+def test_list_pagination_response() -> None:
+    """Test pagination fields in ListResponse."""
+    from dify_oapi.api.knowledge_base.v1.model.document.list_response import ListResponse
+
+    # Test empty response
+    empty_response = ListResponse(data=[], has_more=False, limit=20, total=0, page=1)
+    assert empty_response.data == []
+    assert empty_response.has_more is False
+    assert empty_response.total == 0
+
+    # Test paginated response
+    paginated_response = ListResponse(data=[], has_more=True, limit=10, total=25, page=2)
+    assert paginated_response.has_more is True
+    assert paginated_response.limit == 10
+    assert paginated_response.total == 25
+    assert paginated_response.page == 2

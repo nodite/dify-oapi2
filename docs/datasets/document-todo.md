@@ -83,11 +83,11 @@ This document tracks the implementation progress of the Document API functionali
 ### Phase 3: Implement New Document APIs (3 APIs)
 
 #### Step 3.1: Create Get Document API Models
-- [ ] get_request.py
-- [ ] get_response.py
+- [x] get_request.py
+- [x] get_response.py
 
 #### Step 3.2: Test Get Document API Models
-- [ ] Add Get Document API models tests to test_document_models.py
+- [x] Add Get Document API models tests to test_document_models.py
 
 #### Step 3.3: Create Update Status API Models
 - [ ] update_status_request.py

@@ -998,3 +998,79 @@ def test_list_pagination_response() -> None:
     assert paginated_response.limit == 10
     assert paginated_response.total == 25
     assert paginated_response.page == 2
+
+
+# ===== GET DOCUMENT API MODELS TESTS =====
+
+
+def test_get_request_builder() -> None:
+    """Test GetRequest builder pattern."""
+    from dify_oapi.api.knowledge_base.v1.model.document.get_request import GetRequest
+    from dify_oapi.core.enum import HttpMethod
+
+    request = GetRequest.builder().dataset_id("dataset-123").document_id("doc-456").build()
+
+    assert request.dataset_id == "dataset-123"
+    assert request.document_id == "doc-456"
+    assert request.http_method == HttpMethod.GET
+    assert request.uri == "/v1/datasets/:dataset_id/documents/:document_id"
+    assert request.paths["dataset_id"] == "dataset-123"
+    assert request.paths["document_id"] == "doc-456"
+
+
+def test_get_response_model() -> None:
+    """Test GetResponse model with multiple inheritance."""
+    from dify_oapi.api.knowledge_base.v1.model.document.get_response import GetResponse
+
+    response = GetResponse(id="doc-123", name="Test Document", enabled=True)
+
+    # Test DocumentInfo fields
+    assert response.id == "doc-123"
+    assert response.name == "Test Document"
+    assert response.enabled is True
+
+    # Test that it's also a BaseResponse (has error handling capabilities)
+    assert hasattr(response, "model_dump")
+
+
+def test_get_metadata_query_parameter() -> None:
+    """Test metadata query parameter handling in GetRequest."""
+    from dify_oapi.api.knowledge_base.v1.model.document.get_request import GetRequest
+
+    request = GetRequest.builder().dataset_id("test-dataset").document_id("test-doc").metadata("all").build()
+
+    assert request.dataset_id == "test-dataset"
+    assert request.document_id == "test-doc"
+    # Verify metadata query parameter
+    query_dict = dict(request.queries)
+    assert query_dict["metadata"] == "all"
+
+
+def test_get_builder_method_chaining() -> None:
+    """Test builder method chaining for GetRequest."""
+    from dify_oapi.api.knowledge_base.v1.model.document.get_request import GetRequest
+
+    builder = GetRequest.builder()
+
+    # Test that each method returns the builder instance
+    assert builder.dataset_id("test") is builder
+    assert builder.document_id("test-doc") is builder
+    assert builder.metadata("only") is builder
+
+    # Test final build
+    request = builder.build()
+    assert isinstance(request, GetRequest)
+    assert request.dataset_id == "test"
+    assert request.document_id == "test-doc"
+
+
+def test_get_dual_path_parameters() -> None:
+    """Test dual path parameter handling in GetRequest."""
+    from dify_oapi.api.knowledge_base.v1.model.document.get_request import GetRequest
+
+    request = GetRequest.builder().dataset_id("test-dataset-get").document_id("test-document-get").build()
+
+    assert request.dataset_id == "test-dataset-get"
+    assert request.document_id == "test-document-get"
+    assert request.paths["dataset_id"] == "test-dataset-get"
+    assert request.paths["document_id"] == "test-document-get"

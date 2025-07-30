@@ -28,12 +28,12 @@ This document tracks the implementation progress of the Document API functionali
 ### Phase 2: Migrate Existing Document APIs (7 APIs)
 
 #### Step 2.1: Create Text Creation API Models
-- [ ] create_by_text_request.py
-- [ ] create_by_text_request_body.py
-- [ ] create_by_text_response.py
+- [x] create_by_text_request.py
+- [x] create_by_text_request_body.py
+- [x] create_by_text_response.py
 
 #### Step 2.2: Test Text Creation API Models
-- [ ] Add Create By Text API models tests to test_document_models.py
+- [x] Add Create By Text API models tests to test_document_models.py
 
 #### Step 2.3: Create File Creation API Models
 - [ ] create_by_file_request.py
@@ -194,7 +194,7 @@ This document tracks the implementation progress of the Document API functionali
 - [ ] Phase 7: Integration Testing (0/2 steps)
 - [ ] Phase 8: Final Validation (0/2 steps)
 
-### Overall Progress: 2/35 steps completed (6%)
+### Overall Progress: 4/35 steps completed (11%)
 
 ## Notes
 - Each step should be completed and tested before proceeding to the next

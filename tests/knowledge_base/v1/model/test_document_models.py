@@ -1,5 +1,8 @@
 """Tests for shared document models."""
 
+from dify_oapi.api.knowledge_base.v1.model.document.create_by_text_request import CreateByTextRequest
+from dify_oapi.api.knowledge_base.v1.model.document.create_by_text_request_body import CreateByTextRequestBody
+from dify_oapi.api.knowledge_base.v1.model.document.create_by_text_response import CreateByTextResponse
 from dify_oapi.api.knowledge_base.v1.model.document.data_source_info import DataSourceInfo
 from dify_oapi.api.knowledge_base.v1.model.document.document_info import DocumentInfo
 from dify_oapi.api.knowledge_base.v1.model.document.indexing_status_info import IndexingStatusInfo
@@ -9,6 +12,9 @@ from dify_oapi.api.knowledge_base.v1.model.document.retrieval_model import Retri
 from dify_oapi.api.knowledge_base.v1.model.document.segmentation import Segmentation
 from dify_oapi.api.knowledge_base.v1.model.document.subchunk_segmentation import SubchunkSegmentation
 from dify_oapi.api.knowledge_base.v1.model.document.upload_file_info import UploadFileInfo
+from dify_oapi.core.enum import HttpMethod
+
+# ===== SHARED DOCUMENT MODELS TESTS =====
 
 
 def test_document_info_creation() -> None:
@@ -285,3 +291,138 @@ def test_edge_cases_and_validation() -> None:
     status_info = IndexingStatusInfo(processing_started_at=1681623462.0, completed_at=1681623500.5)
     assert status_info.processing_started_at == 1681623462.0
     assert status_info.completed_at == 1681623500.5
+
+
+# ===== CREATE BY TEXT API MODELS TESTS =====
+
+
+def test_create_by_text_request_builder() -> None:
+    """Test CreateByTextRequest builder pattern."""
+    request = (
+        CreateByTextRequest.builder()
+        .dataset_id("dataset-123")
+        .request_body(CreateByTextRequestBody(name="Test Document", text="Sample text"))
+        .build()
+    )
+
+    assert request.dataset_id == "dataset-123"
+    assert request.paths["dataset_id"] == "dataset-123"
+    assert request.http_method == HttpMethod.POST
+    assert request.uri == "/v1/datasets/:dataset_id/document/create-by-text"
+    assert request.request_body is not None
+    assert request.body is not None
+
+
+def test_create_by_text_request_body_validation() -> None:
+    """Test CreateByTextRequestBody validation and builder."""
+    # Test direct creation
+    request_body = CreateByTextRequestBody(
+        name="Test Document",
+        text="Sample text content",
+        indexing_technique="high_quality",
+        doc_form="text_model",
+        doc_language="English",
+    )
+
+    assert request_body.name == "Test Document"
+    assert request_body.text == "Sample text content"
+    assert request_body.indexing_technique == "high_quality"
+    assert request_body.doc_form == "text_model"
+    assert request_body.doc_language == "English"
+
+    # Test builder pattern
+    builder_body = (
+        CreateByTextRequestBody.builder()
+        .name("Builder Test")
+        .text("Builder text")
+        .indexing_technique("economy")
+        .doc_form("qa_model")
+        .doc_language("Chinese")
+        .build()
+    )
+
+    assert builder_body.name == "Builder Test"
+    assert builder_body.text == "Builder text"
+    assert builder_body.indexing_technique == "economy"
+    assert builder_body.doc_form == "qa_model"
+    assert builder_body.doc_language == "Chinese"
+
+
+def test_create_by_text_request_body_with_complex_fields() -> None:
+    """Test CreateByTextRequestBody with complex nested fields."""
+    process_rule = ProcessRule(mode="custom", rules={"key": "value"})
+    retrieval_model = RetrievalModel(search_method="hybrid_search", top_k=10)
+
+    request_body = (
+        CreateByTextRequestBody.builder()
+        .name("Complex Test")
+        .text("Complex text")
+        .process_rule(process_rule)
+        .retrieval_model(retrieval_model)
+        .embedding_model("text-embedding-ada-002")
+        .embedding_model_provider("openai")
+        .build()
+    )
+
+    assert request_body.name == "Complex Test"
+    assert request_body.text == "Complex text"
+    assert request_body.process_rule == process_rule
+    assert request_body.retrieval_model == retrieval_model
+    assert request_body.embedding_model == "text-embedding-ada-002"
+    assert request_body.embedding_model_provider == "openai"
+
+
+def test_create_by_text_response_model() -> None:
+    """Test CreateByTextResponse model."""
+    document_info = DocumentInfo(id="doc-123", name="Test Document", indexing_status="waiting")
+    response = CreateByTextResponse(document=document_info, batch="batch-456")
+
+    assert response.document == document_info
+    assert response.batch == "batch-456"
+    assert response.document.id == "doc-123"
+    assert response.document.name == "Test Document"
+    assert response.document.indexing_status == "waiting"
+
+
+def test_create_by_text_request_path_parameter_handling() -> None:
+    """Test path parameter handling in CreateByTextRequest."""
+    request = CreateByTextRequest.builder().dataset_id("test-dataset-id").build()
+
+    assert request.dataset_id == "test-dataset-id"
+    assert request.paths["dataset_id"] == "test-dataset-id"
+
+
+def test_create_by_text_request_body_serialization() -> None:
+    """Test request body serialization."""
+    request_body = CreateByTextRequestBody(
+        name="Serialization Test", text="Test content", indexing_technique="high_quality"
+    )
+
+    request = CreateByTextRequest.builder().dataset_id("dataset-123").request_body(request_body).build()
+
+    assert request.body is not None
+    assert isinstance(request.body, dict)
+    assert request.body["name"] == "Serialization Test"
+    assert request.body["text"] == "Test content"
+    assert request.body["indexing_technique"] == "high_quality"
+
+
+def test_create_by_text_builder_method_chaining() -> None:
+    """Test builder method chaining for CreateByTextRequestBody."""
+    builder = CreateByTextRequestBody.builder()
+
+    # Test that each method returns the builder instance
+    assert builder.name("test") is builder
+    assert builder.text("test") is builder
+    assert builder.indexing_technique("high_quality") is builder
+    assert builder.doc_form("text_model") is builder
+    assert builder.doc_language("English") is builder
+
+    # Test final build
+    request_body = builder.build()
+    assert isinstance(request_body, CreateByTextRequestBody)
+    assert request_body.name == "test"
+    assert request_body.text == "test"
+    assert request_body.indexing_technique == "high_quality"
+    assert request_body.doc_form == "text_model"
+    assert request_body.doc_language == "English"

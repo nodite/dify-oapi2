@@ -14,7 +14,7 @@ class UploadFileInfo(BaseModel):
     download_url: str | None = None
     mime_type: str | None = None
     created_by: str | None = None
-    created_at: int | None = None
+    created_at: float | None = None
 
     @staticmethod
     def builder() -> UploadFileInfoBuilder:
@@ -60,6 +60,6 @@ class UploadFileInfoBuilder:
         self._upload_file_info.created_by = created_by
         return self
 
-    def created_at(self, created_at: int) -> UploadFileInfoBuilder:
+    def created_at(self, created_at: float) -> UploadFileInfoBuilder:
         self._upload_file_info.created_at = created_at
         return self

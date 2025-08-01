@@ -17,7 +17,7 @@ class QueryBoundRequest(BaseRequest):
 class QueryBoundRequestBuilder:
     def __init__(self):
         query_bound_request = QueryBoundRequest()
-        query_bound_request.http_method = HttpMethod.POST
+        query_bound_request.http_method = HttpMethod.GET
         query_bound_request.uri = "/v1/datasets/:dataset_id/tags"
         self._request = query_bound_request
 

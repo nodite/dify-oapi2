@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from io import BytesIO
+
 from dify_oapi.core.enum import HttpMethod
 from dify_oapi.core.model.base_request import BaseRequest
 
@@ -15,6 +17,7 @@ class CreateByFileRequest(BaseRequest):
         super().__init__()
         self.dataset_id: str | None = None
         self.request_body: CreateByFileRequestBody | None = None
+        self.file: BytesIO | None = None
 
     @staticmethod
     def builder() -> CreateByFileRequestBuilder:
@@ -41,4 +44,10 @@ class CreateByFileRequestBuilder:
     def request_body(self, request_body: CreateByFileRequestBody) -> CreateByFileRequestBuilder:
         self._create_by_file_request.request_body = request_body
         self._create_by_file_request.body = request_body.model_dump(exclude_none=True, mode="json")
+        return self
+
+    def file(self, file: BytesIO, file_name: str | None = None) -> CreateByFileRequestBuilder:
+        self._create_by_file_request.file = file
+        file_name = file_name or "upload"
+        self._create_by_file_request.files = {"file": (file_name, file)}
         return self

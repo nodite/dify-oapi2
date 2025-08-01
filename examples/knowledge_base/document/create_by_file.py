@@ -11,6 +11,7 @@ import tempfile
 
 from dify_oapi.api.knowledge_base.v1.model.document.create_by_file_request import CreateByFileRequest
 from dify_oapi.api.knowledge_base.v1.model.document.create_by_file_request_body import CreateByFileRequestBody
+from dify_oapi.api.knowledge_base.v1.model.document.create_by_file_request_body_data import CreateByFileRequestBodyData
 from dify_oapi.api.knowledge_base.v1.model.document.process_rule import ProcessRule
 from dify_oapi.client import Client
 from dify_oapi.core.model.request_option import RequestOption
@@ -41,24 +42,33 @@ def create_document_by_file_sync() -> None:
         file_path = create_sample_file()
 
         try:
+            from io import BytesIO
+
+            # Read file content
+            with open(file_path, "rb") as f:
+                file_content = f.read()
+            file_io = BytesIO(file_content)
+
+            # Create process rule
             process_rule = ProcessRule.builder().mode("automatic").build()
 
-            request_body = (
-                CreateByFileRequestBody.builder()
-                .indexing_technique("economy")
-                .process_rule(process_rule)
-                .file(file_path)
-                .build()
+            # Create data object
+            data = (
+                CreateByFileRequestBodyData.builder().indexing_technique("economy").process_rule(process_rule).build()
             )
 
-            request = CreateByFileRequest.builder().dataset_id(dataset_id).request_body(request_body).build()
+            request_body = CreateByFileRequestBody.builder().data(data).build()
+
+            request = (
+                CreateByFileRequest.builder()
+                .dataset_id(dataset_id)
+                .request_body(request_body)
+                .file(file_io, os.path.basename(file_path))
+                .build()
+            )
             request_option = RequestOption.builder().api_key(api_key).build()
 
             response = client.knowledge_base.v1.document.create_by_file(request, request_option)
-
-            if not response.success:
-                print(f"API Error: {response.code} - {response.msg}")
-                return
 
             if not response.success:
                 print(f"API Error: {response.code} - {response.msg}")
@@ -92,24 +102,33 @@ async def create_document_by_file_async() -> None:
         file_path = create_sample_file()
 
         try:
+            from io import BytesIO
+
+            # Read file content
+            with open(file_path, "rb") as f:
+                file_content = f.read()
+            file_io = BytesIO(file_content)
+
+            # Create process rule
             process_rule = ProcessRule.builder().mode("automatic").build()
 
-            request_body = (
-                CreateByFileRequestBody.builder()
-                .indexing_technique("economy")
-                .process_rule(process_rule)
-                .file(file_path)
-                .build()
+            # Create data object
+            data = (
+                CreateByFileRequestBodyData.builder().indexing_technique("economy").process_rule(process_rule).build()
             )
 
-            request = CreateByFileRequest.builder().dataset_id(dataset_id).request_body(request_body).build()
+            request_body = CreateByFileRequestBody.builder().data(data).build()
+
+            request = (
+                CreateByFileRequest.builder()
+                .dataset_id(dataset_id)
+                .request_body(request_body)
+                .file(file_io, os.path.basename(file_path))
+                .build()
+            )
             request_option = RequestOption.builder().api_key(api_key).build()
 
             response = await client.knowledge_base.v1.document.acreate_by_file(request, request_option)
-
-            if not response.success:
-                print(f"API Error (async): {response.code} - {response.msg}")
-                return
 
             if not response.success:
                 print(f"API Error (async): {response.code} - {response.msg}")

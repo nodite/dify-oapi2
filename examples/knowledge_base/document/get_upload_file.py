@@ -43,21 +43,21 @@ def get_document_upload_file_sync() -> None:
             print(f"API Error: {response.code} - {response.msg}")
             return
 
-        if response.upload_file:
+        if response.id:
             print("Upload File Information:")
-            print(f"  ID: {response.upload_file.id}")
-            print(f"  Name: {response.upload_file.name}")
-            print(f"  Size: {response.upload_file.size} bytes")
-            print(f"  Extension: {response.upload_file.extension}")
-            print(f"  MIME Type: {response.upload_file.mime_type}")
-            print(f"  Created By: {response.upload_file.created_by}")
-            print(f"  Created At: {response.upload_file.created_at}")
+            print(f"  ID: {response.id}")
+            print(f"  Name: {response.name}")
+            print(f"  Size: {response.size} bytes")
+            print(f"  Extension: {response.extension}")
+            print(f"  MIME Type: {response.mime_type}")
+            print(f"  Created By: {response.created_by}")
+            print(f"  Created At: {response.created_at}")
 
-            if response.upload_file.url:
-                print(f"  URL: {response.upload_file.url}")
+            if response.url:
+                print(f"  URL: {response.url}")
 
-            if response.upload_file.download_url:
-                print(f"  Download URL: {response.upload_file.download_url}")
+            if response.download_url:
+                print(f"  Download URL: {response.download_url}")
         else:
             print("No upload file information available or document was not created from a file upload")
 
@@ -92,11 +92,11 @@ async def get_document_upload_file_async() -> None:
             return
 
         print("\nAsync Upload File Information:")
-        if response.upload_file:
-            print(f"  ID: {response.upload_file.id}")
-            print(f"  Name: {response.upload_file.name}")
-            print(f"  Size: {response.upload_file.size} bytes")
-            print(f"  Extension: {response.upload_file.extension}")
+        if response.id:
+            print(f"  ID: {response.id}")
+            print(f"  Name: {response.name}")
+            print(f"  Size: {response.size} bytes")
+            print(f"  Extension: {response.extension}")
         else:
             print("No upload file information available (async) or document was not created from a file upload")
 

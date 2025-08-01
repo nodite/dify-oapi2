@@ -139,6 +139,102 @@ class CreateResponse(BaseModel):  # NEVER DO THIS
 - `build()` method returns the RequestBody object
 - No body serialization in RequestBody builder
 
+#### Multipart/Form-Data Handling (CRITICAL PATTERN)
+**Decision**: Special handling for APIs that require multipart/form-data (file uploads)
+
+**Pattern Requirements**:
+- APIs requiring file uploads MUST use multipart/form-data content type
+- Request classes MUST support both `files` and `body` fields in BaseRequest
+- RequestBody classes MUST use nested data structure pattern for complex form data
+- Builder methods MUST handle file streams and form data separately
+
+**Implementation Pattern**:
+```python
+# For APIs with file uploads (e.g., create_by_file)
+class CreateByFileRequestBody(BaseModel):
+    data: str | None = None  # JSON string for form data
+    
+    def data(self, data: CreateByFileRequestBodyData) -> CreateByFileRequestBodyBuilder:
+        # Convert data object to JSON string for multipart form
+        self._request_body.data = data.model_dump_json(exclude_none=True)
+        return self
+
+class CreateByFileRequest(BaseRequest):
+    def __init__(self) -> None:
+        super().__init__()
+        self.file: BytesIO | None = None  # File stream
+        
+    def file(self, file: BytesIO, file_name: str | None = None) -> CreateByFileRequestBuilder:
+        # Set file stream and configure multipart files
+        self._request.file = file
+        file_name = file_name or "upload"
+        self._request.files = {"file": (file_name, file)}
+        return self
+        
+    def request_body(self, request_body: CreateByFileRequestBody) -> CreateByFileRequestBuilder:
+        # Handle multipart form data
+        if request_body.data:
+            self._request.body = {"data": request_body.data}
+        return self
+```
+
+**Nested Data Structure Pattern**:
+```python
+# Separate data model for complex form data
+class CreateByFileRequestBodyData(BaseModel):
+    indexing_technique: str | None = None
+    process_rule: ProcessRule | None = None
+    # ... other fields
+    
+# Main request body references data model
+class CreateByFileRequestBody(BaseModel):
+    data: str | None = None  # JSON string representation
+    
+    def data(self, data: CreateByFileRequestBodyData) -> CreateByFileRequestBodyBuilder:
+        self._request_body.data = data.model_dump_json(exclude_none=True)
+        return self
+```
+
+**Transport Layer Integration**:
+- Transport layer automatically detects `files` field in BaseRequest
+- When `files` is present, uses multipart/form-data content type
+- `body` field becomes form data, `files` field becomes file attachments
+- Supports both sync and async file upload operations
+
+**Usage Example**:
+```python
+# Create data object with complex structure
+data = (
+    CreateByFileRequestBodyData.builder()
+    .indexing_technique("economy")
+    .process_rule(process_rule)
+    .build()
+)
+
+# Create request body with JSON string data
+request_body = (
+    CreateByFileRequestBody.builder()
+    .data(data)
+    .build()
+)
+
+# Create request with file and form data
+request = (
+    CreateByFileRequest.builder()
+    .dataset_id(dataset_id)
+    .request_body(request_body)
+    .file(file_io, "document.txt")
+    .build()
+)
+```
+
+**Benefits**:
+- Clean separation of file data and form data
+- Type-safe handling of complex nested structures
+- Automatic multipart/form-data encoding
+- Consistent with HTTP standards and API expectations
+- Supports both simple and complex file upload scenarios
+
 #### Class Naming Convention (MANDATORY - ZERO TOLERANCE)
 **Universal Naming Pattern**:
 - File names determine class names exactly (e.g., `create_request.py` → `CreateRequest`)
@@ -567,6 +663,111 @@ class Dataset:
 ```
 
 ### Complete Code Style Examples
+
+#### Multipart/Form-Data Request Pattern (File Upload)
+```python
+# create_by_file_request.py
+from __future__ import annotations
+from io import BytesIO
+from dify_oapi.core.enum import HttpMethod
+from dify_oapi.core.model.base_request import BaseRequest
+from .create_by_file_request_body import CreateByFileRequestBody
+
+class CreateByFileRequest(BaseRequest):
+    def __init__(self) -> None:
+        super().__init__()
+        self.dataset_id: str | None = None
+        self.request_body: CreateByFileRequestBody | None = None
+        self.file: BytesIO | None = None
+
+    @staticmethod
+    def builder() -> CreateByFileRequestBuilder:
+        return CreateByFileRequestBuilder()
+
+class CreateByFileRequestBuilder:
+    def __init__(self) -> None:
+        create_by_file_request = CreateByFileRequest()
+        create_by_file_request.http_method = HttpMethod.POST
+        create_by_file_request.uri = "/v1/datasets/:dataset_id/document/create-by-file"
+        self._create_by_file_request = create_by_file_request
+
+    def build(self) -> CreateByFileRequest:
+        return self._create_by_file_request
+
+    def dataset_id(self, dataset_id: str) -> CreateByFileRequestBuilder:
+        self._create_by_file_request.dataset_id = dataset_id
+        self._create_by_file_request.paths["dataset_id"] = dataset_id
+        return self
+
+    def request_body(self, request_body: CreateByFileRequestBody) -> CreateByFileRequestBuilder:
+        self._create_by_file_request.request_body = request_body
+        # Handle multipart form data
+        if request_body.data:
+            self._create_by_file_request.body = {"data": request_body.data}
+        return self
+
+    def file(self, file: BytesIO, file_name: str | None = None) -> CreateByFileRequestBuilder:
+        self._create_by_file_request.file = file
+        file_name = file_name or "upload"
+        self._create_by_file_request.files = {"file": (file_name, file)}
+        return self
+```
+
+```python
+# create_by_file_request_body.py
+from __future__ import annotations
+from pydantic import BaseModel
+from .create_by_file_request_body_data import CreateByFileRequestBodyData
+
+class CreateByFileRequestBody(BaseModel):
+    data: str | None = None
+
+    @staticmethod
+    def builder() -> CreateByFileRequestBodyBuilder:
+        return CreateByFileRequestBodyBuilder()
+
+class CreateByFileRequestBodyBuilder:
+    def __init__(self) -> None:
+        self._create_by_file_request_body = CreateByFileRequestBody()
+
+    def build(self) -> CreateByFileRequestBody:
+        return self._create_by_file_request_body
+
+    def data(self, data: CreateByFileRequestBodyData) -> CreateByFileRequestBodyBuilder:
+        self._create_by_file_request_body.data = data.model_dump_json(exclude_none=True)
+        return self
+```
+
+```python
+# create_by_file_request_body_data.py
+from __future__ import annotations
+from pydantic import BaseModel
+from .process_rule import ProcessRule
+
+class CreateByFileRequestBodyData(BaseModel):
+    indexing_technique: str | None = None
+    process_rule: ProcessRule | None = None
+    # ... other fields
+
+    @staticmethod
+    def builder() -> CreateByFileRequestBodyDataBuilder:
+        return CreateByFileRequestBodyDataBuilder()
+
+class CreateByFileRequestBodyDataBuilder:
+    def __init__(self) -> None:
+        self._create_by_file_request_body_data = CreateByFileRequestBodyData()
+
+    def build(self) -> CreateByFileRequestBodyData:
+        return self._create_by_file_request_body_data
+
+    def indexing_technique(self, indexing_technique: str) -> CreateByFileRequestBodyDataBuilder:
+        self._create_by_file_request_body_data.indexing_technique = indexing_technique
+        return self
+
+    def process_rule(self, process_rule: ProcessRule) -> CreateByFileRequestBodyDataBuilder:
+        self._create_by_file_request_body_data.process_rule = process_rule
+        return self
+```
 
 #### POST Request Pattern (with RequestBody)
 ```python

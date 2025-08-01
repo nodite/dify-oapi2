@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-from pydantic import BaseModel
+from dify_oapi.core.model.base_response import BaseResponse
 
 from .document_info import DocumentInfo
 
 
-class UpdateByFileResponse(BaseModel):
+class UpdateByFileResponse(BaseResponse):
     """Response model for update document by file API"""
 
     document: DocumentInfo | None = None

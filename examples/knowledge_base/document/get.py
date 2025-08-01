@@ -32,6 +32,10 @@ def get_document_sync() -> None:
         list_request = ListRequest.builder().dataset_id(dataset_id).keyword("[Example]").limit("1").build()
         list_response = client.knowledge_base.v1.document.list(list_request, request_option)
 
+        if not list_response.success:
+            print(f"API Error: {list_response.code} - {list_response.msg}")
+            return
+
         if not list_response.data or len(list_response.data) == 0:
             print("No [Example] documents found. Please create one first.")
             return
@@ -41,6 +45,14 @@ def get_document_sync() -> None:
 
         request = GetRequest.builder().dataset_id(dataset_id).document_id(document_id).build()
         response = client.knowledge_base.v1.document.get(request, request_option)
+
+        if not response.success:
+            print(f"API Error: {response.code} - {response.msg}")
+            return
+
+        if not response.success:
+            print(f"API Error: {response.code} - {response.msg}")
+            return
 
         print(f"Document: {response.name}")
         print(f"ID: {response.id}")
@@ -71,6 +83,10 @@ async def get_document_async() -> None:
         list_request = ListRequest.builder().dataset_id(dataset_id).keyword("[Example]").limit("1").build()
         list_response = await client.knowledge_base.v1.document.alist(list_request, request_option)
 
+        if not list_response.success:
+            print(f"API Error (async): {list_response.code} - {list_response.msg}")
+            return
+
         if not list_response.data or len(list_response.data) == 0:
             print("No [Example] documents found. Please create one first.")
             return
@@ -80,6 +96,14 @@ async def get_document_async() -> None:
 
         request = GetRequest.builder().dataset_id(dataset_id).document_id(document_id).build()
         response = await client.knowledge_base.v1.document.aget(request, request_option)
+
+        if not response.success:
+            print(f"API Error (async): {response.code} - {response.msg}")
+            return
+
+        if not response.success:
+            print(f"API Error (async): {response.code} - {response.msg}")
+            return
 
         print(f"Document: {response.name}")
         print(f"ID: {response.id}")

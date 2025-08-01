@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-from pydantic import BaseModel
+from dify_oapi.core.model.base_response import BaseResponse
 
 from .document_info import DocumentInfo
 
 
-class CreateByTextResponse(BaseModel):
+class CreateByTextResponse(BaseResponse):
     """Response model for create document by text API"""
 
     document: DocumentInfo | None = None

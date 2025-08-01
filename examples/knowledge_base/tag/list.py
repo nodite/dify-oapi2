@@ -26,9 +26,25 @@ def list_tags_sync() -> None:
 
         response = client.knowledge_base.v1.tag.list(request, request_option)
 
-        print(f"Found {len(response.data)} tags:")
-        for tag in response.data:
-            print(f"  - {tag.name} (ID: {tag.id}, Bindings: {tag.binding_count})")
+        if not response.success:
+            print(f"API Error: {response.code} - {response.msg}")
+            return
+
+        if not response.success:
+            print(f"API Error: {response.code} - {response.msg}")
+            return
+
+        print(f"Found {len(response.data or [])} tags:")
+        if response.data:
+            if response.data:
+                for tag in response.data:
+                    print(f"  - {tag.name} (ID: {tag.id}, Bindings: {tag.binding_count})")
+
+            else:
+                print("  No items found")
+
+        else:
+            print("  No items found")
 
     except Exception as e:
         print(f"Error listing tags: {e}")
@@ -47,9 +63,25 @@ async def list_tags_async() -> None:
 
         response = await client.knowledge_base.v1.tag.alist(request, request_option)
 
-        print(f"Tags (async): {len(response.data)} found")
-        for tag in response.data:
-            print(f"  • {tag.name} (ID: {tag.id}) - {tag.binding_count} bindings")
+        if not response.success:
+            print(f"API Error (async): {response.code} - {response.msg}")
+            return
+
+        if not response.success:
+            print(f"API Error (async): {response.code} - {response.msg}")
+            return
+
+        print(f"Tags (async): {len(response.data or [])} found")
+        if response.data:
+            if response.data:
+                for tag in response.data:
+                    print(f"  • {tag.name} (ID: {tag.id}) - {tag.binding_count} bindings")
+
+            else:
+                print("  No items found")
+
+        else:
+            print("  No items found")
 
     except Exception as e:
         print(f"Error listing tags (async): {e}")

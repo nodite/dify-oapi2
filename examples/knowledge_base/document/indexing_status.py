@@ -35,6 +35,10 @@ def check_indexing_status_sync() -> None:
 
         response = client.knowledge_base.v1.document.indexing_status(request, request_option)
 
+        if not response.success:
+            print(f"API Error: {response.code} - {response.msg}")
+            return
+
         print(f"Indexing Status for Batch: {batch_id}")
         if response.data:
             for idx, status_info in enumerate(response.data, 1):
@@ -97,6 +101,10 @@ async def check_indexing_status_async() -> None:
         request_option = RequestOption.builder().api_key(api_key).build()
 
         response = await client.knowledge_base.v1.document.aindexing_status(request, request_option)
+
+        if not response.success:
+            print(f"API Error (async): {response.code} - {response.msg}")
+            return
 
         print(f"\nAsync Indexing Status for Batch: {batch_id}")
         if response.data:

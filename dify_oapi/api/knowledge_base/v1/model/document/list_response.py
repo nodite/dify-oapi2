@@ -1,11 +1,11 @@
 from __future__ import annotations
 
-from pydantic import BaseModel
+from dify_oapi.core.model.base_response import BaseResponse
 
 from .document_info import DocumentInfo
 
 
-class ListResponse(BaseModel):
+class ListResponse(BaseResponse):
     """Response model for list documents API"""
 
     data: list[DocumentInfo] | None = None

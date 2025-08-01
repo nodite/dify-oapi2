@@ -2,12 +2,12 @@
 
 from __future__ import annotations
 
-from pydantic import BaseModel
+from dify_oapi.core.model.base_response import BaseResponse
 
 from .document_info import DocumentInfo
 
 
-class UpdateByTextResponse(BaseModel):
+class UpdateByTextResponse(BaseResponse):
     """Response model for updating document by text."""
 
     document: DocumentInfo | None = None

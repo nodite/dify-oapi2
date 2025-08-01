@@ -60,7 +60,32 @@ This document outlines the design for implementing comprehensive dataset managem
 - Remove old model files after new implementations are validated
 - Update import paths and references throughout the codebase
 
-### 7. Request/Response Model Code Style Rules (MANDATORY)
+### 7. Response Model Inheritance Rules (CRITICAL - ZERO TOLERANCE)
+**Decision**: ALL Response classes MUST inherit from BaseResponse for error handling
+
+**MANDATORY RULE**: Every single Response class in the knowledge base module MUST inherit from `BaseResponse`
+- **Rationale**: Ensures all API responses have consistent error handling capabilities
+- **Properties Provided**: `success`, `code`, `msg`, `raw` for comprehensive error management
+- **Zero Exceptions**: No Response class may inherit directly from `pydantic.BaseModel`
+- **Validation**: All examples and tests must check `response.success` before accessing data
+- **Implementation**: Use `from dify_oapi.core.model.base_response import BaseResponse`
+
+**Correct Response Class Patterns**:
+```python
+# ✅ CORRECT: Simple response inheriting from BaseResponse
+class DeleteResponse(BaseResponse):
+    pass
+
+# ✅ CORRECT: Response with data using multiple inheritance
+class CreateResponse(DatasetInfo, BaseResponse):
+    pass
+
+# ❌ WRONG: Direct BaseModel inheritance
+class CreateResponse(BaseModel):  # NEVER DO THIS
+    pass
+```
+
+### 8. Request/Response Model Code Style Rules (MANDATORY)
 **Decision**: Strict adherence to established patterns for consistency across all knowledge base APIs
 
 #### Request Model Architecture
@@ -174,12 +199,14 @@ This document outlines the design for implementing comprehensive dataset managem
 - Public classes are reusable components that can be used across different contexts
 - Examples: `DatasetInfo`, `TagInfo`, `MetadataInfo`, `RetrievalModel`, `RerankingModel`, `ExternalKnowledgeInfo`
 
-**Response Classes**:
-- Response classes MUST inherit from `BaseResponse` for error handling capabilities
+**Response Classes (MANDATORY - ZERO TOLERANCE)**:
+- ALL Response classes MUST inherit from `BaseResponse` for error handling capabilities
 - Response classes MAY use multiple inheritance when they need to include public class data
 - Pattern: `class CreateResponse(DatasetInfo, BaseResponse):`
 - This allows response classes to have both data fields and error handling capabilities
 - Response classes MUST NOT have Builder patterns (unlike Request classes)
+- **CRITICAL**: NEVER inherit from `pydantic.BaseModel` directly - ALWAYS use `BaseResponse`
+- This ensures all responses have `success`, `code`, `msg`, and error handling properties
 
 **Builder Pattern Rules**:
 - Request, RequestBody, and Public/Common classes MUST have Builder patterns
@@ -219,10 +246,19 @@ class CreateResponse(DatasetInfo, BaseResponse):
     """Response model for dataset creation API"""
     pass  # NO builder() method or Builder class
 
+# ✅ CORRECT: Simple response class inheriting from BaseResponse only
+class DeleteResponse(BaseResponse):
+    """Response model for delete API (204 No Content)"""
+    pass  # Empty response body, but has error handling
+
 # ✅ CORRECT: Public classes can be instantiated directly OR via builder
 dataset_info = DatasetInfo(id="123", name="Test Dataset")
 # OR
 dataset_info = DatasetInfo.builder().id("123").name("Test Dataset").build()
+
+# ❌ WRONG: Response class inheriting from BaseModel directly
+class CreateResponse(BaseModel):  # DON'T DO THIS - Missing error handling
+    # ...
 
 # ❌ WRONG: Public class inheriting from BaseResponse
 class DatasetInfo(BaseResponse):  # DON'T DO THIS

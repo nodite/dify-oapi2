@@ -34,6 +34,14 @@ def create_metadata_sync() -> None:
         request_option = RequestOption.builder().api_key(api_key).build()
         response = client.knowledge_base.v1.metadata.create(request, request_option)
 
+        if not response.success:
+            print(f"API Error: {response.code} - {response.msg}")
+            return
+
+        if not response.success:
+            print(f"API Error: {response.code} - {response.msg}")
+            return
+
         print(f"Metadata created: {response.name} ({response.type})")
 
     except Exception as e:
@@ -59,6 +67,14 @@ async def create_metadata_async() -> None:
 
         request_option = RequestOption.builder().api_key(api_key).build()
         response = await client.knowledge_base.v1.metadata.acreate(request, request_option)
+
+        if not response.success:
+            print(f"API Error (async): {response.code} - {response.msg}")
+            return
+
+        if not response.success:
+            print(f"API Error (async): {response.code} - {response.msg}")
+            return
 
         print(f"Metadata created (async): {response.name} ({response.type})")
 

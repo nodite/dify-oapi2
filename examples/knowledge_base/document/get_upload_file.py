@@ -35,6 +35,14 @@ def get_document_upload_file_sync() -> None:
 
         response = client.knowledge_base.v1.document.get_upload_file(request, request_option)
 
+        if not response.success:
+            print(f"API Error: {response.code} - {response.msg}")
+            return
+
+        if not response.success:
+            print(f"API Error: {response.code} - {response.msg}")
+            return
+
         if response.upload_file:
             print("Upload File Information:")
             print(f"  ID: {response.upload_file.id}")
@@ -78,6 +86,10 @@ async def get_document_upload_file_async() -> None:
         request_option = RequestOption.builder().api_key(api_key).build()
 
         response = await client.knowledge_base.v1.document.aget_upload_file(request, request_option)
+
+        if not response.success:
+            print(f"API Error (async): {response.code} - {response.msg}")
+            return
 
         print("\nAsync Upload File Information:")
         if response.upload_file:

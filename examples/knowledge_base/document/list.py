@@ -31,10 +31,26 @@ def list_documents_sync() -> None:
 
         response = client.knowledge_base.v1.document.list(request, request_option)
 
-        print(f"Found {response.total} documents (page {response.page}/{response.limit})")
+        if not response.success:
+            print(f"API Error: {response.code} - {response.msg}")
+            return
+
+        if not response.success:
+            print(f"API Error: {response.code} - {response.msg}")
+            return
+
+        print(f"Found {response.total or 0} documents (page {response.page}/{response.limit})")
         if response.data:
-            for doc in response.data:
-                print(f"- {doc.name} (ID: {doc.id}, Status: {doc.indexing_status})")
+            if response.data:
+                if response.data:
+                    for doc in response.data:
+                        print(f"- {doc.name} (ID: {doc.id}, Status: {doc.indexing_status})")
+
+                else:
+                    print("  No items found")
+
+            else:
+                print("  No items found")
         else:
             print("No documents found")
 
@@ -60,10 +76,26 @@ async def list_documents_async() -> None:
 
         response = await client.knowledge_base.v1.document.alist(request, request_option)
 
-        print(f"Found {response.total} documents (async, page {response.page}/{response.limit})")
+        if not response.success:
+            print(f"API Error (async): {response.code} - {response.msg}")
+            return
+
+        if not response.success:
+            print(f"API Error (async): {response.code} - {response.msg}")
+            return
+
+        print(f"Found {response.total or 0} documents (async, page {response.page}/{response.limit})")
         if response.data:
-            for doc in response.data:
-                print(f"- {doc.name} (ID: {doc.id}, Status: {doc.indexing_status})")
+            if response.data:
+                if response.data:
+                    for doc in response.data:
+                        print(f"- {doc.name} (ID: {doc.id}, Status: {doc.indexing_status})")
+
+                else:
+                    print("  No items found")
+
+            else:
+                print("  No items found")
         else:
             print("No documents found")
 

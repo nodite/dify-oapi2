@@ -46,6 +46,10 @@ def update_document_status_sync() -> None:
 
         response = client.knowledge_base.v1.document.update_status(request, request_option)
 
+        if not response.success:
+            print(f"API Error: {response.code} - {response.msg}")
+            return
+
         print(f"Documents status updated with action '{action}':")
         print(f"  Success: {response.success}")
         if not response.success and response.error:
@@ -86,6 +90,10 @@ async def update_document_status_async() -> None:
         request_option = RequestOption.builder().api_key(api_key).build()
 
         response = await client.knowledge_base.v1.document.aupdate_status(request, request_option)
+
+        if not response.success:
+            print(f"API Error (async): {response.code} - {response.msg}")
+            return
 
         print(f"\nDocuments status updated asynchronously with action '{action}':")
         print(f"  Success: {response.success}")

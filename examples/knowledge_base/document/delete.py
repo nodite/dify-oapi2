@@ -32,6 +32,10 @@ def delete_document_sync() -> None:
         list_request = ListRequest.builder().dataset_id(dataset_id).keyword("[Example]").limit("1").build()
         list_response = client.knowledge_base.v1.document.list(list_request, request_option)
 
+        if not list_response.success:
+            print(f"API Error: {list_response.code} - {list_response.msg}")
+            return
+
         if not list_response.data or len(list_response.data) == 0:
             print("No [Example] documents found to delete.")
             return
@@ -72,6 +76,10 @@ async def delete_document_async() -> None:
         # First, get a document ID from the list
         list_request = ListRequest.builder().dataset_id(dataset_id).keyword("[Example]").limit("1").build()
         list_response = await client.knowledge_base.v1.document.alist(list_request, request_option)
+
+        if not list_response.success:
+            print(f"API Error (async): {list_response.code} - {list_response.msg}")
+            return
 
         if not list_response.data or len(list_response.data) == 0:
             print("No [Example] documents found to delete.")

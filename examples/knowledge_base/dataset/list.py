@@ -26,9 +26,25 @@ def list_datasets_sync() -> None:
 
         response = client.knowledge_base.v1.dataset.list(request, request_option)
 
-        print(f"Found {response.total} datasets:")
-        for dataset in response.data:
-            print(f"  - {dataset.name} (ID: {dataset.id}, Docs: {dataset.document_count})")
+        if not response.success:
+            print(f"API Error: {response.code} - {response.msg}")
+            return
+
+        if not response.success:
+            print(f"API Error: {response.code} - {response.msg}")
+            return
+
+        print(f"Found {response.total or 0} datasets:")
+        if response.data:
+            if response.data:
+                for dataset in response.data:
+                    print(f"  - {dataset.name} (ID: {dataset.id}, Docs: {dataset.document_count})")
+
+            else:
+                print("  No items found")
+
+        else:
+            print("  No items found")
 
     except Exception as e:
         print(f"Error listing datasets: {e}")
@@ -47,9 +63,25 @@ async def list_datasets_async() -> None:
 
         response = await client.knowledge_base.v1.dataset.alist(request, request_option)
 
-        print(f"Search 'test': {len(response.data)} datasets found")
-        for dataset in response.data:
-            print(f"  - {dataset.name} (ID: {dataset.id})")
+        if not response.success:
+            print(f"API Error (async): {response.code} - {response.msg}")
+            return
+
+        if not response.success:
+            print(f"API Error (async): {response.code} - {response.msg}")
+            return
+
+        print(f"Search 'test': {len(response.data or [])} datasets found")
+        if response.data:
+            if response.data:
+                for dataset in response.data:
+                    print(f"  - {dataset.name} (ID: {dataset.id})")
+
+            else:
+                print("  No items found")
+
+        else:
+            print("  No items found")
 
     except Exception as e:
         print(f"Error listing datasets (async): {e}")

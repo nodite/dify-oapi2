@@ -111,6 +111,10 @@ def delete_example_tags() -> None:
         list_request = ListRequest.builder().build()
         list_response = client.knowledge_base.v1.tag.list(list_request, request_option)
 
+        if not list_response.success:
+            print(f"API Error: {list_response.code} - {list_response.msg}")
+            return
+
         example_tags = [t for t in list_response.data if t.name and t.name.startswith("[Example]")]
 
         if not example_tags:

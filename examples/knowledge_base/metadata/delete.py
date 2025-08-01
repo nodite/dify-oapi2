@@ -118,6 +118,10 @@ def delete_example_metadata() -> None:
         list_request = ListRequest.builder().dataset_id(dataset_id).build()
         list_response = client.knowledge_base.v1.metadata.list(list_request, request_option)
 
+        if not list_response.success:
+            print(f"API Error: {list_response.code} - {list_response.msg}")
+            return
+
         example_metadata = [m for m in list_response.doc_metadata if m.name and m.name.startswith("[Example]")]
 
         if not example_metadata:

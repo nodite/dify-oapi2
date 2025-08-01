@@ -46,6 +46,14 @@ def create_document_by_text_sync() -> None:
 
         response = client.knowledge_base.v1.document.create_by_text(request, request_option)
 
+        if not response.success:
+            print(f"API Error: {response.code} - {response.msg}")
+            return
+
+        if not response.success:
+            print(f"API Error: {response.code} - {response.msg}")
+            return
+
         if response.document:
             print(f"Document created: {response.document.name} (ID: {response.document.id})")
         else:
@@ -85,6 +93,14 @@ async def create_document_by_text_async() -> None:
         request_option = RequestOption.builder().api_key(api_key).build()
 
         response = await client.knowledge_base.v1.document.acreate_by_text(request, request_option)
+
+        if not response.success:
+            print(f"API Error (async): {response.code} - {response.msg}")
+            return
+
+        if not response.success:
+            print(f"API Error (async): {response.code} - {response.msg}")
+            return
 
         if response.document:
             print(f"Document created (async): {response.document.name} (ID: {response.document.id})")

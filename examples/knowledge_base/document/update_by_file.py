@@ -60,6 +60,14 @@ def update_document_by_file_sync() -> None:
 
             response = client.knowledge_base.v1.document.update_by_file(request, request_option)
 
+            if not response.success:
+                print(f"API Error: {response.code} - {response.msg}")
+                return
+
+            if not response.success:
+                print(f"API Error: {response.code} - {response.msg}")
+                return
+
             if response.document:
                 print(f"Document updated: {response.document.name} (ID: {response.document.id})")
             else:
@@ -106,6 +114,14 @@ async def update_document_by_file_async() -> None:
             request_option = RequestOption.builder().api_key(api_key).build()
 
             response = await client.knowledge_base.v1.document.aupdate_by_file(request, request_option)
+
+            if not response.success:
+                print(f"API Error (async): {response.code} - {response.msg}")
+                return
+
+            if not response.success:
+                print(f"API Error (async): {response.code} - {response.msg}")
+                return
 
             if response.document:
                 print(f"Document updated (async): {response.document.name} (ID: {response.document.id})")

@@ -39,6 +39,14 @@ def update_metadata_sync() -> None:
         request_option = RequestOption.builder().api_key(api_key).build()
         response = client.knowledge_base.v1.metadata.update(request, request_option)
 
+        if not response.success:
+            print(f"API Error: {response.code} - {response.msg}")
+            return
+
+        if not response.success:
+            print(f"API Error: {response.code} - {response.msg}")
+            return
+
         print(f"Metadata updated: {response.name} ({response.type})")
 
     except Exception as e:
@@ -69,6 +77,14 @@ async def update_metadata_async() -> None:
 
         request_option = RequestOption.builder().api_key(api_key).build()
         response = await client.knowledge_base.v1.metadata.aupdate(request, request_option)
+
+        if not response.success:
+            print(f"API Error (async): {response.code} - {response.msg}")
+            return
+
+        if not response.success:
+            print(f"API Error (async): {response.code} - {response.msg}")
+            return
 
         print(f"Metadata updated (async): {response.name}")
 

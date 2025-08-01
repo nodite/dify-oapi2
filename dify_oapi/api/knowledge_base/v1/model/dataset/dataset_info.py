@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from pydantic import BaseModel
 
+from ..metadata.metadata_info import MetadataInfo
 from ..tag.tag_info import TagInfo
 from .external_knowledge_info import ExternalKnowledgeInfo
 from .retrieval_model import RetrievalModel
@@ -31,6 +32,8 @@ class DatasetInfo(BaseModel):
     external_knowledge_info: ExternalKnowledgeInfo | None = None
     external_retrieval_model: RetrievalModel | None = None
     partial_member_list: list[str] | None = None
+    doc_metadata: list[MetadataInfo] | None = None
+    built_in_field_enabled: bool | None = None
 
     @staticmethod
     def builder() -> DatasetInfoBuilder:
@@ -134,4 +137,12 @@ class DatasetInfoBuilder:
 
     def partial_member_list(self, partial_member_list: list[str]) -> DatasetInfoBuilder:
         self._dataset_info.partial_member_list = partial_member_list
+        return self
+
+    def doc_metadata(self, doc_metadata: list[MetadataInfo]) -> DatasetInfoBuilder:
+        self._dataset_info.doc_metadata = doc_metadata
+        return self
+
+    def built_in_field_enabled(self, built_in_field_enabled: bool) -> DatasetInfoBuilder:
+        self._dataset_info.built_in_field_enabled = built_in_field_enabled
         return self

@@ -33,6 +33,14 @@ def update_tag_sync() -> None:
         request_option = RequestOption.builder().api_key(api_key).build()
         response = client.knowledge_base.v1.tag.update(request, request_option)
 
+        if not response.success:
+            print(f"API Error: {response.code} - {response.msg}")
+            return
+
+        if not response.success:
+            print(f"API Error: {response.code} - {response.msg}")
+            return
+
         print(f"Tag updated: {response.name} (Bindings: {response.binding_count})")
 
     except Exception as e:
@@ -57,6 +65,14 @@ async def update_tag_async() -> None:
         request = UpdateRequest.builder().request_body(request_body).build()
         request_option = RequestOption.builder().api_key(api_key).build()
         response = await client.knowledge_base.v1.tag.aupdate(request, request_option)
+
+        if not response.success:
+            print(f"API Error (async): {response.code} - {response.msg}")
+            return
+
+        if not response.success:
+            print(f"API Error (async): {response.code} - {response.msg}")
+            return
 
         print(f"Tag updated (async): {response.name}")
 

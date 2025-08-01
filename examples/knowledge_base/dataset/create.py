@@ -38,6 +38,14 @@ def create_dataset_sync() -> None:
 
         response = client.knowledge_base.v1.dataset.create(request, request_option)
 
+        if not response.success:
+            print(f"API Error: {response.code} - {response.msg}")
+            return
+
+        if not response.success:
+            print(f"API Error: {response.code} - {response.msg}")
+            return
+
         print(f"Dataset created: {response.name} (ID: {response.id})")
 
     except Exception as e:
@@ -66,6 +74,14 @@ async def create_dataset_async() -> None:
         request_option = RequestOption.builder().api_key(api_key).build()
 
         response = await client.knowledge_base.v1.dataset.acreate(request, request_option)
+
+        if not response.success:
+            print(f"API Error (async): {response.code} - {response.msg}")
+            return
+
+        if not response.success:
+            print(f"API Error (async): {response.code} - {response.msg}")
+            return
 
         print(f"Dataset created (async): {response.name} (ID: {response.id})")
 

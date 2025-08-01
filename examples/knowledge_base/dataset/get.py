@@ -30,6 +30,14 @@ def get_dataset_sync() -> None:
 
         response = client.knowledge_base.v1.dataset.get(request, request_option)
 
+        if not response.success:
+            print(f"API Error: {response.code} - {response.msg}")
+            return
+
+        if not response.success:
+            print(f"API Error: {response.code} - {response.msg}")
+            return
+
         print(f"Dataset: {response.name} (ID: {response.id})")
         print(f"  Permission: {response.permission}")
         print(f"  Documents: {response.document_count}, Words: {response.word_count}")
@@ -58,6 +66,14 @@ async def get_dataset_async() -> None:
         request_option = RequestOption.builder().api_key(api_key).build()
 
         response = await client.knowledge_base.v1.dataset.aget(request, request_option)
+
+        if not response.success:
+            print(f"API Error (async): {response.code} - {response.msg}")
+            return
+
+        if not response.success:
+            print(f"API Error (async): {response.code} - {response.msg}")
+            return
 
         print(f"Dataset (async): {response.name}")
         print(f"  Documents: {response.document_count}")

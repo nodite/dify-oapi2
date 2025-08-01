@@ -87,6 +87,10 @@ def delete_example_datasets() -> None:
         list_request = ListRequest.builder().limit(100).build()
         list_response = client.knowledge_base.v1.dataset.list(list_request, request_option)
 
+        if not list_response.success:
+            print(f"API Error: {list_response.code} - {list_response.msg}")
+            return
+
         example_datasets = [d for d in list_response.data if d.name and d.name.startswith("[Example]")]
 
         if not example_datasets:

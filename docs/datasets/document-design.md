@@ -41,7 +41,32 @@ This document outlines the design for implementing comprehensive document manage
 - Allow domain-specific customizations through separate variants
 - Consistent naming without domain prefixes
 
-### 5. Request/Response Model Code Style Rules (MANDATORY)
+### 5. Response Model Inheritance Rules (CRITICAL - ZERO TOLERANCE)
+**Decision**: ALL Response classes MUST inherit from BaseResponse for error handling
+
+**MANDATORY RULE**: Every single Response class in the document module MUST inherit from `BaseResponse`
+- **Rationale**: Ensures all API responses have consistent error handling capabilities
+- **Properties Provided**: `success`, `code`, `msg`, `raw` for comprehensive error management
+- **Zero Exceptions**: No Response class may inherit directly from `pydantic.BaseModel`
+- **Validation**: All examples and tests must check `response.success` before accessing data
+- **Implementation**: Use `from dify_oapi.core.model.base_response import BaseResponse`
+
+**Correct Response Class Patterns**:
+```python
+# ✅ CORRECT: Simple response inheriting from BaseResponse
+class DeleteResponse(BaseResponse):
+    pass
+
+# ✅ CORRECT: Response with data using multiple inheritance
+class CreateByTextResponse(DocumentInfo, BaseResponse):
+    pass
+
+# ❌ WRONG: Direct BaseModel inheritance
+class CreateByTextResponse(BaseModel):  # NEVER DO THIS
+    pass
+```
+
+### 6. Request/Response Model Code Style Rules (MANDATORY)
 **Decision**: Strict adherence to established patterns for consistency
 
 #### Request Model Architecture
@@ -116,12 +141,14 @@ This document outlines the design for implementing comprehensive document manage
 - Public classes are reusable components that can be used across different contexts
 - Examples: `DocumentInfo`, `ProcessRule`, `PreProcessingRule`, `Segmentation`, `DataSourceInfo`, `UploadFileInfo`
 
-**Response Classes**:
-- Response classes MUST inherit from `BaseResponse` for error handling capabilities
+**Response Classes (MANDATORY - ZERO TOLERANCE)**:
+- ALL Response classes MUST inherit from `BaseResponse` for error handling capabilities
 - Response classes MAY use multiple inheritance when they need to include public class data
 - Pattern: `class CreateByTextResponse(DocumentInfo, BaseResponse):`
 - This allows response classes to have both data fields and error handling capabilities
 - Response classes MUST NOT have Builder patterns (unlike Request classes)
+- **CRITICAL**: NEVER inherit from `pydantic.BaseModel` directly - ALWAYS use `BaseResponse`
+- This ensures all responses have `success`, `code`, `msg`, and error handling properties
 
 **Builder Pattern Rules**:
 - Request, RequestBody, and Public/Common classes MUST have Builder patterns
@@ -161,10 +188,19 @@ class CreateByTextResponse(DocumentInfo, BaseResponse):
     """Response model for create document by text API"""
     pass  # NO builder() method or Builder class
 
+# ✅ CORRECT: Simple response class inheriting from BaseResponse only
+class DeleteResponse(BaseResponse):
+    """Response model for delete API (204 No Content)"""
+    pass  # Empty response body, but has error handling
+
 # ✅ CORRECT: Public classes can be instantiated directly OR via builder
 document_info = DocumentInfo(id="123", name="Test Document")
 # OR
 document_info = DocumentInfo.builder().id("123").name("Test Document").build()
+
+# ❌ WRONG: Response class inheriting from BaseModel directly
+class CreateByTextResponse(BaseModel):  # DON'T DO THIS - Missing error handling
+    # ...
 
 # ❌ WRONG: Public class inheriting from BaseResponse
 class DocumentInfo(BaseResponse):  # DON'T DO THIS
@@ -484,7 +520,222 @@ class Document:
         return await ATransport.aexecute(self.config, request, unmarshal_as=GetUploadFileResponse, option=request_option)
 ```
 
+#### Multipart/Form-Data Handling for Document APIs (CRITICAL PATTERN)
+**Decision**: Document file upload APIs require special multipart/form-data handling
+
+**Affected APIs**:
+- `create_by_file` - Create document by file upload
+- `update_by_file` - Update document by file upload
+
+**Implementation Pattern**:
+```python
+# Three-layer structure for file upload APIs
+# 1. Main RequestBody with data field as JSON string
+class CreateByFileRequestBody(BaseModel):
+    data: str | None = None  # JSON string for multipart form
+    
+    def data(self, data: CreateByFileRequestBodyData) -> CreateByFileRequestBodyBuilder:
+        # Convert complex data object to JSON string
+        self._request_body.data = data.model_dump_json(exclude_none=True)
+        return self
+
+# 2. Nested Data model with actual field structure
+class CreateByFileRequestBodyData(BaseModel):
+    indexing_technique: str | None = None
+    doc_form: str | None = None
+    doc_language: str | None = None
+    process_rule: ProcessRule | None = None
+    retrieval_model: RetrievalModel | None = None
+    embedding_model: str | None = None
+    embedding_model_provider: str | None = None
+    # ... other API-specific fields
+
+# 3. Request class with file handling
+class CreateByFileRequest(BaseRequest):
+    def __init__(self) -> None:
+        super().__init__()
+        self.dataset_id: str | None = None
+        self.request_body: CreateByFileRequestBody | None = None
+        self.file: BytesIO | None = None  # File stream
+        
+    def file(self, file: BytesIO, file_name: str | None = None) -> CreateByFileRequestBuilder:
+        self._request.file = file
+        file_name = file_name or "upload"
+        self._request.files = {"file": (file_name, file)}
+        return self
+        
+    def request_body(self, request_body: CreateByFileRequestBody) -> CreateByFileRequestBuilder:
+        self._request.request_body = request_body
+        # Set form data for multipart upload
+        if request_body.data:
+            self._request.body = {"data": request_body.data}
+        return self
+```
+
+**Key Design Principles**:
+1. **Separation of Concerns**: File data and form data are handled separately
+2. **Type Safety**: Complex nested structures maintain full type checking
+3. **JSON Serialization**: Form data is serialized to JSON string for multipart transmission
+4. **Transport Integration**: BaseRequest.files triggers multipart/form-data encoding
+5. **Backward Compatibility**: Pattern works with existing transport layer
+
+**Usage Pattern**:
+```python
+# Create complex data structure
+process_rule = ProcessRule.builder().mode("automatic").build()
+data = (
+    CreateByFileRequestBodyData.builder()
+    .indexing_technique("economy")
+    .process_rule(process_rule)
+    .build()
+)
+
+# Create request body with JSON data
+request_body = (
+    CreateByFileRequestBody.builder()
+    .data(data)
+    .build()
+)
+
+# Create request with file and form data
+file_io = BytesIO(file_content)
+request = (
+    CreateByFileRequest.builder()
+    .dataset_id(dataset_id)
+    .request_body(request_body)
+    .file(file_io, "document.txt")
+    .build()
+)
+```
+
+**Transport Layer Behavior**:
+- When `files` field is present in BaseRequest, transport uses multipart/form-data
+- `body` field becomes form data fields
+- `files` field becomes file attachments
+- Content-Type automatically set to multipart/form-data
+- Supports both sync and async operations
+
+**Benefits**:
+- **API Compliance**: Matches Dify API multipart/form-data requirements
+- **Type Safety**: Full Pydantic validation for complex nested structures
+- **Developer Experience**: Intuitive builder pattern for file uploads
+- **Maintainability**: Clear separation between file and form data handling
+- **Extensibility**: Pattern can be applied to other file upload APIs
+
 ### Complete Code Style Examples
+
+#### Multipart/Form-Data Request Pattern (Document File Upload)
+```python
+# create_by_file_request.py
+from __future__ import annotations
+from io import BytesIO
+from dify_oapi.core.enum import HttpMethod
+from dify_oapi.core.model.base_request import BaseRequest
+from .create_by_file_request_body import CreateByFileRequestBody
+
+class CreateByFileRequest(BaseRequest):
+    def __init__(self) -> None:
+        super().__init__()
+        self.dataset_id: str | None = None
+        self.request_body: CreateByFileRequestBody | None = None
+        self.file: BytesIO | None = None
+
+    @staticmethod
+    def builder() -> CreateByFileRequestBuilder:
+        return CreateByFileRequestBuilder()
+
+class CreateByFileRequestBuilder:
+    def __init__(self) -> None:
+        create_by_file_request = CreateByFileRequest()
+        create_by_file_request.http_method = HttpMethod.POST
+        create_by_file_request.uri = "/v1/datasets/:dataset_id/document/create-by-file"
+        self._create_by_file_request = create_by_file_request
+
+    def build(self) -> CreateByFileRequest:
+        return self._create_by_file_request
+
+    def dataset_id(self, dataset_id: str) -> CreateByFileRequestBuilder:
+        self._create_by_file_request.dataset_id = dataset_id
+        self._create_by_file_request.paths["dataset_id"] = dataset_id
+        return self
+
+    def request_body(self, request_body: CreateByFileRequestBody) -> CreateByFileRequestBuilder:
+        self._create_by_file_request.request_body = request_body
+        # Handle multipart form data
+        if request_body.data:
+            self._create_by_file_request.body = {"data": request_body.data}
+        return self
+
+    def file(self, file: BytesIO, file_name: str | None = None) -> CreateByFileRequestBuilder:
+        self._create_by_file_request.file = file
+        file_name = file_name or "upload"
+        self._create_by_file_request.files = {"file": (file_name, file)}
+        return self
+```
+
+```python
+# create_by_file_request_body.py
+from __future__ import annotations
+from pydantic import BaseModel
+from .create_by_file_request_body_data import CreateByFileRequestBodyData
+
+class CreateByFileRequestBody(BaseModel):
+    data: str | None = None
+
+    @staticmethod
+    def builder() -> CreateByFileRequestBodyBuilder:
+        return CreateByFileRequestBodyBuilder()
+
+class CreateByFileRequestBodyBuilder:
+    def __init__(self) -> None:
+        self._create_by_file_request_body = CreateByFileRequestBody()
+
+    def build(self) -> CreateByFileRequestBody:
+        return self._create_by_file_request_body
+
+    def data(self, data: CreateByFileRequestBodyData) -> CreateByFileRequestBodyBuilder:
+        self._create_by_file_request_body.data = data.model_dump_json(exclude_none=True)
+        return self
+```
+
+```python
+# create_by_file_request_body_data.py
+from __future__ import annotations
+from pydantic import BaseModel
+from .process_rule import ProcessRule
+from .retrieval_model import RetrievalModel
+
+class CreateByFileRequestBodyData(BaseModel):
+    original_document_id: str | None = None
+    indexing_technique: str | None = None
+    doc_form: str | None = None
+    doc_language: str | None = None
+    process_rule: ProcessRule | None = None
+    retrieval_model: RetrievalModel | None = None
+    embedding_model: str | None = None
+    embedding_model_provider: str | None = None
+
+    @staticmethod
+    def builder() -> CreateByFileRequestBodyDataBuilder:
+        return CreateByFileRequestBodyDataBuilder()
+
+class CreateByFileRequestBodyDataBuilder:
+    def __init__(self) -> None:
+        self._create_by_file_request_body_data = CreateByFileRequestBodyData()
+
+    def build(self) -> CreateByFileRequestBodyData:
+        return self._create_by_file_request_body_data
+
+    def indexing_technique(self, indexing_technique: str) -> CreateByFileRequestBodyDataBuilder:
+        self._create_by_file_request_body_data.indexing_technique = indexing_technique
+        return self
+
+    def process_rule(self, process_rule: ProcessRule) -> CreateByFileRequestBodyDataBuilder:
+        self._create_by_file_request_body_data.process_rule = process_rule
+        return self
+
+    # ... other builder methods for all fields
+```
 
 #### POST Request Pattern (with RequestBody and multipart/form-data)
 ```python
@@ -724,17 +975,29 @@ examples/knowledge_base/document/
 - Integration tests with mock API responses
 - Validation tests for all model classes
 - Migration verification tests to ensure behavioral consistency
+- **Test File Organization**: All model tests MUST follow flat structure in `tests/knowledge_base/v1/model/` directory
+- **Naming Consistency**: Use `test_{resource}_models.py` pattern for all model test files
+- **No Nested Directories**: Avoid creating resource-specific test subdirectories
+- **Consolidated Document Testing**: ALL document model tests MUST be in single `test_document_models.py` file
+- **Comprehensive Coverage**: Single test file covers shared models + all 10 API models with proper organization
+
+### Test File Organization Rules (MANDATORY)
+**Decision**: Test files MUST be organized in a flat structure within the model directory
+- **Flat Structure**: All model test files are placed directly in `tests/knowledge_base/v1/model/` directory
+- **No Subdirectories**: Do NOT create resource-specific subdirectories like `model/document/`
+- **Naming Convention**: Use `test_{resource}_models.py` pattern (e.g., `test_document_models.py`)
+- **Consistency**: Follow the same pattern as existing test files (`test_dataset_models.py`, `test_metadata_models.py`, `test_tag_models.py`)
+- **Consolidated Testing**: ALL document-related model tests MUST be in a single `test_document_models.py` file
+- **Rationale**: Maintains consistency with existing codebase structure and simplifies test discovery
 
 ### Test Directory Structure
 ```
 tests/knowledge_base/v1/
 ├── model/
-│   └── document/
-│       ├── test_create_by_text_models.py
-│       ├── test_create_by_file_models.py
-│       ├── test_update_models.py
-│       ├── test_status_models.py
-│       └── test_shared_models.py
+│   ├── test_dataset_models.py         # Existing dataset model tests
+│   ├── test_metadata_models.py        # Existing metadata model tests
+│   ├── test_tag_models.py             # Existing tag model tests
+│   └── test_document_models.py        # ALL document model tests (shared + API models)
 ├── resource/
 │   └── test_document_resource.py
 ├── integration/
@@ -743,6 +1006,22 @@ tests/knowledge_base/v1/
 │   └── test_examples_validation.py
 └── __init__.py
 ```
+
+### Document Model Test Organization (MANDATORY)
+**Decision**: Single consolidated test file for all document models
+- **File**: `tests/knowledge_base/v1/model/test_document_models.py`
+- **Scope**: ALL document-related model tests in one file
+- **Coverage**: 
+  - Shared models (DocumentInfo, ProcessRule, etc.)
+  - All 10 API request/response models
+  - Builder pattern tests for all models
+  - Integration tests between models
+- **Structure**: Organize tests by model type with clear section comments
+- **Benefits**: 
+  - Single source of truth for all document model tests
+  - Easier maintenance and discovery
+  - Consistent with other resource test patterns
+  - Simplified test execution and coverage reporting
 
 ## Latest Improvements and Optimizations
 

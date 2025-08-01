@@ -60,7 +60,32 @@ This document outlines the design for implementing comprehensive dataset managem
 - Remove old model files after new implementations are validated
 - Update import paths and references throughout the codebase
 
-### 7. Request/Response Model Code Style Rules (MANDATORY)
+### 7. Response Model Inheritance Rules (CRITICAL - ZERO TOLERANCE)
+**Decision**: ALL Response classes MUST inherit from BaseResponse for error handling
+
+**MANDATORY RULE**: Every single Response class in the knowledge base module MUST inherit from `BaseResponse`
+- **Rationale**: Ensures all API responses have consistent error handling capabilities
+- **Properties Provided**: `success`, `code`, `msg`, `raw` for comprehensive error management
+- **Zero Exceptions**: No Response class may inherit directly from `pydantic.BaseModel`
+- **Validation**: All examples and tests must check `response.success` before accessing data
+- **Implementation**: Use `from dify_oapi.core.model.base_response import BaseResponse`
+
+**Correct Response Class Patterns**:
+```python
+# ✅ CORRECT: Simple response inheriting from BaseResponse
+class DeleteResponse(BaseResponse):
+    pass
+
+# ✅ CORRECT: Response with data using multiple inheritance
+class CreateResponse(DatasetInfo, BaseResponse):
+    pass
+
+# ❌ WRONG: Direct BaseModel inheritance
+class CreateResponse(BaseModel):  # NEVER DO THIS
+    pass
+```
+
+### 8. Request/Response Model Code Style Rules (MANDATORY)
 **Decision**: Strict adherence to established patterns for consistency across all knowledge base APIs
 
 #### Request Model Architecture
@@ -113,6 +138,102 @@ This document outlines the design for implementing comprehensive dataset managem
 - Each field method sets `self._request_body.field = value` then returns self
 - `build()` method returns the RequestBody object
 - No body serialization in RequestBody builder
+
+#### Multipart/Form-Data Handling (CRITICAL PATTERN)
+**Decision**: Special handling for APIs that require multipart/form-data (file uploads)
+
+**Pattern Requirements**:
+- APIs requiring file uploads MUST use multipart/form-data content type
+- Request classes MUST support both `files` and `body` fields in BaseRequest
+- RequestBody classes MUST use nested data structure pattern for complex form data
+- Builder methods MUST handle file streams and form data separately
+
+**Implementation Pattern**:
+```python
+# For APIs with file uploads (e.g., create_by_file)
+class CreateByFileRequestBody(BaseModel):
+    data: str | None = None  # JSON string for form data
+    
+    def data(self, data: CreateByFileRequestBodyData) -> CreateByFileRequestBodyBuilder:
+        # Convert data object to JSON string for multipart form
+        self._request_body.data = data.model_dump_json(exclude_none=True)
+        return self
+
+class CreateByFileRequest(BaseRequest):
+    def __init__(self) -> None:
+        super().__init__()
+        self.file: BytesIO | None = None  # File stream
+        
+    def file(self, file: BytesIO, file_name: str | None = None) -> CreateByFileRequestBuilder:
+        # Set file stream and configure multipart files
+        self._request.file = file
+        file_name = file_name or "upload"
+        self._request.files = {"file": (file_name, file)}
+        return self
+        
+    def request_body(self, request_body: CreateByFileRequestBody) -> CreateByFileRequestBuilder:
+        # Handle multipart form data
+        if request_body.data:
+            self._request.body = {"data": request_body.data}
+        return self
+```
+
+**Nested Data Structure Pattern**:
+```python
+# Separate data model for complex form data
+class CreateByFileRequestBodyData(BaseModel):
+    indexing_technique: str | None = None
+    process_rule: ProcessRule | None = None
+    # ... other fields
+    
+# Main request body references data model
+class CreateByFileRequestBody(BaseModel):
+    data: str | None = None  # JSON string representation
+    
+    def data(self, data: CreateByFileRequestBodyData) -> CreateByFileRequestBodyBuilder:
+        self._request_body.data = data.model_dump_json(exclude_none=True)
+        return self
+```
+
+**Transport Layer Integration**:
+- Transport layer automatically detects `files` field in BaseRequest
+- When `files` is present, uses multipart/form-data content type
+- `body` field becomes form data, `files` field becomes file attachments
+- Supports both sync and async file upload operations
+
+**Usage Example**:
+```python
+# Create data object with complex structure
+data = (
+    CreateByFileRequestBodyData.builder()
+    .indexing_technique("economy")
+    .process_rule(process_rule)
+    .build()
+)
+
+# Create request body with JSON string data
+request_body = (
+    CreateByFileRequestBody.builder()
+    .data(data)
+    .build()
+)
+
+# Create request with file and form data
+request = (
+    CreateByFileRequest.builder()
+    .dataset_id(dataset_id)
+    .request_body(request_body)
+    .file(file_io, "document.txt")
+    .build()
+)
+```
+
+**Benefits**:
+- Clean separation of file data and form data
+- Type-safe handling of complex nested structures
+- Automatic multipart/form-data encoding
+- Consistent with HTTP standards and API expectations
+- Supports both simple and complex file upload scenarios
 
 #### Class Naming Convention (MANDATORY - ZERO TOLERANCE)
 **Universal Naming Pattern**:
@@ -174,12 +295,14 @@ This document outlines the design for implementing comprehensive dataset managem
 - Public classes are reusable components that can be used across different contexts
 - Examples: `DatasetInfo`, `TagInfo`, `MetadataInfo`, `RetrievalModel`, `RerankingModel`, `ExternalKnowledgeInfo`
 
-**Response Classes**:
-- Response classes MUST inherit from `BaseResponse` for error handling capabilities
+**Response Classes (MANDATORY - ZERO TOLERANCE)**:
+- ALL Response classes MUST inherit from `BaseResponse` for error handling capabilities
 - Response classes MAY use multiple inheritance when they need to include public class data
 - Pattern: `class CreateResponse(DatasetInfo, BaseResponse):`
 - This allows response classes to have both data fields and error handling capabilities
 - Response classes MUST NOT have Builder patterns (unlike Request classes)
+- **CRITICAL**: NEVER inherit from `pydantic.BaseModel` directly - ALWAYS use `BaseResponse`
+- This ensures all responses have `success`, `code`, `msg`, and error handling properties
 
 **Builder Pattern Rules**:
 - Request, RequestBody, and Public/Common classes MUST have Builder patterns
@@ -194,7 +317,7 @@ class DatasetInfo(BaseModel):
     id: Optional[str] = None
     name: Optional[str] = None
     # ... other fields
-    
+
     @staticmethod
     def builder() -> DatasetInfoBuilder:
         return DatasetInfoBuilder()
@@ -202,14 +325,14 @@ class DatasetInfo(BaseModel):
 class DatasetInfoBuilder:
     def __init__(self):
         self._dataset_info = DatasetInfo()
-    
+
     def build(self) -> DatasetInfo:
         return self._dataset_info
-    
+
     def id(self, id: str) -> DatasetInfoBuilder:
         self._dataset_info.id = id
         return self
-    
+
     def name(self, name: str) -> DatasetInfoBuilder:
         self._dataset_info.name = name
         return self
@@ -219,10 +342,19 @@ class CreateResponse(DatasetInfo, BaseResponse):
     """Response model for dataset creation API"""
     pass  # NO builder() method or Builder class
 
+# ✅ CORRECT: Simple response class inheriting from BaseResponse only
+class DeleteResponse(BaseResponse):
+    """Response model for delete API (204 No Content)"""
+    pass  # Empty response body, but has error handling
+
 # ✅ CORRECT: Public classes can be instantiated directly OR via builder
 dataset_info = DatasetInfo(id="123", name="Test Dataset")
 # OR
 dataset_info = DatasetInfo.builder().id("123").name("Test Dataset").build()
+
+# ❌ WRONG: Response class inheriting from BaseModel directly
+class CreateResponse(BaseModel):  # DON'T DO THIS - Missing error handling
+    # ...
 
 # ❌ WRONG: Public class inheriting from BaseResponse
 class DatasetInfo(BaseResponse):  # DON'T DO THIS
@@ -248,7 +380,7 @@ class PublicClass(BaseModel):
     field1: str | None = None
     field2: int | None = None
     # ... other fields
-    
+
     @staticmethod
     def builder() -> PublicClassBuilder:
         return PublicClassBuilder()
@@ -256,14 +388,14 @@ class PublicClass(BaseModel):
 class PublicClassBuilder:
     def __init__(self):
         self._public_class = PublicClass()
-    
+
     def build(self) -> PublicClass:
         return self._public_class
-    
+
     def field1(self, field1: str) -> PublicClassBuilder:
         self._public_class.field1 = field1
         return self
-    
+
     def field2(self, field2: int) -> PublicClassBuilder:
         self._public_class.field2 = field2
         return self
@@ -477,7 +609,7 @@ model/
 
 #### Existing Methods (Mixed Approach)
 1. **POST /datasets** → `dataset.create()` - Keep existing, verify compliance
-2. **GET /datasets** → `dataset.list()` - Keep existing, verify compliance  
+2. **GET /datasets** → `dataset.list()` - Keep existing, verify compliance
 3. **DELETE /datasets/{dataset_id}** → `dataset.delete()` - Keep existing, verify compliance
 
 #### New Methods to Add
@@ -522,15 +654,120 @@ model/
 class Dataset:
     def __init__(self, config: Config):
         self.config = config
-    
+
     def create(self, request: CreateRequest, request_option: RequestOption) -> CreateResponse:
         return Transport.execute(self.config, request, unmarshal_as=CreateResponse, option=request_option)
-    
+
     async def acreate(self, request: CreateRequest, request_option: RequestOption) -> CreateResponse:
         return await ATransport.aexecute(self.config, request, unmarshal_as=CreateResponse, option=request_option)
 ```
 
 ### Complete Code Style Examples
+
+#### Multipart/Form-Data Request Pattern (File Upload)
+```python
+# create_by_file_request.py
+from __future__ import annotations
+from io import BytesIO
+from dify_oapi.core.enum import HttpMethod
+from dify_oapi.core.model.base_request import BaseRequest
+from .create_by_file_request_body import CreateByFileRequestBody
+
+class CreateByFileRequest(BaseRequest):
+    def __init__(self) -> None:
+        super().__init__()
+        self.dataset_id: str | None = None
+        self.request_body: CreateByFileRequestBody | None = None
+        self.file: BytesIO | None = None
+
+    @staticmethod
+    def builder() -> CreateByFileRequestBuilder:
+        return CreateByFileRequestBuilder()
+
+class CreateByFileRequestBuilder:
+    def __init__(self) -> None:
+        create_by_file_request = CreateByFileRequest()
+        create_by_file_request.http_method = HttpMethod.POST
+        create_by_file_request.uri = "/v1/datasets/:dataset_id/document/create-by-file"
+        self._create_by_file_request = create_by_file_request
+
+    def build(self) -> CreateByFileRequest:
+        return self._create_by_file_request
+
+    def dataset_id(self, dataset_id: str) -> CreateByFileRequestBuilder:
+        self._create_by_file_request.dataset_id = dataset_id
+        self._create_by_file_request.paths["dataset_id"] = dataset_id
+        return self
+
+    def request_body(self, request_body: CreateByFileRequestBody) -> CreateByFileRequestBuilder:
+        self._create_by_file_request.request_body = request_body
+        # Handle multipart form data
+        if request_body.data:
+            self._create_by_file_request.body = {"data": request_body.data}
+        return self
+
+    def file(self, file: BytesIO, file_name: str | None = None) -> CreateByFileRequestBuilder:
+        self._create_by_file_request.file = file
+        file_name = file_name or "upload"
+        self._create_by_file_request.files = {"file": (file_name, file)}
+        return self
+```
+
+```python
+# create_by_file_request_body.py
+from __future__ import annotations
+from pydantic import BaseModel
+from .create_by_file_request_body_data import CreateByFileRequestBodyData
+
+class CreateByFileRequestBody(BaseModel):
+    data: str | None = None
+
+    @staticmethod
+    def builder() -> CreateByFileRequestBodyBuilder:
+        return CreateByFileRequestBodyBuilder()
+
+class CreateByFileRequestBodyBuilder:
+    def __init__(self) -> None:
+        self._create_by_file_request_body = CreateByFileRequestBody()
+
+    def build(self) -> CreateByFileRequestBody:
+        return self._create_by_file_request_body
+
+    def data(self, data: CreateByFileRequestBodyData) -> CreateByFileRequestBodyBuilder:
+        self._create_by_file_request_body.data = data.model_dump_json(exclude_none=True)
+        return self
+```
+
+```python
+# create_by_file_request_body_data.py
+from __future__ import annotations
+from pydantic import BaseModel
+from .process_rule import ProcessRule
+
+class CreateByFileRequestBodyData(BaseModel):
+    indexing_technique: str | None = None
+    process_rule: ProcessRule | None = None
+    # ... other fields
+
+    @staticmethod
+    def builder() -> CreateByFileRequestBodyDataBuilder:
+        return CreateByFileRequestBodyDataBuilder()
+
+class CreateByFileRequestBodyDataBuilder:
+    def __init__(self) -> None:
+        self._create_by_file_request_body_data = CreateByFileRequestBodyData()
+
+    def build(self) -> CreateByFileRequestBodyData:
+        return self._create_by_file_request_body_data
+
+    def indexing_technique(self, indexing_technique: str) -> CreateByFileRequestBodyDataBuilder:
+        self._create_by_file_request_body_data.indexing_technique = indexing_technique
+        return self
+
+    def process_rule(self, process_rule: ProcessRule) -> CreateByFileRequestBodyDataBuilder:
+        self._create_by_file_request_body_data.process_rule = process_rule
+        return self
+```
 
 #### POST Request Pattern (with RequestBody)
 ```python
@@ -574,7 +811,7 @@ class CreateRequestBody(BaseModel):
     name: str | None = None
     description: Optional[str] = None
     retrieval_model: Optional[RetrievalModel] = None
-    
+
     @staticmethod
     def builder() -> CreateRequestBodyBuilder:
         return CreateRequestBodyBuilder()
@@ -722,6 +959,17 @@ class V1:
 - Integration tests with mock API responses
 - Validation tests for all model classes
 - **Comprehensive typing hints**: All test method parameters and return types must include proper type annotations
+- **Test File Organization**: All model tests MUST follow flat structure in `tests/knowledge_base/v1/model/` directory
+- **Naming Consistency**: Use `test_{resource}_models.py` pattern for all model test files
+- **No Nested Directories**: Avoid creating resource-specific test subdirectories
+
+### Test File Organization Rules (MANDATORY)
+**Decision**: Test files MUST be organized in a flat structure within the model directory
+- **Flat Structure**: All model test files are placed directly in `tests/knowledge_base/v1/model/` directory
+- **No Subdirectories**: Do NOT create resource-specific subdirectories like `model/dataset/`, `model/metadata/`
+- **Naming Convention**: Use `test_{resource}_models.py` pattern (e.g., `test_dataset_models.py`, `test_metadata_models.py`)
+- **Consistency**: Follow the same pattern across all knowledge base resources
+- **Rationale**: Maintains consistency with existing codebase structure and simplifies test discovery
 
 ### Test Directory Structure
 ```
@@ -729,17 +977,20 @@ tests/
 └── knowledge_base/
     └── v1/
         ├── model/
-        │   ├── test_dataset_models.py
-        │   ├── test_metadata_models.py
-        │   └── test_tag_models.py
+        │   ├── test_dataset_models.py     # Dataset model tests (flat structure)
+        │   ├── test_metadata_models.py    # Metadata model tests (flat structure)
+        │   ├── test_tag_models.py         # Tag model tests (flat structure)
+        │   └── test_document_models.py    # Document model tests (flat structure)
         ├── resource/
         │   ├── test_dataset_resource.py
         │   ├── test_metadata_resource.py
-        │   └── test_tag_resource.py
+        │   ├── test_tag_resource.py
+        │   └── test_document_resource.py
         ├── integration/
         │   ├── test_dataset_api_integration.py
         │   ├── test_metadata_api_integration.py
         │   ├── test_tag_api_integration.py
+        │   ├── test_document_api_integration.py
         │   ├── test_comprehensive_integration.py
         │   ├── test_examples_validation.py
         │   └── test_version_integration.py
@@ -853,11 +1104,11 @@ examples/knowledge_base/
           api_key = os.getenv("API_KEY")
           if not api_key:
               raise ValueError("API_KEY environment variable is required")
-          
+
           dataset_id = os.getenv("DATASET_ID")
           if not dataset_id:
               raise ValueError("DATASET_ID environment variable is required")
-          
+
           # Initialize client and other logic after validation
           client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
           # ... rest of function

@@ -30,6 +30,14 @@ def list_metadata_sync() -> None:
 
         response = client.knowledge_base.v1.metadata.list(request, request_option)
 
+        if not response.success:
+            print(f"API Error: {response.code} - {response.msg}")
+            return
+
+        if not response.success:
+            print(f"API Error: {response.code} - {response.msg}")
+            return
+
         print(f"Built-in fields: {'Enabled' if response.built_in_field_enabled else 'Disabled'}")
         metadata_list = response.doc_metadata or []
         print(f"Custom metadata: {len(metadata_list)} fields")
@@ -57,6 +65,14 @@ async def list_metadata_async() -> None:
         request_option = RequestOption.builder().api_key(api_key).build()
 
         response = await client.knowledge_base.v1.metadata.alist(request, request_option)
+
+        if not response.success:
+            print(f"API Error (async): {response.code} - {response.msg}")
+            return
+
+        if not response.success:
+            print(f"API Error (async): {response.code} - {response.msg}")
+            return
 
         metadata_list = response.doc_metadata or []
         print(f"Metadata (async): {len(metadata_list)} fields")

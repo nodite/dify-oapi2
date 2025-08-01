@@ -30,9 +30,25 @@ def query_bound_tags_sync() -> None:
         request_option = RequestOption.builder().api_key(api_key).build()
         response = client.knowledge_base.v1.tag.query_bound(request, request_option)
 
-        print(f"Found {response.total} bound tags:")
-        for tag in response.data:
-            print(f"  - {tag.name}")
+        if not response.success:
+            print(f"API Error: {response.code} - {response.msg}")
+            return
+
+        if not response.success:
+            print(f"API Error: {response.code} - {response.msg}")
+            return
+
+        print(f"Found {response.total or 0} bound tags:")
+        if response.data:
+            if response.data:
+                for tag in response.data:
+                    print(f"  - {tag.name}")
+
+            else:
+                print("  No items found")
+
+        else:
+            print("  No items found")
 
     except Exception as e:
         print(f"Error querying bound tags: {e}")
@@ -55,9 +71,25 @@ async def query_bound_tags_async() -> None:
         request_option = RequestOption.builder().api_key(api_key).build()
         response = await client.knowledge_base.v1.tag.aquery_bound(request, request_option)
 
-        print(f"Bound tags (async): {response.total} total")
-        for tag in response.data:
-            print(f"  • {tag.name}")
+        if not response.success:
+            print(f"API Error (async): {response.code} - {response.msg}")
+            return
+
+        if not response.success:
+            print(f"API Error (async): {response.code} - {response.msg}")
+            return
+
+        print(f"Bound tags (async): {response.total or 0} total")
+        if response.data:
+            if response.data:
+                for tag in response.data:
+                    print(f"  • {tag.name}")
+
+            else:
+                print("  No items found")
+
+        else:
+            print("  No items found")
 
     except Exception as e:
         print(f"Error querying bound tags (async): {e}")

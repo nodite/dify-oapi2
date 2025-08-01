@@ -36,6 +36,14 @@ def update_dataset_sync() -> None:
         request_option = RequestOption.builder().api_key(api_key).build()
         response = client.knowledge_base.v1.dataset.update(request, request_option)
 
+        if not response.success:
+            print(f"API Error: {response.code} - {response.msg}")
+            return
+
+        if not response.success:
+            print(f"API Error: {response.code} - {response.msg}")
+            return
+
         print(f"Dataset updated: {response.name} (Permission: {response.permission})")
 
     except Exception as e:
@@ -61,6 +69,14 @@ async def update_dataset_async() -> None:
 
         request_option = RequestOption.builder().api_key(api_key).build()
         response = await client.knowledge_base.v1.dataset.aupdate(request, request_option)
+
+        if not response.success:
+            print(f"API Error (async): {response.code} - {response.msg}")
+            return
+
+        if not response.success:
+            print(f"API Error (async): {response.code} - {response.msg}")
+            return
 
         print(f"Dataset updated (async): {response.name}")
 

@@ -33,6 +33,14 @@ def retrieve_basic_sync() -> None:
 
         response = client.knowledge_base.v1.dataset.retrieve(request, request_option)
 
+        if not response.success:
+            print(f"API Error: {response.code} - {response.msg}")
+            return
+
+        if not response.success:
+            print(f"API Error: {response.code} - {response.msg}")
+            return
+
         if response.raw.status_code != 200:
             print(f"Retrieval failed: {getattr(response, 'message_', 'Unknown error')}")
             return
@@ -68,6 +76,14 @@ async def retrieve_async() -> None:
         request_option = RequestOption.builder().api_key(api_key).build()
 
         response = await client.knowledge_base.v1.dataset.aretrieve(request, request_option)
+
+        if not response.success:
+            print(f"API Error (async): {response.code} - {response.msg}")
+            return
+
+        if not response.success:
+            print(f"API Error (async): {response.code} - {response.msg}")
+            return
 
         if response.raw.status_code != 200:
             print(f"Retrieval failed (async): {getattr(response, 'message_', 'Unknown error')}")

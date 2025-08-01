@@ -23,21 +23,21 @@ This document tracks the implementation progress of the segment management funct
 ### Phase 2: Core Segment Operations (5 APIs)
 
 #### Step 3: Create Segment Request/Response Models
-- [ ] Create `create_request.py`
-- [ ] Create `create_request_body.py`
-- [ ] Create `update_request.py`
-- [ ] Create `update_request_body.py`
-- [ ] Create `list_request.py`
-- [ ] Create `get_request.py`
-- [ ] Create `delete_request.py`
-- [ ] Create `create_response.py`
-- [ ] Create `list_response.py`
-- [ ] Create `get_response.py`
-- [ ] Create `update_response.py`
-- [ ] Create `delete_response.py`
+- [x] Create `create_request.py`
+- [x] Create `create_request_body.py`
+- [x] Create `update_request.py`
+- [x] Create `update_request_body.py`
+- [x] Create `list_request.py`
+- [x] Create `get_request.py`
+- [x] Create `delete_request.py`
+- [x] Create `create_response.py`
+- [x] Create `list_response.py`
+- [x] Create `get_response.py`
+- [x] Create `update_response.py`
+- [x] Create `delete_response.py`
 
 #### Step 4: Test Core Segment Models
-- [ ] Add core segment API model tests to `test_segment_models.py`
+- [x] Add core segment API model tests to `test_segment_models.py`
 
 ### Phase 3: Child Chunk Operations (4 APIs)
 

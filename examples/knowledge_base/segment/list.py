@@ -68,7 +68,7 @@ async def list_segments_async() -> None:
         client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
         request = (
-            ListRequest.builder().dataset_id(dataset_id).document_id(document_id).keyword("example").limit(5).build()
+            ListRequest.builder().dataset_id(dataset_id).document_id(document_id).keyword("[Example]").limit(5).build()
         )
 
         request_option = RequestOption.builder().api_key(api_key).build()
@@ -79,7 +79,7 @@ async def list_segments_async() -> None:
             print(f"API Error (async): {response.code} - {response.msg}")
             return
 
-        print(f"Found {response.total} segments with keyword 'example' (async)")
+        print(f"Found {response.total} segments with keyword '[Example]' (async)")
         for segment in response.data or []:
             print(f"  - ID: {segment.id}, Status: {segment.status}, Content: {segment.content[:50]}...")
 

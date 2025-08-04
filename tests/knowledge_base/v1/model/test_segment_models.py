@@ -6,6 +6,17 @@ from dify_oapi.api.knowledge_base.v1.model.segment.child_chunk_info import (
     ChildChunkInfo,
     ChildChunkInfoBuilder,
 )
+from dify_oapi.api.knowledge_base.v1.model.segment.create_child_chunk_request import (
+    CreateChildChunkRequest,
+    CreateChildChunkRequestBuilder,
+)
+from dify_oapi.api.knowledge_base.v1.model.segment.create_child_chunk_request_body import (
+    CreateChildChunkRequestBody,
+    CreateChildChunkRequestBodyBuilder,
+)
+from dify_oapi.api.knowledge_base.v1.model.segment.create_child_chunk_response import (
+    CreateChildChunkResponse,
+)
 from dify_oapi.api.knowledge_base.v1.model.segment.create_request import (
     CreateRequest,
     CreateRequestBuilder,
@@ -15,6 +26,12 @@ from dify_oapi.api.knowledge_base.v1.model.segment.create_request_body import (
     CreateRequestBodyBuilder,
 )
 from dify_oapi.api.knowledge_base.v1.model.segment.create_response import CreateResponse
+from dify_oapi.api.knowledge_base.v1.model.segment.delete_child_chunk_request import (
+    DeleteChildChunkRequest,
+)
+from dify_oapi.api.knowledge_base.v1.model.segment.delete_child_chunk_response import (
+    DeleteChildChunkResponse,
+)
 from dify_oapi.api.knowledge_base.v1.model.segment.delete_request import (
     DeleteRequest,
 )
@@ -23,6 +40,13 @@ from dify_oapi.api.knowledge_base.v1.model.segment.get_request import (
     GetRequest,
 )
 from dify_oapi.api.knowledge_base.v1.model.segment.get_response import GetResponse
+from dify_oapi.api.knowledge_base.v1.model.segment.list_child_chunks_request import (
+    ListChildChunksRequest,
+    ListChildChunksRequestBuilder,
+)
+from dify_oapi.api.knowledge_base.v1.model.segment.list_child_chunks_response import (
+    ListChildChunksResponse,
+)
 from dify_oapi.api.knowledge_base.v1.model.segment.list_request import (
     ListRequest,
     ListRequestBuilder,
@@ -35,6 +59,17 @@ from dify_oapi.api.knowledge_base.v1.model.segment.segment_data import (
 from dify_oapi.api.knowledge_base.v1.model.segment.segment_info import (
     SegmentInfo,
     SegmentInfoBuilder,
+)
+from dify_oapi.api.knowledge_base.v1.model.segment.update_child_chunk_request import (
+    UpdateChildChunkRequest,
+    UpdateChildChunkRequestBuilder,
+)
+from dify_oapi.api.knowledge_base.v1.model.segment.update_child_chunk_request_body import (
+    UpdateChildChunkRequestBody,
+    UpdateChildChunkRequestBodyBuilder,
+)
+from dify_oapi.api.knowledge_base.v1.model.segment.update_child_chunk_response import (
+    UpdateChildChunkResponse,
 )
 from dify_oapi.api.knowledge_base.v1.model.segment.update_request import (
     UpdateRequest,
@@ -481,3 +516,190 @@ def test_http_method_configuration() -> None:
     # Test DELETE method
     delete_request = DeleteRequest.builder().build()
     assert delete_request.http_method == HttpMethod.DELETE
+
+
+# ===== CHILD CHUNK API MODELS TESTS =====
+
+
+def test_create_child_chunk_request_builder() -> None:
+    """Test CreateChildChunkRequest builder pattern."""
+    request = (
+        CreateChildChunkRequest.builder().dataset_id("dataset-123").document_id("doc-456").segment_id("seg-789").build()
+    )
+
+    assert request.dataset_id == "dataset-123"
+    assert request.document_id == "doc-456"
+    assert request.segment_id == "seg-789"
+    assert request.http_method == HttpMethod.POST
+    assert request.uri == "/v1/datasets/:dataset_id/documents/:document_id/segments/:segment_id/child_chunks"
+    assert request.paths["dataset_id"] == "dataset-123"
+    assert request.paths["document_id"] == "doc-456"
+    assert request.paths["segment_id"] == "seg-789"
+
+
+def test_create_child_chunk_request_body_validation() -> None:
+    """Test CreateChildChunkRequestBody validation and builder."""
+    request_body = CreateChildChunkRequestBody.builder().content("Child chunk content").build()
+
+    assert request_body.content == "Child chunk content"
+
+
+def test_create_child_chunk_request_with_body() -> None:
+    """Test CreateChildChunkRequest with request body."""
+    request_body = CreateChildChunkRequestBody.builder().content("Child chunk content").build()
+
+    request = (
+        CreateChildChunkRequest.builder()
+        .dataset_id("dataset-123")
+        .document_id("doc-456")
+        .segment_id("seg-789")
+        .request_body(request_body)
+        .build()
+    )
+
+    assert request.request_body is not None
+    assert request.body is not None
+    assert isinstance(request.body, dict)
+    assert request.body["content"] == "Child chunk content"
+
+
+def test_list_child_chunks_request_params() -> None:
+    """Test ListChildChunksRequest parameter handling."""
+    request = (
+        ListChildChunksRequest.builder()
+        .dataset_id("dataset-123")
+        .document_id("doc-456")
+        .segment_id("seg-789")
+        .keyword("test")
+        .page(1)
+        .limit(20)
+        .build()
+    )
+
+    assert request.dataset_id == "dataset-123"
+    assert request.document_id == "doc-456"
+    assert request.segment_id == "seg-789"
+    assert request.http_method == HttpMethod.GET
+    assert request.uri == "/v1/datasets/:dataset_id/documents/:document_id/segments/:segment_id/child_chunks"
+    assert request.paths["dataset_id"] == "dataset-123"
+    assert request.paths["document_id"] == "doc-456"
+    assert request.paths["segment_id"] == "seg-789"
+
+
+def test_update_child_chunk_patch_method() -> None:
+    """Test UpdateChildChunkRequest PATCH method configuration."""
+    request_body = UpdateChildChunkRequestBody.builder().content("Updated content").build()
+
+    request = (
+        UpdateChildChunkRequest.builder()
+        .dataset_id("dataset-123")
+        .document_id("doc-456")
+        .segment_id("seg-789")
+        .child_chunk_id("chunk-abc")
+        .request_body(request_body)
+        .build()
+    )
+
+    assert request.dataset_id == "dataset-123"
+    assert request.document_id == "doc-456"
+    assert request.segment_id == "seg-789"
+    assert request.child_chunk_id == "chunk-abc"
+    assert request.http_method == HttpMethod.PATCH
+    assert (
+        request.uri
+        == "/v1/datasets/:dataset_id/documents/:document_id/segments/:segment_id/child_chunks/:child_chunk_id"
+    )
+    assert request.paths["child_chunk_id"] == "chunk-abc"
+    assert request.request_body is not None
+    assert request.body is not None
+
+
+def test_delete_child_chunk_request_builder() -> None:
+    """Test DeleteChildChunkRequest builder pattern."""
+    request = (
+        DeleteChildChunkRequest.builder()
+        .dataset_id("dataset-123")
+        .document_id("doc-456")
+        .segment_id("seg-789")
+        .child_chunk_id("chunk-abc")
+        .build()
+    )
+
+    assert request.dataset_id == "dataset-123"
+    assert request.document_id == "doc-456"
+    assert request.segment_id == "seg-789"
+    assert request.child_chunk_id == "chunk-abc"
+    assert request.http_method == HttpMethod.DELETE
+    assert (
+        request.uri
+        == "/v1/datasets/:dataset_id/documents/:document_id/segments/:segment_id/child_chunks/:child_chunk_id"
+    )
+    assert request.paths["dataset_id"] == "dataset-123"
+    assert request.paths["document_id"] == "doc-456"
+    assert request.paths["segment_id"] == "seg-789"
+    assert request.paths["child_chunk_id"] == "chunk-abc"
+
+
+def test_child_chunk_response_models_inheritance() -> None:
+    """Test all child chunk Response models inherit from BaseResponse."""
+    # Test CreateChildChunkResponse
+    create_response = CreateChildChunkResponse()
+    assert hasattr(create_response, "success")
+    assert hasattr(create_response, "code")
+    assert hasattr(create_response, "msg")
+    assert hasattr(create_response, "raw")
+    assert hasattr(create_response, "data")
+
+    # Test ListChildChunksResponse
+    list_response = ListChildChunksResponse()
+    assert hasattr(list_response, "success")
+    assert hasattr(list_response, "data")
+    assert hasattr(list_response, "total")
+    assert hasattr(list_response, "total_pages")
+    assert hasattr(list_response, "page")
+    assert hasattr(list_response, "limit")
+
+    # Test UpdateChildChunkResponse
+    update_response = UpdateChildChunkResponse()
+    assert hasattr(update_response, "success")
+    assert hasattr(update_response, "data")
+
+    # Test DeleteChildChunkResponse
+    delete_response = DeleteChildChunkResponse()
+    assert hasattr(delete_response, "success")
+
+
+def test_child_chunk_request_builder_chaining() -> None:
+    """Test child chunk request builder method chaining."""
+    # Test CreateChildChunkRequest chaining
+    builder = CreateChildChunkRequest.builder()
+    result = builder.dataset_id("test").document_id("test").segment_id("test")
+    assert isinstance(result, CreateChildChunkRequestBuilder)
+    assert result is builder
+
+    # Test ListChildChunksRequest chaining
+    builder = ListChildChunksRequest.builder()
+    result = builder.dataset_id("test").keyword("test").page(1)
+    assert isinstance(result, ListChildChunksRequestBuilder)
+    assert result is builder
+
+    # Test UpdateChildChunkRequest chaining
+    builder = UpdateChildChunkRequest.builder()
+    result = builder.dataset_id("test").segment_id("test").child_chunk_id("test")
+    assert isinstance(result, UpdateChildChunkRequestBuilder)
+    assert result is builder
+
+
+def test_child_chunk_request_body_builder_chaining() -> None:
+    """Test child chunk request body builder method chaining."""
+    # Test CreateChildChunkRequestBody chaining
+    builder = CreateChildChunkRequestBody.builder()
+    result = builder.content("test content")
+    assert isinstance(result, CreateChildChunkRequestBodyBuilder)
+    assert result is builder
+
+    # Test UpdateChildChunkRequestBody chaining
+    builder = UpdateChildChunkRequestBody.builder()
+    result = builder.content("updated content")
+    assert isinstance(result, UpdateChildChunkRequestBodyBuilder)
+    assert result is builder

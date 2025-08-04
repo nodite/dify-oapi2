@@ -54,7 +54,7 @@ This document tracks the implementation progress of the segment management funct
 - [x] Create `delete_child_chunk_response.py`
 
 #### Step 6: Test Child Chunk Models
-- [ ] Add child chunk API model tests to `test_segment_models.py`
+- [x] Add child chunk API model tests to `test_segment_models.py`
 
 ### Phase 4: Segment Resource Implementation
 

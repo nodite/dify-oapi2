@@ -42,16 +42,16 @@ This document tracks the implementation progress of the segment management funct
 ### Phase 3: Child Chunk Operations (4 APIs)
 
 #### Step 5: Create Child Chunk Request/Response Models
-- [ ] Create `create_child_chunk_request.py`
-- [ ] Create `create_child_chunk_request_body.py`
-- [ ] Create `update_child_chunk_request.py`
-- [ ] Create `update_child_chunk_request_body.py`
-- [ ] Create `list_child_chunks_request.py`
-- [ ] Create `delete_child_chunk_request.py`
-- [ ] Create `create_child_chunk_response.py`
-- [ ] Create `list_child_chunks_response.py`
-- [ ] Create `update_child_chunk_response.py`
-- [ ] Create `delete_child_chunk_response.py`
+- [x] Create `create_child_chunk_request.py`
+- [x] Create `create_child_chunk_request_body.py`
+- [x] Create `update_child_chunk_request.py`
+- [x] Create `update_child_chunk_request_body.py`
+- [x] Create `list_child_chunks_request.py`
+- [x] Create `delete_child_chunk_request.py`
+- [x] Create `create_child_chunk_response.py`
+- [x] Create `list_child_chunks_response.py`
+- [x] Create `update_child_chunk_response.py`
+- [x] Create `delete_child_chunk_response.py`
 
 #### Step 6: Test Child Chunk Models
 - [ ] Add child chunk API model tests to `test_segment_models.py`

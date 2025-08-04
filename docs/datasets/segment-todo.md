@@ -59,9 +59,9 @@ This document tracks the implementation progress of the segment management funct
 ### Phase 4: Segment Resource Implementation
 
 #### Step 7: Segment Resource Implementation
-- [ ] Create `segment.py` resource class
-- [ ] Implement core segment operations (10 methods)
-- [ ] Implement child chunk operations (8 methods)
+- [x] Create `segment.py` resource class
+- [x] Implement core segment operations (10 methods)
+- [x] Implement child chunk operations (8 methods)
 
 #### Step 8: Test Segment Resource
 - [ ] Create `test_segment_resource.py`

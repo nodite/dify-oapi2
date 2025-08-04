@@ -64,8 +64,8 @@ This document tracks the implementation progress of the segment management funct
 - [x] Implement child chunk operations (8 methods)
 
 #### Step 8: Test Segment Resource
-- [ ] Create `test_segment_resource.py`
-- [ ] Test all 18 resource methods
+- [x] Create `test_segment_resource.py`
+- [x] Test all 18 resource methods
 
 ### Phase 5: Version Integration
 

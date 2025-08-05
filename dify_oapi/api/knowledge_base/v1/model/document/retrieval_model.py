@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Literal
+
 from pydantic import BaseModel
 
 
@@ -25,7 +27,9 @@ class RetrievalModelBuilder:
     def build(self) -> RetrievalModel:
         return self._retrieval_model
 
-    def search_method(self, search_method: str) -> RetrievalModelBuilder:
+    def search_method(
+        self, search_method: Literal["keyword_search", "semantic_search", "full_text_search", "hybrid_search"]
+    ) -> RetrievalModelBuilder:
         self._retrieval_model.search_method = search_method
         return self
 

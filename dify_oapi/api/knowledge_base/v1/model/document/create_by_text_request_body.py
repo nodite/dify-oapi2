@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Literal
+
 from pydantic import BaseModel
 
 from .process_rule import ProcessRule
@@ -29,6 +31,12 @@ class CreateByTextRequestBodyBuilder:
         self._create_by_text_request_body = CreateByTextRequestBody()
 
     def build(self) -> CreateByTextRequestBody:
+        if not self._create_by_text_request_body.name:
+            raise ValueError("Name must be provided")
+
+        if not self._create_by_text_request_body.text:
+            raise ValueError("Text must be provided")
+
         return self._create_by_text_request_body
 
     def name(self, name: str) -> CreateByTextRequestBodyBuilder:
@@ -39,11 +47,15 @@ class CreateByTextRequestBodyBuilder:
         self._create_by_text_request_body.text = text
         return self
 
-    def indexing_technique(self, indexing_technique: str) -> CreateByTextRequestBodyBuilder:
+    def indexing_technique(
+        self, indexing_technique: Literal["high_quality", "economy"]
+    ) -> CreateByTextRequestBodyBuilder:
         self._create_by_text_request_body.indexing_technique = indexing_technique
         return self
 
-    def doc_form(self, doc_form: str) -> CreateByTextRequestBodyBuilder:
+    def doc_form(
+        self, doc_form: Literal["text_model", "hierarchical_model", "qa_model"]
+    ) -> CreateByTextRequestBodyBuilder:
         self._create_by_text_request_body.doc_form = doc_form
         return self
 

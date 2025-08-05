@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Literal
+
 from pydantic import BaseModel
 
 from ..metadata.metadata_info import MetadataInfo
@@ -71,7 +73,7 @@ class DatasetInfoBuilder:
         self._dataset_info.data_source_type = data_source_type
         return self
 
-    def indexing_technique(self, indexing_technique: str) -> DatasetInfoBuilder:
+    def indexing_technique(self, indexing_technique: Literal["high_quality", "economy"]) -> DatasetInfoBuilder:
         self._dataset_info.indexing_technique = indexing_technique
         return self
 
@@ -123,7 +125,7 @@ class DatasetInfoBuilder:
         self._dataset_info.tags = tags
         return self
 
-    def doc_form(self, doc_form: str) -> DatasetInfoBuilder:
+    def doc_form(self, doc_form: Literal["text_model", "hierarchical_model", "qa_model"]) -> DatasetInfoBuilder:
         self._dataset_info.doc_form = doc_form
         return self
 

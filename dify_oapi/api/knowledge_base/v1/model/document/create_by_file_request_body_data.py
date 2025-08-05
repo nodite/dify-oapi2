@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Literal
+
 from pydantic import BaseModel
 
 from .process_rule import ProcessRule
@@ -47,11 +49,15 @@ class CreateByFileRequestBodyBuilder:
         self._create_by_file_request_body.original_document_id = original_document_id
         return self
 
-    def indexing_technique(self, indexing_technique: str) -> CreateByFileRequestBodyBuilder:
+    def indexing_technique(
+        self, indexing_technique: Literal["high_quality", "economy"]
+    ) -> CreateByFileRequestBodyBuilder:
         self._create_by_file_request_body.indexing_technique = indexing_technique
         return self
 
-    def doc_form(self, doc_form: str) -> CreateByFileRequestBodyBuilder:
+    def doc_form(
+        self, doc_form: Literal["text_model", "hierarchical_model", "qa_model"]
+    ) -> CreateByFileRequestBodyBuilder:
         self._create_by_file_request_body.doc_form = doc_form
         return self
 

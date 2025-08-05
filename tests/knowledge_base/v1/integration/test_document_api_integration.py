@@ -182,12 +182,15 @@ class TestDocumentAPIIntegration:
         mock_execute.side_effect = [create_response, update_response, upload_file_response]
 
         # 1. Create document by file
+        from dify_oapi.api.knowledge_base.v1.model.document.create_by_file_request_body_data import (
+            CreateByFileRequestBodyData,
+        )
+
+        data = CreateByFileRequestBodyData.builder().file("test.pdf").build()
         create_request = (
             CreateByFileRequest.builder()
             .dataset_id(self.dataset_id)
-            .request_body(
-                CreateByFileRequestBody.builder().data('{"name": "[Example] Test File"}').file("test.pdf").build()
-            )
+            .request_body(CreateByFileRequestBody.builder().data(data).build())
             .build()
         )
         result = self.document.create_by_file(create_request, self.request_option)
@@ -226,12 +229,15 @@ class TestDocumentAPIIntegration:
         mock_aexecute.side_effect = [create_response, upload_file_response]
 
         # 1. Create document by file
+        from dify_oapi.api.knowledge_base.v1.model.document.create_by_file_request_body_data import (
+            CreateByFileRequestBodyData,
+        )
+
+        data = CreateByFileRequestBodyData.builder().file("test.pdf").build()
         create_request = (
             CreateByFileRequest.builder()
             .dataset_id(self.dataset_id)
-            .request_body(
-                CreateByFileRequestBody.builder().data('{"name": "[Example] Test File"}').file("test.pdf").build()
-            )
+            .request_body(CreateByFileRequestBody.builder().data(data).build())
             .build()
         )
         result = await self.document.acreate_by_file(create_request, self.request_option)
@@ -357,10 +363,15 @@ class TestDocumentAPIIntegration:
         """Test error handling for invalid file format."""
         mock_execute.side_effect = Exception("Unsupported file format")
 
+        from dify_oapi.api.knowledge_base.v1.model.document.create_by_file_request_body_data import (
+            CreateByFileRequestBodyData,
+        )
+
+        data = CreateByFileRequestBodyData.builder().file("test.exe").build()
         create_request = (
             CreateByFileRequest.builder()
             .dataset_id(self.dataset_id)
-            .request_body(CreateByFileRequestBody.builder().data('{"name": "[Example] Test"}').file("test.exe").build())
+            .request_body(CreateByFileRequestBody.builder().data(data).build())
             .build()
         )
 

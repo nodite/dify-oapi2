@@ -192,12 +192,12 @@ class TestQueryBoundRequest:
 
         assert request.dataset_id == "dataset-123"
         assert request.paths["dataset_id"] == "dataset-123"
-        assert request.http_method.name == "POST"
+        assert request.http_method.name == "GET"
         assert request.uri == "/v1/datasets/:dataset_id/tags"
 
     def test_http_method_and_uri(self) -> None:
         request = QueryBoundRequest.builder().build()
-        assert request.http_method.name == "POST"
+        assert request.http_method.name == "GET"
         assert request.uri == "/v1/datasets/:dataset_id/tags"
 
 
@@ -367,5 +367,5 @@ class TestTagModelsIntegration:
         assert unbind_request.http_method.name == "POST"
         assert unbind_request.uri == "/v1/datasets/tags/unbinding"
 
-        assert query_request.http_method.name == "POST"
+        assert query_request.http_method.name == "GET"
         assert query_request.uri == "/v1/datasets/:dataset_id/tags"

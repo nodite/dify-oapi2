@@ -384,7 +384,7 @@ class TestTagResource:
         assert unbind_request.http_method == HttpMethod.POST
 
         query_bound_request = QueryBoundRequest.builder().build()
-        assert query_bound_request.http_method == HttpMethod.POST
+        assert query_bound_request.http_method == HttpMethod.GET
 
     def test_array_field_handling(self, tag_resource: Tag, request_option: RequestOption, monkeypatch: Any) -> None:
         # Test handling of tag_ids array in bind request

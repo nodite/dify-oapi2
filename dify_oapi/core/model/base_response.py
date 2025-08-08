@@ -11,7 +11,16 @@ class BaseResponse(BaseModel):
 
     @property
     def msg(self) -> str | None:
-        return self.msg_ or self.message_
+        if self.msg_ is not None:
+            return self.msg_
+
+        if self.message_ is not None:
+            return self.message_
+
+        if self.raw is not None:
+            return self.raw.content.decode("utf-8")
+
+        return None
 
     @property
     def success(self) -> bool:

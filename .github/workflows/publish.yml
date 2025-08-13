@@ -16,7 +16,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: "3.10"
+        python-version: "3.11"
 
     - name: Install Poetry
       uses: snok/install-poetry@v1
@@ -48,3 +48,12 @@ jobs:
       run: poetry publish
       env:
         POETRY_PYPI_TOKEN_PYPI: ${{ secrets.PYPI_TOKEN }}
+
+    - name: Create PR to sync main to develop
+      uses: peter-evans/create-pull-request@v5
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        base: develop
+        head: main
+        title: "Sync main to develop after release"
+        body: "Auto-generated PR to sync main branch changes back to develop after release."

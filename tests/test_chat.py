@@ -5,6 +5,8 @@ from io import BytesIO
 from pathlib import Path
 from types import GeneratorType
 
+import pytest
+
 from dify_oapi.api.chat.v1.model.audio_to_text_request import AudioToTextRequest
 from dify_oapi.api.chat.v1.model.audio_to_text_request_body import AudioToTextRequestBody
 from dify_oapi.api.chat.v1.model.chat_request import ChatRequest
@@ -27,8 +29,7 @@ class TestChatClient(unittest.TestCase):
     def setUp(self):
         chat_key = os.environ.get("CHAT_KEY")
         if not chat_key:
-            raise OSError("CHAT_KEY environment variable not set")
-        self.assertIsNotNone(chat_key, "CHAT_KEY must be set")
+            pytest.skip("CHAT_KEY environment variable not set")
         self.client = Client.builder().domain(os.environ.get("DOMAIN", "https://api.dify.ai")).build()
         self.req_option = RequestOption.builder().api_key(chat_key).build()
 

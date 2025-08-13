@@ -3,6 +3,8 @@ import time
 import unittest
 from types import GeneratorType
 
+import pytest
+
 from dify_oapi.api.completion.v1.model.completion_request import CompletionRequest
 from dify_oapi.api.completion.v1.model.completion_request_body import CompletionRequestBody
 from dify_oapi.api.completion.v1.model.completion_request_body_input import CompletionRequestBodyInput
@@ -17,8 +19,7 @@ class TestCompletionClient(unittest.TestCase):
     def setUp(self):
         completion_key = os.environ.get("COMPLETION_KEY")
         if completion_key is None:
-            raise OSError("COMPLETION_KEY environment variable not set")
-        self.assertIsNotNone(completion_key, "COMPLETION_KEY must be set")
+            pytest.skip("COMPLETION_KEY environment variable not set")
         self.client = Client.builder().domain(os.environ.get("DOMAIN", "https://api.dify.ai")).build()
         self.req_option = RequestOption.builder().api_key(completion_key).build()
 

@@ -3,6 +3,8 @@ import unittest
 from io import BytesIO
 from pathlib import Path
 
+import pytest
+
 from dify_oapi.api.dify.v1.model.get_info_request import GetInfoRequest
 from dify_oapi.api.dify.v1.model.get_meta_request import GetMetaRequest
 from dify_oapi.api.dify.v1.model.get_parameter_request import GetParameterRequest
@@ -22,8 +24,7 @@ class TestDifyClient(unittest.TestCase):
     def setUp(self):
         app_key = os.environ.get("APP_KEY")
         if app_key is None:
-            raise OSError("APP_KEY environment variable not set")
-        self.assertIsNotNone(app_key, "APP_KEY must be set")
+            pytest.skip("APP_KEY environment variable not set")
         self.client = Client.builder().domain(os.environ.get("DOMAIN", "https://api.dify.ai")).build()
         self.req_option = RequestOption.builder().api_key(app_key).build()
 

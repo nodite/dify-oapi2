@@ -45,7 +45,11 @@ jobs:
         poetry run mypy .
 
     - name: Run tests
-      run: poetry run pytest tests/ -v
+      run: poetry run pytest tests/ -v --tb=short
       env:
-        DOMAIN: ${{ secrets.DOMAIN || 'https://api.dify.ai' }}
-        CHAT_KEY: ${{ secrets.CHAT_KEY || 'test-key' }}
+        # Integration tests will be skipped if API keys are not provided
+        DOMAIN: ${{ secrets.DOMAIN }}
+        CHAT_KEY: ${{ secrets.CHAT_KEY }}
+        COMPLETION_KEY: ${{ secrets.COMPLETION_KEY }}
+        APP_KEY: ${{ secrets.APP_KEY }}
+        WORKFLOW_KEY: ${{ secrets.WORKFLOW_KEY }}

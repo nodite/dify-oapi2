@@ -32,51 +32,47 @@ class CreateByFileRequestBodyBuilder:
     """Builder for CreateByFileRequestBody."""
 
     def __init__(self) -> None:
-        self._create_by_file_request_body = CreateByFileRequestBodyData()
+        self._create_by_file_request_body_data = CreateByFileRequestBodyData()
 
     def build(self) -> CreateByFileRequestBodyData:
-        return self._create_by_file_request_body
-
-    def data(self, data: str) -> CreateByFileRequestBodyBuilder:
-        self._create_by_file_request_body.data = data
-        return self
+        return self._create_by_file_request_body_data
 
     def file(self, file: str) -> CreateByFileRequestBodyBuilder:
-        self._create_by_file_request_body.file = file
+        self._create_by_file_request_body_data.file = file
         return self
 
     def original_document_id(self, original_document_id: str) -> CreateByFileRequestBodyBuilder:
-        self._create_by_file_request_body.original_document_id = original_document_id
+        self._create_by_file_request_body_data.original_document_id = original_document_id
         return self
 
     def indexing_technique(
         self, indexing_technique: Literal["high_quality", "economy"]
     ) -> CreateByFileRequestBodyBuilder:
-        self._create_by_file_request_body.indexing_technique = indexing_technique
+        self._create_by_file_request_body_data.indexing_technique = indexing_technique
         return self
 
     def doc_form(
         self, doc_form: Literal["text_model", "hierarchical_model", "qa_model"]
     ) -> CreateByFileRequestBodyBuilder:
-        self._create_by_file_request_body.doc_form = doc_form
+        self._create_by_file_request_body_data.doc_form = doc_form
         return self
 
     def doc_language(self, doc_language: str) -> CreateByFileRequestBodyBuilder:
-        self._create_by_file_request_body.doc_language = doc_language
+        self._create_by_file_request_body_data.doc_language = doc_language
         return self
 
     def process_rule(self, process_rule: ProcessRule) -> CreateByFileRequestBodyBuilder:
-        self._create_by_file_request_body.process_rule = process_rule
+        self._create_by_file_request_body_data.process_rule = process_rule
         return self
 
     def retrieval_model(self, retrieval_model: RetrievalModel) -> CreateByFileRequestBodyBuilder:
-        self._create_by_file_request_body.retrieval_model = retrieval_model
+        self._create_by_file_request_body_data.retrieval_model = retrieval_model
         return self
 
     def embedding_model(self, embedding_model: str) -> CreateByFileRequestBodyBuilder:
-        self._create_by_file_request_body.embedding_model = embedding_model
+        self._create_by_file_request_body_data.embedding_model = embedding_model
         return self
 
     def embedding_model_provider(self, embedding_model_provider: str) -> CreateByFileRequestBodyBuilder:
-        self._create_by_file_request_body.embedding_model_provider = embedding_model_provider
+        self._create_by_file_request_body_data.embedding_model_provider = embedding_model_provider
         return self

@@ -3,6 +3,8 @@ import time
 import unittest
 from types import GeneratorType
 
+import pytest
+
 from dify_oapi.api.workflow.v1.model.get_workflow_log_request import GetWorkflowLogRequest
 from dify_oapi.api.workflow.v1.model.get_workflow_result_request import GetWorkflowResultRequest
 from dify_oapi.api.workflow.v1.model.run_workflow_request import RunWorkflowRequest
@@ -18,8 +20,7 @@ class TestChatClient(unittest.TestCase):
     def setUp(self):
         workflow_key = os.environ.get("WORKFLOW_KEY")
         if workflow_key is None:
-            raise OSError("WORKFLOW_KEY environment variable not set")
-        self.assertIsNotNone(workflow_key, "WORKFLOW_KEY must be set")
+            pytest.skip("WORKFLOW_KEY environment variable not set")
         self.client = Client.builder().domain(os.environ.get("DOMAIN", "https://api.dify.ai")).build()
         self.req_option = RequestOption.builder().api_key(workflow_key).build()
 

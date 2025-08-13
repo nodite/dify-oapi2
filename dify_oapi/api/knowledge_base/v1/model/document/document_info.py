@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Literal
+
 from pydantic import BaseModel
 
 from .data_source_info import DataSourceInfo
@@ -125,7 +127,7 @@ class DocumentInfoBuilder:
         self._document_info.hit_count = hit_count
         return self
 
-    def doc_form(self, doc_form: str) -> DocumentInfoBuilder:
+    def doc_form(self, doc_form: Literal["text_model", "hierarchical_model", "qa_model"]) -> DocumentInfoBuilder:
         self._document_info.doc_form = doc_form
         return self
 

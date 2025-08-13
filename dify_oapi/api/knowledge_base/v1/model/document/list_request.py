@@ -33,10 +33,10 @@ class ListRequestBuilder:
         self._list_request.add_query("keyword", keyword)
         return self
 
-    def page(self, page: str) -> ListRequestBuilder:
+    def page(self, page: int) -> ListRequestBuilder:
         self._list_request.add_query("page", page)
         return self
 
-    def limit(self, limit: str) -> ListRequestBuilder:
+    def limit(self, limit: int) -> ListRequestBuilder:
         self._list_request.add_query("limit", limit)
         return self

@@ -111,6 +111,7 @@ pytest = "^8.3.3"
 pytest-env = "^1.1.5"
 pytest-asyncio = "^1.1.0"
 pre-commit = "^4.2.0"
+commitizen = "^3.29.0"
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
@@ -123,6 +124,12 @@ pre-commit = "^4.0.1"
 mypy = "^1.16.1"
 ruff = "^0.6.0"
 black = "^24.0.0"
+
+[tool.commitizen]
+name = "cz_conventional_commits"
+version_scheme = "pep440"
+version_provider = "poetry"
+update_changelog_on_bump = true
 
 [tool.mypy]
 files = ["dify_oapi"] # 只检查主要代码

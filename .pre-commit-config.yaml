@@ -11,10 +11,8 @@ repos:
     hooks:
       - id: pylint
 
-  - repo: local
+  - repo: https://github.com/commitizen-tools/commitizen
+    rev: v3.29.0
     hooks:
-      - id: commitlint
-        name: commitlint
-        entry: npx commitlint --edit
-        language: system
+      - id: commitizen
         stages: [commit-msg]

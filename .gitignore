@@ -163,7 +163,3 @@ cython_debug/
 .idea/
 /tmp
 .DS_Store
-
-# Node.js dependencies for commitlint
-node_modules/
-package-lock.json

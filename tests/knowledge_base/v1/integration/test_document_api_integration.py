@@ -197,11 +197,16 @@ class TestDocumentAPIIntegration:
         assert result.document.name == "[Example] Test File"
 
         # 2. Update document by file
+        from dify_oapi.api.knowledge_base.v1.model.document.update_by_file_request_body_data import (
+            UpdateByFileRequestBodyData,
+        )
+
+        update_data = UpdateByFileRequestBodyData.builder().name("[Example] Updated File").build()
         update_request = (
             UpdateByFileRequest.builder()
             .dataset_id(self.dataset_id)
             .document_id(self.document_id)
-            .request_body(UpdateByFileRequestBody.builder().name("[Example] Updated File").file("updated.pdf").build())
+            .request_body(UpdateByFileRequestBody.builder().data(update_data).build())
             .build()
         )
         result = self.document.update_by_file(update_request, self.request_option)

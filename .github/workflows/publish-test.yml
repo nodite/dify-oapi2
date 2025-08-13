@@ -15,7 +15,7 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: "3.10"
+        python-version: "3.11"
 
     - name: Install Poetry
       uses: snok/install-poetry@v1
@@ -31,15 +31,19 @@ jobs:
       run: |
         poetry run ruff check .
         poetry run mypy .
-        poetry run pytest tests/ -v
+        poetry run pytest tests/ -v --tb=short
       env:
-        DOMAIN: ${{ secrets.DOMAIN || 'https://api.dify.ai' }}
-        CHAT_KEY: ${{ secrets.CHAT_KEY || 'test-key' }}
+        # Integration tests will be skipped if API keys are not provided
+        DOMAIN: ${{ secrets.DOMAIN }}
+        CHAT_KEY: ${{ secrets.CHAT_KEY }}
+        COMPLETION_KEY: ${{ secrets.COMPLETION_KEY }}
+        APP_KEY: ${{ secrets.APP_KEY }}
+        WORKFLOW_KEY: ${{ secrets.WORKFLOW_KEY }}
 
     - name: Build package
       run: poetry build
 
     - name: Publish to TestPyPI
-      run: poetry publish --repository testpypi
+      run: poetry publish --repository testpypi --skip-existing
       env:
         POETRY_PYPI_TOKEN_TESTPYPI: ${{ secrets.TESTPYPI_TOKEN }}

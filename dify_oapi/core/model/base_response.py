@@ -17,7 +17,7 @@ class BaseResponse(BaseModel):
         if self.message_ is not None:
             return self.message_
 
-        if self.raw is not None:
+        if self.raw is not None and self.raw.content is not None:
             return self.raw.content.decode("utf-8")
 
         return None

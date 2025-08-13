@@ -62,18 +62,30 @@ def test_document_info_optional_fields() -> None:
 
 def test_process_rule_creation() -> None:
     """Test ProcessRule model creation."""
-    process_rule = ProcessRule(mode="automatic", rules={"key": "value"})
+    from dify_oapi.api.knowledge_base.v1.model.document.rules import Rules
+    from dify_oapi.api.knowledge_base.v1.model.document.segmentation import Segmentation
+
+    segmentation = Segmentation.builder().separator("\n").max_tokens(1000).build()
+    rules = Rules.builder().segmentation(segmentation).build()
+    process_rule = ProcessRule(mode="automatic", rules=rules)
 
     assert process_rule.mode == "automatic"
-    assert process_rule.rules == {"key": "value"}
+    assert process_rule.rules == rules
+    assert process_rule.rules.segmentation == segmentation
 
 
 def test_process_rule_builder_pattern() -> None:
     """Test ProcessRule builder pattern."""
-    process_rule = ProcessRule.builder().mode("custom").rules({"custom": "rule"}).build()
+    from dify_oapi.api.knowledge_base.v1.model.document.pre_processing_rule import PreProcessingRule
+    from dify_oapi.api.knowledge_base.v1.model.document.rules import Rules
+
+    pre_rule = PreProcessingRule.builder().id("remove_extra_spaces").enabled(True).build()
+    rules = Rules.builder().pre_processing_rules([pre_rule]).build()
+    process_rule = ProcessRule.builder().mode("custom").rules(rules).build()
 
     assert process_rule.mode == "custom"
-    assert process_rule.rules == {"custom": "rule"}
+    assert process_rule.rules == rules
+    assert process_rule.rules.pre_processing_rules == [pre_rule]
 
 
 def test_pre_processing_rule_creation() -> None:
@@ -674,72 +686,188 @@ def test_update_by_text_builder_method_chaining() -> None:
 # ===== UPDATE BY FILE API MODELS TESTS =====
 
 
+def test_update_by_file_request_body_data_creation() -> None:
+    """Test UpdateByFileRequestBodyData model creation."""
+    from dify_oapi.api.knowledge_base.v1.model.document.process_rule import ProcessRule
+    from dify_oapi.api.knowledge_base.v1.model.document.update_by_file_request_body_data import (
+        UpdateByFileRequestBodyData,
+    )
+
+    process_rule = ProcessRule.builder().mode("automatic").build()
+    data = UpdateByFileRequestBodyData(
+        name="Test Document", indexing_technique="high_quality", process_rule=process_rule
+    )
+
+    assert data.name == "Test Document"
+    assert data.indexing_technique == "high_quality"
+    assert data.process_rule == process_rule
+
+
+def test_update_by_file_request_body_data_builder() -> None:
+    """Test UpdateByFileRequestBodyData builder pattern."""
+    from dify_oapi.api.knowledge_base.v1.model.document.pre_processing_rule import PreProcessingRule
+    from dify_oapi.api.knowledge_base.v1.model.document.process_rule import ProcessRule
+    from dify_oapi.api.knowledge_base.v1.model.document.rules import Rules
+    from dify_oapi.api.knowledge_base.v1.model.document.update_by_file_request_body_data import (
+        UpdateByFileRequestBodyData,
+    )
+
+    pre_rule = PreProcessingRule.builder().id("remove_extra_spaces").enabled(True).build()
+    rules = Rules.builder().pre_processing_rules([pre_rule]).build()
+    process_rule = ProcessRule.builder().mode("custom").rules(rules).build()
+    data = (
+        UpdateByFileRequestBodyData.builder()
+        .name("Builder Test")
+        .indexing_technique("economy")
+        .process_rule(process_rule)
+        .build()
+    )
+
+    assert data.name == "Builder Test"
+    assert data.indexing_technique == "economy"
+    assert data.process_rule == process_rule
+    assert data.process_rule.mode == "custom"
+    assert data.process_rule.rules == rules
+
+
+def test_update_by_file_request_body_data_optional_fields() -> None:
+    """Test UpdateByFileRequestBodyData with optional fields."""
+    from dify_oapi.api.knowledge_base.v1.model.document.update_by_file_request_body_data import (
+        UpdateByFileRequestBodyData,
+    )
+
+    # Test with no fields
+    data = UpdateByFileRequestBodyData()
+    assert data.name is None
+    assert data.indexing_technique is None
+    assert data.process_rule is None
+
+    # Test with only name
+    name_only = UpdateByFileRequestBodyData.builder().name("Name Only").build()
+    assert name_only.name == "Name Only"
+    assert name_only.indexing_technique is None
+    assert name_only.process_rule is None
+
+    # Test with only indexing technique
+    technique_only = UpdateByFileRequestBodyData.builder().indexing_technique("high_quality").build()
+    assert technique_only.name is None
+    assert technique_only.indexing_technique == "high_quality"
+    assert technique_only.process_rule is None
+
+
+def test_update_by_file_request_body_data_indexing_technique_validation() -> None:
+    """Test UpdateByFileRequestBodyData indexing technique validation."""
+    from dify_oapi.api.knowledge_base.v1.model.document.update_by_file_request_body_data import (
+        UpdateByFileRequestBodyData,
+    )
+
+    # Test valid values
+    high_quality = UpdateByFileRequestBodyData.builder().indexing_technique("high_quality").build()
+    assert high_quality.indexing_technique == "high_quality"
+
+    economy = UpdateByFileRequestBodyData.builder().indexing_technique("economy").build()
+    assert economy.indexing_technique == "economy"
+
+
 def test_update_by_file_request_builder() -> None:
     """Test UpdateByFileRequest builder pattern."""
+    from io import BytesIO
+
     from dify_oapi.api.knowledge_base.v1.model.document.update_by_file_request import UpdateByFileRequest
     from dify_oapi.api.knowledge_base.v1.model.document.update_by_file_request_body import UpdateByFileRequestBody
+    from dify_oapi.api.knowledge_base.v1.model.document.update_by_file_request_body_data import (
+        UpdateByFileRequestBodyData,
+    )
     from dify_oapi.core.enum import HttpMethod
 
-    request_body = UpdateByFileRequestBody.builder().name("Updated File Document").file("updated_file.pdf").build()
+    data = UpdateByFileRequestBodyData.builder().name("Updated File Document").indexing_technique("economy").build()
+    request_body = UpdateByFileRequestBody.builder().data(data).build()
+    file_content = BytesIO(b"test file content")
 
     request = (
         UpdateByFileRequest.builder()
         .dataset_id("dataset-123")
         .document_id("doc-456")
         .request_body(request_body)
+        .file(file_content, "updated_file.pdf")
         .build()
     )
 
     assert request.dataset_id == "dataset-123"
     assert request.document_id == "doc-456"
     assert request.request_body is not None
-    assert request.request_body.name == "Updated File Document"
-    assert request.request_body.file == "updated_file.pdf"
+    assert request.file is not None
     assert request.http_method == HttpMethod.POST
     assert request.uri == "/v1/datasets/:dataset_id/documents/:document_id/update-by-file"
     assert request.paths["dataset_id"] == "dataset-123"
     assert request.paths["document_id"] == "doc-456"
+    assert "file" in request.files
+    assert request.files["file"][0] == "updated_file.pdf"
 
 
 def test_update_by_file_request_body_validation() -> None:
     """Test UpdateByFileRequestBody validation and builder."""
     from dify_oapi.api.knowledge_base.v1.model.document.process_rule import ProcessRule
+    from dify_oapi.api.knowledge_base.v1.model.document.rules import Rules
+    from dify_oapi.api.knowledge_base.v1.model.document.segmentation import Segmentation
     from dify_oapi.api.knowledge_base.v1.model.document.update_by_file_request_body import UpdateByFileRequestBody
+    from dify_oapi.api.knowledge_base.v1.model.document.update_by_file_request_body_data import (
+        UpdateByFileRequestBodyData,
+    )
 
-    process_rule = ProcessRule.builder().mode("custom").rules({"key": "value"}).build()
+    segmentation = Segmentation.builder().separator("\n").max_tokens(1000).build()
+    rules = Rules.builder().segmentation(segmentation).build()
+    process_rule = ProcessRule.builder().mode("custom").rules(rules).build()
 
-    request_body = (
-        UpdateByFileRequestBody.builder()
+    data = (
+        UpdateByFileRequestBodyData.builder()
         .name("Updated File Test Document")
-        .file("test_file.docx")
+        .indexing_technique("high_quality")
         .process_rule(process_rule)
         .build()
     )
 
-    assert request_body.name == "Updated File Test Document"
-    assert request_body.file == "test_file.docx"
-    assert request_body.process_rule is not None
-    assert request_body.process_rule.mode == "custom"
-    assert request_body.process_rule.rules == {"key": "value"}
+    request_body = UpdateByFileRequestBody.builder().data(data).build()
+
+    assert request_body.data is not None
+    # Parse the JSON data to verify content
+    import json
+
+    parsed_data = json.loads(request_body.data)
+    assert parsed_data["name"] == "Updated File Test Document"
+    assert parsed_data["indexing_technique"] == "high_quality"
+    assert parsed_data["process_rule"]["mode"] == "custom"
+    assert "segmentation" in parsed_data["process_rule"]["rules"]
 
 
 def test_update_by_file_request_body_optional_fields() -> None:
     """Test UpdateByFileRequestBody with optional fields."""
     from dify_oapi.api.knowledge_base.v1.model.document.update_by_file_request_body import UpdateByFileRequestBody
+    from dify_oapi.api.knowledge_base.v1.model.document.update_by_file_request_body_data import (
+        UpdateByFileRequestBodyData,
+    )
 
     # Test with minimal fields
-    request_body = UpdateByFileRequestBody.builder().name("Minimal File Update").build()
+    data = UpdateByFileRequestBodyData.builder().name("Minimal File Update").build()
+    request_body = UpdateByFileRequestBody.builder().data(data).build()
 
-    assert request_body.name == "Minimal File Update"
-    assert request_body.file is None
-    assert request_body.process_rule is None
+    assert request_body.data is not None
+    import json
 
-    # Test with only file
-    file_only_body = UpdateByFileRequestBody.builder().file("only_file.txt").build()
+    parsed_data = json.loads(request_body.data)
+    assert parsed_data["name"] == "Minimal File Update"
+    assert parsed_data.get("indexing_technique") is None
+    assert parsed_data.get("process_rule") is None
 
-    assert file_only_body.name is None
-    assert file_only_body.file == "only_file.txt"
-    assert file_only_body.process_rule is None
+    # Test with only indexing technique
+    technique_only_data = UpdateByFileRequestBodyData.builder().indexing_technique("economy").build()
+    technique_only_body = UpdateByFileRequestBody.builder().data(technique_only_data).build()
+
+    assert technique_only_body.data is not None
+    parsed_technique_data = json.loads(technique_only_body.data)
+    assert parsed_technique_data.get("name") is None
+    assert parsed_technique_data["indexing_technique"] == "economy"
+    assert parsed_technique_data.get("process_rule") is None
 
 
 def test_update_by_file_response_model() -> None:
@@ -775,34 +903,54 @@ def test_update_by_file_builder_method_chaining() -> None:
     """Test builder method chaining for UpdateByFileRequestBody."""
     from dify_oapi.api.knowledge_base.v1.model.document.process_rule import ProcessRule
     from dify_oapi.api.knowledge_base.v1.model.document.update_by_file_request_body import UpdateByFileRequestBody
+    from dify_oapi.api.knowledge_base.v1.model.document.update_by_file_request_body_data import (
+        UpdateByFileRequestBodyData,
+    )
 
-    builder = UpdateByFileRequestBody.builder()
     process_rule = ProcessRule.builder().mode("automatic").build()
 
-    # Test that each method returns the builder instance
-    assert builder.name("test") is builder
-    assert builder.file("test_file.pdf") is builder
-    assert builder.process_rule(process_rule) is builder
+    # Test UpdateByFileRequestBodyData builder chaining
+    data_builder = UpdateByFileRequestBodyData.builder()
+    assert data_builder.name("test") is data_builder
+    assert data_builder.indexing_technique("high_quality") is data_builder
+    assert data_builder.process_rule(process_rule) is data_builder
 
-    # Test final build
-    request_body = builder.build()
+    data = data_builder.build()
+    assert isinstance(data, UpdateByFileRequestBodyData)
+    assert data.name == "test"
+    assert data.indexing_technique == "high_quality"
+    assert data.process_rule == process_rule
+
+    # Test UpdateByFileRequestBody builder chaining
+    body_builder = UpdateByFileRequestBody.builder()
+    assert body_builder.data(data) is body_builder
+
+    request_body = body_builder.build()
     assert isinstance(request_body, UpdateByFileRequestBody)
-    assert request_body.name == "test"
-    assert request_body.file == "test_file.pdf"
-    assert request_body.process_rule == process_rule
+    assert request_body.data is not None
 
 
 def test_update_by_file_multipart_handling() -> None:
     """Test multipart/form-data handling for UpdateByFileRequestBody."""
-    from dify_oapi.api.knowledge_base.v1.model.document.update_by_file_request_body import UpdateByFileRequestBody
 
-    request_body = (
-        UpdateByFileRequestBody.builder().name("Multipart Test Document").file("/path/to/test_file.pdf").build()
+    from dify_oapi.api.knowledge_base.v1.model.document.update_by_file_request_body import UpdateByFileRequestBody
+    from dify_oapi.api.knowledge_base.v1.model.document.update_by_file_request_body_data import (
+        UpdateByFileRequestBodyData,
     )
 
-    assert request_body.name == "Multipart Test Document"
-    assert request_body.file == "/path/to/test_file.pdf"
-    assert request_body.process_rule is None
+    data = (
+        UpdateByFileRequestBodyData.builder().name("Multipart Test Document").indexing_technique("high_quality").build()
+    )
+
+    request_body = UpdateByFileRequestBody.builder().data(data).build()
+
+    assert request_body.data is not None
+    import json
+
+    parsed_data = json.loads(request_body.data)
+    assert parsed_data["name"] == "Multipart Test Document"
+    assert parsed_data["indexing_technique"] == "high_quality"
+    assert parsed_data.get("process_rule") is None
 
 
 # ===== INDEXING STATUS API MODELS TESTS =====

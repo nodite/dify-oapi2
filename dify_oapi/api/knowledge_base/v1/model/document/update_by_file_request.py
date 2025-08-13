@@ -14,6 +14,7 @@ class UpdateByFileRequest(BaseRequest):
         self.dataset_id: str | None = None
         self.document_id: str | None = None
         self.request_body: UpdateByFileRequestBody | None = None
+        self.file: BytesIO | None = None
 
     @staticmethod
     def builder() -> UpdateByFileRequestBuilder:

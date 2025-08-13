@@ -11,9 +11,8 @@ repos:
     hooks:
       - id: pylint
 
-  # commitlint - temporarily disabled due to configuration issue
-  # - repo: https://github.com/conventional-changelog/commitlint
-  #   rev: v19.8.1
-  #   hooks:
-  #     - id: commitlint
-  #       additional_dependencies: ["@commitlint/config-conventional"]
+  - repo: https://github.com/commitizen-tools/commitizen
+    rev: v3.29.0
+    hooks:
+      - id: commitizen
+        stages: [commit-msg]

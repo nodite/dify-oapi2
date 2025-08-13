@@ -19,13 +19,16 @@ from dify_oapi.core.type import T
 from ._misc import _build_header, _build_url, _get_sleep_time, _merge_dicts, _unmarshaller
 
 
-def _format_log_details(method: str, url: str, headers: dict, queries: dict, body_data: dict | None) -> str:
+def _format_log_details(
+    method: str, url: str, headers: dict, queries: list[tuple[str, str]] | dict, body_data: dict | None
+) -> str:
     """Format log details"""
     details = [f"{method} {url}"]
     if headers:
         details.append(f"headers: {JSON.marshal(headers)}")
     if queries:
-        details.append(f"params: {JSON.marshal(queries)}")
+        queries_dict = dict(queries) if isinstance(queries, list) else queries
+        details.append(f"params: {JSON.marshal(queries_dict)}")
     if body_data:
         details.append(f"body: {JSON.marshal(body_data)}")
     return ", ".join(details)
@@ -63,16 +66,19 @@ def _stream_generator(
             time.sleep(sleep_time)
 
         try:
-            with httpx.Client() as client, client.stream(
-                method_name,
-                url,
-                headers=headers,
-                params=tuple(req.queries),
-                json=json_,
-                data=data,
-                files=files,
-                timeout=conf.timeout,
-            ) as response:
+            with (
+                httpx.Client() as client,
+                client.stream(
+                    method_name,
+                    url,
+                    headers=headers,
+                    params=tuple(req.queries),
+                    json=json_,
+                    data=data,
+                    files=files,
+                    timeout=conf.timeout,
+                ) as response,
+            ):
                 logger.debug(
                     f"{_format_log_details(method_name, url, headers, req.queries, body_data)}, stream response"
                 )
@@ -93,7 +99,7 @@ def _stream_generator(
             log_details = _format_log_details(method_name, url, headers, req.queries, body_data)
 
             if retry < conf.max_retry_count:
-                logger.info(f"in-request: retrying ({retry+1}/{conf.max_retry_count}) {log_details}, exp: {err_msg}")
+                logger.info(f"in-request: retrying ({retry + 1}/{conf.max_retry_count}) {log_details}, exp: {err_msg}")
                 continue
             logger.info(
                 f"in-request: request failed, retried ({retry}/{conf.max_retry_count}) {log_details}, exp: {err_msg}"
@@ -195,7 +201,7 @@ class Transport:
 
                     if retry < conf.max_retry_count:
                         logger.info(
-                            f"in-request: retrying ({retry+1}/{conf.max_retry_count}) {log_details}, exp: {err_msg}"
+                            f"in-request: retrying ({retry + 1}/{conf.max_retry_count}) {log_details}, exp: {err_msg}"
                         )
                         continue
                     logger.info(

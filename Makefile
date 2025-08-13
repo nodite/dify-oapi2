@@ -51,7 +51,10 @@ pre-commit: ## Run pre-commit hooks
 install-hooks: ## Install pre-commit hooks
 	poetry run pre-commit install
 
-dev-setup: install install-hooks ## Setup development environment
+dev-setup: install install-hooks install-commitlint ## Setup development environment
 	@echo "Development environment setup complete!"
 	@echo "VS Code users: Install the recommended extensions for the best experience."
 	@echo "Run 'make help' to see available commands."
+
+install-commitlint: ## Install commitlint dependencies
+	npm install

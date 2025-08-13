@@ -1,0 +1,12 @@
+{
+  "name": "dify-oapi2",
+  "version": "0.0.14",
+  "description": "A package for interacting with the Dify Service-API",
+  "devDependencies": {
+    "@commitlint/cli": "^19.8.1",
+    "@commitlint/config-conventional": "^19.8.1"
+  },
+  "scripts": {
+    "commitlint": "commitlint --edit"
+  }
+}

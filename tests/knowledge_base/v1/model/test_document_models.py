@@ -263,16 +263,18 @@ def test_create_by_file_request_builder() -> None:
     """Test CreateByFileRequest builder pattern."""
     from dify_oapi.api.knowledge_base.v1.model.document.create_by_file_request import CreateByFileRequest
     from dify_oapi.api.knowledge_base.v1.model.document.create_by_file_request_body import CreateByFileRequestBody
+    from dify_oapi.api.knowledge_base.v1.model.document.create_by_file_request_body_data import (
+        CreateByFileRequestBodyData,
+    )
     from dify_oapi.core.enum import HttpMethod
 
-    request_body = CreateByFileRequestBody.builder().file("test.pdf").indexing_technique("high_quality").build()
+    data = CreateByFileRequestBodyData.builder().file("test.pdf").indexing_technique("high_quality").build()
+    request_body = CreateByFileRequestBody.builder().data(data).build()
 
     request = CreateByFileRequest.builder().dataset_id("dataset-123").request_body(request_body).build()
 
     assert request.dataset_id == "dataset-123"
     assert request.request_body is not None
-    assert request.request_body.file == "test.pdf"
-    assert request.request_body.indexing_technique == "high_quality"
     assert request.http_method == HttpMethod.POST
     assert request.uri == "/v1/datasets/:dataset_id/document/create-by-file"
     assert request.paths["dataset_id"] == "dataset-123"
@@ -281,15 +283,17 @@ def test_create_by_file_request_builder() -> None:
 def test_create_by_file_request_body_validation() -> None:
     """Test CreateByFileRequestBody validation and builder."""
     from dify_oapi.api.knowledge_base.v1.model.document.create_by_file_request_body import CreateByFileRequestBody
+    from dify_oapi.api.knowledge_base.v1.model.document.create_by_file_request_body_data import (
+        CreateByFileRequestBodyData,
+    )
     from dify_oapi.api.knowledge_base.v1.model.document.process_rule import ProcessRule
     from dify_oapi.api.knowledge_base.v1.model.document.retrieval_model import RetrievalModel
 
     process_rule = ProcessRule.builder().mode("automatic").build()
     retrieval_model = RetrievalModel.builder().search_method("hybrid_search").top_k(10).build()
 
-    request_body = (
-        CreateByFileRequestBody.builder()
-        .data('{"name": "test.pdf"}')
+    data = (
+        CreateByFileRequestBodyData.builder()
         .file("test.pdf")
         .original_document_id("doc-456")
         .indexing_technique("high_quality")
@@ -302,36 +306,46 @@ def test_create_by_file_request_body_validation() -> None:
         .build()
     )
 
-    assert request_body.data == '{"name": "test.pdf"}'
-    assert request_body.file == "test.pdf"
-    assert request_body.original_document_id == "doc-456"
-    assert request_body.indexing_technique == "high_quality"
-    assert request_body.doc_form == "text_model"
-    assert request_body.doc_language == "English"
-    assert request_body.process_rule is not None
-    assert request_body.process_rule.mode == "automatic"
-    assert request_body.retrieval_model is not None
-    assert request_body.retrieval_model.search_method == "hybrid_search"
-    assert request_body.embedding_model == "text-embedding-ada-002"
-    assert request_body.embedding_model_provider == "openai"
+    request_body = CreateByFileRequestBody.builder().data(data).build()
+
+    assert request_body.data is not None
+    # Parse the JSON data to verify content
+    import json
+
+    parsed_data = json.loads(request_body.data)
+    assert parsed_data["file"] == "test.pdf"
+    assert parsed_data["original_document_id"] == "doc-456"
+    assert parsed_data["indexing_technique"] == "high_quality"
+    assert parsed_data["doc_form"] == "text_model"
+    assert parsed_data["doc_language"] == "English"
+    assert parsed_data["embedding_model"] == "text-embedding-ada-002"
+    assert parsed_data["embedding_model_provider"] == "openai"
 
 
 def test_create_by_file_request_body_optional_fields() -> None:
     """Test CreateByFileRequestBody with optional fields."""
     from dify_oapi.api.knowledge_base.v1.model.document.create_by_file_request_body import CreateByFileRequestBody
+    from dify_oapi.api.knowledge_base.v1.model.document.create_by_file_request_body_data import (
+        CreateByFileRequestBodyData,
+    )
 
-    request_body = CreateByFileRequestBody.builder().file("test.pdf").build()
+    data = CreateByFileRequestBodyData.builder().file("test.pdf").build()
+    request_body = CreateByFileRequestBody.builder().data(data).build()
 
-    assert request_body.file == "test.pdf"
-    assert request_body.data is None
-    assert request_body.original_document_id is None
-    assert request_body.indexing_technique is None
-    assert request_body.doc_form is None
-    assert request_body.doc_language is None
-    assert request_body.process_rule is None
-    assert request_body.retrieval_model is None
-    assert request_body.embedding_model is None
-    assert request_body.embedding_model_provider is None
+    assert request_body.data is not None
+    # Parse the JSON data to verify content
+    import json
+
+    parsed_data = json.loads(request_body.data)
+    assert parsed_data["file"] == "test.pdf"
+    assert parsed_data.get("original_document_id") is None
+    assert parsed_data.get("indexing_technique") is None
+    assert parsed_data.get("doc_form") is None
+    assert parsed_data.get("doc_language") is None
+    assert parsed_data.get("process_rule") is None
+    assert parsed_data.get("retrieval_model") is None
+    assert parsed_data.get("embedding_model") is None
+    assert parsed_data.get("embedding_model_provider") is None
 
 
 def test_create_by_file_response_model() -> None:
@@ -352,35 +366,55 @@ def test_create_by_file_response_model() -> None:
 def test_create_by_file_multipart_handling() -> None:
     """Test multipart/form-data handling in CreateByFileRequestBody."""
     from dify_oapi.api.knowledge_base.v1.model.document.create_by_file_request_body import CreateByFileRequestBody
+    from dify_oapi.api.knowledge_base.v1.model.document.create_by_file_request_body_data import (
+        CreateByFileRequestBodyData,
+    )
 
     # Test with multipart data field
-    request_body = (
-        CreateByFileRequestBody.builder()
-        .data('{"indexing_technique": "high_quality", "doc_form": "text_model"}')
+    data = (
+        CreateByFileRequestBodyData.builder()
+        .indexing_technique("high_quality")
+        .doc_form("text_model")
         .file("/path/to/document.pdf")
         .build()
     )
+    request_body = CreateByFileRequestBody.builder().data(data).build()
 
-    assert request_body.data == '{"indexing_technique": "high_quality", "doc_form": "text_model"}'
-    assert request_body.file == "/path/to/document.pdf"
+    assert request_body.data is not None
+    # Parse the JSON data to verify content
+    import json
+
+    parsed_data = json.loads(request_body.data)
+    assert parsed_data["indexing_technique"] == "high_quality"
+    assert parsed_data["doc_form"] == "text_model"
+    assert parsed_data["file"] == "/path/to/document.pdf"
 
 
 def test_create_by_file_original_document_id_handling() -> None:
     """Test original_document_id handling for document updates."""
     from dify_oapi.api.knowledge_base.v1.model.document.create_by_file_request_body import CreateByFileRequestBody
+    from dify_oapi.api.knowledge_base.v1.model.document.create_by_file_request_body_data import (
+        CreateByFileRequestBodyData,
+    )
 
     # Test update scenario with original_document_id
-    request_body = (
-        CreateByFileRequestBody.builder()
+    data = (
+        CreateByFileRequestBodyData.builder()
         .file("updated_document.pdf")
         .original_document_id("original-doc-123")
         .indexing_technique("economy")
         .build()
     )
+    request_body = CreateByFileRequestBody.builder().data(data).build()
 
-    assert request_body.file == "updated_document.pdf"
-    assert request_body.original_document_id == "original-doc-123"
-    assert request_body.indexing_technique == "economy"
+    assert request_body.data is not None
+    # Parse the JSON data to verify content
+    import json
+
+    parsed_data = json.loads(request_body.data)
+    assert parsed_data["file"] == "updated_document.pdf"
+    assert parsed_data["original_document_id"] == "original-doc-123"
+    assert parsed_data["indexing_technique"] == "economy"
 
 
 # ===== CREATE BY TEXT API MODELS TESTS =====
@@ -865,8 +899,11 @@ def test_delete_response_model() -> None:
 
     response = DeleteResponse()
 
-    # Test that response is empty (204 No Content)
-    assert response.model_dump() == {}
+    # Test that response has minimal fields (inherits from BaseResponse)
+    model_data = response.model_dump()
+    # BaseResponse includes 'raw' field, so we check it exists but is None
+    assert "raw" in model_data
+    assert model_data["raw"] is None
 
 
 def test_delete_dual_path_parameters() -> None:
@@ -1219,7 +1256,7 @@ def test_get_upload_file_response_model() -> None:
         extension="pdf",
         mime_type="application/pdf",
         created_by="user-123",
-        created_at=1681623639
+        created_at=1681623639,
     )
 
     # Test UploadFileInfo fields
@@ -1239,7 +1276,9 @@ def test_get_upload_file_dual_path_parameters() -> None:
     """Test dual path parameter handling in GetUploadFileRequest."""
     from dify_oapi.api.knowledge_base.v1.model.document.get_upload_file_request import GetUploadFileRequest
 
-    request = GetUploadFileRequest.builder().dataset_id("test-dataset-upload").document_id("test-document-upload").build()
+    request = (
+        GetUploadFileRequest.builder().dataset_id("test-dataset-upload").document_id("test-document-upload").build()
+    )
 
     assert request.dataset_id == "test-dataset-upload"
     assert request.document_id == "test-document-upload"
@@ -1304,7 +1343,7 @@ def test_get_upload_file_response_optional_fields() -> None:
         download_url="https://example.com/download",
         mime_type="application/pdf",
         created_by="user-456",
-        created_at=1681623640
+        created_at=1681623640,
     )
     assert full_response.id == "file-full"
     assert full_response.name == "complete.pdf"

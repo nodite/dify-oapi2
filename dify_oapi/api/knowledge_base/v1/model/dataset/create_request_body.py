@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Literal
+
 from pydantic import BaseModel
 
 from .retrieval_model import RetrievalModel
@@ -38,7 +40,7 @@ class CreateRequestBodyBuilder:
         self._create_request_body.description = description
         return self
 
-    def indexing_technique(self, indexing_technique: str) -> CreateRequestBodyBuilder:
+    def indexing_technique(self, indexing_technique: Literal["high_quality", "economy"]) -> CreateRequestBodyBuilder:
         self._create_request_body.indexing_technique = indexing_technique
         return self
 

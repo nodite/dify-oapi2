@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Literal
+
 from pydantic import BaseModel
 
 
@@ -21,7 +23,7 @@ class PreProcessingRuleBuilder:
     def build(self) -> PreProcessingRule:
         return self._pre_processing_rule
 
-    def id(self, id: str) -> PreProcessingRuleBuilder:
+    def id(self, id: Literal["remove_extra_spaces", "remove_urls_emails"]) -> PreProcessingRuleBuilder:
         self._pre_processing_rule.id = id
         return self
 

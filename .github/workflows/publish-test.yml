@@ -1,0 +1,45 @@
+name: Publish to TestPyPI
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ develop ]
+
+jobs:
+  publish-test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.10"
+
+    - name: Install Poetry
+      uses: snok/install-poetry@v1
+      with:
+        version: latest
+        virtualenvs-create: true
+        virtualenvs-in-project: true
+
+    - name: Install dependencies
+      run: poetry install --with dev,format
+
+    - name: Run tests
+      run: |
+        poetry run ruff check .
+        poetry run mypy .
+        poetry run pytest tests/ -v
+      env:
+        DOMAIN: ${{ secrets.DOMAIN || 'https://api.dify.ai' }}
+        CHAT_KEY: ${{ secrets.CHAT_KEY || 'test-key' }}
+
+    - name: Build package
+      run: poetry build
+
+    - name: Publish to TestPyPI
+      run: poetry publish --repository testpypi
+      env:
+        POETRY_PYPI_TOKEN_TESTPYPI: ${{ secrets.TESTPYPI_TOKEN }}

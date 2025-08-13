@@ -7,11 +7,11 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
-    
+
     steps:
     - uses: actions/checkout@v4
       with:
-        token: ${{ secrets.GITHUB_TOKEN }}
+        token: ${{ secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}
 
     - name: Set up Python
       uses: actions/setup-python@v4
@@ -50,10 +50,12 @@ jobs:
         POETRY_PYPI_TOKEN_PYPI: ${{ secrets.PYPI_TOKEN }}
 
     - name: Create PR to sync main to develop
-      uses: peter-evans/create-pull-request@v5
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        base: develop
-        head: main
-        title: "Sync main to develop after release"
-        body: "Auto-generated PR to sync main branch changes back to develop after release."
+      run: |
+        gh pr create \
+          --base develop \
+          --head main \
+          --title "Sync main to develop after release" \
+          --body "Auto-generated PR to sync main branch changes back to develop after release." \
+          || echo "PR already exists or no changes to sync"
+      env:
+        GH_TOKEN: ${{ secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}

@@ -424,3 +424,123 @@ def test_file_info_serialization() -> None:
     assert data["mime_type"] is None
     assert data["created_by"] is None
     assert data["created_at"] is None
+
+
+# ===== FEEDBACK API MODELS TESTS =====
+
+
+def test_feedback_info_builder_pattern() -> None:
+    """Test FeedbackInfo builder pattern."""
+    from dify_oapi.api.completion.v1.model.feedback.feedback_info import FeedbackInfo
+
+    feedback_info = (
+        FeedbackInfo.builder()
+        .id("feedback-123")
+        .rating("like")
+        .content("Great response!")
+        .from_source("api")
+        .from_end_user_id("user-123")
+        .from_account_id("account-123")
+        .created_at(1705395332)
+        .build()
+    )
+
+    assert feedback_info.id == "feedback-123"
+    assert feedback_info.rating == "like"
+    assert feedback_info.content == "Great response!"
+    assert feedback_info.from_source == "api"
+    assert feedback_info.from_end_user_id == "user-123"
+    assert feedback_info.from_account_id == "account-123"
+    assert feedback_info.created_at == 1705395332
+
+
+def test_message_feedback_request_builder() -> None:
+    """Test MessageFeedbackRequest builder pattern."""
+    from dify_oapi.api.completion.v1.model.feedback.message_feedback_request import MessageFeedbackRequest
+    from dify_oapi.api.completion.v1.model.feedback.message_feedback_request_body import MessageFeedbackRequestBody
+    from dify_oapi.core.enum import HttpMethod
+
+    request_body = MessageFeedbackRequestBody.builder().rating("like").user("test-user").content("Good answer").build()
+
+    request = MessageFeedbackRequest.builder().message_id("message-123").request_body(request_body).build()
+
+    assert request.http_method == HttpMethod.POST
+    assert request.uri == "/v1/messages/:message_id/feedbacks"
+    assert request.message_id == "message-123"
+    assert request.paths["message_id"] == "message-123"
+    assert request.request_body == request_body
+    assert request.body is not None
+
+
+def test_message_feedback_request_body_validation() -> None:
+    """Test MessageFeedbackRequestBody validation and builder."""
+    from dify_oapi.api.completion.v1.model.feedback.message_feedback_request_body import MessageFeedbackRequestBody
+
+    request_body = (
+        MessageFeedbackRequestBody.builder().rating("like").user("user-123").content("Excellent response!").build()
+    )
+
+    assert request_body.rating == "like"
+    assert request_body.user == "user-123"
+    assert request_body.content == "Excellent response!"
+
+
+def test_message_feedback_response_model() -> None:
+    """Test MessageFeedbackResponse model."""
+    from dify_oapi.api.completion.v1.model.feedback.message_feedback_response import MessageFeedbackResponse
+
+    response = MessageFeedbackResponse(result="success")
+
+    assert response.result == "success"
+    # Test BaseResponse inheritance
+    assert hasattr(response, "success")
+    assert hasattr(response, "code")
+    assert hasattr(response, "msg")
+
+
+def test_get_feedbacks_request_builder() -> None:
+    """Test GetFeedbacksRequest builder pattern."""
+    from dify_oapi.api.completion.v1.model.feedback.get_feedbacks_request import GetFeedbacksRequest
+    from dify_oapi.core.enum import HttpMethod
+
+    request = GetFeedbacksRequest.builder().page("1").limit("20").build()
+
+    assert request.http_method == HttpMethod.GET
+    assert request.uri == "/v1/app/feedbacks"
+    assert ("page", "1") in request.queries
+    assert ("limit", "20") in request.queries
+    assert len(request.queries) == 2
+
+
+def test_get_feedbacks_response_model() -> None:
+    """Test GetFeedbacksResponse model."""
+    from dify_oapi.api.completion.v1.model.feedback.feedback_info import FeedbackInfo
+    from dify_oapi.api.completion.v1.model.feedback.get_feedbacks_response import GetFeedbacksResponse
+
+    feedback_info = FeedbackInfo.builder().id("feedback-123").rating("like").build()
+    response = GetFeedbacksResponse(data=[feedback_info])
+
+    assert response.data == [feedback_info]
+    assert len(response.data) == 1
+    assert response.data[0].id == "feedback-123"
+    # Test BaseResponse inheritance
+    assert hasattr(response, "success")
+    assert hasattr(response, "code")
+    assert hasattr(response, "msg")
+
+
+def test_feedback_info_serialization() -> None:
+    """Test FeedbackInfo serialization."""
+    from dify_oapi.api.completion.v1.model.feedback.feedback_info import FeedbackInfo
+
+    feedback_info = FeedbackInfo.builder().id("feedback-123").rating("like").content("Great!").build()
+
+    data = feedback_info.model_dump()
+
+    assert data["id"] == "feedback-123"
+    assert data["rating"] == "like"
+    assert data["content"] == "Great!"
+    assert data["from_source"] is None
+    assert data["from_end_user_id"] is None
+    assert data["from_account_id"] is None
+    assert data["created_at"] is None

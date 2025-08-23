@@ -144,7 +144,90 @@ class CreateResponse(BaseModel):  # NEVER DO THIS
 - Response classes should be instantiated by the transport layer, not manually
 - Builder patterns provide fluent interface for complex object construction
 
-### 6. Public Class Builder Pattern Rules (MANDATORY)
+### 6. Strict Type Safety Rules (MANDATORY - ZERO TOLERANCE)
+**Decision**: ALL API fields MUST use strict typing with Literal types instead of generic strings
+
+**MANDATORY RULE**: Every field that has predefined values MUST use Literal types for type safety
+- **Rationale**: Ensures compile-time validation and prevents invalid values
+- **Implementation**: Use `from typing import Literal` and define type aliases
+- **Zero Exceptions**: No field with predefined values may use generic `str` type
+- **Validation**: IDE and type checkers will catch invalid values at development time
+
+**Strict Type Implementation Pattern**:
+```python
+# segment_types.py - Define all Literal types
+from typing import Literal
+
+# Segment status types
+SegmentStatus = Literal["waiting", "indexing", "completed", "error", "paused"]
+
+# Segment enabled status types
+SegmentEnabledStatus = Literal["enabled", "disabled"]
+
+# Child chunk status types
+ChildChunkStatus = Literal["waiting", "indexing", "completed", "error"]
+
+# Segment search status types
+SearchStatus = Literal["all", "enabled", "disabled"]
+
+# Sort order types
+SortOrder = Literal["created_at", "position", "word_count", "hit_count"]
+
+# Sort direction types
+SortDirection = Literal["asc", "desc"]
+```
+
+**Model Usage Pattern**:
+```python
+# Use Literal types in models
+from .segment_types import SegmentStatus, SegmentEnabledStatus
+
+class SegmentInfo(BaseModel):
+    status: SegmentStatus | None = None
+    enabled: bool | None = None  # Can be converted to SegmentEnabledStatus if needed
+    # NOT: status: str | None = None
+```
+
+**Structured Input Objects (MANDATORY)**:
+- Replace generic `dict[str, Any]` with structured classes
+- Create dedicated input classes with builder patterns
+- Provide type safety for complex nested objects
+
+**Example - Structured Segment Data**:
+```python
+# segment_data.py
+class SegmentData(BaseModel):
+    content: str | None = None
+    answer: str | None = None
+    keywords: list[str] | None = None
+    enabled: bool | None = None
+    
+    @staticmethod
+    def builder() -> SegmentDataBuilder:
+        return SegmentDataBuilder()
+
+# Usage in RequestBody
+class UpdateRequestBody(BaseModel):
+    segment: SegmentData | None = None
+    # NOT: segment: dict[str, Any] | None = None
+```
+
+**Strict Type Coverage**:
+- **Segment Status**: `"waiting"` | `"indexing"` | `"completed"` | `"error"` | `"paused"`
+- **Enabled Status**: `"enabled"` | `"disabled"`
+- **Child Chunk Status**: `"waiting"` | `"indexing"` | `"completed"` | `"error"`
+- **Search Status**: `"all"` | `"enabled"` | `"disabled"`
+- **Sort Orders**: `"created_at"` | `"position"` | `"word_count"` | `"hit_count"`
+- **Sort Directions**: `"asc"` | `"desc"`
+
+**Benefits of Strict Typing**:
+- **Compile-time Validation**: Catch invalid values during development
+- **IDE Support**: Auto-completion and error highlighting
+- **Documentation**: Self-documenting code with clear valid values
+- **Refactoring Safety**: Type-safe refactoring across the codebase
+- **API Consistency**: Ensures consistent usage of predefined values
+
+### 7. Public Class Builder Pattern Rules (MANDATORY)
 **Decision**: All public classes MUST implement builder patterns for consistency and usability
 
 #### Builder Pattern Implementation Requirements

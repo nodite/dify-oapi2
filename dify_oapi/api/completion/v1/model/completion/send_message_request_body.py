@@ -1,13 +1,14 @@
 from __future__ import annotations
 
-from typing import Any
-
 from pydantic import BaseModel
+
+from .completion_inputs import CompletionInputs
+from .completion_types import FileType, ResponseMode, TransferMethod
 
 
 class FileInfo(BaseModel):
-    type: str | None = None
-    transfer_method: str | None = None
+    type: FileType | None = None
+    transfer_method: TransferMethod | None = None
     url: str | None = None
     upload_file_id: str | None = None
 
@@ -23,11 +24,11 @@ class FileInfoBuilder:
     def build(self) -> FileInfo:
         return self._file_info
 
-    def type(self, type_: str) -> FileInfoBuilder:
+    def type(self, type_: FileType) -> FileInfoBuilder:
         self._file_info.type = type_
         return self
 
-    def transfer_method(self, transfer_method: str) -> FileInfoBuilder:
+    def transfer_method(self, transfer_method: TransferMethod) -> FileInfoBuilder:
         self._file_info.transfer_method = transfer_method
         return self
 
@@ -41,9 +42,8 @@ class FileInfoBuilder:
 
 
 class SendMessageRequestBody(BaseModel):
-    inputs: dict[str, Any] | None = None
-    query: str | None = None
-    response_mode: str | None = None
+    inputs: CompletionInputs | None = None
+    response_mode: ResponseMode | None = None
     user: str | None = None
     files: list[FileInfo] | None = None
 
@@ -59,15 +59,11 @@ class SendMessageRequestBodyBuilder:
     def build(self) -> SendMessageRequestBody:
         return self._send_message_request_body
 
-    def inputs(self, inputs: dict[str, Any]) -> SendMessageRequestBodyBuilder:
+    def inputs(self, inputs: CompletionInputs) -> SendMessageRequestBodyBuilder:
         self._send_message_request_body.inputs = inputs
         return self
 
-    def query(self, query: str) -> SendMessageRequestBodyBuilder:
-        self._send_message_request_body.query = query
-        return self
-
-    def response_mode(self, response_mode: str) -> SendMessageRequestBodyBuilder:
+    def response_mode(self, response_mode: ResponseMode) -> SendMessageRequestBodyBuilder:
         self._send_message_request_body.response_mode = response_mode
         return self
 

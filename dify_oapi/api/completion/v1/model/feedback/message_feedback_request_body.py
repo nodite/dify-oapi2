@@ -2,9 +2,11 @@ from __future__ import annotations
 
 from pydantic import BaseModel
 
+from ..completion.completion_types import FeedbackRating
+
 
 class MessageFeedbackRequestBody(BaseModel):
-    rating: str | None = None
+    rating: FeedbackRating | None = None
     user: str | None = None
     content: str | None = None
 
@@ -20,7 +22,7 @@ class MessageFeedbackRequestBodyBuilder:
     def build(self) -> MessageFeedbackRequestBody:
         return self._message_feedback_request_body
 
-    def rating(self, rating: str) -> MessageFeedbackRequestBodyBuilder:
+    def rating(self, rating: FeedbackRating) -> MessageFeedbackRequestBodyBuilder:
         self._message_feedback_request_body.rating = rating
         return self
 

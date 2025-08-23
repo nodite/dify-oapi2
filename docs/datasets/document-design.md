@@ -211,7 +211,104 @@ class CreateByTextResponse(DocumentInfo):  # Missing BaseResponse
     # ...
 ```
 
-### 8. Public Class Builder Pattern Rules (MANDATORY)
+### 8. Strict Type Safety Rules (MANDATORY - ZERO TOLERANCE)
+**Decision**: ALL API fields MUST use strict typing with Literal types instead of generic strings
+
+**MANDATORY RULE**: Every field that has predefined values MUST use Literal types for type safety
+- **Rationale**: Ensures compile-time validation and prevents invalid values
+- **Implementation**: Use `from typing import Literal` and define type aliases
+- **Zero Exceptions**: No field with predefined values may use generic `str` type
+- **Validation**: IDE and type checkers will catch invalid values at development time
+
+**Strict Type Implementation Pattern**:
+```python
+# document_types.py - Define all Literal types
+from typing import Literal
+
+# Indexing technique types
+IndexingTechnique = Literal["high_quality", "economy"]
+
+# Document form types
+DocumentForm = Literal["text_model", "qa_model"]
+
+# Document language types
+DocumentLanguage = Literal["English", "Chinese", "Japanese", "Korean"]
+
+# Processing rule mode types
+ProcessingRuleMode = Literal["automatic", "custom"]
+
+# Segmentation separator types
+Separator = Literal["\n\n", "\n", ".", "!", "?", ";"]
+
+# Pre-processing rule types
+PreProcessingRuleType = Literal["remove_extra_spaces", "remove_urls_emails"]
+
+# Data source types
+DataSourceType = Literal["upload_file", "notion_import", "website_crawl"]
+
+# Document indexing status types
+IndexingStatus = Literal["waiting", "parsing", "cleaning", "splitting", "indexing", "completed", "error", "paused"]
+
+# Document status action types
+StatusAction = Literal["enable", "disable", "archive"]
+
+# Upload file status types
+UploadFileStatus = Literal["success", "processing", "error"]
+```
+
+**Model Usage Pattern**:
+```python
+# Use Literal types in models
+from .document_types import IndexingTechnique, DocumentForm
+
+class CreateByTextRequestBody(BaseModel):
+    indexing_technique: IndexingTechnique | None = None
+    doc_form: DocumentForm | None = None
+    # NOT: indexing_technique: str | None = None
+```
+
+**Structured Input Objects (MANDATORY)**:
+- Replace generic `dict[str, Any]` with structured classes
+- Create dedicated input classes with builder patterns
+- Provide type safety for complex nested objects
+
+**Example - Structured Process Rule**:
+```python
+# process_rule.py
+class ProcessRule(BaseModel):
+    mode: ProcessingRuleMode | None = None
+    pre_processing_rules: list[PreProcessingRule] | None = None
+    segmentation: Segmentation | None = None
+    
+    @staticmethod
+    def builder() -> ProcessRuleBuilder:
+        return ProcessRuleBuilder()
+
+# Usage in RequestBody
+class CreateByTextRequestBody(BaseModel):
+    process_rule: ProcessRule | None = None
+    # NOT: process_rule: dict[str, Any] | None = None
+```
+
+**Strict Type Coverage**:
+- **Indexing Techniques**: `"high_quality"` | `"economy"`
+- **Document Forms**: `"text_model"` | `"qa_model"`
+- **Languages**: `"English"` | `"Chinese"` | `"Japanese"` | `"Korean"`
+- **Processing Modes**: `"automatic"` | `"custom"`
+- **Separators**: `"\n\n"` | `"\n"` | `"."` | `"!"` | `"?"` | `";"`
+- **Data Sources**: `"upload_file"` | `"notion_import"` | `"website_crawl"`
+- **Indexing Status**: `"waiting"` | `"parsing"` | `"cleaning"` | `"splitting"` | `"indexing"` | `"completed"` | `"error"` | `"paused"`
+- **Status Actions**: `"enable"` | `"disable"` | `"archive"`
+- **Upload Status**: `"success"` | `"processing"` | `"error"`
+
+**Benefits of Strict Typing**:
+- **Compile-time Validation**: Catch invalid values during development
+- **IDE Support**: Auto-completion and error highlighting
+- **Documentation**: Self-documenting code with clear valid values
+- **Refactoring Safety**: Type-safe refactoring across the codebase
+- **API Consistency**: Ensures consistent usage of predefined values
+
+### 9. Public Class Builder Pattern Rules (MANDATORY)
 **Decision**: All public classes MUST implement builder patterns for consistency and usability
 
 #### Builder Pattern Implementation Requirements

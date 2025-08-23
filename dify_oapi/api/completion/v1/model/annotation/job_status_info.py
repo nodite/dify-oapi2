@@ -2,10 +2,12 @@ from __future__ import annotations
 
 from pydantic import BaseModel
 
+from ..completion.completion_types import JobStatus
+
 
 class JobStatusInfo(BaseModel):
     job_id: str | None = None
-    job_status: str | None = None
+    job_status: JobStatus | None = None
     error_msg: str | None = None
 
     @staticmethod
@@ -24,7 +26,7 @@ class JobStatusInfoBuilder:
         self._job_status_info.job_id = job_id
         return self
 
-    def job_status(self, job_status: str) -> JobStatusInfoBuilder:
+    def job_status(self, job_status: JobStatus) -> JobStatusInfoBuilder:
         self._job_status_info.job_status = job_status
         return self
 

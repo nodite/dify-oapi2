@@ -365,7 +365,99 @@ class CreateResponse(DatasetInfo):  # Missing BaseResponse
     # ...
 ```
 
-### 8. Public Class Builder Pattern Rules (MANDATORY)
+### 8. Strict Type Safety Rules (MANDATORY - ZERO TOLERANCE)
+**Decision**: ALL API fields MUST use strict typing with Literal types instead of generic strings
+
+**MANDATORY RULE**: Every field that has predefined values MUST use Literal types for type safety
+- **Rationale**: Ensures compile-time validation and prevents invalid values
+- **Implementation**: Use `from typing import Literal` and define type aliases
+- **Zero Exceptions**: No field with predefined values may use generic `str` type
+- **Validation**: IDE and type checkers will catch invalid values at development time
+
+**Strict Type Implementation Pattern**:
+```python
+# dataset_types.py - Define all Literal types
+from typing import Literal
+
+# Indexing technique types
+IndexingTechnique = Literal["high_quality", "economy"]
+
+# Search method types
+SearchMethod = Literal["semantic_search", "full_text_search", "hybrid_search"]
+
+# Reranking model types
+RerankingModelType = Literal["rerank-model"]
+
+# Processing rule mode types
+ProcessingRuleMode = Literal["automatic", "custom"]
+
+# Data source types
+DataSourceType = Literal["upload_file", "notion_import", "website_crawl"]
+
+# Document status types
+DocumentStatus = Literal["indexing", "completed", "error", "paused"]
+
+# Metadata field types
+MetadataFieldType = Literal["text", "number", "select"]
+
+# Tag types
+TagType = Literal["knowledge", "custom"]
+
+# Built-in metadata actions
+BuiltinMetadataAction = Literal["enable", "disable"]
+```
+
+**Model Usage Pattern**:
+```python
+# Use Literal types in models
+from .dataset_types import IndexingTechnique, SearchMethod
+
+class CreateRequestBody(BaseModel):
+    indexing_technique: IndexingTechnique | None = None
+    # NOT: indexing_technique: str | None = None
+```
+
+**Structured Input Objects (MANDATORY)**:
+- Replace generic `dict[str, Any]` with structured classes
+- Create dedicated input classes with builder patterns
+- Provide type safety for complex nested objects
+
+**Example - Structured Retrieval Model**:
+```python
+# retrieval_model.py
+class RetrievalModel(BaseModel):
+    search_method: SearchMethod | None = None
+    reranking_enable: bool | None = None
+    top_k: int | None = None
+    
+    @staticmethod
+    def builder() -> RetrievalModelBuilder:
+        return RetrievalModelBuilder()
+
+# Usage in RequestBody
+class CreateRequestBody(BaseModel):
+    retrieval_model: RetrievalModel | None = None
+    # NOT: retrieval_model: dict[str, Any] | None = None
+```
+
+**Strict Type Coverage**:
+- **Indexing Techniques**: `"high_quality"` | `"economy"`
+- **Search Methods**: `"semantic_search"` | `"full_text_search"` | `"hybrid_search"`
+- **Processing Modes**: `"automatic"` | `"custom"`
+- **Data Source Types**: `"upload_file"` | `"notion_import"` | `"website_crawl"`
+- **Document Status**: `"indexing"` | `"completed"` | `"error"` | `"paused"`
+- **Metadata Types**: `"text"` | `"number"` | `"select"`
+- **Tag Types**: `"knowledge"` | `"custom"`
+- **Actions**: `"enable"` | `"disable"`
+
+**Benefits of Strict Typing**:
+- **Compile-time Validation**: Catch invalid values during development
+- **IDE Support**: Auto-completion and error highlighting
+- **Documentation**: Self-documenting code with clear valid values
+- **Refactoring Safety**: Type-safe refactoring across the codebase
+- **API Consistency**: Ensures consistent usage of predefined values
+
+### 9. Public Class Builder Pattern Rules (MANDATORY)
 **Decision**: All public classes MUST implement builder patterns for consistency and usability
 
 #### Builder Pattern Implementation Requirements
@@ -533,7 +625,7 @@ class RetrievalModelBuilder:
         return self
 ```
 
-### 9. Model File Organization
+### 10. Model File Organization
 **Decision**: Organize models by resource grouping with shared common models
 
 ```

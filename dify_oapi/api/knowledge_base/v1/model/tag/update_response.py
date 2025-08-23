@@ -11,9 +11,10 @@ class UpdateResponse(BaseResponse):
     binding_count: int | str | None = None
 
     def to_tag_info(self) -> TagInfo:
-        binding_count = self.binding_count
-        if isinstance(binding_count, str):
-            binding_count = int(binding_count) if binding_count.isdigit() else 0
+        binding_count = None
+        if self.binding_count is not None:
+            binding_count = int(self.binding_count) if isinstance(self.binding_count, str) else self.binding_count
+
         return TagInfo(
             id=self.id or "",
             name=self.name or "",

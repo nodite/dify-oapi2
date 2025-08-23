@@ -926,3 +926,466 @@ def test_info_models_multiple_inheritance() -> None:
     assert site_response.icon_type == "emoji"
     assert hasattr(site_response, "success")  # From BaseResponse
     assert hasattr(site_response, "raw")  # From BaseResponse
+
+
+# ===== ANNOTATION API MODELS TESTS =====
+
+
+def test_annotation_info_builder_pattern() -> None:
+    """Test AnnotationInfo builder pattern."""
+    from dify_oapi.api.completion.v1.model.annotation.annotation_info import AnnotationInfo
+
+    annotation_info = (
+        AnnotationInfo.builder()
+        .id("annotation-123")
+        .question("What is AI?")
+        .answer("AI is artificial intelligence.")
+        .hit_count(5)
+        .created_at(1705395332)
+        .build()
+    )
+
+    assert annotation_info.id == "annotation-123"
+    assert annotation_info.question == "What is AI?"
+    assert annotation_info.answer == "AI is artificial intelligence."
+    assert annotation_info.hit_count == 5
+    assert annotation_info.created_at == 1705395332
+
+
+def test_job_status_info_builder_pattern() -> None:
+    """Test JobStatusInfo builder pattern."""
+    from dify_oapi.api.completion.v1.model.annotation.job_status_info import JobStatusInfo
+
+    job_status_info = JobStatusInfo.builder().job_id("job-456").job_status("completed").error_msg("").build()
+
+    assert job_status_info.job_id == "job-456"
+    assert job_status_info.job_status == "completed"
+    assert job_status_info.error_msg == ""
+
+
+def test_list_annotations_request_builder() -> None:
+    """Test ListAnnotationsRequest builder pattern."""
+    from dify_oapi.api.completion.v1.model.annotation.list_annotations_request import ListAnnotationsRequest
+    from dify_oapi.core.enum import HttpMethod
+
+    request = ListAnnotationsRequest.builder().page("1").limit("20").build()
+
+    assert request.http_method == HttpMethod.GET
+    assert request.uri == "/v1/apps/annotations"
+    assert ("page", "1") in request.queries
+    assert ("limit", "20") in request.queries
+    assert len(request.queries) == 2
+
+
+def test_list_annotations_response_model() -> None:
+    """Test ListAnnotationsResponse model."""
+    from dify_oapi.api.completion.v1.model.annotation.annotation_info import AnnotationInfo
+    from dify_oapi.api.completion.v1.model.annotation.list_annotations_response import ListAnnotationsResponse
+
+    annotation_info = AnnotationInfo.builder().id("annotation-123").question("What is AI?").build()
+    response = ListAnnotationsResponse(data=[annotation_info], has_more=False, limit=20, total=1, page=1)
+
+    assert response.data == [annotation_info]
+    assert response.has_more is False
+    assert response.limit == 20
+    assert response.total == 1
+    assert response.page == 1
+    # Test BaseResponse inheritance
+    assert hasattr(response, "success")
+    assert hasattr(response, "code")
+    assert hasattr(response, "msg")
+
+
+def test_create_annotation_request_builder() -> None:
+    """Test CreateAnnotationRequest builder pattern."""
+    from dify_oapi.api.completion.v1.model.annotation.create_annotation_request import CreateAnnotationRequest
+    from dify_oapi.api.completion.v1.model.annotation.create_annotation_request_body import CreateAnnotationRequestBody
+    from dify_oapi.core.enum import HttpMethod
+
+    request_body = (
+        CreateAnnotationRequestBody.builder().question("What is AI?").answer("AI is artificial intelligence.").build()
+    )
+
+    request = CreateAnnotationRequest.builder().request_body(request_body).build()
+
+    assert request.http_method == HttpMethod.POST
+    assert request.uri == "/v1/apps/annotations"
+    assert request.request_body == request_body
+    assert request.body is not None
+
+
+def test_create_annotation_request_body_validation() -> None:
+    """Test CreateAnnotationRequestBody validation and builder."""
+    from dify_oapi.api.completion.v1.model.annotation.create_annotation_request_body import CreateAnnotationRequestBody
+
+    request_body = (
+        CreateAnnotationRequestBody.builder()
+        .question("How does machine learning work?")
+        .answer("Machine learning uses algorithms to learn from data.")
+        .build()
+    )
+
+    assert request_body.question == "How does machine learning work?"
+    assert request_body.answer == "Machine learning uses algorithms to learn from data."
+
+
+def test_create_annotation_response_model() -> None:
+    """Test CreateAnnotationResponse model."""
+    from dify_oapi.api.completion.v1.model.annotation.create_annotation_response import CreateAnnotationResponse
+
+    response = CreateAnnotationResponse(
+        id="annotation-123",
+        question="What is AI?",
+        answer="AI is artificial intelligence.",
+        hit_count=0,
+        created_at=1705395332,
+    )
+
+    assert response.id == "annotation-123"
+    assert response.question == "What is AI?"
+    assert response.answer == "AI is artificial intelligence."
+    assert response.hit_count == 0
+    assert response.created_at == 1705395332
+    # Test BaseResponse inheritance
+    assert hasattr(response, "success")
+    assert hasattr(response, "code")
+    assert hasattr(response, "msg")
+
+
+def test_update_annotation_request_path_params() -> None:
+    """Test UpdateAnnotationRequest path parameter handling."""
+    from dify_oapi.api.completion.v1.model.annotation.update_annotation_request import UpdateAnnotationRequest
+    from dify_oapi.api.completion.v1.model.annotation.update_annotation_request_body import UpdateAnnotationRequestBody
+    from dify_oapi.core.enum import HttpMethod
+
+    request_body = UpdateAnnotationRequestBody.builder().question("Updated question?").answer("Updated answer.").build()
+
+    request = UpdateAnnotationRequest.builder().annotation_id("annotation-456").request_body(request_body).build()
+
+    assert request.http_method == HttpMethod.PUT
+    assert request.uri == "/v1/apps/annotations/:annotation_id"
+    assert request.annotation_id == "annotation-456"
+    assert request.paths["annotation_id"] == "annotation-456"
+    assert request.request_body == request_body
+    assert request.body is not None
+
+
+def test_update_annotation_request_body_validation() -> None:
+    """Test UpdateAnnotationRequestBody validation and builder."""
+    from dify_oapi.api.completion.v1.model.annotation.update_annotation_request_body import UpdateAnnotationRequestBody
+
+    request_body = (
+        UpdateAnnotationRequestBody.builder()
+        .question("What is deep learning?")
+        .answer("Deep learning is a subset of machine learning.")
+        .build()
+    )
+
+    assert request_body.question == "What is deep learning?"
+    assert request_body.answer == "Deep learning is a subset of machine learning."
+
+
+def test_update_annotation_response_model() -> None:
+    """Test UpdateAnnotationResponse model."""
+    from dify_oapi.api.completion.v1.model.annotation.update_annotation_response import UpdateAnnotationResponse
+
+    response = UpdateAnnotationResponse(
+        id="annotation-456",
+        question="What is deep learning?",
+        answer="Deep learning is a subset of machine learning.",
+        hit_count=3,
+        created_at=1705395332,
+    )
+
+    assert response.id == "annotation-456"
+    assert response.question == "What is deep learning?"
+    assert response.answer == "Deep learning is a subset of machine learning."
+    assert response.hit_count == 3
+    assert response.created_at == 1705395332
+    # Test BaseResponse inheritance
+    assert hasattr(response, "success")
+    assert hasattr(response, "code")
+    assert hasattr(response, "msg")
+
+
+def test_delete_annotation_request_builder() -> None:
+    """Test DeleteAnnotationRequest builder pattern."""
+    from dify_oapi.api.completion.v1.model.annotation.delete_annotation_request import DeleteAnnotationRequest
+    from dify_oapi.core.enum import HttpMethod
+
+    request = DeleteAnnotationRequest.builder().annotation_id("annotation-789").build()
+
+    assert request.http_method == HttpMethod.DELETE
+    assert request.uri == "/v1/apps/annotations/:annotation_id"
+    assert request.annotation_id == "annotation-789"
+    assert request.paths["annotation_id"] == "annotation-789"
+
+
+def test_delete_annotation_response_model() -> None:
+    """Test DeleteAnnotationResponse model."""
+    from dify_oapi.api.completion.v1.model.annotation.delete_annotation_response import DeleteAnnotationResponse
+
+    response = DeleteAnnotationResponse()
+
+    # Test BaseResponse inheritance
+    assert hasattr(response, "success")
+    assert hasattr(response, "code")
+    assert hasattr(response, "msg")
+    assert hasattr(response, "raw")
+
+
+def test_annotation_reply_settings_request_builder() -> None:
+    """Test AnnotationReplySettingsRequest builder pattern."""
+    from dify_oapi.api.completion.v1.model.annotation.annotation_reply_settings_request import (
+        AnnotationReplySettingsRequest,
+    )
+    from dify_oapi.api.completion.v1.model.annotation.annotation_reply_settings_request_body import (
+        AnnotationReplySettingsRequestBody,
+    )
+    from dify_oapi.core.enum import HttpMethod
+
+    request_body = (
+        AnnotationReplySettingsRequestBody.builder()
+        .embedding_provider_name("openai")
+        .embedding_model_name("text-embedding-ada-002")
+        .score_threshold(0.8)
+        .build()
+    )
+
+    request = AnnotationReplySettingsRequest.builder().action("enable").request_body(request_body).build()
+
+    assert request.http_method == HttpMethod.POST
+    assert request.uri == "/v1/apps/annotation-reply/:action"
+    assert request.action == "enable"
+    assert request.paths["action"] == "enable"
+    assert request.request_body == request_body
+    assert request.body is not None
+
+
+def test_annotation_reply_settings_request_body_validation() -> None:
+    """Test AnnotationReplySettingsRequestBody validation and builder."""
+    from dify_oapi.api.completion.v1.model.annotation.annotation_reply_settings_request_body import (
+        AnnotationReplySettingsRequestBody,
+    )
+
+    request_body = (
+        AnnotationReplySettingsRequestBody.builder()
+        .embedding_provider_name("openai")
+        .embedding_model_name("text-embedding-ada-002")
+        .score_threshold(0.75)
+        .build()
+    )
+
+    assert request_body.embedding_provider_name == "openai"
+    assert request_body.embedding_model_name == "text-embedding-ada-002"
+    assert request_body.score_threshold == 0.75
+
+
+def test_annotation_reply_settings_response_model() -> None:
+    """Test AnnotationReplySettingsResponse model."""
+    from dify_oapi.api.completion.v1.model.annotation.annotation_reply_settings_response import (
+        AnnotationReplySettingsResponse,
+    )
+
+    response = AnnotationReplySettingsResponse(job_id="job-123", job_status="waiting", error_msg="")
+
+    assert response.job_id == "job-123"
+    assert response.job_status == "waiting"
+    assert response.error_msg == ""
+    # Test BaseResponse inheritance
+    assert hasattr(response, "success")
+    assert hasattr(response, "code")
+    assert hasattr(response, "msg")
+
+
+def test_query_annotation_reply_status_request_builder() -> None:
+    """Test QueryAnnotationReplyStatusRequest builder pattern."""
+    from dify_oapi.api.completion.v1.model.annotation.query_annotation_reply_status_request import (
+        QueryAnnotationReplyStatusRequest,
+    )
+    from dify_oapi.core.enum import HttpMethod
+
+    request = QueryAnnotationReplyStatusRequest.builder().action("enable").job_id("job-456").build()
+
+    assert request.http_method == HttpMethod.GET
+    assert request.uri == "/v1/apps/annotation-reply/:action/status/:job_id"
+    assert request.action == "enable"
+    assert request.job_id == "job-456"
+    assert request.paths["action"] == "enable"
+    assert request.paths["job_id"] == "job-456"
+
+
+def test_query_annotation_reply_status_response_model() -> None:
+    """Test QueryAnnotationReplyStatusResponse model."""
+    from dify_oapi.api.completion.v1.model.annotation.query_annotation_reply_status_response import (
+        QueryAnnotationReplyStatusResponse,
+    )
+
+    response = QueryAnnotationReplyStatusResponse(job_id="job-456", job_status="completed", error_msg="")
+
+    assert response.job_id == "job-456"
+    assert response.job_status == "completed"
+    assert response.error_msg == ""
+    # Test BaseResponse inheritance
+    assert hasattr(response, "success")
+    assert hasattr(response, "code")
+    assert hasattr(response, "msg")
+
+
+def test_annotation_models_serialization() -> None:
+    """Test annotation models serialization."""
+    from dify_oapi.api.completion.v1.model.annotation.annotation_info import AnnotationInfo
+    from dify_oapi.api.completion.v1.model.annotation.job_status_info import JobStatusInfo
+
+    annotation_info = (
+        AnnotationInfo.builder()
+        .id("annotation-123")
+        .question("What is AI?")
+        .answer("AI is artificial intelligence.")
+        .build()
+    )
+    data = annotation_info.model_dump()
+    assert data["id"] == "annotation-123"
+    assert data["question"] == "What is AI?"
+    assert data["answer"] == "AI is artificial intelligence."
+    assert data["hit_count"] is None
+    assert data["created_at"] is None
+
+    job_status_info = JobStatusInfo.builder().job_id("job-456").job_status("waiting").build()
+    data = job_status_info.model_dump()
+    assert data["job_id"] == "job-456"
+    assert data["job_status"] == "waiting"
+    assert data["error_msg"] is None
+
+
+def test_annotation_models_multiple_inheritance() -> None:
+    """Test annotation response models with multiple inheritance."""
+    from dify_oapi.api.completion.v1.model.annotation.annotation_reply_settings_response import (
+        AnnotationReplySettingsResponse,
+    )
+    from dify_oapi.api.completion.v1.model.annotation.create_annotation_response import CreateAnnotationResponse
+    from dify_oapi.api.completion.v1.model.annotation.query_annotation_reply_status_response import (
+        QueryAnnotationReplyStatusResponse,
+    )
+    from dify_oapi.api.completion.v1.model.annotation.update_annotation_response import UpdateAnnotationResponse
+
+    # Test CreateAnnotationResponse inherits from both AnnotationInfo and BaseResponse
+    create_response = CreateAnnotationResponse(id="annotation-123", question="What is AI?")
+    assert create_response.id == "annotation-123"
+    assert create_response.question == "What is AI?"
+    assert hasattr(create_response, "success")  # From BaseResponse
+    assert hasattr(create_response, "code")  # From BaseResponse
+
+    # Test UpdateAnnotationResponse inherits from both AnnotationInfo and BaseResponse
+    update_response = UpdateAnnotationResponse(id="annotation-456", answer="Updated answer")
+    assert update_response.id == "annotation-456"
+    assert update_response.answer == "Updated answer"
+    assert hasattr(update_response, "success")  # From BaseResponse
+    assert hasattr(update_response, "msg")  # From BaseResponse
+
+    # Test AnnotationReplySettingsResponse inherits from both JobStatusInfo and BaseResponse
+    settings_response = AnnotationReplySettingsResponse(job_id="job-123", job_status="waiting")
+    assert settings_response.job_id == "job-123"
+    assert settings_response.job_status == "waiting"
+    assert hasattr(settings_response, "success")  # From BaseResponse
+    assert hasattr(settings_response, "raw")  # From BaseResponse
+
+    # Test QueryAnnotationReplyStatusResponse inherits from both JobStatusInfo and BaseResponse
+    query_response = QueryAnnotationReplyStatusResponse(job_id="job-789", job_status="completed")
+    assert query_response.job_id == "job-789"
+    assert query_response.job_status == "completed"
+    assert hasattr(query_response, "success")  # From BaseResponse
+    assert hasattr(query_response, "code")  # From BaseResponse
+
+
+def test_annotation_path_parameter_handling() -> None:
+    """Test annotation requests with multiple path parameters."""
+    from dify_oapi.api.completion.v1.model.annotation.annotation_reply_settings_request import (
+        AnnotationReplySettingsRequest,
+    )
+    from dify_oapi.api.completion.v1.model.annotation.delete_annotation_request import DeleteAnnotationRequest
+    from dify_oapi.api.completion.v1.model.annotation.query_annotation_reply_status_request import (
+        QueryAnnotationReplyStatusRequest,
+    )
+    from dify_oapi.api.completion.v1.model.annotation.update_annotation_request import UpdateAnnotationRequest
+
+    # Test single path parameter
+    delete_request = DeleteAnnotationRequest.builder().annotation_id("annotation-123").build()
+    assert delete_request.annotation_id == "annotation-123"
+    assert "annotation_id" in delete_request.paths
+    assert delete_request.paths["annotation_id"] == "annotation-123"
+
+    update_request = UpdateAnnotationRequest.builder().annotation_id("annotation-456").build()
+    assert update_request.annotation_id == "annotation-456"
+    assert "annotation_id" in update_request.paths
+    assert update_request.paths["annotation_id"] == "annotation-456"
+
+    # Test single path parameter for action
+    settings_request = AnnotationReplySettingsRequest.builder().action("enable").build()
+    assert settings_request.action == "enable"
+    assert "action" in settings_request.paths
+    assert settings_request.paths["action"] == "enable"
+
+    # Test multiple path parameters
+    query_request = QueryAnnotationReplyStatusRequest.builder().action("disable").job_id("job-789").build()
+    assert query_request.action == "disable"
+    assert query_request.job_id == "job-789"
+    assert "action" in query_request.paths
+    assert "job_id" in query_request.paths
+    assert query_request.paths["action"] == "disable"
+    assert query_request.paths["job_id"] == "job-789"
+
+
+def test_annotation_query_parameter_handling() -> None:
+    """Test annotation requests with query parameters."""
+    from dify_oapi.api.completion.v1.model.annotation.list_annotations_request import ListAnnotationsRequest
+
+    # Test with both page and limit
+    request = ListAnnotationsRequest.builder().page("2").limit("50").build()
+    assert ("page", "2") in request.queries
+    assert ("limit", "50") in request.queries
+    assert len(request.queries) == 2
+
+    # Test with only page
+    request_page_only = ListAnnotationsRequest.builder().page("1").build()
+    assert ("page", "1") in request_page_only.queries
+    assert len(request_page_only.queries) == 1
+
+    # Test with only limit
+    request_limit_only = ListAnnotationsRequest.builder().limit("10").build()
+    assert ("limit", "10") in request_limit_only.queries
+    assert len(request_limit_only.queries) == 1
+
+    # Test with no parameters
+    request_empty = ListAnnotationsRequest.builder().build()
+    assert len(request_empty.queries) == 0
+
+
+def test_annotation_optional_field_handling() -> None:
+    """Test annotation models with optional fields."""
+    from dify_oapi.api.completion.v1.model.annotation.annotation_info import AnnotationInfo
+    from dify_oapi.api.completion.v1.model.annotation.job_status_info import JobStatusInfo
+
+    # Test AnnotationInfo with minimal fields
+    annotation_minimal = AnnotationInfo()
+    assert annotation_minimal.id is None
+    assert annotation_minimal.question is None
+    assert annotation_minimal.answer is None
+    assert annotation_minimal.hit_count is None
+    assert annotation_minimal.created_at is None
+
+    # Test AnnotationInfo builder with no fields
+    annotation_empty = AnnotationInfo.builder().build()
+    assert annotation_empty.id is None
+    assert annotation_empty.question is None
+
+    # Test JobStatusInfo with minimal fields
+    job_status_minimal = JobStatusInfo()
+    assert job_status_minimal.job_id is None
+    assert job_status_minimal.job_status is None
+    assert job_status_minimal.error_msg is None
+
+    # Test JobStatusInfo builder with no fields
+    job_status_empty = JobStatusInfo.builder().build()
+    assert job_status_empty.job_id is None
+    assert job_status_empty.job_status is None

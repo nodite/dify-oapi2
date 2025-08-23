@@ -300,3 +300,127 @@ def test_stop_response_path_parameter_handling() -> None:
     assert request.task_id == "task-456"
     assert "task_id" in request.paths
     assert request.paths["task_id"] == "task-456"
+
+
+# ===== FILE API MODELS TESTS =====
+
+
+def test_file_api_file_info_builder_pattern() -> None:
+    """Test File API FileInfo builder pattern."""
+    from dify_oapi.api.completion.v1.model.file.file_info import FileInfo
+
+    file_info = (
+        FileInfo.builder()
+        .id("file-123")
+        .name("test.jpg")
+        .size(1024)
+        .extension("jpg")
+        .mime_type("image/jpeg")
+        .created_by("user-123")
+        .created_at(1705395332)
+        .build()
+    )
+
+    assert file_info.id == "file-123"
+    assert file_info.name == "test.jpg"
+    assert file_info.size == 1024
+    assert file_info.extension == "jpg"
+    assert file_info.mime_type == "image/jpeg"
+    assert file_info.created_by == "user-123"
+    assert file_info.created_at == 1705395332
+
+
+def test_upload_file_request_multipart() -> None:
+    """Test UploadFileRequest multipart handling."""
+    from io import BytesIO
+
+    from dify_oapi.api.completion.v1.model.file.upload_file_request import UploadFileRequest
+    from dify_oapi.api.completion.v1.model.file.upload_file_request_body import UploadFileRequestBody
+    from dify_oapi.core.enum import HttpMethod
+
+    # Create test file data
+    file_data = BytesIO(b"test file content")
+    request_body = UploadFileRequestBody.builder().user("test-user").build()
+
+    request = UploadFileRequest.builder().file(file_data, "test.jpg").request_body(request_body).build()
+
+    assert request.http_method == HttpMethod.POST
+    assert request.uri == "/v1/files/upload"
+    assert request.file == file_data
+    assert request.request_body == request_body
+    assert "file" in request.files
+    assert request.files["file"][0] == "test.jpg"
+    assert request.files["file"][1] == file_data
+    assert request.body == {"user": "test-user"}
+
+
+def test_upload_file_request_body_validation() -> None:
+    """Test UploadFileRequestBody validation and builder."""
+    from dify_oapi.api.completion.v1.model.file.upload_file_request_body import UploadFileRequestBody
+
+    request_body = UploadFileRequestBody.builder().user("user-123").build()
+
+    assert request_body.user == "user-123"
+
+    # Test empty request body
+    empty_request_body = UploadFileRequestBody.builder().build()
+    assert empty_request_body.user is None
+
+
+def test_upload_file_response_model() -> None:
+    """Test UploadFileResponse model."""
+    from dify_oapi.api.completion.v1.model.file.upload_file_response import UploadFileResponse
+
+    response = UploadFileResponse(
+        id="file-123",
+        name="test.jpg",
+        size=1024,
+        extension="jpg",
+        mime_type="image/jpeg",
+        created_by="user-123",
+        created_at=1705395332,
+    )
+
+    assert response.id == "file-123"
+    assert response.name == "test.jpg"
+    assert response.size == 1024
+    assert response.extension == "jpg"
+    assert response.mime_type == "image/jpeg"
+    assert response.created_by == "user-123"
+    assert response.created_at == 1705395332
+    # Test BaseResponse inheritance
+    assert hasattr(response, "success")
+    assert hasattr(response, "code")
+    assert hasattr(response, "msg")
+
+
+def test_upload_file_request_default_filename() -> None:
+    """Test UploadFileRequest with default filename."""
+    from io import BytesIO
+
+    from dify_oapi.api.completion.v1.model.file.upload_file_request import UploadFileRequest
+
+    file_data = BytesIO(b"test content")
+    request = UploadFileRequest.builder().file(file_data).build()
+
+    assert request.file == file_data
+    assert "file" in request.files
+    assert request.files["file"][0] == "upload"  # Default filename
+    assert request.files["file"][1] == file_data
+
+
+def test_file_info_serialization() -> None:
+    """Test FileInfo serialization."""
+    from dify_oapi.api.completion.v1.model.file.file_info import FileInfo
+
+    file_info = FileInfo.builder().id("file-123").name("test.jpg").size(1024).build()
+
+    data = file_info.model_dump()
+
+    assert data["id"] == "file-123"
+    assert data["name"] == "test.jpg"
+    assert data["size"] == 1024
+    assert data["extension"] is None
+    assert data["mime_type"] is None
+    assert data["created_by"] is None
+    assert data["created_at"] is None

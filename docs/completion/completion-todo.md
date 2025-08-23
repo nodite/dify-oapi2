@@ -73,8 +73,8 @@ This document tracks the implementation progress of all 15 completion-related AP
 - [x] **Step 31**: Create Completion Examples
 - [x] **Step 32**: Test Completion Examples
 - [x] **Step 33**: Create File Examples
-- [ ] **Step 34**: Test File Examples
-- [ ] **Step 35**: Create Feedback Examples
+- [x] **Step 34**: Test File Examples
+- [x] **Step 35**: Create Feedback Examples
 - [ ] **Step 36**: Test Feedback Examples
 - [ ] **Step 37**: Create Audio Examples
 - [ ] **Step 38**: Test Audio Examples
@@ -95,7 +95,7 @@ This document tracks the implementation progress of all 15 completion-related AP
 - [x] POST /v1/completion-messages/:task_id/stop - Stop streaming response
 
 ### File Management APIs (1 API)
-- [x] POST /v1/files/upload - Upload files for multimodal support
+- [x] POST /v1/files/upload - Upload files for multimodal support ✅
 
 ### Feedback Management APIs (2 APIs)
 - [ ] POST /v1/messages/:message_id/feedbacks - Submit message feedback
@@ -159,14 +159,14 @@ This document tracks the implementation progress of all 15 completion-related AP
 ### Resource Examples
 - [x] **Completion Examples** - Send message, stop response
 - [x] **File Examples** - Upload file
-- [ ] **Feedback Examples** - Message feedback, get feedbacks
+- [x] **Feedback Examples** - Message feedback, get feedbacks
 - [ ] **Audio Examples** - Text to audio
 - [ ] **Info Examples** - Get info, parameters, site
 - [ ] **Annotation Examples** - All annotation operations
 
 ### Example Validation
 - [ ] **Completion Examples Validation** - Sync/async functionality
-- [ ] **File Examples Validation** - File upload scenarios
+- [x] **File Examples Validation** - File upload scenarios
 - [ ] **Feedback Examples Validation** - Feedback operations
 - [ ] **Audio Examples Validation** - Audio processing
 - [ ] **Info Examples Validation** - Info retrieval
@@ -203,6 +203,6 @@ This document tracks the implementation progress of all 15 completion-related AP
 
 ---
 
-**Progress**: 32/44 steps completed (72.7%)
+**Progress**: 34/44 steps completed (77.3%)
 **Status**: In Progress
-**Next Step**: Step 34 - Test File Examples
+**Next Step**: Step 36 - Test Feedback Examples

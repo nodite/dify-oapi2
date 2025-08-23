@@ -20,8 +20,8 @@ This document tracks the implementation progress of all 15 completion-related AP
 
 - [x] **Step 3**: Create Send Message API Models
 - [x] **Step 4**: Test Send Message API Models
-- [ ] **Step 5**: Create Stop Response API Models
-- [ ] **Step 6**: Test Stop Response API Models
+- [x] **Step 5**: Create Stop Response API Models
+- [x] **Step 6**: Test Stop Response API Models
 
 ### Phase 3: File Management APIs (1 API)
 
@@ -203,6 +203,6 @@ This document tracks the implementation progress of all 15 completion-related AP
 
 ---
 
-**Progress**: 4/44 steps completed (9.1%)
+**Progress**: 6/44 steps completed (13.6%)
 **Status**: In Progress
-**Next Step**: Step 5 - Create Stop Response API Models
+**Next Step**: Step 7 - Create File Models

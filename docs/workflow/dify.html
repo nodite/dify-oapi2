@@ -1,0 +1,2253 @@
+<article class="prose-xl prose prose-invert">
+    <h1>Workflow 应用 API</h1>
+    <p>Workflow 应用无会话支持，适合用于翻译/文章写作/总结 AI 等等。</p>
+    <div>
+        <h3>Base URL</h3>
+        <div class="not-prose my-6 overflow-hidden rounded-2xl bg-zinc-900 shadow-md dark:ring-1 dark:ring-white/10">
+            <div
+                class="flex min-h-[calc(theme(spacing.12)+1px)] flex-wrap items-start gap-x-4 border-b border-zinc-700 bg-zinc-800 px-4 dark:border-zinc-800 dark:bg-transparent">
+                <h3 class="mr-auto pt-3 text-xs font-semibold text-white">Code</h3>
+            </div>
+            <div class="dark:bg-white/2.5 group">
+                <div class="relative">
+                    <pre class="overflow-x-auto p-4 text-xs text-white">http://localhost/v1</pre>
+                    <button type="button"
+                        class="group/button absolute right-4 top-3.5 overflow-hidden rounded-full py-1 pl-2 pr-3 text-2xs font-medium opacity-0 backdrop-blur transition focus:opacity-100 group-hover:opacity-100 hover:bg-white/7.5 dark:bg-white/2.5 bg-white/5 dark:hover:bg-white/5"><span
+                            aria-hidden="false"
+                            class="pointer-events-none flex items-center gap-0.5 text-zinc-400 transition duration-300"><svg
+                                viewBox="0 0 20 20" aria-hidden="true"
+                                class="h-5 w-5 fill-zinc-500/20 stroke-zinc-500 transition-colors group-hover/button:stroke-zinc-400">
+                                <path stroke-width="0"
+                                    d="M5.5 13.5v-5a2 2 0 0 1 2-2l.447-.894A2 2 0 0 1 9.737 4.5h.527a2 2 0 0 1 1.789 1.106l.447.894a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-5a2 2 0 0 1-2-2Z">
+                                </path>
+                                <path fill="none" stroke-linejoin="round"
+                                    d="M12.5 6.5a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-5a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2m5 0-.447-.894a2 2 0 0 0-1.79-1.106h-.527a2 2 0 0 0-1.789 1.106L7.5 6.5m5 0-1 1h-3l-1-1">
+                                </path>
+                            </svg>Copy</span><span aria-hidden="true"
+                            class="pointer-events-none absolute inset-0 flex items-center justify-center text-emerald-400 transition duration-300 translate-y-1.5 opacity-0">Copied!</span></button>
+                </div>
+            </div>
+        </div>
+        <h3>Authentication</h3>
+        <p>Service API 使用 <code>API-Key</code> 进行鉴权。
+            <i><strong>强烈建议开发者把 <code>API-Key</code> 放在后端存储，而非分享或者放在客户端存储，以免
+                    <code>API-Key</code> 泄露，导致财产损失。</strong></i>
+            所有 API 请求都应在 <strong><code>Authorization</code></strong> HTTP Header 中包含您的
+            <code>API-Key</code>，如下所示：
+        </p>
+        <div class="not-prose my-6 overflow-hidden rounded-2xl bg-zinc-900 shadow-md dark:ring-1 dark:ring-white/10">
+            <div
+                class="flex min-h-[calc(theme(spacing.12)+1px)] flex-wrap items-start gap-x-4 border-b border-zinc-700 bg-zinc-800 px-4 dark:border-zinc-800 dark:bg-transparent">
+                <h3 class="mr-auto pt-3 text-xs font-semibold text-white">Code</h3>
+            </div>
+            <div class="dark:bg-white/2.5 group">
+                <div class="relative">
+                    <pre class="overflow-x-auto p-4 text-xs text-white"><pre><code class="language-javascript">  Authorization: Bearer {API_KEY}
+
+</code></pre>
+                    </pre><button type="button"
+                        class="group/button absolute right-4 top-3.5 overflow-hidden rounded-full py-1 pl-2 pr-3 text-2xs font-medium opacity-0 backdrop-blur transition focus:opacity-100 group-hover:opacity-100 hover:bg-white/7.5 dark:bg-white/2.5 bg-white/5 dark:hover:bg-white/5"><span
+                            aria-hidden="false"
+                            class="pointer-events-none flex items-center gap-0.5 text-zinc-400 transition duration-300"><svg
+                                viewBox="0 0 20 20" aria-hidden="true"
+                                class="h-5 w-5 fill-zinc-500/20 stroke-zinc-500 transition-colors group-hover/button:stroke-zinc-400">
+                                <path stroke-width="0"
+                                    d="M5.5 13.5v-5a2 2 0 0 1 2-2l.447-.894A2 2 0 0 1 9.737 4.5h.527a2 2 0 0 1 1.789 1.106l.447.894a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-5a2 2 0 0 1-2-2Z">
+                                </path>
+                                <path fill="none" stroke-linejoin="round"
+                                    d="M12.5 6.5a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-5a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2m5 0-.447-.894a2 2 0 0 0-1.79-1.106h-.527a2 2 0 0 0-1.789 1.106L7.5 6.5m5 0-1 1h-3l-1-1">
+                                </path>
+                            </svg>Copy</span><span aria-hidden="true"
+                            class="pointer-events-none absolute inset-0 flex items-center justify-center text-emerald-400 transition duration-300 translate-y-1.5 opacity-0">Copied!</span></button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr>
+    <span id="Execute-Workflow" class="relative -top-28"></span>
+    <div class="flex items-center gap-x-3"><span
+            class="rounded-lg px-1.5 font-mono text-[0.625rem] font-semibold leading-6 ring-1 ring-inset ring-sky-300 bg-sky-400/10 text-sky-500 dark:ring-sky-400/30 dark:bg-sky-400/10 dark:text-sky-400">POST</span><span
+            class="font-mono text-xs text-zinc-400">/workflows/run</span></div>
+    <h2 class="mt-2 scroll-mt-32"><a
+            href="http://localhost:8080/app/ee62021d-4c34-4965-8bc4-9a2b50b538a9/develop#Execute-Workflow"
+            class="group text-inherit no-underline hover:text-inherit">执行 workflow</a>
+    </h2>
+    <div class="grid grid-cols-1 items-start gap-x-16 gap-y-10 xl:!max-w-none xl:grid-cols-2">
+        <div class="[&amp;&gt;:first-child]:mt-0 [&amp;&gt;:last-child]:mb-0">
+            <p>执行 workflow，没有已发布的 workflow，不可执行。</p>
+            <h3>Request Body</h3>
+            <ul>
+                <li><code>inputs</code> (object) Required
+                    允许传入 App 定义的各变量值。
+                    inputs 参数包含了多组键值对（Key/Value
+                    pairs），每组的键对应一个特定变量，每组的值则是该变量的具体值。变量可以是文件列表类型。
+                    文件列表类型变量适用于传入文件结合文本理解并回答问题，仅当模型支持该类型文件解析能力时可用。如果该变量是文件列表类型，该变量对应的值应是列表格式，其中每个元素应包含以下内容：
+                    <ul>
+                        <li><code>type</code> (string) 支持类型：
+                            <ul>
+                                <li><code>document</code> 具体类型包含：'TXT', 'MD',
+                                    'MARKDOWN', 'PDF', 'HTML', 'XLSX', 'XLS', 'DOCX',
+                                    'CSV', 'EML', 'MSG', 'PPTX', 'PPT', 'XML', 'EPUB'
+                                </li>
+                                <li><code>image</code> 具体类型包含：'JPG', 'JPEG', 'PNG',
+                                    'GIF', 'WEBP', 'SVG'</li>
+                                <li><code>audio</code> 具体类型包含：'MP3', 'M4A', 'WAV',
+                                    'WEBM', 'AMR'</li>
+                                <li><code>video</code> 具体类型包含：'MP4', 'MOV', 'MPEG',
+                                    'MPGA'</li>
+                                <li><code>custom</code> 具体类型包含：其他文件类型</li>
+                            </ul>
+                        </li>
+                        <li><code>transfer_method</code> (string)
+                            传递方式，<code>remote_url</code> 图片地址 / <code>local_file</code>
+                            上传文件</li>
+                        <li><code>url</code> (string) 图片地址（仅当传递方式为
+                            <code>remote_url</code> 时）
+                        </li>
+                        <li><code>upload_file_id</code> (string) 上传文件 ID（仅当传递方式为
+                            <code>local_file</code> 时）
+                        </li>
+                    </ul>
+                </li>
+                <li><code>response_mode</code> (string) Required
+                    返回响应模式，支持：
+                    <ul>
+                        <li><code>streaming</code> 流式模式（推荐）。基于 SSE（<strong><a
+                                    href="https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events">Server-Sent
+                                    Events</a></strong>）实现类似打字机输出方式的流式返回。</li>
+                        <li><code>blocking</code> 阻塞模式，等待执行完毕后返回结果。（请求若流程较长可能会被中断）。
+                            <i>由于 Cloudflare 限制，请求会在 100 秒超时无返回后中断。</i>
+                        </li>
+                    </ul>
+                </li>
+                <li><code>user</code> (string) Required
+                    用户标识，用于定义终端用户的身份，方便检索、统计。
+                    由开发者定义规则，需保证用户标识在应用内唯一。API 无法访问 WebApp 创建的会话。</li>
+                <li><code>files</code> (array[object]) 可选</li>
+                <li><code>trace_id</code> (string) Optional
+                    链路追踪ID。适用于与业务系统已有的trace组件打通，实现端到端分布式追踪等场景。如果未指定，系统将自动生成
+                    <code>trace_id</code>。支持以下三种方式传递，具体优先级依次为：
+                    <ol>
+                        <li>Header：推荐通过 HTTP Header <code>X-Trace-Id</code> 传递，优先级最高。
+                        </li>
+                        <li>Query 参数：通过 URL 查询参数 <code>trace_id</code> 传递。</li>
+                        <li>Request Body：通过请求体字段 <code>trace_id</code> 传递（即本字段）。</li>
+                    </ol>
+                </li>
+            </ul>
+            <h3>Response</h3>
+            <p>当 <code>response_mode</code> 为 <code>blocking</code> 时，返回
+                CompletionResponse object。
+                当 <code>response_mode</code> 为 <code>streaming</code>时，返回
+                ChunkCompletionResponse object 流式序列。</p>
+            <h3>CompletionResponse</h3>
+            <p>返回完整的 App 结果，<code>Content-Type</code> 为 <code>application/json</code> 。
+            </p>
+            <ul>
+                <li><code>workflow_run_id</code> (string) workflow 执行 ID</li>
+                <li><code>task_id</code> (string) 任务 ID，用于请求跟踪和下方的停止响应接口</li>
+                <li><code>data</code> (object) 详细内容
+                    <ul>
+                        <li><code>id</code> (string) workflow 执行 ID</li>
+                        <li><code>workflow_id</code> (string) 关联 Workflow ID</li>
+                        <li><code>status</code> (string) 执行状态, <code>running</code> /
+                            <code>succeeded</code> / <code>failed</code> /
+                            <code>stopped</code>
+                        </li>
+                        <li><code>outputs</code> (json) Optional 输出内容</li>
+                        <li><code>error</code> (string) Optional 错误原因</li>
+                        <li><code>elapsed_time</code> (float) Optional 耗时(s)</li>
+                        <li><code>total_tokens</code> (int) Optional 总使用 tokens</li>
+                        <li><code>total_steps</code> (int) 总步数（冗余），默认 0</li>
+                        <li><code>created_at</code> (timestamp) 开始时间</li>
+                        <li><code>finished_at</code> (timestamp) 结束时间</li>
+                    </ul>
+                </li>
+            </ul>
+            <h3>ChunkCompletionResponse</h3>
+            <p>返回 App 输出的流式块，<code>Content-Type</code> 为 <code>text/event-stream</code>。
+                每个流式块均为 data: 开头，块之间以 <code>\n\n</code> 即两个换行符分隔，如下所示：</p>
+            <div
+                class="not-prose my-6 overflow-hidden rounded-2xl bg-zinc-900 shadow-md dark:ring-1 dark:ring-white/10">
+                <div class="dark:bg-white/2.5 group">
+                    <div class="relative">
+                        <pre class="overflow-x-auto p-4 text-xs text-white"><pre><code class="language-streaming">data: {"event": "text_chunk", "workflow_run_id": "b85e5fc5-751b-454d-b14e-dc5f240b0a31", "task_id": "bd029338-b068-4d34-a331-fc85478922c2", "data": {"text": "\u4e3a\u4e86", "from_variable_selector": ["1745912968134", "text"]}}\n\n
+</code></pre>
+                        </pre><button type="button"
+                            class="group/button absolute right-4 top-3.5 overflow-hidden rounded-full py-1 pl-2 pr-3 text-2xs font-medium opacity-0 backdrop-blur transition focus:opacity-100 group-hover:opacity-100 hover:bg-white/7.5 dark:bg-white/2.5 bg-white/5 dark:hover:bg-white/5"><span
+                                aria-hidden="false"
+                                class="pointer-events-none flex items-center gap-0.5 text-zinc-400 transition duration-300"><svg
+                                    viewBox="0 0 20 20" aria-hidden="true"
+                                    class="h-5 w-5 fill-zinc-500/20 stroke-zinc-500 transition-colors group-hover/button:stroke-zinc-400">
+                                    <path stroke-width="0"
+                                        d="M5.5 13.5v-5a2 2 0 0 1 2-2l.447-.894A2 2 0 0 1 9.737 4.5h.527a2 2 0 0 1 1.789 1.106l.447.894a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-5a2 2 0 0 1-2-2Z">
+                                    </path>
+                                    <path fill="none" stroke-linejoin="round"
+                                        d="M12.5 6.5a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-5a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2m5 0-.447-.894a2 2 0 0 0-1.79-1.106h-.527a2 2 0 0 0-1.789 1.106L7.5 6.5m5 0-1 1h-3l-1-1">
+                                    </path>
+                                </svg>Copy</span><span aria-hidden="true"
+                                class="pointer-events-none absolute inset-0 flex items-center justify-center text-emerald-400 transition duration-300 translate-y-1.5 opacity-0">Copied!</span></button>
+                    </div>
+                </div>
+            </div>
+            <p>流式块中根据 <code>event</code> 不同，结构也不同，包含以下类型：</p>
+            <ul>
+                <li><code>event: workflow_started</code> workflow 开始执行
+                    <ul>
+                        <li><code>task_id</code> (string) 任务 ID，用于请求跟踪和下方的停止响应接口</li>
+                        <li><code>workflow_run_id</code> (string) workflow 执行 ID</li>
+                        <li><code>event</code> (string) 固定为
+                            <code>workflow_started</code>
+                        </li>
+                        <li><code>data</code> (object) 详细内容
+                            <ul>
+                                <li><code>id</code> (string) workflow 执行 ID</li>
+                                <li><code>workflow_id</code> (string) 关联 Workflow ID
+                                </li>
+                                <li><code>created_at</code> (timestamp) 开始时间</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li><code>event: node_started</code> node 开始执行
+                    <ul>
+                        <li><code>task_id</code> (string) 任务 ID，用于请求跟踪和下方的停止响应接口</li>
+                        <li><code>workflow_run_id</code> (string) workflow 执行 ID</li>
+                        <li><code>event</code> (string) 固定为 <code>node_started</code>
+                        </li>
+                        <li><code>data</code> (object) 详细内容
+                            <ul>
+                                <li><code>id</code> (string) workflow 执行 ID</li>
+                                <li><code>node_id</code> (string) 节点 ID</li>
+                                <li><code>node_type</code> (string) 节点类型</li>
+                                <li><code>title</code> (string) 节点名称</li>
+                                <li><code>index</code> (int) 执行序号，用于展示 Tracing Node 顺序
+                                </li>
+                                <li><code>predecessor_node_id</code> (string) 前置节点
+                                    ID，用于画布展示执行路径</li>
+                                <li><code>inputs</code> (object) 节点中所有使用到的前置节点变量内容</li>
+                                <li><code>created_at</code> (timestamp) 开始时间</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li><code>event: text_chunk</code> 文本片段
+                    <ul>
+                        <li><code>task_id</code> (string) 任务 ID，用于请求跟踪和下方的停止响应接口</li>
+                        <li><code>workflow_run_id</code> (string) workflow 执行 ID</li>
+                        <li><code>event</code> (string) 固定为 <code>text_chunk</code></li>
+                        <li><code>data</code> (object) 详细内容
+                            <ul>
+                                <li><code>text</code> (string) 文本内容</li>
+                                <li><code>from_variable_selector</code> (array)
+                                    文本来源路径，帮助开发者了解文本是由哪个节点的哪个变量生成的</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li><code>event: node_finished</code> node 执行结束，成功失败同一事件中不同状态
+                    <ul>
+                        <li><code>task_id</code> (string) 任务 ID，用于请求跟踪和下方的停止响应接口</li>
+                        <li><code>workflow_run_id</code> (string) workflow 执行 ID</li>
+                        <li><code>event</code> (string) 固定为 <code>node_finished</code>
+                        </li>
+                        <li><code>data</code> (object) 详细内容
+                            <ul>
+                                <li><code>id</code> (string) node 执行 ID</li>
+                                <li><code>node_id</code> (string) 节点 ID</li>
+                                <li><code>index</code> (int) 执行序号，用于展示 Tracing Node 顺序
+                                </li>
+                                <li><code>predecessor_node_id</code> (string) optional
+                                    前置节点 ID，用于画布展示执行路径</li>
+                                <li><code>inputs</code> (object) 节点中所有使用到的前置节点变量内容</li>
+                                <li><code>process_data</code> (json) Optional 节点过程数据
+                                </li>
+                                <li><code>outputs</code> (json) Optional 输出内容</li>
+                                <li><code>status</code> (string) 执行状态
+                                    <code>running</code> / <code>succeeded</code> /
+                                    <code>failed</code> / <code>stopped</code>
+                                </li>
+                                <li><code>error</code> (string) Optional 错误原因</li>
+                                <li><code>elapsed_time</code> (float) Optional 耗时(s)
+                                </li>
+                                <li><code>execution_metadata</code> (json) 元数据
+                                    <ul>
+                                        <li><code>total_tokens</code> (int) optional 总使用
+                                            tokens</li>
+                                        <li><code>total_price</code> (decimal) optional
+                                            总费用</li>
+                                        <li><code>currency</code> (string) optional 货币，如
+                                            <code>USD</code> / <code>RMB</code>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li><code>created_at</code> (timestamp) 开始时间</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li><code>event: workflow_finished</code> workflow 执行结束，成功失败同一事件中不同状态
+                    <ul>
+                        <li><code>task_id</code> (string) 任务 ID，用于请求跟踪和下方的停止响应接口</li>
+                        <li><code>workflow_run_id</code> (string) workflow 执行 ID</li>
+                        <li><code>event</code> (string) 固定为
+                            <code>workflow_finished</code>
+                        </li>
+                        <li><code>data</code> (object) 详细内容
+                            <ul>
+                                <li><code>id</code> (string) workflow 执行 ID</li>
+                                <li><code>workflow_id</code> (string) 关联 Workflow ID
+                                </li>
+                                <li><code>status</code> (string) 执行状态
+                                    <code>running</code> / <code>succeeded</code> /
+                                    <code>failed</code> / <code>stopped</code>
+                                </li>
+                                <li><code>outputs</code> (json) Optional 输出内容</li>
+                                <li><code>error</code> (string) Optional 错误原因</li>
+                                <li><code>elapsed_time</code> (float) Optional 耗时(s)
+                                </li>
+                                <li><code>total_tokens</code> (int) Optional 总使用 tokens
+                                </li>
+                                <li><code>total_steps</code> (int) 总步数（冗余），默认 0</li>
+                                <li><code>created_at</code> (timestamp) 开始时间</li>
+                                <li><code>finished_at</code> (timestamp) 结束时间</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li><code>event: tts_message</code> TTS 音频流事件，即：语音合成输出。内容是Mp3格式的音频块，使用
+                    base64 编码后的字符串，播放的时候直接解码即可。(开启自动播放才有此消息)
+                    <ul>
+                        <li><code>task_id</code> (string) 任务 ID，用于请求跟踪和下方的停止响应接口</li>
+                        <li><code>message_id</code> (string) 消息唯一 ID</li>
+                        <li><code>audio</code> (string) 语音合成之后的音频块使用 Base64
+                            编码之后的文本内容，播放的时候直接 base64 解码送入播放器即可</li>
+                        <li><code>created_at</code> (int) 创建时间戳，如：1705395332</li>
+                    </ul>
+                </li>
+                <li><code>event: tts_message_end</code> TTS 音频流结束事件，收到这个事件表示音频流返回结束。
+                    <ul>
+                        <li><code>task_id</code> (string) 任务 ID，用于请求跟踪和下方的停止响应接口</li>
+                        <li><code>message_id</code> (string) 消息唯一 ID</li>
+                        <li><code>audio</code> (string) 结束事件是没有音频的，所以这里是空字符串</li>
+                        <li><code>created_at</code> (int) 创建时间戳，如：1705395332</li>
+                    </ul>
+                </li>
+                <li><code>event: ping</code> 每 10s 一次的 ping 事件，保持连接存活。</li>
+            </ul>
+            <h3>Errors</h3>
+            <ul>
+                <li>400，<code>invalid_param</code>，传入参数异常</li>
+                <li>400，<code>app_unavailable</code>，App 配置不可用</li>
+                <li>400，<code>provider_not_initialize</code>，无可用模型凭据配置</li>
+                <li>400，<code>provider_quota_exceeded</code>，模型调用额度不足</li>
+                <li>400，<code>model_currently_not_support</code>，当前模型不可用</li>
+                <li>400，<code>workflow_request_error</code>，workflow 执行失败</li>
+                <li>500，服务内部异常</li>
+            </ul>
+        </div>
+        <div class="[&amp;&gt;:first-child]:mt-0 [&amp;&gt;:last-child]:mb-0 xl:sticky xl:top-24">
+            <div
+                class="not-prose my-6 overflow-hidden rounded-2xl bg-zinc-900 shadow-md dark:ring-1 dark:ring-white/10">
+                <div
+                    class="flex min-h-[calc(theme(spacing.12)+1px)] flex-wrap items-start gap-x-4 border-b border-zinc-700 bg-zinc-800 px-4 dark:border-zinc-800 dark:bg-transparent">
+                    <h3 class="mr-auto pt-3 text-xs font-semibold text-white">Request
+                    </h3>
+                </div>
+                <div class="dark:bg-white/2.5 group">
+                    <div
+                        class="border-b-white/7.5 bg-white/2.5 dark:bg-white/1 flex h-9 items-center gap-2 border-y border-t-transparent bg-zinc-900 px-4 dark:border-b-white/5">
+                        <div class="dark flex"><span
+                                class="font-mono text-[0.625rem] font-semibold leading-6 text-sky-500">POST</span>
+                        </div><span class="h-0.5 w-0.5 rounded-full bg-zinc-500"></span><span
+                            class="font-mono text-xs text-zinc-400">/workflows/run</span>
+                    </div>
+                    <div class="relative">
+                        <pre class="overflow-x-auto p-4 text-xs text-white">curl -X POST 'http://localhost/v1/workflows/run' \
+--header 'Authorization: Bearer {api_key}' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "inputs": {},
+    "response_mode": "streaming",
+    "user": "abc-123"
+}'
+</pre><button type="button"
+                            class="group/button absolute right-4 top-3.5 overflow-hidden rounded-full py-1 pl-2 pr-3 text-2xs font-medium opacity-0 backdrop-blur transition focus:opacity-100 group-hover:opacity-100 hover:bg-white/7.5 dark:bg-white/2.5 bg-white/5 dark:hover:bg-white/5"><span
+                                aria-hidden="false"
+                                class="pointer-events-none flex items-center gap-0.5 text-zinc-400 transition duration-300"><svg
+                                    viewBox="0 0 20 20" aria-hidden="true"
+                                    class="h-5 w-5 fill-zinc-500/20 stroke-zinc-500 transition-colors group-hover/button:stroke-zinc-400">
+                                    <path stroke-width="0"
+                                        d="M5.5 13.5v-5a2 2 0 0 1 2-2l.447-.894A2 2 0 0 1 9.737 4.5h.527a2 2 0 0 1 1.789 1.106l.447.894a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-5a2 2 0 0 1-2-2Z">
+                                    </path>
+                                    <path fill="none" stroke-linejoin="round"
+                                        d="M12.5 6.5a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-5a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2m5 0-.447-.894a2 2 0 0 0-1.79-1.106h-.527a2 2 0 0 0-1.789 1.106L7.5 6.5m5 0-1 1h-3l-1-1">
+                                    </path>
+                                </svg>Copy</span><span aria-hidden="true"
+                                class="pointer-events-none absolute inset-0 flex items-center justify-center text-emerald-400 transition duration-300 translate-y-1.5 opacity-0">Copied!</span></button>
+                    </div>
+                </div>
+            </div>
+            <div
+                class="not-prose my-6 overflow-hidden rounded-2xl bg-zinc-900 shadow-md dark:ring-1 dark:ring-white/10">
+                <div
+                    class="flex min-h-[calc(theme(spacing.12)+1px)] flex-wrap items-start gap-x-4 border-b border-zinc-700 bg-zinc-800 px-4 dark:border-zinc-800 dark:bg-transparent">
+                    <h3 class="mr-auto pt-3 text-xs font-semibold text-white">Example:
+                        file array as an input variable</h3>
+                </div>
+                <div class="dark:bg-white/2.5 group">
+                    <div class="relative">
+                        <pre class="overflow-x-auto p-4 text-xs text-white"><pre><code class="language-json">{
+  "inputs": {
+    "{variable_name}":
+    [
+      {
+      "transfer_method": "local_file",
+      "upload_file_id": "{upload_file_id}",
+      "type": "{document_type}"
+      }
+    ]
+  }
+}
+</code></pre>
+                        </pre><button type="button"
+                            class="group/button absolute right-4 top-3.5 overflow-hidden rounded-full py-1 pl-2 pr-3 text-2xs font-medium opacity-0 backdrop-blur transition focus:opacity-100 group-hover:opacity-100 hover:bg-white/7.5 dark:bg-white/2.5 bg-white/5 dark:hover:bg-white/5"><span
+                                aria-hidden="false"
+                                class="pointer-events-none flex items-center gap-0.5 text-zinc-400 transition duration-300"><svg
+                                    viewBox="0 0 20 20" aria-hidden="true"
+                                    class="h-5 w-5 fill-zinc-500/20 stroke-zinc-500 transition-colors group-hover/button:stroke-zinc-400">
+                                    <path stroke-width="0"
+                                        d="M5.5 13.5v-5a2 2 0 0 1 2-2l.447-.894A2 2 0 0 1 9.737 4.5h.527a2 2 0 0 1 1.789 1.106l.447.894a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-5a2 2 0 0 1-2-2Z">
+                                    </path>
+                                    <path fill="none" stroke-linejoin="round"
+                                        d="M12.5 6.5a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-5a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2m5 0-.447-.894a2 2 0 0 0-1.79-1.106h-.527a2 2 0 0 0-1.789 1.106L7.5 6.5m5 0-1 1h-3l-1-1">
+                                    </path>
+                                </svg>Copy</span><span aria-hidden="true"
+                                class="pointer-events-none absolute inset-0 flex items-center justify-center text-emerald-400 transition duration-300 translate-y-1.5 opacity-0">Copied!</span></button>
+                    </div>
+                </div>
+            </div>
+            <h3>Blocking Mode</h3>
+            <div
+                class="not-prose my-6 overflow-hidden rounded-2xl bg-zinc-900 shadow-md dark:ring-1 dark:ring-white/10">
+                <div
+                    class="flex min-h-[calc(theme(spacing.12)+1px)] flex-wrap items-start gap-x-4 border-b border-zinc-700 bg-zinc-800 px-4 dark:border-zinc-800 dark:bg-transparent">
+                    <h3 class="mr-auto pt-3 text-xs font-semibold text-white">Response
+                    </h3>
+                </div>
+                <div class="dark:bg-white/2.5 group">
+                    <div class="relative">
+                        <pre class="overflow-x-auto p-4 text-xs text-white"><pre><code class="language-json">{
+    "workflow_run_id": "djflajgkldjgd",
+    "task_id": "9da23599-e713-473b-982c-4328d4f5c78a",
+    "data": {
+        "id": "fdlsjfjejkghjda",
+        "workflow_id": "fldjaslkfjlsda",
+        "status": "succeeded",
+        "outputs": {
+          "text": "Nice to meet you."
+        },
+        "error": null,
+        "elapsed_time": 0.875,
+        "total_tokens": 3562,
+        "total_steps": 8,
+        "created_at": 1705407629,
+        "finished_at": 1727807631
+    }
+}
+</code></pre>
+                        </pre><button type="button"
+                            class="group/button absolute right-4 top-3.5 overflow-hidden rounded-full py-1 pl-2 pr-3 text-2xs font-medium opacity-0 backdrop-blur transition focus:opacity-100 group-hover:opacity-100 hover:bg-white/7.5 dark:bg-white/2.5 bg-white/5 dark:hover:bg-white/5"><span
+                                aria-hidden="false"
+                                class="pointer-events-none flex items-center gap-0.5 text-zinc-400 transition duration-300"><svg
+                                    viewBox="0 0 20 20" aria-hidden="true"
+                                    class="h-5 w-5 fill-zinc-500/20 stroke-zinc-500 transition-colors group-hover/button:stroke-zinc-400">
+                                    <path stroke-width="0"
+                                        d="M5.5 13.5v-5a2 2 0 0 1 2-2l.447-.894A2 2 0 0 1 9.737 4.5h.527a2 2 0 0 1 1.789 1.106l.447.894a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-5a2 2 0 0 1-2-2Z">
+                                    </path>
+                                    <path fill="none" stroke-linejoin="round"
+                                        d="M12.5 6.5a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-5a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2m5 0-.447-.894a2 2 0 0 0-1.79-1.106h-.527a2 2 0 0 0-1.789 1.106L7.5 6.5m5 0-1 1h-3l-1-1">
+                                    </path>
+                                </svg>Copy</span><span aria-hidden="true"
+                                class="pointer-events-none absolute inset-0 flex items-center justify-center text-emerald-400 transition duration-300 translate-y-1.5 opacity-0">Copied!</span></button>
+                    </div>
+                </div>
+            </div>
+            <h3>Streaming Mode</h3>
+            <div
+                class="not-prose my-6 overflow-hidden rounded-2xl bg-zinc-900 shadow-md dark:ring-1 dark:ring-white/10">
+                <div
+                    class="flex min-h-[calc(theme(spacing.12)+1px)] flex-wrap items-start gap-x-4 border-b border-zinc-700 bg-zinc-800 px-4 dark:border-zinc-800 dark:bg-transparent">
+                    <h3 class="mr-auto pt-3 text-xs font-semibold text-white">Response
+                    </h3>
+                </div>
+                <div class="dark:bg-white/2.5 group">
+                    <div class="relative">
+                        <pre class="overflow-x-auto p-4 text-xs text-white"><pre><code class="language-streaming">  data: {"event": "workflow_started", "task_id": "5ad4cb98-f0c7-4085-b384-88c403be6290", "workflow_run_id": "5ad498-f0c7-4085-b384-88cbe6290", "data": {"id": "5ad498-f0c7-4085-b384-88cbe6290", "workflow_id": "dfjasklfjdslag", "created_at": 1679586595}}
+  data: {"event": "node_started", "task_id": "5ad4cb98-f0c7-4085-b384-88c403be6290", "workflow_run_id": "5ad498-f0c7-4085-b384-88cbe6290", "data": {"id": "5ad498-f0c7-4085-b384-88cbe6290", "node_id": "dfjasklfjdslag", "node_type": "start", "title": "Start", "index": 0, "predecessor_node_id": "fdljewklfklgejlglsd", "inputs": {}, "created_at": 1679586595}}
+  data: {"event": "node_finished", "task_id": "5ad4cb98-f0c7-4085-b384-88c403be6290", "workflow_run_id": "5ad498-f0c7-4085-b384-88cbe6290", "data": {"id": "5ad498-f0c7-4085-b384-88cbe6290", "node_id": "dfjasklfjdslag", "node_type": "start", "title": "Start", "index": 0, "predecessor_node_id": "fdljewklfklgejlglsd", "inputs": {}, "outputs": {}, "status": "succeeded", "elapsed_time": 0.324, "execution_metadata": {"total_tokens": 63127864, "total_price": 2.378, "currency": "USD"},  "created_at": 1679586595}}
+  data: {"event": "workflow_finished", "task_id": "5ad4cb98-f0c7-4085-b384-88c403be6290", "workflow_run_id": "5ad498-f0c7-4085-b384-88cbe6290", "data": {"id": "5ad498-f0c7-4085-b384-88cbe6290", "workflow_id": "dfjasklfjdslag", "outputs": {}, "status": "succeeded", "elapsed_time": 0.324, "total_tokens": 63127864, "total_steps": "1", "created_at": 1679586595, "finished_at": 1679976595}}
+  data: {"event": "tts_message", "conversation_id": "23dd85f3-1a41-4ea0-b7a9-062734ccfaf9", "message_id": "a8bdc41c-13b2-4c18-bfd9-054b9803038c", "created_at": 1721205487, "task_id": "3bf8a0bb-e73b-4690-9e66-4e429bad8ee7", "audio": "qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq"}
+  data: {"event": "tts_message_end", "conversation_id": "23dd85f3-1a41-4ea0-b7a9-062734ccfaf9", "message_id": "a8bdc41c-13b2-4c18-bfd9-054b9803038c", "created_at": 1721205487, "task_id": "3bf8a0bb-e73b-4690-9e66-4e429bad8ee7", "audio": ""}
+</code></pre>
+                        </pre><button type="button"
+                            class="group/button absolute right-4 top-3.5 overflow-hidden rounded-full py-1 pl-2 pr-3 text-2xs font-medium opacity-0 backdrop-blur transition focus:opacity-100 group-hover:opacity-100 hover:bg-white/7.5 dark:bg-white/2.5 bg-white/5 dark:hover:bg-white/5"><span
+                                aria-hidden="false"
+                                class="pointer-events-none flex items-center gap-0.5 text-zinc-400 transition duration-300"><svg
+                                    viewBox="0 0 20 20" aria-hidden="true"
+                                    class="h-5 w-5 fill-zinc-500/20 stroke-zinc-500 transition-colors group-hover/button:stroke-zinc-400">
+                                    <path stroke-width="0"
+                                        d="M5.5 13.5v-5a2 2 0 0 1 2-2l.447-.894A2 2 0 0 1 9.737 4.5h.527a2 2 0 0 1 1.789 1.106l.447.894a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-5a2 2 0 0 1-2-2Z">
+                                    </path>
+                                    <path fill="none" stroke-linejoin="round"
+                                        d="M12.5 6.5a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-5a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2m5 0-.447-.894a2 2 0 0 0-1.79-1.106h-.527a2 2 0 0 0-1.789 1.106L7.5 6.5m5 0-1 1h-3l-1-1">
+                                    </path>
+                                </svg>Copy</span><span aria-hidden="true"
+                                class="pointer-events-none absolute inset-0 flex items-center justify-center text-emerald-400 transition duration-300 translate-y-1.5 opacity-0">Copied!</span></button>
+                    </div>
+                </div>
+            </div>
+            <div
+                class="not-prose my-6 overflow-hidden rounded-2xl bg-zinc-900 shadow-md dark:ring-1 dark:ring-white/10">
+                <div
+                    class="flex min-h-[calc(theme(spacing.12)+1px)] flex-wrap items-start gap-x-4 border-b border-zinc-700 bg-zinc-800 px-4 dark:border-zinc-800 dark:bg-transparent">
+                    <h3 class="mr-auto pt-3 text-xs font-semibold text-white">File
+                        upload sample code</h3>
+                </div>
+                <div class="dark:bg-white/2.5 group">
+                    <div class="relative">
+                        <pre class="overflow-x-auto p-4 text-xs text-white"><pre><code class="language-json">import requests
+import json
+
+def upload_file(file_path, user):
+    upload_url = "https://api.dify.ai/v1/files/upload"
+    headers = {
+        "Authorization": "Bearer app-xxxxxxxx",
+    }
+
+    try:
+        print("上传文件中...")
+        with open(file_path, 'rb') as file:
+            files = {
+                'file': (file_path, file, 'text/plain')  # 确保文件以适当的MIME类型上传
+            }
+            data = {
+                "user": user,
+                "type": "TXT"  # 设置文件类型为TXT
+            }
+
+            response = requests.post(upload_url, headers=headers, files=files, data=data)
+            if response.status_code == 201:  # 201 表示创建成功
+                print("文件上传成功")
+                return response.json().get("id")  # 获取上传的文件 ID
+            else:
+                print(f"文件上传失败，状态码: {response.status_code}")
+                return None
+    except Exception as e:
+        print(f"发生错误: {str(e)}")
+        return None
+
+def run_workflow(file_id, user, response_mode="blocking"):
+    workflow_url = "https://api.dify.ai/v1/workflows/run"
+    headers = {
+        "Authorization": "Bearer app-xxxxxxxxx",
+        "Content-Type": "application/json"
+    }
+
+    data = {
+        "inputs": {
+            "orig_mail": [{
+                "transfer_method": "local_file",
+                "upload_file_id": file_id,
+                "type": "document"
+            }]
+        },
+        "response_mode": response_mode,
+        "user": user
+    }
+
+    try:
+        print("运行工作流...")
+        response = requests.post(workflow_url, headers=headers, json=data)
+        if response.status_code == 200:
+            print("工作流执行成功")
+            return response.json()
+        else:
+            print(f"工作流执行失败，状态码: {response.status_code}")
+            return {"status": "error", "message": f"Failed to execute workflow, status code: {response.status_code}"}
+    except Exception as e:
+        print(f"发生错误: {str(e)}")
+        return {"status": "error", "message": str(e)}
+
+# 使用示例
+file_path = "{your_file_path}"
+user = "difyuser"
+
+# 上传文件
+file_id = upload_file(file_path, user)
+if file_id:
+    # 文件上传成功，继续运行工作流
+    result = run_workflow(file_id, user)
+    print(result)
+else:
+    print("文件上传失败，无法执行工作流")
+</code></pre>
+                        </pre><button type="button"
+                            class="group/button absolute right-4 top-3.5 overflow-hidden rounded-full py-1 pl-2 pr-3 text-2xs font-medium opacity-0 backdrop-blur transition focus:opacity-100 group-hover:opacity-100 hover:bg-white/7.5 dark:bg-white/2.5 bg-white/5 dark:hover:bg-white/5"><span
+                                aria-hidden="false"
+                                class="pointer-events-none flex items-center gap-0.5 text-zinc-400 transition duration-300"><svg
+                                    viewBox="0 0 20 20" aria-hidden="true"
+                                    class="h-5 w-5 fill-zinc-500/20 stroke-zinc-500 transition-colors group-hover/button:stroke-zinc-400">
+                                    <path stroke-width="0"
+                                        d="M5.5 13.5v-5a2 2 0 0 1 2-2l.447-.894A2 2 0 0 1 9.737 4.5h.527a2 2 0 0 1 1.789 1.106l.447.894a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-5a2 2 0 0 1-2-2Z">
+                                    </path>
+                                    <path fill="none" stroke-linejoin="round"
+                                        d="M12.5 6.5a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-5a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2m5 0-.447-.894a2 2 0 0 0-1.79-1.106h-.527a2 2 0 0 0-1.789 1.106L7.5 6.5m5 0-1 1h-3l-1-1">
+                                    </path>
+                                </svg>Copy</span><span aria-hidden="true"
+                                class="pointer-events-none absolute inset-0 flex items-center justify-center text-emerald-400 transition duration-300 translate-y-1.5 opacity-0">Copied!</span></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr>
+    <span id="Execute-Specific-Workflow" class="relative -top-28"></span>
+    <div class="flex items-center gap-x-3"><span
+            class="rounded-lg px-1.5 font-mono text-[0.625rem] font-semibold leading-6 ring-1 ring-inset ring-sky-300 bg-sky-400/10 text-sky-500 dark:ring-sky-400/30 dark:bg-sky-400/10 dark:text-sky-400">POST</span><span
+            class="font-mono text-xs text-zinc-400">/workflows/:workflow_id/run</span>
+    </div>
+    <h2 class="mt-2 scroll-mt-32"><a
+            href="http://localhost:8080/app/ee62021d-4c34-4965-8bc4-9a2b50b538a9/develop#Execute-Specific-Workflow"
+            class="group text-inherit no-underline hover:text-inherit">执行指定版本
+            workflow</a></h2>
+    <div class="grid grid-cols-1 items-start gap-x-16 gap-y-10 xl:!max-w-none xl:grid-cols-2">
+        <div class="[&amp;&gt;:first-child]:mt-0 [&amp;&gt;:last-child]:mb-0">
+            <p>执行指定版本的工作流，通过路径参数指定工作流ID。</p>
+            <h3>Path</h3>
+            <ul>
+                <li>
+                    <p><code>workflow_id</code> (string) Required 工作流ID，用于指定特定版本的工作流</p>
+                    <p>获取方式：可以在版本历史中查询特定版本的工作流ID。</p>
+                </li>
+            </ul>
+            <h3>Request Body</h3>
+            <ul>
+                <li><code>inputs</code> (object) Required
+                    允许传入 App 定义的各变量值。
+                    inputs 参数包含了多组键值对（Key/Value
+                    pairs），每组的键对应一个特定变量，每组的值则是该变量的具体值。变量可以是文件列表类型。
+                    文件列表类型变量适用于传入文件结合文本理解并回答问题，仅当模型支持该类型文件解析能力时可用。如果该变量是文件列表类型，该变量对应的值应是列表格式，其中每个元素应包含以下内容：
+                    <ul>
+                        <li><code>type</code> (string) 支持类型：
+                            <ul>
+                                <li><code>document</code> 具体类型包含：'TXT', 'MD',
+                                    'MARKDOWN', 'PDF', 'HTML', 'XLSX', 'XLS', 'DOCX',
+                                    'CSV', 'EML', 'MSG', 'PPTX', 'PPT', 'XML', 'EPUB'
+                                </li>
+                                <li><code>image</code> 具体类型包含：'JPG', 'JPEG', 'PNG',
+                                    'GIF', 'WEBP', 'SVG'</li>
+                                <li><code>audio</code> 具体类型包含：'MP3', 'M4A', 'WAV',
+                                    'WEBM', 'AMR'</li>
+                                <li><code>video</code> 具体类型包含：'MP4', 'MOV', 'MPEG',
+                                    'MPGA'</li>
+                                <li><code>custom</code> 具体类型包含：其他文件类型</li>
+                            </ul>
+                        </li>
+                        <li><code>transfer_method</code> (string)
+                            传递方式，<code>remote_url</code> 图片地址 / <code>local_file</code>
+                            上传文件</li>
+                        <li><code>url</code> (string) 图片地址（仅当传递方式为
+                            <code>remote_url</code> 时）
+                        </li>
+                        <li><code>upload_file_id</code> (string) 上传文件 ID（仅当传递方式为
+                            <code>local_file</code> 时）
+                        </li>
+                    </ul>
+                </li>
+                <li><code>response_mode</code> (string) Required
+                    返回响应模式，支持：
+                    <ul>
+                        <li><code>streaming</code> 流式模式（推荐）。基于 SSE（<strong><a
+                                    href="https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events">Server-Sent
+                                    Events</a></strong>）实现类似打字机输出方式的流式返回。</li>
+                        <li><code>blocking</code> 阻塞模式，等待执行完毕后返回结果。（请求若流程较长可能会被中断）。
+                            <i>由于 Cloudflare 限制，请求会在 100 秒超时无返回后中断。</i>
+                        </li>
+                    </ul>
+                </li>
+                <li><code>user</code> (string) Required
+                    用户标识，用于定义终端用户的身份，方便检索、统计。
+                    由开发者定义规则，需保证用户标识在应用内唯一。API 无法访问 WebApp 创建的会话。</li>
+                <li><code>files</code> (array[object]) 可选</li>
+                <li><code>trace_id</code> (string) Optional
+                    链路追踪ID。适用于与业务系统已有的trace组件打通，实现端到端分布式追踪等场景。如果未指定，系统将自动生成
+                    <code>trace_id</code>。支持以下三种方式传递，具体优先级依次为：
+                    <ol>
+                        <li>Header：推荐通过 HTTP Header <code>X-Trace-Id</code> 传递，优先级最高。
+                        </li>
+                        <li>Query 参数：通过 URL 查询参数 <code>trace_id</code> 传递。</li>
+                        <li>Request Body：通过请求体字段 <code>trace_id</code> 传递（即本字段）。</li>
+                    </ol>
+                </li>
+            </ul>
+            <h3>Response</h3>
+            <p>当 <code>response_mode</code> 为 <code>blocking</code> 时，返回
+                CompletionResponse object。
+                当 <code>response_mode</code> 为 <code>streaming</code>时，返回
+                ChunkCompletionResponse object 流式序列。</p>
+            <h3>CompletionResponse</h3>
+            <p>返回完整的 App 结果，<code>Content-Type</code> 为 <code>application/json</code> 。
+            </p>
+            <ul>
+                <li><code>workflow_run_id</code> (string) workflow 执行 ID</li>
+                <li><code>task_id</code> (string) 任务 ID，用于请求跟踪和下方的停止响应接口</li>
+                <li><code>data</code> (object) 详细内容
+                    <ul>
+                        <li><code>id</code> (string) workflow 执行 ID</li>
+                        <li><code>workflow_id</code> (string) 关联 Workflow ID</li>
+                        <li><code>status</code> (string) 执行状态, <code>running</code> /
+                            <code>succeeded</code> / <code>failed</code> /
+                            <code>stopped</code>
+                        </li>
+                        <li><code>outputs</code> (json) Optional 输出内容</li>
+                        <li><code>error</code> (string) Optional 错误原因</li>
+                        <li><code>elapsed_time</code> (float) Optional 耗时(s)</li>
+                        <li><code>total_tokens</code> (int) Optional 总使用 tokens</li>
+                        <li><code>total_steps</code> (int) 总步数（冗余），默认 0</li>
+                        <li><code>created_at</code> (timestamp) 开始时间</li>
+                        <li><code>finished_at</code> (timestamp) 结束时间</li>
+                    </ul>
+                </li>
+            </ul>
+            <h3>ChunkCompletionResponse</h3>
+            <p>返回 App 输出的流式块，<code>Content-Type</code> 为 <code>text/event-stream</code>。
+                每个流式块均为 data: 开头，块之间以 <code>\n\n</code> 即两个换行符分隔，如下所示：</p>
+            <div
+                class="not-prose my-6 overflow-hidden rounded-2xl bg-zinc-900 shadow-md dark:ring-1 dark:ring-white/10">
+                <div class="dark:bg-white/2.5 group">
+                    <div class="relative">
+                        <pre class="overflow-x-auto p-4 text-xs text-white"><pre><code class="language-streaming">data: {"event": "text_chunk", "workflow_run_id": "b85e5fc5-751b-454d-b14e-dc5f240b0a31", "task_id": "bd029338-b068-4d34-a331-fc85478922c2", "data": {"text": "\u4e3a\u4e86", "from_variable_selector": ["1745912968134", "text"]}}\n\n
+</code></pre>
+                        </pre><button type="button"
+                            class="group/button absolute right-4 top-3.5 overflow-hidden rounded-full py-1 pl-2 pr-3 text-2xs font-medium opacity-0 backdrop-blur transition focus:opacity-100 group-hover:opacity-100 hover:bg-white/7.5 dark:bg-white/2.5 bg-white/5 dark:hover:bg-white/5"><span
+                                aria-hidden="false"
+                                class="pointer-events-none flex items-center gap-0.5 text-zinc-400 transition duration-300"><svg
+                                    viewBox="0 0 20 20" aria-hidden="true"
+                                    class="h-5 w-5 fill-zinc-500/20 stroke-zinc-500 transition-colors group-hover/button:stroke-zinc-400">
+                                    <path stroke-width="0"
+                                        d="M5.5 13.5v-5a2 2 0 0 1 2-2l.447-.894A2 2 0 0 1 9.737 4.5h.527a2 2 0 0 1 1.789 1.106l.447.894a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-5a2 2 0 0 1-2-2Z">
+                                    </path>
+                                    <path fill="none" stroke-linejoin="round"
+                                        d="M12.5 6.5a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-5a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2m5 0-.447-.894a2 2 0 0 0-1.79-1.106h-.527a2 2 0 0 0-1.789 1.106L7.5 6.5m5 0-1 1h-3l-1-1">
+                                    </path>
+                                </svg>Copy</span><span aria-hidden="true"
+                                class="pointer-events-none absolute inset-0 flex items-center justify-center text-emerald-400 transition duration-300 translate-y-1.5 opacity-0">Copied!</span></button>
+                    </div>
+                </div>
+            </div>
+            <p>流式块中根据 <code>event</code> 不同，结构也不同，包含以下类型：</p>
+            <ul>
+                <li><code>event: workflow_started</code> workflow 开始执行
+                    <ul>
+                        <li><code>task_id</code> (string) 任务 ID，用于请求跟踪和下方的停止响应接口</li>
+                        <li><code>workflow_run_id</code> (string) workflow 执行 ID</li>
+                        <li><code>event</code> (string) 固定为
+                            <code>workflow_started</code>
+                        </li>
+                        <li><code>data</code> (object) 详细内容
+                            <ul>
+                                <li><code>id</code> (string) workflow 执行 ID</li>
+                                <li><code>workflow_id</code> (string) 关联 Workflow ID
+                                </li>
+                                <li><code>created_at</code> (timestamp) 开始时间</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li><code>event: node_started</code> node 开始执行
+                    <ul>
+                        <li><code>task_id</code> (string) 任务 ID，用于请求跟踪和下方的停止响应接口</li>
+                        <li><code>workflow_run_id</code> (string) workflow 执行 ID</li>
+                        <li><code>event</code> (string) 固定为 <code>node_started</code>
+                        </li>
+                        <li><code>data</code> (object) 详细内容
+                            <ul>
+                                <li><code>id</code> (string) workflow 执行 ID</li>
+                                <li><code>node_id</code> (string) 节点 ID</li>
+                                <li><code>node_type</code> (string) 节点类型</li>
+                                <li><code>title</code> (string) 节点名称</li>
+                                <li><code>index</code> (int) 执行序号，用于展示 Tracing Node 顺序
+                                </li>
+                                <li><code>predecessor_node_id</code> (string) 前置节点
+                                    ID，用于画布展示执行路径</li>
+                                <li><code>inputs</code> (object) 节点中所有使用到的前置节点变量内容</li>
+                                <li><code>created_at</code> (timestamp) 开始时间</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li><code>event: text_chunk</code> 文本片段
+                    <ul>
+                        <li><code>task_id</code> (string) 任务 ID，用于请求跟踪和下方的停止响应接口</li>
+                        <li><code>workflow_run_id</code> (string) workflow 执行 ID</li>
+                        <li><code>event</code> (string) 固定为 <code>text_chunk</code></li>
+                        <li><code>data</code> (object) 详细内容
+                            <ul>
+                                <li><code>text</code> (string) 文本内容</li>
+                                <li><code>from_variable_selector</code> (array)
+                                    文本来源路径，帮助开发者了解文本是由哪个节点的哪个变量生成的</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li><code>event: node_finished</code> node 执行结束，成功失败同一事件中不同状态
+                    <ul>
+                        <li><code>task_id</code> (string) 任务 ID，用于请求跟踪和下方的停止响应接口</li>
+                        <li><code>workflow_run_id</code> (string) workflow 执行 ID</li>
+                        <li><code>event</code> (string) 固定为 <code>node_finished</code>
+                        </li>
+                        <li><code>data</code> (object) 详细内容
+                            <ul>
+                                <li><code>id</code> (string) node 执行 ID</li>
+                                <li><code>node_id</code> (string) 节点 ID</li>
+                                <li><code>index</code> (int) 执行序号，用于展示 Tracing Node 顺序
+                                </li>
+                                <li><code>predecessor_node_id</code> (string) optional
+                                    前置节点 ID，用于画布展示执行路径</li>
+                                <li><code>inputs</code> (object) 节点中所有使用到的前置节点变量内容</li>
+                                <li><code>process_data</code> (json) Optional 节点过程数据
+                                </li>
+                                <li><code>outputs</code> (json) Optional 输出内容</li>
+                                <li><code>status</code> (string) 执行状态
+                                    <code>running</code> / <code>succeeded</code> /
+                                    <code>failed</code> / <code>stopped</code>
+                                </li>
+                                <li><code>error</code> (string) Optional 错误原因</li>
+                                <li><code>elapsed_time</code> (float) Optional 耗时(s)
+                                </li>
+                                <li><code>execution_metadata</code> (json) 元数据
+                                    <ul>
+                                        <li><code>total_tokens</code> (int) optional 总使用
+                                            tokens</li>
+                                        <li><code>total_price</code> (decimal) optional
+                                            总费用</li>
+                                        <li><code>currency</code> (string) optional 货币，如
+                                            <code>USD</code> / <code>RMB</code>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li><code>created_at</code> (timestamp) 开始时间</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li><code>event: workflow_finished</code> workflow 执行结束，成功失败同一事件中不同状态
+                    <ul>
+                        <li><code>task_id</code> (string) 任务 ID，用于请求跟踪和下方的停止响应接口</li>
+                        <li><code>workflow_run_id</code> (string) workflow 执行 ID</li>
+                        <li><code>event</code> (string) 固定为
+                            <code>workflow_finished</code>
+                        </li>
+                        <li><code>data</code> (object) 详细内容
+                            <ul>
+                                <li><code>id</code> (string) workflow 执行 ID</li>
+                                <li><code>workflow_id</code> (string) 关联 Workflow ID
+                                </li>
+                                <li><code>status</code> (string) 执行状态
+                                    <code>running</code> / <code>succeeded</code> /
+                                    <code>failed</code> / <code>stopped</code>
+                                </li>
+                                <li><code>outputs</code> (json) Optional 输出内容</li>
+                                <li><code>error</code> (string) Optional 错误原因</li>
+                                <li><code>elapsed_time</code> (float) Optional 耗时(s)
+                                </li>
+                                <li><code>total_tokens</code> (int) Optional 总使用 tokens
+                                </li>
+                                <li><code>total_steps</code> (int) 总步数（冗余），默认 0</li>
+                                <li><code>created_at</code> (timestamp) 开始时间</li>
+                                <li><code>finished_at</code> (timestamp) 结束时间</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li><code>event: tts_message</code> TTS 音频流事件，即：语音合成输出。内容是Mp3格式的音频块，使用
+                    base64 编码后的字符串，播放的时候直接解码即可。(开启自动播放才有此消息)
+                    <ul>
+                        <li><code>task_id</code> (string) 任务 ID，用于请求跟踪和下方的停止响应接口</li>
+                        <li><code>message_id</code> (string) 消息唯一 ID</li>
+                        <li><code>audio</code> (string) 语音合成之后的音频块使用 Base64
+                            编码之后的文本内容，播放的时候直接 base64 解码送入播放器即可</li>
+                        <li><code>created_at</code> (int) 创建时间戳，如：1705395332</li>
+                    </ul>
+                </li>
+                <li><code>event: tts_message_end</code> TTS 音频流结束事件，收到这个事件表示音频流返回结束。
+                    <ul>
+                        <li><code>task_id</code> (string) 任务 ID，用于请求跟踪和下方的停止响应接口</li>
+                        <li><code>message_id</code> (string) 消息唯一 ID</li>
+                        <li><code>audio</code> (string) 结束事件是没有音频的，所以这里是空字符串</li>
+                        <li><code>created_at</code> (int) 创建时间戳，如：1705395332</li>
+                    </ul>
+                </li>
+                <li><code>event: ping</code> 每 10s 一次的 ping 事件，保持连接存活。</li>
+            </ul>
+            <h3>Errors</h3>
+            <ul>
+                <li>400，<code>invalid_param</code>，传入参数异常</li>
+                <li>400，<code>app_unavailable</code>，App 配置不可用</li>
+                <li>400，<code>provider_not_initialize</code>，无可用模型凭据配置</li>
+                <li>400，<code>provider_quota_exceeded</code>，模型调用额度不足</li>
+                <li>400，<code>model_currently_not_support</code>，当前模型不可用</li>
+                <li>400，<code>workflow_not_found</code>，指定的工作流版本未找到</li>
+                <li>400，<code>draft_workflow_error</code>，无法使用草稿工作流版本</li>
+                <li>400，<code>workflow_id_format_error</code>，工作流ID格式错误，需要UUID格式</li>
+                <li>400，<code>workflow_request_error</code>，workflow 执行失败</li>
+                <li>500，服务内部异常</li>
+            </ul>
+        </div>
+        <div class="[&amp;&gt;:first-child]:mt-0 [&amp;&gt;:last-child]:mb-0 xl:sticky xl:top-24">
+            <div
+                class="not-prose my-6 overflow-hidden rounded-2xl bg-zinc-900 shadow-md dark:ring-1 dark:ring-white/10">
+                <div
+                    class="flex min-h-[calc(theme(spacing.12)+1px)] flex-wrap items-start gap-x-4 border-b border-zinc-700 bg-zinc-800 px-4 dark:border-zinc-800 dark:bg-transparent">
+                    <h3 class="mr-auto pt-3 text-xs font-semibold text-white">Request
+                    </h3>
+                </div>
+                <div class="dark:bg-white/2.5 group">
+                    <div
+                        class="border-b-white/7.5 bg-white/2.5 dark:bg-white/1 flex h-9 items-center gap-2 border-y border-t-transparent bg-zinc-900 px-4 dark:border-b-white/5">
+                        <div class="dark flex"><span
+                                class="font-mono text-[0.625rem] font-semibold leading-6 text-sky-500">POST</span>
+                        </div><span class="h-0.5 w-0.5 rounded-full bg-zinc-500"></span><span
+                            class="font-mono text-xs text-zinc-400">/workflows/:workflow_id/run</span>
+                    </div>
+                    <div class="relative">
+                        <pre class="overflow-x-auto p-4 text-xs text-white">curl -X POST 'http://localhost/v1/workflows/{workflow_id}/run' \
+--header 'Authorization: Bearer {api_key}' \
+--header 'Content-Type: application/json' \
+--data-raw '{
+    "inputs": {},
+    "response_mode": "streaming",
+    "user": "abc-123"
+}'
+</pre><button type="button"
+                            class="group/button absolute right-4 top-3.5 overflow-hidden rounded-full py-1 pl-2 pr-3 text-2xs font-medium opacity-0 backdrop-blur transition focus:opacity-100 group-hover:opacity-100 hover:bg-white/7.5 dark:bg-white/2.5 bg-white/5 dark:hover:bg-white/5"><span
+                                aria-hidden="false"
+                                class="pointer-events-none flex items-center gap-0.5 text-zinc-400 transition duration-300"><svg
+                                    viewBox="0 0 20 20" aria-hidden="true"
+                                    class="h-5 w-5 fill-zinc-500/20 stroke-zinc-500 transition-colors group-hover/button:stroke-zinc-400">
+                                    <path stroke-width="0"
+                                        d="M5.5 13.5v-5a2 2 0 0 1 2-2l.447-.894A2 2 0 0 1 9.737 4.5h.527a2 2 0 0 1 1.789 1.106l.447.894a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-5a2 2 0 0 1-2-2Z">
+                                    </path>
+                                    <path fill="none" stroke-linejoin="round"
+                                        d="M12.5 6.5a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-5a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2m5 0-.447-.894a2 2 0 0 0-1.79-1.106h-.527a2 2 0 0 0-1.789 1.106L7.5 6.5m5 0-1 1h-3l-1-1">
+                                    </path>
+                                </svg>Copy</span><span aria-hidden="true"
+                                class="pointer-events-none absolute inset-0 flex items-center justify-center text-emerald-400 transition duration-300 translate-y-1.5 opacity-0">Copied!</span></button>
+                    </div>
+                </div>
+            </div>
+            <div
+                class="not-prose my-6 overflow-hidden rounded-2xl bg-zinc-900 shadow-md dark:ring-1 dark:ring-white/10">
+                <div
+                    class="flex min-h-[calc(theme(spacing.12)+1px)] flex-wrap items-start gap-x-4 border-b border-zinc-700 bg-zinc-800 px-4 dark:border-zinc-800 dark:bg-transparent">
+                    <h3 class="mr-auto pt-3 text-xs font-semibold text-white">Example:
+                        file array as an input variable</h3>
+                </div>
+                <div class="dark:bg-white/2.5 group">
+                    <div class="relative">
+                        <pre class="overflow-x-auto p-4 text-xs text-white"><pre><code class="language-json">{
+  "inputs": {
+    "{variable_name}":
+    [
+      {
+      "transfer_method": "local_file",
+      "upload_file_id": "{upload_file_id}",
+      "type": "{document_type}"
+      }
+    ]
+  }
+}
+</code></pre>
+                        </pre><button type="button"
+                            class="group/button absolute right-4 top-3.5 overflow-hidden rounded-full py-1 pl-2 pr-3 text-2xs font-medium opacity-0 backdrop-blur transition focus:opacity-100 group-hover:opacity-100 hover:bg-white/7.5 dark:bg-white/2.5 bg-white/5 dark:hover:bg-white/5"><span
+                                aria-hidden="false"
+                                class="pointer-events-none flex items-center gap-0.5 text-zinc-400 transition duration-300"><svg
+                                    viewBox="0 0 20 20" aria-hidden="true"
+                                    class="h-5 w-5 fill-zinc-500/20 stroke-zinc-500 transition-colors group-hover/button:stroke-zinc-400">
+                                    <path stroke-width="0"
+                                        d="M5.5 13.5v-5a2 2 0 0 1 2-2l.447-.894A2 2 0 0 1 9.737 4.5h.527a2 2 0 0 1 1.789 1.106l.447.894a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-5a2 2 0 0 1-2-2Z">
+                                    </path>
+                                    <path fill="none" stroke-linejoin="round"
+                                        d="M12.5 6.5a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-5a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2m5 0-.447-.894a2 2 0 0 0-1.79-1.106h-.527a2 2 0 0 0-1.789 1.106L7.5 6.5m5 0-1 1h-3l-1-1">
+                                    </path>
+                                </svg>Copy</span><span aria-hidden="true"
+                                class="pointer-events-none absolute inset-0 flex items-center justify-center text-emerald-400 transition duration-300 translate-y-1.5 opacity-0">Copied!</span></button>
+                    </div>
+                </div>
+            </div>
+            <h3>Blocking Mode</h3>
+            <div
+                class="not-prose my-6 overflow-hidden rounded-2xl bg-zinc-900 shadow-md dark:ring-1 dark:ring-white/10">
+                <div
+                    class="flex min-h-[calc(theme(spacing.12)+1px)] flex-wrap items-start gap-x-4 border-b border-zinc-700 bg-zinc-800 px-4 dark:border-zinc-800 dark:bg-transparent">
+                    <h3 class="mr-auto pt-3 text-xs font-semibold text-white">Response
+                    </h3>
+                </div>
+                <div class="dark:bg-white/2.5 group">
+                    <div class="relative">
+                        <pre class="overflow-x-auto p-4 text-xs text-white"><pre><code class="language-json">{
+    "workflow_run_id": "djflajgkldjgd",
+    "task_id": "9da23599-e713-473b-982c-4328d4f5c78a",
+    "data": {
+        "id": "fdlsjfjejkghjda",
+        "workflow_id": "fldjaslkfjlsda",
+        "status": "succeeded",
+        "outputs": {
+          "text": "Nice to meet you."
+        },
+        "error": null,
+        "elapsed_time": 0.875,
+        "total_tokens": 3562,
+        "total_steps": 8,
+        "created_at": 1705407629,
+        "finished_at": 1727807631
+    }
+}
+</code></pre>
+                        </pre><button type="button"
+                            class="group/button absolute right-4 top-3.5 overflow-hidden rounded-full py-1 pl-2 pr-3 text-2xs font-medium opacity-0 backdrop-blur transition focus:opacity-100 group-hover:opacity-100 hover:bg-white/7.5 dark:bg-white/2.5 bg-white/5 dark:hover:bg-white/5"><span
+                                aria-hidden="false"
+                                class="pointer-events-none flex items-center gap-0.5 text-zinc-400 transition duration-300"><svg
+                                    viewBox="0 0 20 20" aria-hidden="true"
+                                    class="h-5 w-5 fill-zinc-500/20 stroke-zinc-500 transition-colors group-hover/button:stroke-zinc-400">
+                                    <path stroke-width="0"
+                                        d="M5.5 13.5v-5a2 2 0 0 1 2-2l.447-.894A2 2 0 0 1 9.737 4.5h.527a2 2 0 0 1 1.789 1.106l.447.894a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-5a2 2 0 0 1-2-2Z">
+                                    </path>
+                                    <path fill="none" stroke-linejoin="round"
+                                        d="M12.5 6.5a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-5a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2m5 0-.447-.894a2 2 0 0 0-1.79-1.106h-.527a2 2 0 0 0-1.789 1.106L7.5 6.5m5 0-1 1h-3l-1-1">
+                                    </path>
+                                </svg>Copy</span><span aria-hidden="true"
+                                class="pointer-events-none absolute inset-0 flex items-center justify-center text-emerald-400 transition duration-300 translate-y-1.5 opacity-0">Copied!</span></button>
+                    </div>
+                </div>
+            </div>
+            <h3>Streaming Mode</h3>
+            <div
+                class="not-prose my-6 overflow-hidden rounded-2xl bg-zinc-900 shadow-md dark:ring-1 dark:ring-white/10">
+                <div
+                    class="flex min-h-[calc(theme(spacing.12)+1px)] flex-wrap items-start gap-x-4 border-b border-zinc-700 bg-zinc-800 px-4 dark:border-zinc-800 dark:bg-transparent">
+                    <h3 class="mr-auto pt-3 text-xs font-semibold text-white">Response
+                    </h3>
+                </div>
+                <div class="dark:bg-white/2.5 group">
+                    <div class="relative">
+                        <pre class="overflow-x-auto p-4 text-xs text-white"><pre><code class="language-streaming">  data: {"event": "workflow_started", "task_id": "5ad4cb98-f0c7-4085-b384-88c403be6290", "workflow_run_id": "5ad498-f0c7-4085-b384-88cbe6290", "data": {"id": "5ad498-f0c7-4085-b384-88cbe6290", "workflow_id": "dfjasklfjdslag", "created_at": 1679586595}}
+  data: {"event": "node_started", "task_id": "5ad4cb98-f0c7-4085-b384-88c403be6290", "workflow_run_id": "5ad498-f0c7-4085-b384-88cbe6290", "data": {"id": "5ad498-f0c7-4085-b384-88cbe6290", "node_id": "dfjasklfjdslag", "node_type": "start", "title": "Start", "index": 0, "predecessor_node_id": "fdljewklfklgejlglsd", "inputs": {}, "created_at": 1679586595}}
+  data: {"event": "node_finished", "task_id": "5ad4cb98-f0c7-4085-b384-88c403be6290", "workflow_run_id": "5ad498-f0c7-4085-b384-88cbe6290", "data": {"id": "5ad498-f0c7-4085-b384-88cbe6290", "node_id": "dfjasklfjdslag", "node_type": "start", "title": "Start", "index": 0, "predecessor_node_id": "fdljewklfklgejlglsd", "inputs": {}, "outputs": {}, "status": "succeeded", "elapsed_time": 0.324, "execution_metadata": {"total_tokens": 63127864, "total_price": 2.378, "currency": "USD"},  "created_at": 1679586595}}
+  data: {"event": "workflow_finished", "task_id": "5ad4cb98-f0c7-4085-b384-88c403be6290", "workflow_run_id": "5ad498-f0c7-4085-b384-88cbe6290", "data": {"id": "5ad498-f0c7-4085-b384-88cbe6290", "workflow_id": "dfjasklfjdslag", "outputs": {}, "status": "succeeded", "elapsed_time": 0.324, "total_tokens": 63127864, "total_steps": "1", "created_at": 1679586595, "finished_at": 1679976595}}
+  data: {"event": "tts_message", "conversation_id": "23dd85f3-1a41-4ea0-b7a9-062734ccfaf9", "message_id": "a8bdc41c-13b2-4c18-bfd9-054b9803038c", "created_at": 1721205487, "task_id": "3bf8a0bb-e73b-4690-9e66-4e429bad8ee7", "audio": "qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq"}
+  data: {"event": "tts_message_end", "conversation_id": "23dd85f3-1a41-4ea0-b7a9-062734ccfaf9", "message_id": "a8bdc41c-13b2-4c18-bfd9-054b9803038c", "created_at": 1721205487, "task_id": "3bf8a0bb-e73b-4690-9e66-4e429bad8ee7", "audio": ""}
+</code></pre>
+                        </pre><button type="button"
+                            class="group/button absolute right-4 top-3.5 overflow-hidden rounded-full py-1 pl-2 pr-3 text-2xs font-medium opacity-0 backdrop-blur transition focus:opacity-100 group-hover:opacity-100 hover:bg-white/7.5 dark:bg-white/2.5 bg-white/5 dark:hover:bg-white/5"><span
+                                aria-hidden="false"
+                                class="pointer-events-none flex items-center gap-0.5 text-zinc-400 transition duration-300"><svg
+                                    viewBox="0 0 20 20" aria-hidden="true"
+                                    class="h-5 w-5 fill-zinc-500/20 stroke-zinc-500 transition-colors group-hover/button:stroke-zinc-400">
+                                    <path stroke-width="0"
+                                        d="M5.5 13.5v-5a2 2 0 0 1 2-2l.447-.894A2 2 0 0 1 9.737 4.5h.527a2 2 0 0 1 1.789 1.106l.447.894a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-5a2 2 0 0 1-2-2Z">
+                                    </path>
+                                    <path fill="none" stroke-linejoin="round"
+                                        d="M12.5 6.5a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-5a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2m5 0-.447-.894a2 2 0 0 0-1.79-1.106h-.527a2 2 0 0 0-1.789 1.106L7.5 6.5m5 0-1 1h-3l-1-1">
+                                    </path>
+                                </svg>Copy</span><span aria-hidden="true"
+                                class="pointer-events-none absolute inset-0 flex items-center justify-center text-emerald-400 transition duration-300 translate-y-1.5 opacity-0">Copied!</span></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr>
+    <span id="get-workflow-run-detail" class="relative -top-28"></span>
+    <div class="flex items-center gap-x-3"><span
+            class="rounded-lg px-1.5 font-mono text-[0.625rem] font-semibold leading-6 ring-1 ring-inset ring-emerald-300 dark:ring-emerald-400/30 bg-emerald-400/10 text-emerald-500 dark:text-emerald-400">GET</span><span
+            class="font-mono text-xs text-zinc-400">/workflows/run/:workflow_run_id</span>
+    </div>
+    <h2 class="mt-2 scroll-mt-32"><a
+            href="http://localhost:8080/app/ee62021d-4c34-4965-8bc4-9a2b50b538a9/develop#get-workflow-run-detail"
+            class="group text-inherit no-underline hover:text-inherit">获取workflow执行情况</a>
+    </h2>
+    <div class="grid grid-cols-1 items-start gap-x-16 gap-y-10 xl:!max-w-none xl:grid-cols-2">
+        <div class="[&amp;&gt;:first-child]:mt-0 [&amp;&gt;:last-child]:mb-0">
+            <p>根据 workflow 执行 ID 获取 workflow 任务当前执行结果</p>
+            <h3>Path</h3>
+            <ul>
+                <li><code>workflow_run_id</code> (string) workflow 执行 ID，可在流式返回 Chunk
+                    中获取</li>
+            </ul>
+            <h3>Response</h3>
+            <ul>
+                <li><code>id</code> (string) workflow 执行 ID</li>
+                <li><code>workflow_id</code> (string) 关联的 Workflow ID</li>
+                <li><code>status</code> (string) 执行状态 <code>running</code> /
+                    <code>succeeded</code> / <code>failed</code> / <code>stopped</code>
+                </li>
+                <li><code>inputs</code> (json) 任务输入内容</li>
+                <li><code>outputs</code> (json) 任务输出内容</li>
+                <li><code>error</code> (string) 错误原因</li>
+                <li><code>total_steps</code> (int) 任务执行总步数</li>
+                <li><code>total_tokens</code> (int) 任务执行总 tokens</li>
+                <li><code>created_at</code> (timestamp) 任务开始时间</li>
+                <li><code>finished_at</code> (timestamp) 任务结束时间</li>
+                <li><code>elapsed_time</code> (float) 耗时 (s)</li>
+            </ul>
+        </div>
+        <div class="[&amp;&gt;:first-child]:mt-0 [&amp;&gt;:last-child]:mb-0 xl:sticky xl:top-24">
+            <h3>Request Example</h3>
+            <div
+                class="not-prose my-6 overflow-hidden rounded-2xl bg-zinc-900 shadow-md dark:ring-1 dark:ring-white/10">
+                <div
+                    class="flex min-h-[calc(theme(spacing.12)+1px)] flex-wrap items-start gap-x-4 border-b border-zinc-700 bg-zinc-800 px-4 dark:border-zinc-800 dark:bg-transparent">
+                    <h3 class="mr-auto pt-3 text-xs font-semibold text-white">Request
+                    </h3>
+                </div>
+                <div class="dark:bg-white/2.5 group">
+                    <div
+                        class="border-b-white/7.5 bg-white/2.5 dark:bg-white/1 flex h-9 items-center gap-2 border-y border-t-transparent bg-zinc-900 px-4 dark:border-b-white/5">
+                        <div class="dark flex"><span
+                                class="font-mono text-[0.625rem] font-semibold leading-6 text-emerald-500 dark:text-emerald-400">GET</span>
+                        </div><span class="h-0.5 w-0.5 rounded-full bg-zinc-500"></span><span
+                            class="font-mono text-xs text-zinc-400">/workflows/run/:workflow_run_id</span>
+                    </div>
+                    <div class="relative">
+                        <pre class="overflow-x-auto p-4 text-xs text-white">curl -X GET 'http://localhost/v1/workflows/run/:workflow_run_id' \
+-H 'Authorization: Bearer {api_key}' \
+-H 'Content-Type: application/json'</pre><button type="button"
+                            class="group/button absolute right-4 top-3.5 overflow-hidden rounded-full py-1 pl-2 pr-3 text-2xs font-medium opacity-0 backdrop-blur transition focus:opacity-100 group-hover:opacity-100 hover:bg-white/7.5 dark:bg-white/2.5 bg-white/5 dark:hover:bg-white/5"><span
+                                aria-hidden="false"
+                                class="pointer-events-none flex items-center gap-0.5 text-zinc-400 transition duration-300"><svg
+                                    viewBox="0 0 20 20" aria-hidden="true"
+                                    class="h-5 w-5 fill-zinc-500/20 stroke-zinc-500 transition-colors group-hover/button:stroke-zinc-400">
+                                    <path stroke-width="0"
+                                        d="M5.5 13.5v-5a2 2 0 0 1 2-2l.447-.894A2 2 0 0 1 9.737 4.5h.527a2 2 0 0 1 1.789 1.106l.447.894a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-5a2 2 0 0 1-2-2Z">
+                                    </path>
+                                    <path fill="none" stroke-linejoin="round"
+                                        d="M12.5 6.5a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-5a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2m5 0-.447-.894a2 2 0 0 0-1.79-1.106h-.527a2 2 0 0 0-1.789 1.106L7.5 6.5m5 0-1 1h-3l-1-1">
+                                    </path>
+                                </svg>Copy</span><span aria-hidden="true"
+                                class="pointer-events-none absolute inset-0 flex items-center justify-center text-emerald-400 transition duration-300 translate-y-1.5 opacity-0">Copied!</span></button>
+                    </div>
+                </div>
+            </div>
+            <h3>Response Example</h3>
+            <div
+                class="not-prose my-6 overflow-hidden rounded-2xl bg-zinc-900 shadow-md dark:ring-1 dark:ring-white/10">
+                <div
+                    class="flex min-h-[calc(theme(spacing.12)+1px)] flex-wrap items-start gap-x-4 border-b border-zinc-700 bg-zinc-800 px-4 dark:border-zinc-800 dark:bg-transparent">
+                    <h3 class="mr-auto pt-3 text-xs font-semibold text-white">Response
+                    </h3>
+                </div>
+                <div class="dark:bg-white/2.5 group">
+                    <div class="relative">
+                        <pre class="overflow-x-auto p-4 text-xs text-white"><pre><code class="language-json">{
+    "id": "b1ad3277-089e-42c6-9dff-6820d94fbc76",
+    "workflow_id": "19eff89f-ec03-4f75-b0fc-897e7effea02",
+    "status": "succeeded",
+    "inputs": "{\"sys.files\": [], \"sys.user_id\": \"abc-123\"}",
+    "outputs": null,
+    "error": null,
+    "total_steps": 3,
+    "total_tokens": 0,
+    "created_at": 1705407629,
+    "finished_at": 1727807631,
+    "elapsed_time": 30.098514399956912
+}
+</code></pre>
+                        </pre><button type="button"
+                            class="group/button absolute right-4 top-3.5 overflow-hidden rounded-full py-1 pl-2 pr-3 text-2xs font-medium opacity-0 backdrop-blur transition focus:opacity-100 group-hover:opacity-100 hover:bg-white/7.5 dark:bg-white/2.5 bg-white/5 dark:hover:bg-white/5"><span
+                                aria-hidden="false"
+                                class="pointer-events-none flex items-center gap-0.5 text-zinc-400 transition duration-300"><svg
+                                    viewBox="0 0 20 20" aria-hidden="true"
+                                    class="h-5 w-5 fill-zinc-500/20 stroke-zinc-500 transition-colors group-hover/button:stroke-zinc-400">
+                                    <path stroke-width="0"
+                                        d="M5.5 13.5v-5a2 2 0 0 1 2-2l.447-.894A2 2 0 0 1 9.737 4.5h.527a2 2 0 0 1 1.789 1.106l.447.894a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-5a2 2 0 0 1-2-2Z">
+                                    </path>
+                                    <path fill="none" stroke-linejoin="round"
+                                        d="M12.5 6.5a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-5a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2m5 0-.447-.894a2 2 0 0 0-1.79-1.106h-.527a2 2 0 0 0-1.789 1.106L7.5 6.5m5 0-1 1h-3l-1-1">
+                                    </path>
+                                </svg>Copy</span><span aria-hidden="true"
+                                class="pointer-events-none absolute inset-0 flex items-center justify-center text-emerald-400 transition duration-300 translate-y-1.5 opacity-0">Copied!</span></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr>
+    <span id="stop-generatebacks" class="relative -top-28"></span>
+    <div class="flex items-center gap-x-3"><span
+            class="rounded-lg px-1.5 font-mono text-[0.625rem] font-semibold leading-6 ring-1 ring-inset ring-sky-300 bg-sky-400/10 text-sky-500 dark:ring-sky-400/30 dark:bg-sky-400/10 dark:text-sky-400">POST</span><span
+            class="font-mono text-xs text-zinc-400">/workflows/tasks/:task_id/stop</span>
+    </div>
+    <h2 class="mt-2 scroll-mt-32"><a
+            href="http://localhost:8080/app/ee62021d-4c34-4965-8bc4-9a2b50b538a9/develop#stop-generatebacks"
+            class="group text-inherit no-underline hover:text-inherit">停止响应</a></h2>
+    <div class="grid grid-cols-1 items-start gap-x-16 gap-y-10 xl:!max-w-none xl:grid-cols-2">
+        <div class="[&amp;&gt;:first-child]:mt-0 [&amp;&gt;:last-child]:mb-0">
+            <p>仅支持流式模式。</p>
+            <h3>Path</h3>
+            <ul>
+                <li><code>task_id</code> (string) 任务 ID，可在流式返回 Chunk 中获取</li>
+            </ul>
+            <h3>Request Body</h3>
+            <ul>
+                <li><code>user</code> (string) Required
+                    用户标识，用于定义终端用户的身份，必须和发送消息接口传入 user 保持一致。API 无法访问 WebApp 创建的会话。</li>
+            </ul>
+            <h3>Response</h3>
+            <ul>
+                <li><code>result</code> (string) 固定返回 "success"</li>
+            </ul>
+        </div>
+        <div class="[&amp;&gt;:first-child]:mt-0 [&amp;&gt;:last-child]:mb-0 xl:sticky xl:top-24">
+            <h3>Request Example</h3>
+            <div
+                class="not-prose my-6 overflow-hidden rounded-2xl bg-zinc-900 shadow-md dark:ring-1 dark:ring-white/10">
+                <div
+                    class="flex min-h-[calc(theme(spacing.12)+1px)] flex-wrap items-start gap-x-4 border-b border-zinc-700 bg-zinc-800 px-4 dark:border-zinc-800 dark:bg-transparent">
+                    <h3 class="mr-auto pt-3 text-xs font-semibold text-white">Request
+                    </h3>
+                </div>
+                <div class="dark:bg-white/2.5 group">
+                    <div
+                        class="border-b-white/7.5 bg-white/2.5 dark:bg-white/1 flex h-9 items-center gap-2 border-y border-t-transparent bg-zinc-900 px-4 dark:border-b-white/5">
+                        <div class="dark flex"><span
+                                class="font-mono text-[0.625rem] font-semibold leading-6 text-sky-500">POST</span>
+                        </div><span class="h-0.5 w-0.5 rounded-full bg-zinc-500"></span><span
+                            class="font-mono text-xs text-zinc-400">/workflows/tasks/:task_id/stop</span>
+                    </div>
+                    <div class="relative">
+                        <pre class="overflow-x-auto p-4 text-xs text-white">curl -X POST 'http://localhost/v1/workflows/tasks/:task_id/stop' \
+-H 'Authorization: Bearer {api_key}' \
+-H 'Content-Type: application/json' \
+--data-raw '{"user": "abc-123"}'</pre><button type="button"
+                            class="group/button absolute right-4 top-3.5 overflow-hidden rounded-full py-1 pl-2 pr-3 text-2xs font-medium opacity-0 backdrop-blur transition focus:opacity-100 group-hover:opacity-100 hover:bg-white/7.5 dark:bg-white/2.5 bg-white/5 dark:hover:bg-white/5"><span
+                                aria-hidden="false"
+                                class="pointer-events-none flex items-center gap-0.5 text-zinc-400 transition duration-300"><svg
+                                    viewBox="0 0 20 20" aria-hidden="true"
+                                    class="h-5 w-5 fill-zinc-500/20 stroke-zinc-500 transition-colors group-hover/button:stroke-zinc-400">
+                                    <path stroke-width="0"
+                                        d="M5.5 13.5v-5a2 2 0 0 1 2-2l.447-.894A2 2 0 0 1 9.737 4.5h.527a2 2 0 0 1 1.789 1.106l.447.894a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-5a2 2 0 0 1-2-2Z">
+                                    </path>
+                                    <path fill="none" stroke-linejoin="round"
+                                        d="M12.5 6.5a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-5a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2m5 0-.447-.894a2 2 0 0 0-1.79-1.106h-.527a2 2 0 0 0-1.789 1.106L7.5 6.5m5 0-1 1h-3l-1-1">
+                                    </path>
+                                </svg>Copy</span><span aria-hidden="true"
+                                class="pointer-events-none absolute inset-0 flex items-center justify-center text-emerald-400 transition duration-300 translate-y-1.5 opacity-0">Copied!</span></button>
+                    </div>
+                </div>
+            </div>
+            <h3>Response Example</h3>
+            <div
+                class="not-prose my-6 overflow-hidden rounded-2xl bg-zinc-900 shadow-md dark:ring-1 dark:ring-white/10">
+                <div
+                    class="flex min-h-[calc(theme(spacing.12)+1px)] flex-wrap items-start gap-x-4 border-b border-zinc-700 bg-zinc-800 px-4 dark:border-zinc-800 dark:bg-transparent">
+                    <h3 class="mr-auto pt-3 text-xs font-semibold text-white">Response
+                    </h3>
+                </div>
+                <div class="dark:bg-white/2.5 group">
+                    <div class="relative">
+                        <pre class="overflow-x-auto p-4 text-xs text-white"><pre><code class="language-json">{
+  "result": "success"
+}
+</code></pre>
+                        </pre><button type="button"
+                            class="group/button absolute right-4 top-3.5 overflow-hidden rounded-full py-1 pl-2 pr-3 text-2xs font-medium opacity-0 backdrop-blur transition focus:opacity-100 group-hover:opacity-100 hover:bg-white/7.5 dark:bg-white/2.5 bg-white/5 dark:hover:bg-white/5"><span
+                                aria-hidden="false"
+                                class="pointer-events-none flex items-center gap-0.5 text-zinc-400 transition duration-300"><svg
+                                    viewBox="0 0 20 20" aria-hidden="true"
+                                    class="h-5 w-5 fill-zinc-500/20 stroke-zinc-500 transition-colors group-hover/button:stroke-zinc-400">
+                                    <path stroke-width="0"
+                                        d="M5.5 13.5v-5a2 2 0 0 1 2-2l.447-.894A2 2 0 0 1 9.737 4.5h.527a2 2 0 0 1 1.789 1.106l.447.894a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-5a2 2 0 0 1-2-2Z">
+                                    </path>
+                                    <path fill="none" stroke-linejoin="round"
+                                        d="M12.5 6.5a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-5a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2m5 0-.447-.894a2 2 0 0 0-1.79-1.106h-.527a2 2 0 0 0-1.789 1.106L7.5 6.5m5 0-1 1h-3l-1-1">
+                                    </path>
+                                </svg>Copy</span><span aria-hidden="true"
+                                class="pointer-events-none absolute inset-0 flex items-center justify-center text-emerald-400 transition duration-300 translate-y-1.5 opacity-0">Copied!</span></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr>
+    <span id="files-upload" class="relative -top-28"></span>
+    <div class="flex items-center gap-x-3"><span
+            class="rounded-lg px-1.5 font-mono text-[0.625rem] font-semibold leading-6 ring-1 ring-inset ring-sky-300 bg-sky-400/10 text-sky-500 dark:ring-sky-400/30 dark:bg-sky-400/10 dark:text-sky-400">POST</span><span
+            class="font-mono text-xs text-zinc-400">/files/upload</span></div>
+    <h2 class="mt-2 scroll-mt-32"><a
+            href="http://localhost:8080/app/ee62021d-4c34-4965-8bc4-9a2b50b538a9/develop#files-upload"
+            class="group text-inherit no-underline hover:text-inherit">上传文件</a></h2>
+    <div class="grid grid-cols-1 items-start gap-x-16 gap-y-10 xl:!max-w-none xl:grid-cols-2">
+        <div class="[&amp;&gt;:first-child]:mt-0 [&amp;&gt;:last-child]:mb-0">
+            <p>上传文件并在发送消息时使用，可实现图文多模态理解。
+                支持您的工作流程所支持的任何格式。
+                <i>上传的文件仅供当前终端用户使用。</i>
+            </p>
+            <h3>Request Body</h3>
+            <p>该接口需使用 <code>multipart/form-data</code> 进行请求。</p>
+            <div class="my-6">
+                <ul role="list"
+                    class="m-0 max-w-[calc(theme(maxWidth.lg)-theme(spacing.8))] list-none divide-y divide-zinc-900/5 p-0 dark:divide-white/5">
+                    <li class="m-0 px-0 py-4 first:pt-0 last:pb-0">
+                        <dl class="m-0 flex flex-wrap items-center gap-x-3 gap-y-2">
+                            <dt class="sr-only">Name</dt>
+                            <dd><code>file</code></dd>
+                            <dt class="sr-only">Type</dt>
+                            <dd class="font-mono text-xs text-zinc-400 dark:text-zinc-500">
+                                file</dd>
+                            <dt class="sr-only">Description</dt>
+                            <dd class="w-full flex-none [&amp;&gt;:first-child]:mt-0 [&amp;&gt;:last-child]:mb-0">
+                                <p>要上传的文件。</p>
+                            </dd>
+                        </dl>
+                    </li>
+                    <li class="m-0 px-0 py-4 first:pt-0 last:pb-0">
+                        <dl class="m-0 flex flex-wrap items-center gap-x-3 gap-y-2">
+                            <dt class="sr-only">Name</dt>
+                            <dd><code>user</code></dd>
+                            <dt class="sr-only">Type</dt>
+                            <dd class="font-mono text-xs text-zinc-400 dark:text-zinc-500">
+                                string</dd>
+                            <dt class="sr-only">Description</dt>
+                            <dd class="w-full flex-none [&amp;&gt;:first-child]:mt-0 [&amp;&gt;:last-child]:mb-0">
+                                <p>用户标识，用于定义终端用户的身份，必须和发送消息接口传入 user 保持一致。服务 API 不会共享
+                                    WebApp 创建的对话。</p>
+                            </dd>
+                        </dl>
+                    </li>
+                </ul>
+            </div>
+            <h3>Response</h3>
+            <p>成功上传后，服务器会返回文件的 ID 和相关信息。</p>
+            <ul>
+                <li><code>id</code> (uuid) ID</li>
+                <li><code>name</code> (string) 文件名</li>
+                <li><code>size</code> (int) 文件大小（byte）</li>
+                <li><code>extension</code> (string) 文件后缀</li>
+                <li><code>mime_type</code> (string) 文件 mime-type</li>
+                <li><code>created_by</code> (uuid) 上传人 ID</li>
+                <li><code>created_at</code> (timestamp) 上传时间</li>
+            </ul>
+            <h3>Errors</h3>
+            <ul>
+                <li>400，<code>no_file_uploaded</code>，必须提供文件</li>
+                <li>400，<code>too_many_files</code>，目前只接受一个文件</li>
+                <li>400，<code>unsupported_preview</code>，该文件不支持预览</li>
+                <li>400，<code>unsupported_estimate</code>，该文件不支持估算</li>
+                <li>413，<code>file_too_large</code>，文件太大</li>
+                <li>415，<code>unsupported_file_type</code>，不支持的扩展名，当前只接受文档类文件</li>
+                <li>503，<code>s3_connection_failed</code>，无法连接到 S3 服务</li>
+                <li>503，<code>s3_permission_denied</code>，无权限上传文件到 S3</li>
+                <li>503，<code>s3_file_too_large</code>，文件超出 S3 大小限制</li>
+            </ul>
+        </div>
+        <div class="[&amp;&gt;:first-child]:mt-0 [&amp;&gt;:last-child]:mb-0 xl:sticky xl:top-24">
+            <div
+                class="not-prose my-6 overflow-hidden rounded-2xl bg-zinc-900 shadow-md dark:ring-1 dark:ring-white/10">
+                <div
+                    class="flex min-h-[calc(theme(spacing.12)+1px)] flex-wrap items-start gap-x-4 border-b border-zinc-700 bg-zinc-800 px-4 dark:border-zinc-800 dark:bg-transparent">
+                    <h3 class="mr-auto pt-3 text-xs font-semibold text-white">Request
+                    </h3>
+                </div>
+                <div class="dark:bg-white/2.5 group">
+                    <div
+                        class="border-b-white/7.5 bg-white/2.5 dark:bg-white/1 flex h-9 items-center gap-2 border-y border-t-transparent bg-zinc-900 px-4 dark:border-b-white/5">
+                        <div class="dark flex"><span
+                                class="font-mono text-[0.625rem] font-semibold leading-6 text-sky-500">POST</span>
+                        </div><span class="h-0.5 w-0.5 rounded-full bg-zinc-500"></span><span
+                            class="font-mono text-xs text-zinc-400">/files/upload</span>
+                    </div>
+                    <div class="relative">
+                        <pre class="overflow-x-auto p-4 text-xs text-white">curl -X POST 'http://localhost/v1/files/upload' \
+--header 'Authorization: Bearer {api_key}' \
+--form 'file=@localfile;type=image/[png|jpeg|jpg|webp|gif]' \
+--form 'user=abc-123'</pre><button type="button"
+                            class="group/button absolute right-4 top-3.5 overflow-hidden rounded-full py-1 pl-2 pr-3 text-2xs font-medium opacity-0 backdrop-blur transition focus:opacity-100 group-hover:opacity-100 hover:bg-white/7.5 dark:bg-white/2.5 bg-white/5 dark:hover:bg-white/5"><span
+                                aria-hidden="false"
+                                class="pointer-events-none flex items-center gap-0.5 text-zinc-400 transition duration-300"><svg
+                                    viewBox="0 0 20 20" aria-hidden="true"
+                                    class="h-5 w-5 fill-zinc-500/20 stroke-zinc-500 transition-colors group-hover/button:stroke-zinc-400">
+                                    <path stroke-width="0"
+                                        d="M5.5 13.5v-5a2 2 0 0 1 2-2l.447-.894A2 2 0 0 1 9.737 4.5h.527a2 2 0 0 1 1.789 1.106l.447.894a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-5a2 2 0 0 1-2-2Z">
+                                    </path>
+                                    <path fill="none" stroke-linejoin="round"
+                                        d="M12.5 6.5a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-5a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2m5 0-.447-.894a2 2 0 0 0-1.79-1.106h-.527a2 2 0 0 0-1.789 1.106L7.5 6.5m5 0-1 1h-3l-1-1">
+                                    </path>
+                                </svg>Copy</span><span aria-hidden="true"
+                                class="pointer-events-none absolute inset-0 flex items-center justify-center text-emerald-400 transition duration-300 translate-y-1.5 opacity-0">Copied!</span></button>
+                    </div>
+                </div>
+            </div>
+            <div
+                class="not-prose my-6 overflow-hidden rounded-2xl bg-zinc-900 shadow-md dark:ring-1 dark:ring-white/10">
+                <div
+                    class="flex min-h-[calc(theme(spacing.12)+1px)] flex-wrap items-start gap-x-4 border-b border-zinc-700 bg-zinc-800 px-4 dark:border-zinc-800 dark:bg-transparent">
+                    <h3 class="mr-auto pt-3 text-xs font-semibold text-white">Response
+                    </h3>
+                </div>
+                <div class="dark:bg-white/2.5 group">
+                    <div class="relative">
+                        <pre class="overflow-x-auto p-4 text-xs text-white"><pre><code class="language-json">{
+  "id": "72fa9618-8f89-4a37-9b33-7e1178a24a67",
+  "name": "example.png",
+  "size": 1024,
+  "extension": "png",
+  "mime_type": "image/png",
+  "created_by": 123,
+  "created_at": 1577836800,
+}
+</code></pre>
+                        </pre><button type="button"
+                            class="group/button absolute right-4 top-3.5 overflow-hidden rounded-full py-1 pl-2 pr-3 text-2xs font-medium opacity-0 backdrop-blur transition focus:opacity-100 group-hover:opacity-100 hover:bg-white/7.5 dark:bg-white/2.5 bg-white/5 dark:hover:bg-white/5"><span
+                                aria-hidden="false"
+                                class="pointer-events-none flex items-center gap-0.5 text-zinc-400 transition duration-300"><svg
+                                    viewBox="0 0 20 20" aria-hidden="true"
+                                    class="h-5 w-5 fill-zinc-500/20 stroke-zinc-500 transition-colors group-hover/button:stroke-zinc-400">
+                                    <path stroke-width="0"
+                                        d="M5.5 13.5v-5a2 2 0 0 1 2-2l.447-.894A2 2 0 0 1 9.737 4.5h.527a2 2 0 0 1 1.789 1.106l.447.894a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-5a2 2 0 0 1-2-2Z">
+                                    </path>
+                                    <path fill="none" stroke-linejoin="round"
+                                        d="M12.5 6.5a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-5a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2m5 0-.447-.894a2 2 0 0 0-1.79-1.106h-.527a2 2 0 0 0-1.789 1.106L7.5 6.5m5 0-1 1h-3l-1-1">
+                                    </path>
+                                </svg>Copy</span><span aria-hidden="true"
+                                class="pointer-events-none absolute inset-0 flex items-center justify-center text-emerald-400 transition duration-300 translate-y-1.5 opacity-0">Copied!</span></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr>
+    <span id="file-preview" class="relative -top-28"></span>
+    <div class="flex items-center gap-x-3"><span
+            class="rounded-lg px-1.5 font-mono text-[0.625rem] font-semibold leading-6 ring-1 ring-inset ring-emerald-300 dark:ring-emerald-400/30 bg-emerald-400/10 text-emerald-500 dark:text-emerald-400">GET</span><span
+            class="font-mono text-xs text-zinc-400">/files/:file_id/preview</span></div>
+    <h2 class="mt-2 scroll-mt-32"><a
+            href="http://localhost:8080/app/ee62021d-4c34-4965-8bc4-9a2b50b538a9/develop#file-preview"
+            class="group text-inherit no-underline hover:text-inherit">文件预览</a></h2>
+    <div class="grid grid-cols-1 items-start gap-x-16 gap-y-10 xl:!max-w-none xl:grid-cols-2">
+        <div class="[&amp;&gt;:first-child]:mt-0 [&amp;&gt;:last-child]:mb-0">
+            <p>预览或下载已上传的文件。此端点允许您访问先前通过文件上传 API 上传的文件。</p><i>文件只能在属于请求应用程序的消息范围内访问。</i>
+            <h3>路径参数</h3>
+            <ul>
+                <li><code>file_id</code> (string) 必需
+                    要预览的文件的唯一标识符，从文件上传 API 响应中获得。</li>
+            </ul>
+            <h3>查询参数</h3>
+            <ul>
+                <li><code>as_attachment</code> (boolean) 可选
+                    是否强制将文件作为附件下载。默认为 <code>false</code>（在浏览器中预览）。</li>
+            </ul>
+            <h3>响应</h3>
+            <p>返回带有适当浏览器显示或下载标头的文件内容。</p>
+            <ul>
+                <li><code>Content-Type</code> 根据文件 MIME 类型设置</li>
+                <li><code>Content-Length</code> 文件大小（以字节为单位，如果可用）</li>
+                <li><code>Content-Disposition</code> 如果 <code>as_attachment=true</code>
+                    则设置为 "attachment"</li>
+                <li><code>Cache-Control</code> 用于性能的缓存标头</li>
+                <li><code>Accept-Ranges</code> 对于音频/视频文件设置为 "bytes"</li>
+            </ul>
+            <h3>错误</h3>
+            <ul>
+                <li>400, <code>invalid_param</code>, 参数输入异常</li>
+                <li>403, <code>file_access_denied</code>, 文件访问被拒绝或文件不属于当前应用程序</li>
+                <li>404, <code>file_not_found</code>, 文件未找到或已被删除</li>
+                <li>500, 服务内部错误</li>
+            </ul>
+        </div>
+        <div class="[&amp;&gt;:first-child]:mt-0 [&amp;&gt;:last-child]:mb-0 xl:sticky xl:top-24">
+            <h3>请求示例</h3>
+            <div
+                class="not-prose my-6 overflow-hidden rounded-2xl bg-zinc-900 shadow-md dark:ring-1 dark:ring-white/10">
+                <div
+                    class="flex min-h-[calc(theme(spacing.12)+1px)] flex-wrap items-start gap-x-4 border-b border-zinc-700 bg-zinc-800 px-4 dark:border-zinc-800 dark:bg-transparent">
+                    <h3 class="mr-auto pt-3 text-xs font-semibold text-white">Request
+                    </h3>
+                </div>
+                <div class="dark:bg-white/2.5 group">
+                    <div
+                        class="border-b-white/7.5 bg-white/2.5 dark:bg-white/1 flex h-9 items-center gap-2 border-y border-t-transparent bg-zinc-900 px-4 dark:border-b-white/5">
+                        <div class="dark flex"><span
+                                class="font-mono text-[0.625rem] font-semibold leading-6 text-emerald-500 dark:text-emerald-400">GET</span>
+                        </div><span class="h-0.5 w-0.5 rounded-full bg-zinc-500"></span><span
+                            class="font-mono text-xs text-zinc-400">/files/:file_id/preview</span>
+                    </div>
+                    <div class="relative">
+                        <pre class="overflow-x-auto p-4 text-xs text-white">curl -X GET 'http://localhost/v1/files/72fa9618-8f89-4a37-9b33-7e1178a24a67/preview' \
+--header 'Authorization: Bearer {api_key}'</pre><button type="button"
+                            class="group/button absolute right-4 top-3.5 overflow-hidden rounded-full py-1 pl-2 pr-3 text-2xs font-medium opacity-0 backdrop-blur transition focus:opacity-100 group-hover:opacity-100 hover:bg-white/7.5 dark:bg-white/2.5 bg-white/5 dark:hover:bg-white/5"><span
+                                aria-hidden="false"
+                                class="pointer-events-none flex items-center gap-0.5 text-zinc-400 transition duration-300"><svg
+                                    viewBox="0 0 20 20" aria-hidden="true"
+                                    class="h-5 w-5 fill-zinc-500/20 stroke-zinc-500 transition-colors group-hover/button:stroke-zinc-400">
+                                    <path stroke-width="0"
+                                        d="M5.5 13.5v-5a2 2 0 0 1 2-2l.447-.894A2 2 0 0 1 9.737 4.5h.527a2 2 0 0 1 1.789 1.106l.447.894a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-5a2 2 0 0 1-2-2Z">
+                                    </path>
+                                    <path fill="none" stroke-linejoin="round"
+                                        d="M12.5 6.5a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-5a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2m5 0-.447-.894a2 2 0 0 0-1.79-1.106h-.527a2 2 0 0 0-1.789 1.106L7.5 6.5m5 0-1 1h-3l-1-1">
+                                    </path>
+                                </svg>Copy</span><span aria-hidden="true"
+                                class="pointer-events-none absolute inset-0 flex items-center justify-center text-emerald-400 transition duration-300 translate-y-1.5 opacity-0">Copied!</span></button>
+                    </div>
+                </div>
+            </div>
+            <h3>作为附件下载</h3>
+            <div
+                class="not-prose my-6 overflow-hidden rounded-2xl bg-zinc-900 shadow-md dark:ring-1 dark:ring-white/10">
+                <div
+                    class="flex min-h-[calc(theme(spacing.12)+1px)] flex-wrap items-start gap-x-4 border-b border-zinc-700 bg-zinc-800 px-4 dark:border-zinc-800 dark:bg-transparent">
+                    <h3 class="mr-auto pt-3 text-xs font-semibold text-white">Request
+                    </h3>
+                </div>
+                <div class="dark:bg-white/2.5 group">
+                    <div
+                        class="border-b-white/7.5 bg-white/2.5 dark:bg-white/1 flex h-9 items-center gap-2 border-y border-t-transparent bg-zinc-900 px-4 dark:border-b-white/5">
+                        <div class="dark flex"><span
+                                class="font-mono text-[0.625rem] font-semibold leading-6 text-emerald-500 dark:text-emerald-400">GET</span>
+                        </div><span class="h-0.5 w-0.5 rounded-full bg-zinc-500"></span><span
+                            class="font-mono text-xs text-zinc-400">/files/:file_id/preview?as_attachment=true</span>
+                    </div>
+                    <div class="relative">
+                        <pre
+                            class="overflow-x-auto p-4 text-xs text-white">curl -X GET 'http://localhost/v1/files/72fa9618-8f89-4a37-9b33-7e1178a24a67/preview?as_attachment=true' \\\n--header 'Authorization: Bearer {api_key}' \\\n--output downloaded_file.png</pre>
+                        <button type="button"
+                            class="group/button absolute right-4 top-3.5 overflow-hidden rounded-full py-1 pl-2 pr-3 text-2xs font-medium opacity-0 backdrop-blur transition focus:opacity-100 group-hover:opacity-100 hover:bg-white/7.5 dark:bg-white/2.5 bg-white/5 dark:hover:bg-white/5"><span
+                                aria-hidden="false"
+                                class="pointer-events-none flex items-center gap-0.5 text-zinc-400 transition duration-300"><svg
+                                    viewBox="0 0 20 20" aria-hidden="true"
+                                    class="h-5 w-5 fill-zinc-500/20 stroke-zinc-500 transition-colors group-hover/button:stroke-zinc-400">
+                                    <path stroke-width="0"
+                                        d="M5.5 13.5v-5a2 2 0 0 1 2-2l.447-.894A2 2 0 0 1 9.737 4.5h.527a2 2 0 0 1 1.789 1.106l.447.894a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-5a2 2 0 0 1-2-2Z">
+                                    </path>
+                                    <path fill="none" stroke-linejoin="round"
+                                        d="M12.5 6.5a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-5a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2m5 0-.447-.894a2 2 0 0 0-1.79-1.106h-.527a2 2 0 0 0-1.789 1.106L7.5 6.5m5 0-1 1h-3l-1-1">
+                                    </path>
+                                </svg>Copy</span><span aria-hidden="true"
+                                class="pointer-events-none absolute inset-0 flex items-center justify-center text-emerald-400 transition duration-300 translate-y-1.5 opacity-0">Copied!</span></button>
+                    </div>
+                </div>
+            </div>
+            <h3>响应标头示例</h3>
+            <div
+                class="not-prose my-6 overflow-hidden rounded-2xl bg-zinc-900 shadow-md dark:ring-1 dark:ring-white/10">
+                <div
+                    class="flex min-h-[calc(theme(spacing.12)+1px)] flex-wrap items-start gap-x-4 border-b border-zinc-700 bg-zinc-800 px-4 dark:border-zinc-800 dark:bg-transparent">
+                    <h3 class="mr-auto pt-3 text-xs font-semibold text-white">Response
+                        Headers</h3>
+                </div>
+                <div class="dark:bg-white/2.5 group">
+                    <div class="relative">
+                        <pre class="overflow-x-auto p-4 text-xs text-white"><pre><code class="language-http">Content-Type: image/png
+Content-Length: 1024
+Cache-Control: public, max-age=3600
+</code></pre>
+                        </pre><button type="button"
+                            class="group/button absolute right-4 top-3.5 overflow-hidden rounded-full py-1 pl-2 pr-3 text-2xs font-medium opacity-0 backdrop-blur transition focus:opacity-100 group-hover:opacity-100 hover:bg-white/7.5 dark:bg-white/2.5 bg-white/5 dark:hover:bg-white/5"><span
+                                aria-hidden="false"
+                                class="pointer-events-none flex items-center gap-0.5 text-zinc-400 transition duration-300"><svg
+                                    viewBox="0 0 20 20" aria-hidden="true"
+                                    class="h-5 w-5 fill-zinc-500/20 stroke-zinc-500 transition-colors group-hover/button:stroke-zinc-400">
+                                    <path stroke-width="0"
+                                        d="M5.5 13.5v-5a2 2 0 0 1 2-2l.447-.894A2 2 0 0 1 9.737 4.5h.527a2 2 0 0 1 1.789 1.106l.447.894a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-5a2 2 0 0 1-2-2Z">
+                                    </path>
+                                    <path fill="none" stroke-linejoin="round"
+                                        d="M12.5 6.5a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-5a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2m5 0-.447-.894a2 2 0 0 0-1.79-1.106h-.527a2 2 0 0 0-1.789 1.106L7.5 6.5m5 0-1 1h-3l-1-1">
+                                    </path>
+                                </svg>Copy</span><span aria-hidden="true"
+                                class="pointer-events-none absolute inset-0 flex items-center justify-center text-emerald-400 transition duration-300 translate-y-1.5 opacity-0">Copied!</span></button>
+                    </div>
+                </div>
+            </div>
+            <h3>文件下载响应标头</h3>
+            <div
+                class="not-prose my-6 overflow-hidden rounded-2xl bg-zinc-900 shadow-md dark:ring-1 dark:ring-white/10">
+                <div
+                    class="flex min-h-[calc(theme(spacing.12)+1px)] flex-wrap items-start gap-x-4 border-b border-zinc-700 bg-zinc-800 px-4 dark:border-zinc-800 dark:bg-transparent">
+                    <h3 class="mr-auto pt-3 text-xs font-semibold text-white">Download
+                        Response Headers</h3>
+                </div>
+                <div class="dark:bg-white/2.5 group">
+                    <div class="relative">
+                        <pre class="overflow-x-auto p-4 text-xs text-white"><pre><code class="language-http">Content-Type: image/png
+Content-Length: 1024
+Content-Disposition: attachment; filename*=UTF-8''example.png
+Cache-Control: public, max-age=3600
+</code></pre>
+                        </pre><button type="button"
+                            class="group/button absolute right-4 top-3.5 overflow-hidden rounded-full py-1 pl-2 pr-3 text-2xs font-medium opacity-0 backdrop-blur transition focus:opacity-100 group-hover:opacity-100 hover:bg-white/7.5 dark:bg-white/2.5 bg-white/5 dark:hover:bg-white/5"><span
+                                aria-hidden="false"
+                                class="pointer-events-none flex items-center gap-0.5 text-zinc-400 transition duration-300"><svg
+                                    viewBox="0 0 20 20" aria-hidden="true"
+                                    class="h-5 w-5 fill-zinc-500/20 stroke-zinc-500 transition-colors group-hover/button:stroke-zinc-400">
+                                    <path stroke-width="0"
+                                        d="M5.5 13.5v-5a2 2 0 0 1 2-2l.447-.894A2 2 0 0 1 9.737 4.5h.527a2 2 0 0 1 1.789 1.106l.447.894a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-5a2 2 0 0 1-2-2Z">
+                                    </path>
+                                    <path fill="none" stroke-linejoin="round"
+                                        d="M12.5 6.5a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-5a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2m5 0-.447-.894a2 2 0 0 0-1.79-1.106h-.527a2 2 0 0 0-1.789 1.106L7.5 6.5m5 0-1 1h-3l-1-1">
+                                    </path>
+                                </svg>Copy</span><span aria-hidden="true"
+                                class="pointer-events-none absolute inset-0 flex items-center justify-center text-emerald-400 transition duration-300 translate-y-1.5 opacity-0">Copied!</span></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr>
+    <span id="Get-Workflow-Logs" class="relative -top-28"></span>
+    <div class="flex items-center gap-x-3"><span
+            class="rounded-lg px-1.5 font-mono text-[0.625rem] font-semibold leading-6 ring-1 ring-inset ring-emerald-300 dark:ring-emerald-400/30 bg-emerald-400/10 text-emerald-500 dark:text-emerald-400">GET</span><span
+            class="font-mono text-xs text-zinc-400">/workflows/logs</span></div>
+    <h2 class="mt-2 scroll-mt-32"><a
+            href="http://localhost:8080/app/ee62021d-4c34-4965-8bc4-9a2b50b538a9/develop#Get-Workflow-Logs"
+            class="group text-inherit no-underline hover:text-inherit">获取 workflow
+            日志</a></h2>
+    <div class="grid grid-cols-1 items-start gap-x-16 gap-y-10 xl:!max-w-none xl:grid-cols-2">
+        <div class="[&amp;&gt;:first-child]:mt-0 [&amp;&gt;:last-child]:mb-0">
+            <p>倒序返回 workflow 日志</p>
+            <h3>Query</h3>
+            <div class="my-6">
+                <ul role="list"
+                    class="m-0 max-w-[calc(theme(maxWidth.lg)-theme(spacing.8))] list-none divide-y divide-zinc-900/5 p-0 dark:divide-white/5">
+                    <li class="m-0 px-0 py-4 first:pt-0 last:pb-0">
+                        <dl class="m-0 flex flex-wrap items-center gap-x-3 gap-y-2">
+                            <dt class="sr-only">Name</dt>
+                            <dd><code>keyword</code></dd>
+                            <dt class="sr-only">Type</dt>
+                            <dd class="font-mono text-xs text-zinc-400 dark:text-zinc-500">
+                                string</dd>
+                            <dt class="sr-only">Description</dt>
+                            <dd class="w-full flex-none [&amp;&gt;:first-child]:mt-0 [&amp;&gt;:last-child]:mb-0">
+                                <p>关键字</p>
+                            </dd>
+                        </dl>
+                    </li>
+                    <li class="m-0 px-0 py-4 first:pt-0 last:pb-0">
+                        <dl class="m-0 flex flex-wrap items-center gap-x-3 gap-y-2">
+                            <dt class="sr-only">Name</dt>
+                            <dd><code>status</code></dd>
+                            <dt class="sr-only">Type</dt>
+                            <dd class="font-mono text-xs text-zinc-400 dark:text-zinc-500">
+                                string</dd>
+                            <dt class="sr-only">Description</dt>
+                            <dd class="w-full flex-none [&amp;&gt;:first-child]:mt-0 [&amp;&gt;:last-child]:mb-0">
+                                <p>执行状态 succeeded/failed/stopped</p>
+                            </dd>
+                        </dl>
+                    </li>
+                    <li class="m-0 px-0 py-4 first:pt-0 last:pb-0">
+                        <dl class="m-0 flex flex-wrap items-center gap-x-3 gap-y-2">
+                            <dt class="sr-only">Name</dt>
+                            <dd><code>page</code></dd>
+                            <dt class="sr-only">Type</dt>
+                            <dd class="font-mono text-xs text-zinc-400 dark:text-zinc-500">
+                                int</dd>
+                            <dt class="sr-only">Description</dt>
+                            <dd class="w-full flex-none [&amp;&gt;:first-child]:mt-0 [&amp;&gt;:last-child]:mb-0">
+                                <p>当前页码, 默认1.</p>
+                            </dd>
+                        </dl>
+                    </li>
+                    <li class="m-0 px-0 py-4 first:pt-0 last:pb-0">
+                        <dl class="m-0 flex flex-wrap items-center gap-x-3 gap-y-2">
+                            <dt class="sr-only">Name</dt>
+                            <dd><code>limit</code></dd>
+                            <dt class="sr-only">Type</dt>
+                            <dd class="font-mono text-xs text-zinc-400 dark:text-zinc-500">
+                                int</dd>
+                            <dt class="sr-only">Description</dt>
+                            <dd class="w-full flex-none [&amp;&gt;:first-child]:mt-0 [&amp;&gt;:last-child]:mb-0">
+                                <p>每页条数, 默认20.</p>
+                            </dd>
+                        </dl>
+                    </li>
+                    <li class="m-0 px-0 py-4 first:pt-0 last:pb-0">
+                        <dl class="m-0 flex flex-wrap items-center gap-x-3 gap-y-2">
+                            <dt class="sr-only">Name</dt>
+                            <dd><code>created_by_end_user_session_id</code></dd>
+                            <dt class="sr-only">Type</dt>
+                            <dd class="font-mono text-xs text-zinc-400 dark:text-zinc-500">
+                                str</dd>
+                            <dt class="sr-only">Description</dt>
+                            <dd class="w-full flex-none [&amp;&gt;:first-child]:mt-0 [&amp;&gt;:last-child]:mb-0">
+                                <p>由哪个endUser创建，例如，<code>abc-123</code>.</p>
+                            </dd>
+                        </dl>
+                    </li>
+                    <li class="m-0 px-0 py-4 first:pt-0 last:pb-0">
+                        <dl class="m-0 flex flex-wrap items-center gap-x-3 gap-y-2">
+                            <dt class="sr-only">Name</dt>
+                            <dd><code>created_by_account</code></dd>
+                            <dt class="sr-only">Type</dt>
+                            <dd class="font-mono text-xs text-zinc-400 dark:text-zinc-500">
+                                str</dd>
+                            <dt class="sr-only">Description</dt>
+                            <dd class="w-full flex-none [&amp;&gt;:first-child]:mt-0 [&amp;&gt;:last-child]:mb-0">
+                                <p>由哪个邮箱账户创建，例如，lizb@test.com.</p>
+                            </dd>
+                        </dl>
+                    </li>
+                </ul>
+            </div>
+            <h3>Response</h3>
+            <ul>
+                <li><code>page</code> (int) 当前页码</li>
+                <li><code>limit</code> (int) 每页条数</li>
+                <li><code>total</code> (int) 总条数</li>
+                <li><code>has_more</code> (bool) 是否还有更多数据</li>
+                <li><code>data</code> (array[object]) 当前页码的数据
+                    <ul>
+                        <li><code>id</code> (string) 标识</li>
+                        <li><code>workflow_run</code> (object) Workflow 执行日志
+                            <ul>
+                                <li><code>id</code> (string) 标识</li>
+                                <li><code>version</code> (string) 版本</li>
+                                <li><code>status</code> (string)
+                                    执行状态，<code>running</code> / <code>succeeded</code> /
+                                    <code>failed</code> / <code>stopped</code>
+                                </li>
+                                <li><code>error</code> (string) (可选) 错误</li>
+                                <li><code>elapsed_time</code> (float) 耗时，单位秒</li>
+                                <li><code>total_tokens</code> (int) 消耗的 token 数量</li>
+                                <li><code>total_steps</code> (int) 执行步骤长度</li>
+                                <li><code>created_at</code> (timestamp) 开始时间</li>
+                                <li><code>finished_at</code> (timestamp) 结束时间</li>
+                            </ul>
+                        </li>
+                        <li><code>created_from</code> (string) 来源</li>
+                        <li><code>created_by_role</code> (string) 角色</li>
+                        <li><code>created_by_account</code> (string) (可选) 帐号</li>
+                        <li><code>created_by_end_user</code> (object) 用户
+                            <ul>
+                                <li><code>id</code> (string) 标识</li>
+                                <li><code>type</code> (string) 类型</li>
+                                <li><code>is_anonymous</code> (bool) 是否匿名</li>
+                                <li><code>session_id</code> (string) 会话标识</li>
+                            </ul>
+                        </li>
+                        <li><code>created_at</code> (timestamp) 创建时间</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        <div class="[&amp;&gt;:first-child]:mt-0 [&amp;&gt;:last-child]:mb-0 xl:sticky xl:top-24">
+            <div
+                class="not-prose my-6 overflow-hidden rounded-2xl bg-zinc-900 shadow-md dark:ring-1 dark:ring-white/10">
+                <div
+                    class="flex min-h-[calc(theme(spacing.12)+1px)] flex-wrap items-start gap-x-4 border-b border-zinc-700 bg-zinc-800 px-4 dark:border-zinc-800 dark:bg-transparent">
+                    <h3 class="mr-auto pt-3 text-xs font-semibold text-white">Request
+                    </h3>
+                </div>
+                <div class="dark:bg-white/2.5 group">
+                    <div
+                        class="border-b-white/7.5 bg-white/2.5 dark:bg-white/1 flex h-9 items-center gap-2 border-y border-t-transparent bg-zinc-900 px-4 dark:border-b-white/5">
+                        <div class="dark flex"><span
+                                class="font-mono text-[0.625rem] font-semibold leading-6 text-emerald-500 dark:text-emerald-400">GET</span>
+                        </div><span class="h-0.5 w-0.5 rounded-full bg-zinc-500"></span><span
+                            class="font-mono text-xs text-zinc-400">/workflows/logs</span>
+                    </div>
+                    <div class="relative">
+                        <pre class="overflow-x-auto p-4 text-xs text-white">curl -X GET 'http://localhost/v1/workflows/logs'\
+ --header 'Authorization: Bearer {api_key}'</pre><button type="button"
+                            class="group/button absolute right-4 top-3.5 overflow-hidden rounded-full py-1 pl-2 pr-3 text-2xs font-medium opacity-0 backdrop-blur transition focus:opacity-100 group-hover:opacity-100 hover:bg-white/7.5 dark:bg-white/2.5 bg-white/5 dark:hover:bg-white/5"><span
+                                aria-hidden="false"
+                                class="pointer-events-none flex items-center gap-0.5 text-zinc-400 transition duration-300"><svg
+                                    viewBox="0 0 20 20" aria-hidden="true"
+                                    class="h-5 w-5 fill-zinc-500/20 stroke-zinc-500 transition-colors group-hover/button:stroke-zinc-400">
+                                    <path stroke-width="0"
+                                        d="M5.5 13.5v-5a2 2 0 0 1 2-2l.447-.894A2 2 0 0 1 9.737 4.5h.527a2 2 0 0 1 1.789 1.106l.447.894a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-5a2 2 0 0 1-2-2Z">
+                                    </path>
+                                    <path fill="none" stroke-linejoin="round"
+                                        d="M12.5 6.5a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-5a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2m5 0-.447-.894a2 2 0 0 0-1.79-1.106h-.527a2 2 0 0 0-1.789 1.106L7.5 6.5m5 0-1 1h-3l-1-1">
+                                    </path>
+                                </svg>Copy</span><span aria-hidden="true"
+                                class="pointer-events-none absolute inset-0 flex items-center justify-center text-emerald-400 transition duration-300 translate-y-1.5 opacity-0">Copied!</span></button>
+                    </div>
+                </div>
+            </div>
+            <h3>Response Example</h3>
+            <div
+                class="not-prose my-6 overflow-hidden rounded-2xl bg-zinc-900 shadow-md dark:ring-1 dark:ring-white/10">
+                <div
+                    class="flex min-h-[calc(theme(spacing.12)+1px)] flex-wrap items-start gap-x-4 border-b border-zinc-700 bg-zinc-800 px-4 dark:border-zinc-800 dark:bg-transparent">
+                    <h3 class="mr-auto pt-3 text-xs font-semibold text-white">Response
+                    </h3>
+                </div>
+                <div class="dark:bg-white/2.5 group">
+                    <div class="relative">
+                        <pre class="overflow-x-auto p-4 text-xs text-white"><pre><code class="language-json">{
+    "page": 1,
+    "limit": 1,
+    "total": 7,
+    "has_more": true,
+    "data": [
+        {
+            "id": "e41b93f1-7ca2-40fd-b3a8-999aeb499cc0",
+            "workflow_run": {
+                "id": "c0640fc8-03ef-4481-a96c-8a13b732a36e",
+                "version": "2024-08-01 12:17:09.771832",
+                "status": "succeeded",
+                "error": null,
+                "elapsed_time": 1.3588523610014818,
+                "total_tokens": 0,
+                "total_steps": 3,
+                "created_at": 1726139643,
+                "finished_at": 1726139644
+            },
+            "created_from": "service-api",
+            "created_by_role": "end_user",
+            "created_by_account": null,
+            "created_by_end_user": {
+                "id": "7f7d9117-dd9d-441d-8970-87e5e7e687a3",
+                "type": "service_api",
+                "is_anonymous": false,
+                "session_id": "abc-123"
+            },
+            "created_at": 1726139644
+        }
+    ]
+}
+</code></pre>
+                        </pre><button type="button"
+                            class="group/button absolute right-4 top-3.5 overflow-hidden rounded-full py-1 pl-2 pr-3 text-2xs font-medium opacity-0 backdrop-blur transition focus:opacity-100 group-hover:opacity-100 hover:bg-white/7.5 dark:bg-white/2.5 bg-white/5 dark:hover:bg-white/5"><span
+                                aria-hidden="false"
+                                class="pointer-events-none flex items-center gap-0.5 text-zinc-400 transition duration-300"><svg
+                                    viewBox="0 0 20 20" aria-hidden="true"
+                                    class="h-5 w-5 fill-zinc-500/20 stroke-zinc-500 transition-colors group-hover/button:stroke-zinc-400">
+                                    <path stroke-width="0"
+                                        d="M5.5 13.5v-5a2 2 0 0 1 2-2l.447-.894A2 2 0 0 1 9.737 4.5h.527a2 2 0 0 1 1.789 1.106l.447.894a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-5a2 2 0 0 1-2-2Z">
+                                    </path>
+                                    <path fill="none" stroke-linejoin="round"
+                                        d="M12.5 6.5a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-5a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2m5 0-.447-.894a2 2 0 0 0-1.79-1.106h-.527a2 2 0 0 0-1.789 1.106L7.5 6.5m5 0-1 1h-3l-1-1">
+                                    </path>
+                                </svg>Copy</span><span aria-hidden="true"
+                                class="pointer-events-none absolute inset-0 flex items-center justify-center text-emerald-400 transition duration-300 translate-y-1.5 opacity-0">Copied!</span></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr>
+    <span id="info" class="relative -top-28"></span>
+    <div class="flex items-center gap-x-3"><span
+            class="rounded-lg px-1.5 font-mono text-[0.625rem] font-semibold leading-6 ring-1 ring-inset ring-emerald-300 dark:ring-emerald-400/30 bg-emerald-400/10 text-emerald-500 dark:text-emerald-400">GET</span><span
+            class="font-mono text-xs text-zinc-400">/info</span></div>
+    <h2 class="mt-2 scroll-mt-32"><a href="http://localhost:8080/app/ee62021d-4c34-4965-8bc4-9a2b50b538a9/develop#info"
+            class="group text-inherit no-underline hover:text-inherit">获取应用基本信息</a></h2>
+    <div class="grid grid-cols-1 items-start gap-x-16 gap-y-10 xl:!max-w-none xl:grid-cols-2">
+        <div class="[&amp;&gt;:first-child]:mt-0 [&amp;&gt;:last-child]:mb-0">
+            <p>用于获取应用的基本信息</p>
+            <h3>Response</h3>
+            <ul>
+                <li><code>name</code> (string) 应用名称</li>
+                <li><code>description</code> (string) 应用描述</li>
+                <li><code>tags</code> (array[string]) 应用标签</li>
+                <li><code>mode</code> (string) 应用模式</li>
+                <li>'author_name' (string) 作者名称</li>
+            </ul>
+        </div>
+        <div class="[&amp;&gt;:first-child]:mt-0 [&amp;&gt;:last-child]:mb-0">
+            <div
+                class="not-prose my-6 overflow-hidden rounded-2xl bg-zinc-900 shadow-md dark:ring-1 dark:ring-white/10">
+                <div
+                    class="flex min-h-[calc(theme(spacing.12)+1px)] flex-wrap items-start gap-x-4 border-b border-zinc-700 bg-zinc-800 px-4 dark:border-zinc-800 dark:bg-transparent">
+                    <h3 class="mr-auto pt-3 text-xs font-semibold text-white">Request
+                    </h3>
+                </div>
+                <div class="dark:bg-white/2.5 group">
+                    <div
+                        class="border-b-white/7.5 bg-white/2.5 dark:bg-white/1 flex h-9 items-center gap-2 border-y border-t-transparent bg-zinc-900 px-4 dark:border-b-white/5">
+                        <div class="dark flex"><span
+                                class="font-mono text-[0.625rem] font-semibold leading-6 text-emerald-500 dark:text-emerald-400">GET</span>
+                        </div><span class="h-0.5 w-0.5 rounded-full bg-zinc-500"></span><span
+                            class="font-mono text-xs text-zinc-400">/info</span>
+                    </div>
+                    <div class="relative">
+                        <pre class="overflow-x-auto p-4 text-xs text-white">curl -X GET 'http://localhost/v1/info' \
+-H 'Authorization: Bearer {api_key}'</pre><button type="button"
+                            class="group/button absolute right-4 top-3.5 overflow-hidden rounded-full py-1 pl-2 pr-3 text-2xs font-medium opacity-0 backdrop-blur transition focus:opacity-100 group-hover:opacity-100 hover:bg-white/7.5 dark:bg-white/2.5 bg-white/5 dark:hover:bg-white/5"><span
+                                aria-hidden="false"
+                                class="pointer-events-none flex items-center gap-0.5 text-zinc-400 transition duration-300"><svg
+                                    viewBox="0 0 20 20" aria-hidden="true"
+                                    class="h-5 w-5 fill-zinc-500/20 stroke-zinc-500 transition-colors group-hover/button:stroke-zinc-400">
+                                    <path stroke-width="0"
+                                        d="M5.5 13.5v-5a2 2 0 0 1 2-2l.447-.894A2 2 0 0 1 9.737 4.5h.527a2 2 0 0 1 1.789 1.106l.447.894a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-5a2 2 0 0 1-2-2Z">
+                                    </path>
+                                    <path fill="none" stroke-linejoin="round"
+                                        d="M12.5 6.5a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-5a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2m5 0-.447-.894a2 2 0 0 0-1.79-1.106h-.527a2 2 0 0 0-1.789 1.106L7.5 6.5m5 0-1 1h-3l-1-1">
+                                    </path>
+                                </svg>Copy</span><span aria-hidden="true"
+                                class="pointer-events-none absolute inset-0 flex items-center justify-center text-emerald-400 transition duration-300 translate-y-1.5 opacity-0">Copied!</span></button>
+                    </div>
+                </div>
+            </div>
+            <div
+                class="not-prose my-6 overflow-hidden rounded-2xl bg-zinc-900 shadow-md dark:ring-1 dark:ring-white/10">
+                <div
+                    class="flex min-h-[calc(theme(spacing.12)+1px)] flex-wrap items-start gap-x-4 border-b border-zinc-700 bg-zinc-800 px-4 dark:border-zinc-800 dark:bg-transparent">
+                    <h3 class="mr-auto pt-3 text-xs font-semibold text-white">Response
+                    </h3>
+                </div>
+                <div class="dark:bg-white/2.5 group">
+                    <div class="relative">
+                        <pre class="overflow-x-auto p-4 text-xs text-white"><pre><code class="language-json">{
+  "name": "My App",
+  "description": "This is my app.",
+  "tags": [
+    "tag1",
+    "tag2"
+  ],
+  "mode": "workflow",
+  "author_name": "Dify"
+}
+</code></pre>
+                        </pre><button type="button"
+                            class="group/button absolute right-4 top-3.5 overflow-hidden rounded-full py-1 pl-2 pr-3 text-2xs font-medium opacity-0 backdrop-blur transition focus:opacity-100 group-hover:opacity-100 hover:bg-white/7.5 dark:bg-white/2.5 bg-white/5 dark:hover:bg-white/5"><span
+                                aria-hidden="false"
+                                class="pointer-events-none flex items-center gap-0.5 text-zinc-400 transition duration-300"><svg
+                                    viewBox="0 0 20 20" aria-hidden="true"
+                                    class="h-5 w-5 fill-zinc-500/20 stroke-zinc-500 transition-colors group-hover/button:stroke-zinc-400">
+                                    <path stroke-width="0"
+                                        d="M5.5 13.5v-5a2 2 0 0 1 2-2l.447-.894A2 2 0 0 1 9.737 4.5h.527a2 2 0 0 1 1.789 1.106l.447.894a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-5a2 2 0 0 1-2-2Z">
+                                    </path>
+                                    <path fill="none" stroke-linejoin="round"
+                                        d="M12.5 6.5a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-5a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2m5 0-.447-.894a2 2 0 0 0-1.79-1.106h-.527a2 2 0 0 0-1.789 1.106L7.5 6.5m5 0-1 1h-3l-1-1">
+                                    </path>
+                                </svg>Copy</span><span aria-hidden="true"
+                                class="pointer-events-none absolute inset-0 flex items-center justify-center text-emerald-400 transition duration-300 translate-y-1.5 opacity-0">Copied!</span></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr>
+    <span id="parameters" class="relative -top-28"></span>
+    <div class="flex items-center gap-x-3"><span
+            class="rounded-lg px-1.5 font-mono text-[0.625rem] font-semibold leading-6 ring-1 ring-inset ring-emerald-300 dark:ring-emerald-400/30 bg-emerald-400/10 text-emerald-500 dark:text-emerald-400">GET</span><span
+            class="font-mono text-xs text-zinc-400">/parameters</span></div>
+    <h2 class="mt-2 scroll-mt-32"><a
+            href="http://localhost:8080/app/ee62021d-4c34-4965-8bc4-9a2b50b538a9/develop#parameters"
+            class="group text-inherit no-underline hover:text-inherit">获取应用参数</a></h2>
+    <div class="grid grid-cols-1 items-start gap-x-16 gap-y-10 xl:!max-w-none xl:grid-cols-2">
+        <div class="[&amp;&gt;:first-child]:mt-0 [&amp;&gt;:last-child]:mb-0">
+            <p>用于进入页面一开始，获取功能开关、输入参数名称、类型及默认值等使用。</p>
+            <h3>Response</h3>
+            <ul>
+                <li><code>user_input_form</code> (array[object]) 用户输入表单配置
+                    <ul>
+                        <li><code>text-input</code> (object) 文本输入控件
+                            <ul>
+                                <li><code>label</code> (string) 控件展示标签名</li>
+                                <li><code>variable</code> (string) 控件 ID</li>
+                                <li><code>required</code> (bool) 是否必填</li>
+                                <li><code>default</code> (string) 默认值</li>
+                            </ul>
+                        </li>
+                        <li><code>paragraph</code> (object) 段落文本输入控件
+                            <ul>
+                                <li><code>label</code> (string) 控件展示标签名</li>
+                                <li><code>variable</code> (string) 控件 ID</li>
+                                <li><code>required</code> (bool) 是否必填</li>
+                                <li><code>default</code> (string) 默认值</li>
+                            </ul>
+                        </li>
+                        <li><code>select</code> (object) 下拉控件
+                            <ul>
+                                <li><code>label</code> (string) 控件展示标签名</li>
+                                <li><code>variable</code> (string) 控件 ID</li>
+                                <li><code>required</code> (bool) 是否必填</li>
+                                <li><code>default</code> (string) 默认值</li>
+                                <li><code>options</code> (array[string]) 选项值</li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li><code>file_upload</code> (object) 文件上传配置
+                    <ul>
+                        <li><code>document</code> (object) 文档设置<br>
+                            当前仅支持文档类型：<code>txt</code>, <code>md</code>,
+                            <code>markdown</code>, <code>pdf</code>, <code>html</code>,
+                            <code>xlsx</code>, <code>xls</code>, <code>docx</code>,
+                            <code>csv</code>, <code>eml</code>, <code>msg</code>,
+                            <code>pptx</code>, <code>ppt</code>, <code>xml</code>,
+                            <code>epub</code>。
+                            <ul>
+                                <li><code>enabled</code> (bool) 是否启用</li>
+                                <li><code>number_limits</code> (int) 文档数量限制，默认为 3</li>
+                                <li><code>transfer_methods</code> (array[string])
+                                    传输方式列表：<code>remote_url</code>,
+                                    <code>local_file</code>，必须选择一个。
+                                </li>
+                            </ul>
+                        </li>
+                        <li><code>image</code> (object) 图片设置<br>
+                            当前仅支持图片类型：<code>png</code>, <code>jpg</code>,
+                            <code>jpeg</code>, <code>webp</code>, <code>gif</code>。
+                            <ul>
+                                <li><code>enabled</code> (bool) 是否启用</li>
+                                <li><code>number_limits</code> (int) 图片数量限制，默认为 3</li>
+                                <li><code>transfer_methods</code> (array[string])
+                                    传输方式列表：<code>remote_url</code>,
+                                    <code>local_file</code>，必须选择一个。
+                                </li>
+                            </ul>
+                        </li>
+                        <li><code>audio</code> (object) 音频设置<br>
+                            当前仅支持音频类型：<code>mp3</code>, <code>m4a</code>,
+                            <code>wav</code>, <code>webm</code>, <code>amr</code>。
+                            <ul>
+                                <li><code>enabled</code> (bool) 是否启用</li>
+                                <li><code>number_limits</code> (int) 音频数量限制，默认为 3</li>
+                                <li><code>transfer_methods</code> (array[string])
+                                    传输方式列表：<code>remote_url</code>,
+                                    <code>local_file</code>，必须选择一个。
+                                </li>
+                            </ul>
+                        </li>
+                        <li><code>video</code> (object) 视频设置<br>
+                            当前仅支持视频类型：<code>mp4</code>, <code>mov</code>,
+                            <code>mpeg</code>, <code>mpga</code>。
+                            <ul>
+                                <li><code>enabled</code> (bool) 是否启用</li>
+                                <li><code>number_limits</code> (int) 视频数量限制，默认为 3</li>
+                                <li><code>transfer_methods</code> (array[string])
+                                    传输方式列表：<code>remote_url</code>,
+                                    <code>local_file</code>，必须选择一个。
+                                </li>
+                            </ul>
+                        </li>
+                        <li><code>custom</code> (object) 自定义设置
+                            <ul>
+                                <li><code>enabled</code> (bool) 是否启用</li>
+                                <li><code>number_limits</code> (int) 自定义数量限制，默认为 3</li>
+                                <li><code>transfer_methods</code> (array[string])
+                                    传输方式列表：<code>remote_url</code>,
+                                    <code>local_file</code>，必须选择一个。
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
+                <li><code>system_parameters</code> (object) 系统参数
+                    <ul>
+                        <li><code>file_size_limit</code> (int) 文档上传大小限制 (MB)</li>
+                        <li><code>image_file_size_limit</code> (int) 图片文件上传大小限制（MB）</li>
+                        <li><code>audio_file_size_limit</code> (int) 音频文件上传大小限制 (MB)
+                        </li>
+                        <li><code>video_file_size_limit</code> (int) 视频文件上传大小限制 (MB)
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+        <div class="[&amp;&gt;:first-child]:mt-0 [&amp;&gt;:last-child]:mb-0 xl:sticky xl:top-24">
+            <div
+                class="not-prose my-6 overflow-hidden rounded-2xl bg-zinc-900 shadow-md dark:ring-1 dark:ring-white/10">
+                <div
+                    class="flex min-h-[calc(theme(spacing.12)+1px)] flex-wrap items-start gap-x-4 border-b border-zinc-700 bg-zinc-800 px-4 dark:border-zinc-800 dark:bg-transparent">
+                    <h3 class="mr-auto pt-3 text-xs font-semibold text-white">Request
+                    </h3>
+                </div>
+                <div class="dark:bg-white/2.5 group">
+                    <div
+                        class="border-b-white/7.5 bg-white/2.5 dark:bg-white/1 flex h-9 items-center gap-2 border-y border-t-transparent bg-zinc-900 px-4 dark:border-b-white/5">
+                        <div class="dark flex"><span
+                                class="font-mono text-[0.625rem] font-semibold leading-6 text-emerald-500 dark:text-emerald-400">GET</span>
+                        </div><span class="h-0.5 w-0.5 rounded-full bg-zinc-500"></span><span
+                            class="font-mono text-xs text-zinc-400">/parameters</span>
+                    </div>
+                    <div class="relative">
+                        <pre
+                            class="overflow-x-auto p-4 text-xs text-white"> curl -X GET 'http://localhost/v1/parameters'</pre>
+                        <button type="button"
+                            class="group/button absolute right-4 top-3.5 overflow-hidden rounded-full py-1 pl-2 pr-3 text-2xs font-medium opacity-0 backdrop-blur transition focus:opacity-100 group-hover:opacity-100 hover:bg-white/7.5 dark:bg-white/2.5 bg-white/5 dark:hover:bg-white/5"><span
+                                aria-hidden="false"
+                                class="pointer-events-none flex items-center gap-0.5 text-zinc-400 transition duration-300"><svg
+                                    viewBox="0 0 20 20" aria-hidden="true"
+                                    class="h-5 w-5 fill-zinc-500/20 stroke-zinc-500 transition-colors group-hover/button:stroke-zinc-400">
+                                    <path stroke-width="0"
+                                        d="M5.5 13.5v-5a2 2 0 0 1 2-2l.447-.894A2 2 0 0 1 9.737 4.5h.527a2 2 0 0 1 1.789 1.106l.447.894a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-5a2 2 0 0 1-2-2Z">
+                                    </path>
+                                    <path fill="none" stroke-linejoin="round"
+                                        d="M12.5 6.5a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-5a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2m5 0-.447-.894a2 2 0 0 0-1.79-1.106h-.527a2 2 0 0 0-1.789 1.106L7.5 6.5m5 0-1 1h-3l-1-1">
+                                    </path>
+                                </svg>Copy</span><span aria-hidden="true"
+                                class="pointer-events-none absolute inset-0 flex items-center justify-center text-emerald-400 transition duration-300 translate-y-1.5 opacity-0">Copied!</span></button>
+                    </div>
+                </div>
+            </div>
+            <div
+                class="not-prose my-6 overflow-hidden rounded-2xl bg-zinc-900 shadow-md dark:ring-1 dark:ring-white/10">
+                <div
+                    class="flex min-h-[calc(theme(spacing.12)+1px)] flex-wrap items-start gap-x-4 border-b border-zinc-700 bg-zinc-800 px-4 dark:border-zinc-800 dark:bg-transparent">
+                    <h3 class="mr-auto pt-3 text-xs font-semibold text-white">Response
+                    </h3>
+                </div>
+                <div class="dark:bg-white/2.5 group">
+                    <div class="relative">
+                        <pre class="overflow-x-auto p-4 text-xs text-white"><pre><code class="language-json">{
+  "user_input_form": [
+      {
+          "paragraph": {
+              "label": "Query",
+              "variable": "query",
+              "required": true,
+              "default": ""
+          }
+      }
+  ],
+  "file_upload": {
+      "image": {
+          "enabled": false,
+          "number_limits": 3,
+          "detail": "high",
+          "transfer_methods": [
+              "remote_url",
+              "local_file"
+          ]
+      }
+  },
+  "system_parameters": {
+      "file_size_limit": 15,
+      "image_file_size_limit": 10,
+      "audio_file_size_limit": 50,
+      "video_file_size_limit": 100
+  }
+}
+</code></pre>
+                        </pre><button type="button"
+                            class="group/button absolute right-4 top-3.5 overflow-hidden rounded-full py-1 pl-2 pr-3 text-2xs font-medium opacity-0 backdrop-blur transition focus:opacity-100 group-hover:opacity-100 hover:bg-white/7.5 dark:bg-white/2.5 bg-white/5 dark:hover:bg-white/5"><span
+                                aria-hidden="false"
+                                class="pointer-events-none flex items-center gap-0.5 text-zinc-400 transition duration-300"><svg
+                                    viewBox="0 0 20 20" aria-hidden="true"
+                                    class="h-5 w-5 fill-zinc-500/20 stroke-zinc-500 transition-colors group-hover/button:stroke-zinc-400">
+                                    <path stroke-width="0"
+                                        d="M5.5 13.5v-5a2 2 0 0 1 2-2l.447-.894A2 2 0 0 1 9.737 4.5h.527a2 2 0 0 1 1.789 1.106l.447.894a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-5a2 2 0 0 1-2-2Z">
+                                    </path>
+                                    <path fill="none" stroke-linejoin="round"
+                                        d="M12.5 6.5a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-5a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2m5 0-.447-.894a2 2 0 0 0-1.79-1.106h-.527a2 2 0 0 0-1.789 1.106L7.5 6.5m5 0-1 1h-3l-1-1">
+                                    </path>
+                                </svg>Copy</span><span aria-hidden="true"
+                                class="pointer-events-none absolute inset-0 flex items-center justify-center text-emerald-400 transition duration-300 translate-y-1.5 opacity-0">Copied!</span></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr>
+    <span id="site" class="relative -top-28"></span>
+    <div class="flex items-center gap-x-3"><span
+            class="rounded-lg px-1.5 font-mono text-[0.625rem] font-semibold leading-6 ring-1 ring-inset ring-emerald-300 dark:ring-emerald-400/30 bg-emerald-400/10 text-emerald-500 dark:text-emerald-400">GET</span><span
+            class="font-mono text-xs text-zinc-400">/site</span></div>
+    <h2 class="mt-2 scroll-mt-32"><a href="http://localhost:8080/app/ee62021d-4c34-4965-8bc4-9a2b50b538a9/develop#site"
+            class="group text-inherit no-underline hover:text-inherit">获取应用 WebApp
+            设置</a></h2>
+    <div class="grid grid-cols-1 items-start gap-x-16 gap-y-10 xl:!max-w-none xl:grid-cols-2">
+        <div class="[&amp;&gt;:first-child]:mt-0 [&amp;&gt;:last-child]:mb-0">
+            <p>用于获取应用的 WebApp 设置</p>
+            <h3>Response</h3>
+            <ul>
+                <li><code>title</code> (string) WebApp 名称</li>
+                <li><code>icon_type</code> (string)
+                    图标类型，<code>emoji</code>-表情，<code>image</code>-图片</li>
+                <li><code>icon</code> (string) 图标，如果是 <code>emoji</code> 类型，则是 emoji
+                    表情符号，如果是 <code>image</code> 类型，则是图片 URL</li>
+                <li><code>icon_background</code> (string) hex 格式的背景色</li>
+                <li><code>icon_url</code> (string) 图标 URL</li>
+                <li><code>description</code> (string) 描述</li>
+                <li><code>copyright</code> (string) 版权信息</li>
+                <li><code>privacy_policy</code> (string) 隐私政策链接</li>
+                <li><code>custom_disclaimer</code> (string) 自定义免责声明</li>
+                <li><code>default_language</code> (string) 默认语言</li>
+                <li><code>show_workflow_steps</code> (bool) 是否显示工作流详情</li>
+            </ul>
+        </div>
+        <div class="[&amp;&gt;:first-child]:mt-0 [&amp;&gt;:last-child]:mb-0">
+            <div
+                class="not-prose my-6 overflow-hidden rounded-2xl bg-zinc-900 shadow-md dark:ring-1 dark:ring-white/10">
+                <div
+                    class="flex min-h-[calc(theme(spacing.12)+1px)] flex-wrap items-start gap-x-4 border-b border-zinc-700 bg-zinc-800 px-4 dark:border-zinc-800 dark:bg-transparent">
+                    <h3 class="mr-auto pt-3 text-xs font-semibold text-white">Request
+                    </h3>
+                </div>
+                <div class="dark:bg-white/2.5 group">
+                    <div
+                        class="border-b-white/7.5 bg-white/2.5 dark:bg-white/1 flex h-9 items-center gap-2 border-y border-t-transparent bg-zinc-900 px-4 dark:border-b-white/5">
+                        <div class="dark flex"><span
+                                class="font-mono text-[0.625rem] font-semibold leading-6 text-sky-500">POST</span>
+                        </div><span class="h-0.5 w-0.5 rounded-full bg-zinc-500"></span><span
+                            class="font-mono text-xs text-zinc-400">/meta</span>
+                    </div>
+                    <div class="relative">
+                        <pre class="overflow-x-auto p-4 text-xs text-white">curl -X GET 'http://localhost/v1/site' \
+-H 'Authorization: Bearer {api_key}'</pre><button type="button"
+                            class="group/button absolute right-4 top-3.5 overflow-hidden rounded-full py-1 pl-2 pr-3 text-2xs font-medium opacity-0 backdrop-blur transition focus:opacity-100 group-hover:opacity-100 hover:bg-white/7.5 dark:bg-white/2.5 bg-white/5 dark:hover:bg-white/5"><span
+                                aria-hidden="false"
+                                class="pointer-events-none flex items-center gap-0.5 text-zinc-400 transition duration-300"><svg
+                                    viewBox="0 0 20 20" aria-hidden="true"
+                                    class="h-5 w-5 fill-zinc-500/20 stroke-zinc-500 transition-colors group-hover/button:stroke-zinc-400">
+                                    <path stroke-width="0"
+                                        d="M5.5 13.5v-5a2 2 0 0 1 2-2l.447-.894A2 2 0 0 1 9.737 4.5h.527a2 2 0 0 1 1.789 1.106l.447.894a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-5a2 2 0 0 1-2-2Z">
+                                    </path>
+                                    <path fill="none" stroke-linejoin="round"
+                                        d="M12.5 6.5a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-5a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2m5 0-.447-.894a2 2 0 0 0-1.79-1.106h-.527a2 2 0 0 0-1.789 1.106L7.5 6.5m5 0-1 1h-3l-1-1">
+                                    </path>
+                                </svg>Copy</span><span aria-hidden="true"
+                                class="pointer-events-none absolute inset-0 flex items-center justify-center text-emerald-400 transition duration-300 translate-y-1.5 opacity-0">Copied!</span></button>
+                    </div>
+                </div>
+            </div>
+            <div
+                class="not-prose my-6 overflow-hidden rounded-2xl bg-zinc-900 shadow-md dark:ring-1 dark:ring-white/10">
+                <div
+                    class="flex min-h-[calc(theme(spacing.12)+1px)] flex-wrap items-start gap-x-4 border-b border-zinc-700 bg-zinc-800 px-4 dark:border-zinc-800 dark:bg-transparent">
+                    <h3 class="mr-auto pt-3 text-xs font-semibold text-white">Response
+                    </h3>
+                </div>
+                <div class="dark:bg-white/2.5 group">
+                    <div class="relative">
+                        <pre class="overflow-x-auto p-4 text-xs text-white"><pre><code class="language-json">{
+  "title": "My App",
+  "icon_type": "emoji",
+  "icon": "😄",
+  "icon_background": "#FFEAD5",
+  "icon_url": null,
+  "description": "This is my app.",
+  "copyright": "all rights reserved",
+  "privacy_policy": "",
+  "custom_disclaimer": "All generated by AI",
+  "default_language": "en-US",
+  "show_workflow_steps": false,
+}
+</code></pre>
+                        </pre><button type="button"
+                            class="group/button absolute right-4 top-3.5 overflow-hidden rounded-full py-1 pl-2 pr-3 text-2xs font-medium opacity-0 backdrop-blur transition focus:opacity-100 group-hover:opacity-100 hover:bg-white/7.5 dark:bg-white/2.5 bg-white/5 dark:hover:bg-white/5"><span
+                                aria-hidden="false"
+                                class="pointer-events-none flex items-center gap-0.5 text-zinc-400 transition duration-300"><svg
+                                    viewBox="0 0 20 20" aria-hidden="true"
+                                    class="h-5 w-5 fill-zinc-500/20 stroke-zinc-500 transition-colors group-hover/button:stroke-zinc-400">
+                                    <path stroke-width="0"
+                                        d="M5.5 13.5v-5a2 2 0 0 1 2-2l.447-.894A2 2 0 0 1 9.737 4.5h.527a2 2 0 0 1 1.789 1.106l.447.894a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-5a2 2 0 0 1-2-2Z">
+                                    </path>
+                                    <path fill="none" stroke-linejoin="round"
+                                        d="M12.5 6.5a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-5a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2m5 0-.447-.894a2 2 0 0 0-1.79-1.106h-.527a2 2 0 0 0-1.789 1.106L7.5 6.5m5 0-1 1h-3l-1-1">
+                                    </path>
+                                </svg>Copy</span><span aria-hidden="true"
+                                class="pointer-events-none absolute inset-0 flex items-center justify-center text-emerald-400 transition duration-300 translate-y-1.5 opacity-0">Copied!</span></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr>
+</article>

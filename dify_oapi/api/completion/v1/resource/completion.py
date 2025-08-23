@@ -1,4 +1,4 @@
-from collections.abc import AsyncIterator, Iterator
+from collections.abc import AsyncGenerator, Generator
 from typing import Literal, overload
 
 from dify_oapi.core.http.transport import ATransport, Transport
@@ -21,7 +21,7 @@ class Completion:
         request: SendMessageRequest,
         request_option: RequestOption,
         stream: Literal[True],
-    ) -> Iterator[str]: ...
+    ) -> Generator[bytes, None, None]: ...
 
     @overload
     def send_message(
@@ -36,7 +36,7 @@ class Completion:
         request: SendMessageRequest,
         request_option: RequestOption,
         stream: bool = False,
-    ) -> SendMessageResponse | Iterator[str]:
+    ) -> SendMessageResponse | Generator[bytes, None, None]:
         if stream:
             return Transport.execute(self.config, request, stream=True, option=request_option)
         return Transport.execute(self.config, request, unmarshal_as=SendMessageResponse, option=request_option)
@@ -47,7 +47,7 @@ class Completion:
         request: SendMessageRequest,
         request_option: RequestOption,
         stream: Literal[True],
-    ) -> AsyncIterator[str]: ...
+    ) -> AsyncGenerator[bytes, None]: ...
 
     @overload
     async def asend_message(
@@ -62,7 +62,7 @@ class Completion:
         request: SendMessageRequest,
         request_option: RequestOption,
         stream: bool = False,
-    ) -> SendMessageResponse | AsyncIterator[str]:
+    ) -> SendMessageResponse | AsyncGenerator[bytes, None]:
         if stream:
             return await ATransport.aexecute(self.config, request, stream=True, option=request_option)
         return await ATransport.aexecute(self.config, request, unmarshal_as=SendMessageResponse, option=request_option)

@@ -544,3 +544,77 @@ def test_feedback_info_serialization() -> None:
     assert data["from_end_user_id"] is None
     assert data["from_account_id"] is None
     assert data["created_at"] is None
+
+
+# ===== AUDIO API MODELS TESTS =====
+
+
+def test_audio_info_builder_pattern() -> None:
+    """Test AudioInfo builder pattern."""
+    from dify_oapi.api.completion.v1.model.audio.audio_info import AudioInfo
+
+    audio_info = AudioInfo.builder().content_type("audio/wav").data(b"audio data").build()
+
+    assert audio_info.content_type == "audio/wav"
+    assert audio_info.data == b"audio data"
+
+
+def test_text_to_audio_request_builder() -> None:
+    """Test TextToAudioRequest builder pattern."""
+    from dify_oapi.api.completion.v1.model.audio.text_to_audio_request import TextToAudioRequest
+    from dify_oapi.api.completion.v1.model.audio.text_to_audio_request_body import TextToAudioRequestBody
+    from dify_oapi.core.enum import HttpMethod
+
+    request_body = TextToAudioRequestBody.builder().text("Hello world").user("test-user").build()
+
+    request = TextToAudioRequest.builder().request_body(request_body).build()
+
+    assert request.http_method == HttpMethod.POST
+    assert request.uri == "/v1/text-to-audio"
+    assert request.request_body == request_body
+    assert request.body is not None
+
+
+def test_text_to_audio_request_body_validation() -> None:
+    """Test TextToAudioRequestBody validation and builder."""
+    from dify_oapi.api.completion.v1.model.audio.text_to_audio_request_body import TextToAudioRequestBody
+
+    # Test with text
+    request_body = TextToAudioRequestBody.builder().text("Convert this to audio").user("user-123").build()
+
+    assert request_body.text == "Convert this to audio"
+    assert request_body.user == "user-123"
+    assert request_body.message_id is None
+
+    # Test with message_id
+    request_body_msg = TextToAudioRequestBody.builder().message_id("message-456").user("user-123").build()
+
+    assert request_body_msg.message_id == "message-456"
+    assert request_body_msg.user == "user-123"
+    assert request_body_msg.text is None
+
+
+def test_text_to_audio_response_model() -> None:
+    """Test TextToAudioResponse model."""
+    from dify_oapi.api.completion.v1.model.audio.text_to_audio_response import TextToAudioResponse
+
+    response = TextToAudioResponse(content_type="audio/wav", data=b"audio binary data")
+
+    assert response.content_type == "audio/wav"
+    assert response.data == b"audio binary data"
+    # Test BaseResponse inheritance
+    assert hasattr(response, "success")
+    assert hasattr(response, "code")
+    assert hasattr(response, "msg")
+
+
+def test_audio_info_serialization() -> None:
+    """Test AudioInfo serialization."""
+    from dify_oapi.api.completion.v1.model.audio.audio_info import AudioInfo
+
+    audio_info = AudioInfo.builder().content_type("audio/wav").data(b"test audio").build()
+
+    data = audio_info.model_dump()
+
+    assert data["content_type"] == "audio/wav"
+    assert data["data"] == b"test audio"

@@ -179,11 +179,13 @@ def test_nested_model_relationships() -> None:
 
 def test_send_message_request_builder() -> None:
     """Test SendMessageRequest builder pattern."""
+    from dify_oapi.api.completion.v1.model.completion.completion_inputs import CompletionInputs
     from dify_oapi.api.completion.v1.model.completion.send_message_request import SendMessageRequest
     from dify_oapi.api.completion.v1.model.completion.send_message_request_body import SendMessageRequestBody
     from dify_oapi.core.enum import HttpMethod
 
-    request_body = SendMessageRequestBody.builder().query("test query").user("test-user").build()
+    inputs = CompletionInputs.builder().query("test query").build()
+    request_body = SendMessageRequestBody.builder().inputs(inputs).user("test-user").build()
 
     request = SendMessageRequest.builder().request_body(request_body).build()
 
@@ -195,24 +197,25 @@ def test_send_message_request_builder() -> None:
 
 def test_send_message_request_body_validation() -> None:
     """Test SendMessageRequestBody validation and builder."""
+    from dify_oapi.api.completion.v1.model.completion.completion_inputs import CompletionInputs
     from dify_oapi.api.completion.v1.model.completion.send_message_request_body import FileInfo, SendMessageRequestBody
 
     file_info = (
         FileInfo.builder().type("image").transfer_method("remote_url").url("https://example.com/image.jpg").build()
     )
 
+    inputs = CompletionInputs.builder().query("What is AI?").build()
     request_body = (
         SendMessageRequestBody.builder()
-        .inputs({"key": "value"})
-        .query("What is AI?")
+        .inputs(inputs)
         .response_mode("blocking")
         .user("user-123")
         .files([file_info])
         .build()
     )
 
-    assert request_body.inputs == {"key": "value"}
-    assert request_body.query == "What is AI?"
+    assert request_body.inputs == inputs
+    assert request_body.inputs.query == "What is AI?"
     assert request_body.response_mode == "blocking"
     assert request_body.user == "user-123"
     assert request_body.files == [file_info]

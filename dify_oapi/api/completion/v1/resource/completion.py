@@ -38,7 +38,7 @@ class Completion:
         stream: bool = False,
     ) -> SendMessageResponse | Iterator[str]:
         if stream:
-            return Transport.stream(self.config, request, option=request_option)
+            return Transport.execute(self.config, request, stream=True, option=request_option)
         return Transport.execute(self.config, request, unmarshal_as=SendMessageResponse, option=request_option)
 
     @overload
@@ -64,7 +64,7 @@ class Completion:
         stream: bool = False,
     ) -> SendMessageResponse | AsyncIterator[str]:
         if stream:
-            return ATransport.astream(self.config, request, option=request_option)
+            return await ATransport.aexecute(self.config, request, stream=True, option=request_option)
         return await ATransport.aexecute(self.config, request, unmarshal_as=SendMessageResponse, option=request_option)
 
     def stop_response(self, request: StopResponseRequest, request_option: RequestOption) -> StopResponseResponse:

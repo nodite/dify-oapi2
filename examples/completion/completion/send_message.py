@@ -3,6 +3,7 @@
 import asyncio
 import os
 
+from dify_oapi.api.completion.v1.model.completion.completion_inputs import CompletionInputs
 from dify_oapi.api.completion.v1.model.completion.send_message_request import SendMessageRequest
 from dify_oapi.api.completion.v1.model.completion.send_message_request_body import SendMessageRequestBody
 from dify_oapi.client import Client
@@ -20,14 +21,8 @@ def send_message_sync() -> None:
         req_option = RequestOption.builder().api_key(api_key).build()
 
         # Send completion message
-        req_body = (
-            SendMessageRequestBody.builder()
-            .inputs({})
-            .query("[Example] What is artificial intelligence?")
-            .response_mode("blocking")
-            .user("user-123")
-            .build()
-        )
+        inputs = CompletionInputs.builder().query("[Example] What is artificial intelligence?").build()
+        req_body = SendMessageRequestBody.builder().inputs(inputs).response_mode("blocking").user("user-123").build()
 
         req = SendMessageRequest.builder().request_body(req_body).build()
         response = client.completion.v1.completion.send_message(req, req_option, False)
@@ -52,14 +47,8 @@ async def send_message_async() -> None:
         req_option = RequestOption.builder().api_key(api_key).build()
 
         # Send completion message
-        req_body = (
-            SendMessageRequestBody.builder()
-            .inputs({})
-            .query("[Example] Explain machine learning in simple terms")
-            .response_mode("blocking")
-            .user("user-123")
-            .build()
-        )
+        inputs = CompletionInputs.builder().query("[Example] Explain machine learning in simple terms").build()
+        req_body = SendMessageRequestBody.builder().inputs(inputs).response_mode("blocking").user("user-123").build()
 
         req = SendMessageRequest.builder().request_body(req_body).build()
         response = await client.completion.v1.completion.asend_message(req, req_option, False)
@@ -84,14 +73,8 @@ def send_message_streaming_sync() -> None:
         req_option = RequestOption.builder().api_key(api_key).build()
 
         # Send streaming completion message
-        req_body = (
-            SendMessageRequestBody.builder()
-            .inputs({})
-            .query("[Example] Write a short story about AI")
-            .response_mode("streaming")
-            .user("user-123")
-            .build()
-        )
+        inputs = CompletionInputs.builder().query("[Example] Write a short story about AI").build()
+        req_body = SendMessageRequestBody.builder().inputs(inputs).response_mode("streaming").user("user-123").build()
 
         req = SendMessageRequest.builder().request_body(req_body).build()
         response = client.completion.v1.completion.send_message(req, req_option, True)
@@ -116,14 +99,8 @@ async def send_message_streaming_async() -> None:
         req_option = RequestOption.builder().api_key(api_key).build()
 
         # Send streaming completion message
-        req_body = (
-            SendMessageRequestBody.builder()
-            .inputs({})
-            .query("[Example] Describe the future of technology")
-            .response_mode("streaming")
-            .user("user-123")
-            .build()
-        )
+        inputs = CompletionInputs.builder().query("[Example] Describe the future of technology").build()
+        req_body = SendMessageRequestBody.builder().inputs(inputs).response_mode("streaming").user("user-123").build()
 
         req = SendMessageRequest.builder().request_body(req_body).build()
         response = await client.completion.v1.completion.asend_message(req, req_option, True)

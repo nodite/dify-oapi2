@@ -1,9 +1,8 @@
 from __future__ import annotations
 
-from typing import Literal
-
 from pydantic import BaseModel
 
+from .document_types import DocumentForm, DocumentLanguage, IndexingTechnique
 from .process_rule import ProcessRule
 from .retrieval_model import RetrievalModel
 
@@ -13,9 +12,9 @@ class CreateByTextRequestBody(BaseModel):
 
     name: str | None = None
     text: str | None = None
-    indexing_technique: str | None = None
-    doc_form: str | None = None
-    doc_language: str | None = None
+    indexing_technique: IndexingTechnique | None = None
+    doc_form: DocumentForm | None = None
+    doc_language: DocumentLanguage | None = None
     process_rule: ProcessRule | None = None
     retrieval_model: RetrievalModel | None = None
     embedding_model: str | None = None
@@ -47,19 +46,15 @@ class CreateByTextRequestBodyBuilder:
         self._create_by_text_request_body.text = text
         return self
 
-    def indexing_technique(
-        self, indexing_technique: Literal["high_quality", "economy"]
-    ) -> CreateByTextRequestBodyBuilder:
+    def indexing_technique(self, indexing_technique: IndexingTechnique) -> CreateByTextRequestBodyBuilder:
         self._create_by_text_request_body.indexing_technique = indexing_technique
         return self
 
-    def doc_form(
-        self, doc_form: Literal["text_model", "hierarchical_model", "qa_model"]
-    ) -> CreateByTextRequestBodyBuilder:
+    def doc_form(self, doc_form: DocumentForm) -> CreateByTextRequestBodyBuilder:
         self._create_by_text_request_body.doc_form = doc_form
         return self
 
-    def doc_language(self, doc_language: str) -> CreateByTextRequestBodyBuilder:
+    def doc_language(self, doc_language: DocumentLanguage) -> CreateByTextRequestBodyBuilder:
         self._create_by_text_request_body.doc_language = doc_language
         return self
 

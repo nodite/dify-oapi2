@@ -211,7 +211,94 @@ class UploadFileRequest(BaseRequest):
 - Response classes MUST NOT have Builder patterns (unlike Request classes)
 - **CRITICAL**: NEVER inherit from `pydantic.BaseModel` directly - ALWAYS use `BaseResponse`
 
-### 8. Public Class Builder Pattern Rules (MANDATORY)
+### 8. Strict Type Safety Rules (MANDATORY - ZERO TOLERANCE)
+**Decision**: ALL API fields MUST use strict typing with Literal types instead of generic strings
+
+**MANDATORY RULE**: Every field that has predefined values MUST use Literal types for type safety
+- **Rationale**: Ensures compile-time validation and prevents invalid values
+- **Implementation**: Use `from typing import Literal` and define type aliases
+- **Zero Exceptions**: No field with predefined values may use generic `str` type
+- **Validation**: IDE and type checkers will catch invalid values at development time
+
+**Strict Type Implementation Pattern**:
+```python
+# completion_types.py - Define all Literal types
+from typing import Literal
+
+# Response mode types
+ResponseMode = Literal["streaming", "blocking"]
+
+# File types
+FileType = Literal["image"]
+
+# Transfer method types
+TransferMethod = Literal["remote_url", "local_file"]
+
+# Feedback rating types
+FeedbackRating = Literal["like", "dislike", "null"]
+
+# Annotation action types
+AnnotationAction = Literal["enable", "disable"]
+
+# Icon types
+IconType = Literal["emoji", "image"]
+
+# App mode types
+AppMode = Literal["completion"]
+
+# Job status types
+JobStatus = Literal["waiting", "running", "completed", "failed"]
+```
+
+**Model Usage Pattern**:
+```python
+# Use Literal types in models
+from .completion_types import ResponseMode, FileType
+
+class SendMessageRequestBody(BaseModel):
+    response_mode: ResponseMode | None = None
+    # NOT: response_mode: str | None = None
+```
+
+**Structured Input Objects (MANDATORY)**:
+- Replace generic `dict[str, Any]` with structured classes
+- Create dedicated input classes with builder patterns
+- Provide type safety for complex nested objects
+
+**Example - Structured Inputs**:
+```python
+# completion_inputs.py
+class CompletionInputs(BaseModel):
+    query: str | None = None  # Required for completion apps
+    
+    @staticmethod
+    def builder() -> CompletionInputsBuilder:
+        return CompletionInputsBuilder()
+
+# Usage in RequestBody
+class SendMessageRequestBody(BaseModel):
+    inputs: CompletionInputs | None = None
+    # NOT: inputs: dict[str, Any] | None = None
+```
+
+**Strict Type Coverage**:
+- **Response Modes**: `"streaming"` | `"blocking"`
+- **File Types**: `"image"`
+- **Transfer Methods**: `"remote_url"` | `"local_file"`
+- **Feedback Ratings**: `"like"` | `"dislike"` | `"null"`
+- **Annotation Actions**: `"enable"` | `"disable"`
+- **Icon Types**: `"emoji"` | `"image"`
+- **App Modes**: `"completion"`
+- **Job Status**: `"waiting"` | `"running"` | `"completed"` | `"failed"`
+
+**Benefits of Strict Typing**:
+- **Compile-time Validation**: Catch invalid values during development
+- **IDE Support**: Auto-completion and error highlighting
+- **Documentation**: Self-documenting code with clear valid values
+- **Refactoring Safety**: Type-safe refactoring across the codebase
+- **API Consistency**: Ensures consistent usage of predefined values
+
+### 9. Public Class Builder Pattern Rules (MANDATORY)
 **Decision**: All public classes MUST implement builder patterns for consistency and usability
 
 #### Builder Pattern Implementation Requirements
@@ -247,7 +334,7 @@ class PublicClassBuilder:
         return self
 ```
 
-### 9. Model File Organization
+### 10. Model File Organization
 **Decision**: Organize models by resource grouping with shared common models
 
 ```

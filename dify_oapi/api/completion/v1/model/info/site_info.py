@@ -2,12 +2,14 @@ from __future__ import annotations
 
 from pydantic import BaseModel
 
+from ..completion.completion_types import IconType
+
 
 class SiteInfo(BaseModel):
     title: str | None = None
     chat_color_theme: str | None = None
     chat_color_theme_inverted: bool | None = None
-    icon_type: str | None = None
+    icon_type: IconType | None = None
     icon: str | None = None
     icon_background: str | None = None
     icon_url: str | None = None
@@ -43,7 +45,7 @@ class SiteInfoBuilder:
         self._site_info.chat_color_theme_inverted = chat_color_theme_inverted
         return self
 
-    def icon_type(self, icon_type: str) -> SiteInfoBuilder:
+    def icon_type(self, icon_type: IconType) -> SiteInfoBuilder:
         self._site_info.icon_type = icon_type
         return self
 

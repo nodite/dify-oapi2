@@ -3,11 +3,13 @@ from __future__ import annotations
 from dify_oapi.core.enum import HttpMethod
 from dify_oapi.core.model.base_request import BaseRequest
 
+from ..completion.completion_types import AnnotationAction
+
 
 class QueryAnnotationReplyStatusRequest(BaseRequest):
     def __init__(self):
         super().__init__()
-        self.action: str | None = None
+        self.action: AnnotationAction | None = None
         self.job_id: str | None = None
 
     @staticmethod
@@ -25,7 +27,7 @@ class QueryAnnotationReplyStatusRequestBuilder:
     def build(self) -> QueryAnnotationReplyStatusRequest:
         return self._query_annotation_reply_status_request
 
-    def action(self, action: str) -> QueryAnnotationReplyStatusRequestBuilder:
+    def action(self, action: AnnotationAction) -> QueryAnnotationReplyStatusRequestBuilder:
         self._query_annotation_reply_status_request.action = action
         self._query_annotation_reply_status_request.paths["action"] = action
         return self

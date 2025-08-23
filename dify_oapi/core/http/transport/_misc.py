@@ -48,8 +48,15 @@ def _merge_dicts(*dicts: dict | None) -> dict:
 def _create_no_content_response(unmarshal_as: type[T]) -> T:
     """Create response for 204 No Content status."""
     try:
-        if hasattr(unmarshal_as, "__annotations__") and "result" in unmarshal_as.__annotations__:
-            return unmarshal_as(result="success")
+        # Check if the model has a 'result' field in its annotations
+        annotations = getattr(unmarshal_as, "__annotations__", {})
+        if "result" in annotations:
+            # Only pass result if the specific model supports it
+            try:
+                return unmarshal_as(result="success")  # type: ignore
+            except TypeError:
+                # Fallback if constructor doesn't accept result
+                pass
         return unmarshal_as()
     except Exception:
         resp = unmarshal_as.__new__(unmarshal_as)
@@ -77,23 +84,56 @@ def _handle_json_response(content: str, unmarshal_as: type[T]) -> T:
 
 def _handle_array_response(data: list, unmarshal_as: type[T]) -> T:
     """Handle array JSON responses."""
-    if hasattr(unmarshal_as, "__annotations__") and "data" in unmarshal_as.__annotations__:
-        return unmarshal_as(data=data)
-    return unmarshal_as(data=data)
+    try:
+        # Check if the model has a 'data' field in its annotations
+        annotations = getattr(unmarshal_as, "__annotations__", {})
+        if "data" in annotations:
+            try:
+                return unmarshal_as(data=data)  # type: ignore
+            except TypeError:
+                # Fallback if constructor doesn't accept data
+                pass
+        return unmarshal_as()
+    except Exception:
+        resp = unmarshal_as.__new__(unmarshal_as)
+        if hasattr(resp, "data"):
+            try:
+                object.__setattr__(resp, "data", data)
+            except Exception:
+                pass
+        return resp
 
 
 def _handle_primitive_response(value, unmarshal_as: type[T]) -> T:
     """Handle primitive JSON responses."""
-    if not hasattr(unmarshal_as, "__annotations__"):
+    try:
+        annotations = getattr(unmarshal_as, "__annotations__", {})
+        if "result" in annotations:
+            try:
+                return unmarshal_as(result=str(value))  # type: ignore
+            except TypeError:
+                # Fallback if constructor doesn't accept result
+                pass
+        elif "data" in annotations:
+            try:
+                return unmarshal_as(data=value)  # type: ignore
+            except TypeError:
+                # Fallback if constructor doesn't accept data
+                pass
         return unmarshal_as()
-
-    annotations = unmarshal_as.__annotations__
-    if "result" in annotations:
-        return unmarshal_as(result=str(value))
-    elif "data" in annotations:
-        return unmarshal_as(data=value)
-    else:
-        return unmarshal_as()
+    except Exception:
+        resp = unmarshal_as.__new__(unmarshal_as)
+        if hasattr(resp, "result"):
+            try:
+                object.__setattr__(resp, "result", str(value))
+            except Exception:
+                pass
+        elif hasattr(resp, "data"):
+            try:
+                object.__setattr__(resp, "data", value)
+            except Exception:
+                pass
+        return resp
 
 
 def _set_raw_response(resp: T, raw_resp: RawResponse) -> T:

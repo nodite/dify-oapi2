@@ -246,3 +246,57 @@ def test_file_info_builder_pattern() -> None:
     assert file_info.transfer_method == "local_file"
     assert file_info.upload_file_id == "file-123"
     assert file_info.url is None
+
+
+# ===== STOP RESPONSE API MODELS TESTS =====
+
+
+def test_stop_response_request_builder() -> None:
+    """Test StopResponseRequest builder pattern."""
+    from dify_oapi.api.completion.v1.model.completion.stop_response_request import StopResponseRequest
+    from dify_oapi.api.completion.v1.model.completion.stop_response_request_body import StopResponseRequestBody
+    from dify_oapi.core.enum import HttpMethod
+
+    request_body = StopResponseRequestBody.builder().user("test-user").build()
+
+    request = StopResponseRequest.builder().task_id("task-123").request_body(request_body).build()
+
+    assert request.http_method == HttpMethod.POST
+    assert request.uri == "/v1/completion-messages/:task_id/stop"
+    assert request.task_id == "task-123"
+    assert request.paths["task_id"] == "task-123"
+    assert request.request_body == request_body
+    assert request.body is not None
+
+
+def test_stop_response_request_body_validation() -> None:
+    """Test StopResponseRequestBody validation and builder."""
+    from dify_oapi.api.completion.v1.model.completion.stop_response_request_body import StopResponseRequestBody
+
+    request_body = StopResponseRequestBody.builder().user("user-123").build()
+
+    assert request_body.user == "user-123"
+
+
+def test_stop_response_response_model() -> None:
+    """Test StopResponseResponse model."""
+    from dify_oapi.api.completion.v1.model.completion.stop_response_response import StopResponseResponse
+
+    response = StopResponseResponse(result="success")
+
+    assert response.result == "success"
+    # Test BaseResponse inheritance
+    assert hasattr(response, "success")
+    assert hasattr(response, "code")
+    assert hasattr(response, "msg")
+
+
+def test_stop_response_path_parameter_handling() -> None:
+    """Test StopResponseRequest path parameter handling."""
+    from dify_oapi.api.completion.v1.model.completion.stop_response_request import StopResponseRequest
+
+    request = StopResponseRequest.builder().task_id("task-456").build()
+
+    assert request.task_id == "task-456"
+    assert "task_id" in request.paths
+    assert request.paths["task_id"] == "task-456"

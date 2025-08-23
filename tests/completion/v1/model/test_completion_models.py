@@ -172,3 +172,77 @@ def test_nested_model_relationships() -> None:
     assert completion_message_info.metadata is not None
     assert completion_message_info.metadata.usage == usage
     assert completion_message_info.metadata.retriever_resources == [retriever_resource]
+
+
+# ===== SEND MESSAGE API MODELS TESTS =====
+
+
+def test_send_message_request_builder() -> None:
+    """Test SendMessageRequest builder pattern."""
+    from dify_oapi.api.completion.v1.model.completion.send_message_request import SendMessageRequest
+    from dify_oapi.api.completion.v1.model.completion.send_message_request_body import SendMessageRequestBody
+    from dify_oapi.core.enum import HttpMethod
+
+    request_body = SendMessageRequestBody.builder().query("test query").user("test-user").build()
+
+    request = SendMessageRequest.builder().request_body(request_body).build()
+
+    assert request.http_method == HttpMethod.POST
+    assert request.uri == "/v1/completion-messages"
+    assert request.request_body == request_body
+    assert request.body is not None
+
+
+def test_send_message_request_body_validation() -> None:
+    """Test SendMessageRequestBody validation and builder."""
+    from dify_oapi.api.completion.v1.model.completion.send_message_request_body import FileInfo, SendMessageRequestBody
+
+    file_info = (
+        FileInfo.builder().type("image").transfer_method("remote_url").url("https://example.com/image.jpg").build()
+    )
+
+    request_body = (
+        SendMessageRequestBody.builder()
+        .inputs({"key": "value"})
+        .query("What is AI?")
+        .response_mode("blocking")
+        .user("user-123")
+        .files([file_info])
+        .build()
+    )
+
+    assert request_body.inputs == {"key": "value"}
+    assert request_body.query == "What is AI?"
+    assert request_body.response_mode == "blocking"
+    assert request_body.user == "user-123"
+    assert request_body.files == [file_info]
+
+
+def test_send_message_response_model() -> None:
+    """Test SendMessageResponse model."""
+    from dify_oapi.api.completion.v1.model.completion.send_message_response import SendMessageResponse
+
+    response = SendMessageResponse(
+        message_id="test-message-id", mode="completion", answer="Test answer", created_at=1705395332
+    )
+
+    assert response.message_id == "test-message-id"
+    assert response.mode == "completion"
+    assert response.answer == "Test answer"
+    assert response.created_at == 1705395332
+    # Test BaseResponse inheritance
+    assert hasattr(response, "success")
+    assert hasattr(response, "code")
+    assert hasattr(response, "msg")
+
+
+def test_file_info_builder_pattern() -> None:
+    """Test FileInfo builder pattern."""
+    from dify_oapi.api.completion.v1.model.completion.send_message_request_body import FileInfo
+
+    file_info = FileInfo.builder().type("image").transfer_method("local_file").upload_file_id("file-123").build()
+
+    assert file_info.type == "image"
+    assert file_info.transfer_method == "local_file"
+    assert file_info.upload_file_id == "file-123"
+    assert file_info.url is None

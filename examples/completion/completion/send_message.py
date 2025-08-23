@@ -10,7 +10,7 @@ from dify_oapi.client import Client
 from dify_oapi.core.model.request_option import RequestOption
 
 
-def send_message_sync() -> None:
+def send_message_sync() -> str | None:
     try:
         # Check required environment variables
         api_key = os.getenv("API_KEY")
@@ -29,14 +29,18 @@ def send_message_sync() -> None:
 
         if response.success:
             print(f"Message sent successfully: {response.answer}")
+            print(f"Message ID: {response.message_id}")
+            return response.message_id
         else:
             print(f"Error: {response.msg}")
+            return None
 
     except Exception as e:
         print(f"Error: {e}")
+        return None
 
 
-async def send_message_async() -> None:
+async def send_message_async() -> str | None:
     try:
         # Check required environment variables
         api_key = os.getenv("API_KEY")
@@ -55,11 +59,15 @@ async def send_message_async() -> None:
 
         if response.success:
             print(f"Message sent successfully: {response.answer}")
+            print(f"Message ID: {response.message_id}")
+            return response.message_id
         else:
             print(f"Error: {response.msg}")
+            return None
 
     except Exception as e:
         print(f"Error: {e}")
+        return None
 
 
 def send_message_streaming_sync() -> None:
@@ -118,7 +126,9 @@ def main() -> None:
     print("=== Send Message Examples ===")
 
     print("\n1. Sync send message:")
-    send_message_sync()
+    message_id = send_message_sync()
+    if message_id:
+        print(f"MESSAGE_ID for testing: {message_id}")
 
     print("\n2. Async send message:")
     asyncio.run(send_message_async())

@@ -59,7 +59,7 @@ This document tracks the implementation progress of all 15 completion-related AP
 - [x] **Step 23**: Implement Audio Resource
 - [x] **Step 24**: Test Audio Resource
 - [x] **Step 25**: Implement Info Resource
-- [ ] **Step 26**: Test Info Resource
+- [x] **Step 26**: Test Info Resource
 - [x] **Step 27**: Implement Annotation Resource
 - [ ] **Step 28**: Test Annotation Resource
 
@@ -147,7 +147,7 @@ This document tracks the implementation progress of all 15 completion-related AP
 - [ ] **File Resource Tests** - File upload methods
 - [ ] **Feedback Resource Tests** - Feedback methods
 - [x] **Audio Resource Tests** - Audio processing methods
-- [ ] **Info Resource Tests** - Info retrieval methods
+- [x] **Info Resource Tests** - Info retrieval methods
 - [ ] **Annotation Resource Tests** - Annotation management methods
 
 ### Integration Tests
@@ -203,6 +203,6 @@ This document tracks the implementation progress of all 15 completion-related AP
 
 ---
 
-**Progress**: 26/44 steps completed (59.1%)
+**Progress**: 27/44 steps completed (61.4%)
 **Status**: In Progress
-**Next Step**: Step 26 - Test Info Resource
+**Next Step**: Step 28 - Test Annotation Resource

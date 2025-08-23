@@ -5,6 +5,7 @@ from unittest.mock import Mock, patch
 
 import pytest
 
+from dify_oapi.api.completion.v1.model.completion.completion_inputs import CompletionInputs
 from dify_oapi.api.completion.v1.model.completion.send_message_request import SendMessageRequest
 from dify_oapi.api.completion.v1.model.completion.send_message_request_body import SendMessageRequestBody
 from dify_oapi.api.completion.v1.model.completion.send_message_response import SendMessageResponse
@@ -39,8 +40,9 @@ class TestCompletion:
     @pytest.fixture
     def send_message_request(self) -> SendMessageRequest:
         """Create a test send message request."""
+        inputs = CompletionInputs.builder().query("What is AI?").build()
         request_body = (
-            SendMessageRequestBody.builder().query("What is AI?").response_mode("blocking").user("test-user").build()
+            SendMessageRequestBody.builder().inputs(inputs).response_mode("blocking").user("test-user").build()
         )
         return SendMessageRequest.builder().request_body(request_body).build()
 
@@ -95,10 +97,10 @@ class TestCompletion:
         """Test send_message with streaming response mode."""
 
         # Arrange
-        def mock_stream_generator() -> Iterator[str]:
-            yield "AI"
-            yield " is"
-            yield " artificial intelligence."
+        def mock_stream_generator() -> Iterator[bytes]:
+            yield b"AI"
+            yield b" is"
+            yield b" artificial intelligence."
 
         mock_execute.return_value = mock_stream_generator()
 
@@ -107,8 +109,8 @@ class TestCompletion:
 
         # Assert
         assert isinstance(result, Iterator)
-        chunks = list(result)
-        assert chunks == ["AI", " is", " artificial intelligence."]
+        chunks: list[bytes] = list(result)
+        assert chunks == [b"AI", b" is", b" artificial intelligence."]
         mock_execute.assert_called_once_with(
             completion.config, send_message_request, stream=True, option=request_option
         )
@@ -158,10 +160,10 @@ class TestCompletion:
         """Test asend_message with streaming response mode."""
 
         # Arrange
-        async def mock_async_stream_generator() -> AsyncIterator[str]:
-            yield "AI"
-            yield " is"
-            yield " artificial intelligence."
+        async def mock_async_stream_generator() -> AsyncIterator[bytes]:
+            yield b"AI"
+            yield b" is"
+            yield b" artificial intelligence."
 
         mock_aexecute.return_value = mock_async_stream_generator()
 
@@ -170,10 +172,10 @@ class TestCompletion:
 
         # Assert
         assert hasattr(result, "__aiter__")  # Check if it's an async iterator
-        chunks = []
+        chunks: list[bytes] = []
         async for chunk in result:
             chunks.append(chunk)
-        assert chunks == ["AI", " is", " artificial intelligence."]
+        assert chunks == [b"AI", b" is", b" artificial intelligence."]
         mock_aexecute.assert_called_once_with(
             completion.config, send_message_request, stream=True, option=request_option
         )

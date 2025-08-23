@@ -48,8 +48,11 @@ def _merge_dicts(*dicts: dict | None) -> dict:
 def _create_no_content_response(unmarshal_as: type[T]) -> T:
     """Create response for 204 No Content status."""
     try:
+        # Try to create instance with result if it has that field
         if hasattr(unmarshal_as, "__annotations__") and "result" in unmarshal_as.__annotations__:
-            return unmarshal_as(result="success")
+            resp = unmarshal_as()
+            object.__setattr__(resp, "result", "success")
+            return resp
         return unmarshal_as()
     except Exception:
         resp = unmarshal_as.__new__(unmarshal_as)
@@ -78,8 +81,12 @@ def _handle_json_response(content: str, unmarshal_as: type[T]) -> T:
 def _handle_array_response(data: list, unmarshal_as: type[T]) -> T:
     """Handle array JSON responses."""
     if hasattr(unmarshal_as, "__annotations__") and "data" in unmarshal_as.__annotations__:
-        return unmarshal_as(data=data)
-    return unmarshal_as(data=data)
+        resp = unmarshal_as()
+        object.__setattr__(resp, "data", data)
+        return resp
+    resp = unmarshal_as()
+    object.__setattr__(resp, "data", data)
+    return resp
 
 
 def _handle_primitive_response(value, unmarshal_as: type[T]) -> T:
@@ -89,9 +96,13 @@ def _handle_primitive_response(value, unmarshal_as: type[T]) -> T:
 
     annotations = unmarshal_as.__annotations__
     if "result" in annotations:
-        return unmarshal_as(result=str(value))
+        resp = unmarshal_as()
+        object.__setattr__(resp, "result", str(value))
+        return resp
     elif "data" in annotations:
-        return unmarshal_as(data=value)
+        resp = unmarshal_as()
+        object.__setattr__(resp, "data", value)
+        return resp
     else:
         return unmarshal_as()
 

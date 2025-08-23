@@ -20,8 +20,10 @@ def query_annotation_reply_status_sync() -> None:
         client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
         req_option = RequestOption.builder().api_key(api_key).build()
 
-        # Use example job ID (in real usage, this would come from annotation_reply_settings response)
-        job_id = "example-job-id-123"
+        # Get job ID from environment variable
+        job_id = os.getenv("JOB_ID")
+        if not job_id:
+            raise ValueError("JOB_ID environment variable is required")
 
         req = QueryAnnotationReplyStatusRequest.builder().action("enable").job_id(job_id).build()
         response = client.completion.v1.annotation.query_annotation_reply_status(req, req_option)
@@ -47,8 +49,10 @@ async def query_annotation_reply_status_async() -> None:
         client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
         req_option = RequestOption.builder().api_key(api_key).build()
 
-        # Use example job ID (in real usage, this would come from annotation_reply_settings response)
-        job_id = "example-job-id-456"
+        # Get job ID from environment variable
+        job_id = os.getenv("JOB_ID")
+        if not job_id:
+            raise ValueError("JOB_ID environment variable is required")
 
         req = QueryAnnotationReplyStatusRequest.builder().action("enable").job_id(job_id).build()
         response = await client.completion.v1.annotation.aquery_annotation_reply_status(req, req_option)

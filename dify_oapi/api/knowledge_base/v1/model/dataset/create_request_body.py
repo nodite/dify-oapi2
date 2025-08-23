@@ -1,16 +1,15 @@
 from __future__ import annotations
 
-from typing import Literal
-
 from pydantic import BaseModel
 
+from .dataset_types import IndexingTechnique
 from .retrieval_model import RetrievalModel
 
 
 class CreateRequestBody(BaseModel):
     name: str | None = None
     description: str | None = None
-    indexing_technique: str | None = None
+    indexing_technique: IndexingTechnique | None = None
     permission: str | None = None
     provider: str | None = None
     external_knowledge_api_id: str | None = None
@@ -40,7 +39,7 @@ class CreateRequestBodyBuilder:
         self._create_request_body.description = description
         return self
 
-    def indexing_technique(self, indexing_technique: Literal["high_quality", "economy"]) -> CreateRequestBodyBuilder:
+    def indexing_technique(self, indexing_technique: IndexingTechnique) -> CreateRequestBodyBuilder:
         self._create_request_body.indexing_technique = indexing_technique
         return self
 

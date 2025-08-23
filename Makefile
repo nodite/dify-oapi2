@@ -50,6 +50,7 @@ pre-commit: ## Run pre-commit hooks
 
 install-hooks: ## Install pre-commit hooks
 	poetry run pre-commit install
+	poetry run pre-commit install --hook-type commit-msg
 
 dev-setup: install install-hooks ## Setup development environment
 	@echo "Development environment setup complete!"

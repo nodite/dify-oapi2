@@ -1,9 +1,8 @@
 from __future__ import annotations
 
-from typing import Literal
-
 from pydantic import BaseModel
 
+from .dataset_types import SearchMethod
 from .metadata_filtering_conditions import MetadataFilteringConditions
 from .reranking_model import RerankingModel
 
@@ -84,7 +83,7 @@ class WeightsBuilder:
 
 
 class RetrievalModel(BaseModel):
-    search_method: str | None = None
+    search_method: SearchMethod | None = None
     reranking_enable: bool | None = None
     reranking_mode: str | None = None
     reranking_model: RerankingModel | None = None
@@ -106,9 +105,7 @@ class RetrievalModelBuilder:
     def build(self) -> RetrievalModel:
         return self._retrieval_model
 
-    def search_method(
-        self, search_method: Literal["keyword_search", "semantic_search", "full_text_search", "hybrid_search"]
-    ) -> RetrievalModelBuilder:
+    def search_method(self, search_method: SearchMethod) -> RetrievalModelBuilder:
         self._retrieval_model.search_method = search_method
         return self
 

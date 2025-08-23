@@ -101,10 +101,13 @@ asyncio.run(async_chat())
 - Conversation and message history management
 - Streaming and blocking response modes
 
-### Completion API
-- Text generation and completion
-- Custom input parameters
-- Streaming support
+### Completion API (15 APIs)
+- **Message Processing**: Send messages and control responses
+- **Annotation Management**: Create, update, and manage annotations
+- **Audio Processing**: Text-to-audio conversion
+- **Feedback System**: Collect and analyze user feedback
+- **File Upload**: Support for document and media files
+- **Application Info**: Configuration and metadata retrieval
 
 ### Knowledge Base API (39 APIs)
 - **Dataset Management**: CRUD operations for datasets
@@ -240,6 +243,7 @@ dify-oapi/
 ## 📖 Documentation
 
 - [**Project Overview**](./docs/overview.md) - Architecture and technical details
+- [**Completion APIs**](./docs/completion/apis.md) - Complete completion API documentation
 - [**Knowledge Base APIs**](./docs/datasets/apis.md) - Complete dataset API documentation
 - [**Examples**](./examples/README.md) - Usage examples and patterns
 

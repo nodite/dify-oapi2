@@ -88,8 +88,14 @@ def send_message_streaming_sync() -> None:
         response = client.completion.v1.completion.send_message(req, req_option, True)
 
         print("Streaming response:")
+        line_count = 0
         for chunk in response:
-            print(chunk, end="", flush=True)
+            chunk_str = chunk.decode("utf-8") if isinstance(chunk, bytes) else str(chunk)
+            if "\n" in chunk_str:
+                line_count += chunk_str.count("\n")
+            print(chunk_str, end="", flush=True)
+            if line_count >= 10:
+                break
         print()
 
     except Exception as e:
@@ -114,8 +120,14 @@ async def send_message_streaming_async() -> None:
         response = await client.completion.v1.completion.asend_message(req, req_option, True)
 
         print("Streaming response:")
+        line_count = 0
         async for chunk in response:
-            print(chunk, end="", flush=True)
+            chunk_str = chunk.decode("utf-8") if isinstance(chunk, bytes) else str(chunk)
+            if "\n" in chunk_str:
+                line_count += chunk_str.count("\n")
+            print(chunk_str, end="", flush=True)
+            if line_count >= 10:
+                break
         print()
 
     except Exception as e:

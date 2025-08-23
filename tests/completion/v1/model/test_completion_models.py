@@ -618,3 +618,311 @@ def test_audio_info_serialization() -> None:
 
     assert data["content_type"] == "audio/wav"
     assert data["data"] == b"test audio"
+
+
+# ===== INFO API MODELS TESTS =====
+
+
+def test_app_info_builder_pattern() -> None:
+    """Test AppInfo builder pattern."""
+    from dify_oapi.api.completion.v1.model.info.app_info import AppInfo
+
+    app_info = (
+        AppInfo.builder()
+        .name("Test App")
+        .description("A test application")
+        .tags(["ai", "completion"])
+        .mode("completion")
+        .author_name("Test Author")
+        .build()
+    )
+
+    assert app_info.name == "Test App"
+    assert app_info.description == "A test application"
+    assert app_info.tags == ["ai", "completion"]
+    assert app_info.mode == "completion"
+    assert app_info.author_name == "Test Author"
+
+
+def test_parameters_info_complex_structure() -> None:
+    """Test ParametersInfo complex nested structure."""
+    from dify_oapi.api.completion.v1.model.info.file_upload_config import FileUploadConfig
+    from dify_oapi.api.completion.v1.model.info.parameters_info import ParametersInfo
+    from dify_oapi.api.completion.v1.model.info.system_parameters import SystemParameters
+    from dify_oapi.api.completion.v1.model.info.user_input_form import UserInputForm
+
+    user_input_form = UserInputForm.builder().label("Query").variable("query").required(True).build()
+    file_upload_config = FileUploadConfig.builder().image({"enabled": True, "number_limits": 3}).build()
+    system_parameters = SystemParameters.builder().file_size_limit(10).image_file_size_limit(5).build()
+
+    parameters_info = (
+        ParametersInfo.builder()
+        .opening_statement("Welcome to the app")
+        .suggested_questions(["What can you do?", "How does this work?"])
+        .suggested_questions_after_answer({"enabled": True})
+        .speech_to_text({"enabled": False})
+        .retriever_resource({"enabled": True})
+        .annotation_reply({"enabled": False})
+        .user_input_form([user_input_form])
+        .file_upload(file_upload_config)
+        .system_parameters(system_parameters)
+        .build()
+    )
+
+    assert parameters_info.opening_statement == "Welcome to the app"
+    assert parameters_info.suggested_questions == ["What can you do?", "How does this work?"]
+    assert parameters_info.suggested_questions_after_answer == {"enabled": True}
+    assert parameters_info.speech_to_text == {"enabled": False}
+    assert parameters_info.retriever_resource == {"enabled": True}
+    assert parameters_info.annotation_reply == {"enabled": False}
+    assert parameters_info.user_input_form == [user_input_form]
+    assert parameters_info.file_upload == file_upload_config
+    assert parameters_info.system_parameters == system_parameters
+
+
+def test_site_info_builder_pattern() -> None:
+    """Test SiteInfo builder pattern."""
+    from dify_oapi.api.completion.v1.model.info.site_info import SiteInfo
+
+    site_info = (
+        SiteInfo.builder()
+        .title("Test WebApp")
+        .chat_color_theme("#007bff")
+        .chat_color_theme_inverted(False)
+        .icon_type("emoji")
+        .icon("🤖")
+        .icon_background("#ffffff")
+        .icon_url("https://example.com/icon.png")
+        .description("A test web application")
+        .copyright("© 2024 Test Company")
+        .privacy_policy("https://example.com/privacy")
+        .custom_disclaimer("This is a test app")
+        .default_language("en")
+        .show_workflow_steps(True)
+        .use_icon_as_answer_icon(False)
+        .build()
+    )
+
+    assert site_info.title == "Test WebApp"
+    assert site_info.chat_color_theme == "#007bff"
+    assert site_info.chat_color_theme_inverted is False
+    assert site_info.icon_type == "emoji"
+    assert site_info.icon == "🤖"
+    assert site_info.icon_background == "#ffffff"
+    assert site_info.icon_url == "https://example.com/icon.png"
+    assert site_info.description == "A test web application"
+    assert site_info.copyright == "© 2024 Test Company"
+    assert site_info.privacy_policy == "https://example.com/privacy"
+    assert site_info.custom_disclaimer == "This is a test app"
+    assert site_info.default_language == "en"
+    assert site_info.show_workflow_steps is True
+    assert site_info.use_icon_as_answer_icon is False
+
+
+def test_user_input_form_builder_pattern() -> None:
+    """Test UserInputForm builder pattern."""
+    from dify_oapi.api.completion.v1.model.info.user_input_form import UserInputForm
+
+    user_input_form = (
+        UserInputForm.builder()
+        .label("User Query")
+        .variable("query")
+        .required(True)
+        .default("Enter your question")
+        .options(["Option 1", "Option 2", "Option 3"])
+        .build()
+    )
+
+    assert user_input_form.label == "User Query"
+    assert user_input_form.variable == "query"
+    assert user_input_form.required is True
+    assert user_input_form.default == "Enter your question"
+    assert user_input_form.options == ["Option 1", "Option 2", "Option 3"]
+
+
+def test_file_upload_config_builder_pattern() -> None:
+    """Test FileUploadConfig builder pattern."""
+    from dify_oapi.api.completion.v1.model.info.file_upload_config import FileUploadConfig
+
+    image_config = {"enabled": True, "number_limits": 5, "transfer_methods": ["remote_url", "local_file"]}
+
+    file_upload_config = FileUploadConfig.builder().image(image_config).build()
+
+    assert file_upload_config.image == image_config
+    assert file_upload_config.image["enabled"] is True
+    assert file_upload_config.image["number_limits"] == 5
+
+
+def test_system_parameters_builder_pattern() -> None:
+    """Test SystemParameters builder pattern."""
+    from dify_oapi.api.completion.v1.model.info.system_parameters import SystemParameters
+
+    system_parameters = (
+        SystemParameters.builder()
+        .file_size_limit(20)
+        .image_file_size_limit(10)
+        .audio_file_size_limit(50)
+        .video_file_size_limit(100)
+        .build()
+    )
+
+    assert system_parameters.file_size_limit == 20
+    assert system_parameters.image_file_size_limit == 10
+    assert system_parameters.audio_file_size_limit == 50
+    assert system_parameters.video_file_size_limit == 100
+
+
+def test_get_info_request_builder() -> None:
+    """Test GetInfoRequest builder pattern."""
+    from dify_oapi.api.completion.v1.model.info.get_info_request import GetInfoRequest
+    from dify_oapi.core.enum import HttpMethod
+
+    request = GetInfoRequest.builder().build()
+
+    assert request.http_method == HttpMethod.GET
+    assert request.uri == "/v1/info"
+    assert len(request.queries) == 0
+
+
+def test_get_info_response_model() -> None:
+    """Test GetInfoResponse model."""
+    from dify_oapi.api.completion.v1.model.info.get_info_response import GetInfoResponse
+
+    response = GetInfoResponse(
+        name="Test App",
+        description="A test application",
+        tags=["ai", "completion"],
+        mode="completion",
+        author_name="Test Author",
+    )
+
+    assert response.name == "Test App"
+    assert response.description == "A test application"
+    assert response.tags == ["ai", "completion"]
+    assert response.mode == "completion"
+    assert response.author_name == "Test Author"
+    # Test BaseResponse inheritance
+    assert hasattr(response, "success")
+    assert hasattr(response, "code")
+    assert hasattr(response, "msg")
+
+
+def test_get_parameters_request_builder() -> None:
+    """Test GetParametersRequest builder pattern."""
+    from dify_oapi.api.completion.v1.model.info.get_parameters_request import GetParametersRequest
+    from dify_oapi.core.enum import HttpMethod
+
+    request = GetParametersRequest.builder().build()
+
+    assert request.http_method == HttpMethod.GET
+    assert request.uri == "/v1/parameters"
+    assert len(request.queries) == 0
+
+
+def test_get_parameters_response_model() -> None:
+    """Test GetParametersResponse model."""
+    from dify_oapi.api.completion.v1.model.info.get_parameters_response import GetParametersResponse
+    from dify_oapi.api.completion.v1.model.info.user_input_form import UserInputForm
+
+    user_input_form = UserInputForm.builder().label("Query").variable("query").build()
+
+    response = GetParametersResponse(
+        opening_statement="Welcome", suggested_questions=["What can you do?"], user_input_form=[user_input_form]
+    )
+
+    assert response.opening_statement == "Welcome"
+    assert response.suggested_questions == ["What can you do?"]
+    assert response.user_input_form == [user_input_form]
+    # Test BaseResponse inheritance
+    assert hasattr(response, "success")
+    assert hasattr(response, "code")
+    assert hasattr(response, "msg")
+
+
+def test_get_site_request_builder() -> None:
+    """Test GetSiteRequest builder pattern."""
+    from dify_oapi.api.completion.v1.model.info.get_site_request import GetSiteRequest
+    from dify_oapi.core.enum import HttpMethod
+
+    request = GetSiteRequest.builder().build()
+
+    assert request.http_method == HttpMethod.GET
+    assert request.uri == "/v1/site"
+    assert len(request.queries) == 0
+
+
+def test_get_site_response_model() -> None:
+    """Test GetSiteResponse model."""
+    from dify_oapi.api.completion.v1.model.info.get_site_response import GetSiteResponse
+
+    response = GetSiteResponse(
+        title="Test WebApp",
+        chat_color_theme="#007bff",
+        icon_type="emoji",
+        icon="🤖",
+        description="A test web application",
+        default_language="en",
+    )
+
+    assert response.title == "Test WebApp"
+    assert response.chat_color_theme == "#007bff"
+    assert response.icon_type == "emoji"
+    assert response.icon == "🤖"
+    assert response.description == "A test web application"
+    assert response.default_language == "en"
+    # Test BaseResponse inheritance
+    assert hasattr(response, "success")
+    assert hasattr(response, "code")
+    assert hasattr(response, "msg")
+
+
+def test_info_models_serialization() -> None:
+    """Test info models serialization."""
+    from dify_oapi.api.completion.v1.model.info.app_info import AppInfo
+    from dify_oapi.api.completion.v1.model.info.site_info import SiteInfo
+    from dify_oapi.api.completion.v1.model.info.user_input_form import UserInputForm
+
+    app_info = AppInfo.builder().name("Test App").mode("completion").build()
+    data = app_info.model_dump()
+    assert data["name"] == "Test App"
+    assert data["mode"] == "completion"
+    assert data["description"] is None
+
+    site_info = SiteInfo.builder().title("Test Site").icon_type("emoji").build()
+    data = site_info.model_dump()
+    assert data["title"] == "Test Site"
+    assert data["icon_type"] == "emoji"
+    assert data["chat_color_theme"] is None
+
+    user_input_form = UserInputForm.builder().label("Query").required(True).build()
+    data = user_input_form.model_dump()
+    assert data["label"] == "Query"
+    assert data["required"] is True
+    assert data["variable"] is None
+
+
+def test_info_models_multiple_inheritance() -> None:
+    """Test info response models with multiple inheritance."""
+    from dify_oapi.api.completion.v1.model.info.get_info_response import GetInfoResponse
+    from dify_oapi.api.completion.v1.model.info.get_parameters_response import GetParametersResponse
+    from dify_oapi.api.completion.v1.model.info.get_site_response import GetSiteResponse
+
+    # Test GetInfoResponse inherits from both AppInfo and BaseResponse
+    info_response = GetInfoResponse(name="Test App", mode="completion")
+    assert info_response.name == "Test App"
+    assert info_response.mode == "completion"
+    assert hasattr(info_response, "success")  # From BaseResponse
+    assert hasattr(info_response, "code")  # From BaseResponse
+
+    # Test GetParametersResponse inherits from both ParametersInfo and BaseResponse
+    params_response = GetParametersResponse(opening_statement="Welcome")
+    assert params_response.opening_statement == "Welcome"
+    assert hasattr(params_response, "success")  # From BaseResponse
+    assert hasattr(params_response, "msg")  # From BaseResponse
+
+    # Test GetSiteResponse inherits from both SiteInfo and BaseResponse
+    site_response = GetSiteResponse(title="Test Site", icon_type="emoji")
+    assert site_response.title == "Test Site"
+    assert site_response.icon_type == "emoji"
+    assert hasattr(site_response, "success")  # From BaseResponse
+    assert hasattr(site_response, "raw")  # From BaseResponse

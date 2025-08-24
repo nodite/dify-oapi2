@@ -5,9 +5,9 @@ This document tracks the implementation progress of the workflow API module base
 ## Progress Overview
 
 **Total Steps**: 36  
-**Completed**: 14  
+**Completed**: 15  
 **In Progress**: 0  
-**Remaining**: 22
+**Remaining**: 21
 
 ## Implementation Progress
 
@@ -39,7 +39,7 @@ This document tracks the implementation progress of the workflow API module base
 
 ### Phase 5: Application Information APIs (3 APIs)
 
-- [ ] **Step 15**: Create Info Models
+- [x] **Step 15**: Create Info Models
 - [ ] **Step 16**: Test Info Models
 
 ### Phase 6: Resource Implementation

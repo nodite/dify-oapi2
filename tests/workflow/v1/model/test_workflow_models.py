@@ -6,12 +6,13 @@ from dify_oapi.api.workflow.v1.model.workflow.run_specific_workflow_request impo
 from dify_oapi.api.workflow.v1.model.workflow.run_specific_workflow_request_body import RunSpecificWorkflowRequestBody
 from dify_oapi.api.workflow.v1.model.workflow.run_specific_workflow_response import RunSpecificWorkflowResponse
 from dify_oapi.api.workflow.v1.model.workflow.run_workflow_request import RunWorkflowRequest
-from dify_oapi.api.workflow.v1.model.workflow.run_workflow_request_body import FileInfo, RunWorkflowRequestBody
+from dify_oapi.api.workflow.v1.model.workflow.run_workflow_request_body import RunWorkflowRequestBody
 from dify_oapi.api.workflow.v1.model.workflow.run_workflow_response import RunWorkflowResponse
 from dify_oapi.api.workflow.v1.model.workflow.stop_workflow_request import StopWorkflowRequest
 from dify_oapi.api.workflow.v1.model.workflow.stop_workflow_request_body import StopWorkflowRequestBody
 from dify_oapi.api.workflow.v1.model.workflow.stop_workflow_response import StopWorkflowResponse
 from dify_oapi.api.workflow.v1.model.workflow.streaming_event import StreamingEvent
+from dify_oapi.api.workflow.v1.model.workflow.workflow_file_info import WorkflowFileInfo
 from dify_oapi.api.workflow.v1.model.workflow.workflow_inputs import WorkflowInputs
 from dify_oapi.api.workflow.v1.model.workflow.workflow_run_data import WorkflowRunData
 from dify_oapi.api.workflow.v1.model.workflow.workflow_run_info import WorkflowRunInfo
@@ -272,7 +273,7 @@ def test_run_workflow_request_with_body() -> None:
 
 def test_run_workflow_request_body_validation() -> None:
     """Test RunWorkflowRequestBody validation and builder."""
-    file_info = FileInfo(type="document", transfer_method="local_file", upload_file_id="file-123")
+    file_info = WorkflowFileInfo(type="document", transfer_method="local_file", upload_file_id="file-123")
     inputs = WorkflowInputs.builder().add_input("content", "test content").build()
 
     request_body = (
@@ -326,9 +327,9 @@ def test_run_workflow_response_model() -> None:
     assert response.msg == "Success"
 
 
-def test_file_info_model() -> None:
-    """Test FileInfo model creation and validation."""
-    file_info = FileInfo(type="image", transfer_method="remote_url", url="https://example.com/image.jpg")
+def test_workflow_file_info_model() -> None:
+    """Test WorkflowFileInfo model creation and validation."""
+    file_info = WorkflowFileInfo(type="image", transfer_method="remote_url", url="https://example.com/image.jpg")
 
     assert file_info.type == "image"
     assert file_info.transfer_method == "remote_url"
@@ -409,9 +410,7 @@ def test_run_specific_workflow_request_with_body() -> None:
 
 def test_run_specific_workflow_request_body_validation() -> None:
     """Test RunSpecificWorkflowRequestBody validation and builder."""
-    from dify_oapi.api.workflow.v1.model.file.file_info import FileInfo as FileInfoModel
-
-    file_info = FileInfoModel(type="document", transfer_method="local_file", upload_file_id="file-123")
+    file_info = WorkflowFileInfo(type="document", transfer_method="local_file", upload_file_id="file-123")
     inputs = WorkflowInputs.builder().add_input("content", "test content").build()
 
     request_body = (
@@ -490,11 +489,9 @@ def test_run_specific_workflow_path_parameter_handling() -> None:
 
 def test_workflow_inputs_with_file_list() -> None:
     """Test WorkflowInputs with file list type variables."""
-    from dify_oapi.api.workflow.v1.model.file.file_info import FileInfo as FileInfoModel
-
-    # Create file list for file type variable
-    file1 = FileInfoModel(type="document", transfer_method="local_file", upload_file_id="file-123")
-    file2 = FileInfoModel(type="image", transfer_method="remote_url", url="https://example.com/image.jpg")
+    # Use WorkflowFileInfo for workflow inputs
+    file1 = WorkflowFileInfo(type="document", transfer_method="local_file", upload_file_id="file-123")
+    file2 = WorkflowFileInfo(type="image", transfer_method="remote_url", url="https://example.com/image.jpg")
     file_list = [file1, file2]
 
     # Test with file list type variable
@@ -506,8 +503,8 @@ def test_workflow_inputs_with_file_list() -> None:
     assert isinstance(retrieved_files, list)
     assert len(retrieved_files) == 2
     # Type assertion for mypy
-    assert isinstance(retrieved_files[0], FileInfoModel)
-    assert isinstance(retrieved_files[1], FileInfoModel)
+    assert isinstance(retrieved_files[0], WorkflowFileInfo)
+    assert isinstance(retrieved_files[1], WorkflowFileInfo)
     assert retrieved_files[0].type == "document"
     assert retrieved_files[0].upload_file_id == "file-123"
     assert retrieved_files[1].type == "image"
@@ -544,9 +541,8 @@ def test_workflow_inputs_with_various_types() -> None:
 
 def test_workflow_inputs_builder_with_mixed_types() -> None:
     """Test WorkflowInputs builder with mixed value types."""
-    from dify_oapi.api.workflow.v1.model.file.file_info import FileInfo as FileInfoModel
-
-    file_info = FileInfoModel(type="document", transfer_method="local_file", upload_file_id="doc-456")
+    # Use WorkflowFileInfo for workflow inputs
+    file_info = WorkflowFileInfo(type="document", transfer_method="local_file", upload_file_id="doc-456")
 
     inputs = (
         WorkflowInputs.builder()
@@ -573,7 +569,7 @@ def test_workflow_inputs_builder_with_mixed_types() -> None:
     assert isinstance(files, list)
     assert len(files) == 1
     # Type assertion for mypy
-    assert isinstance(files[0], FileInfoModel)
+    assert isinstance(files[0], WorkflowFileInfo)
     assert files[0].type == "document"
 
     tags = inputs.get_input("tags")
@@ -694,9 +690,8 @@ def test_get_workflow_run_detail_response_serialization() -> None:
 
 def test_workflow_inputs_serialization_with_files() -> None:
     """Test WorkflowInputs serialization with file list types."""
-    from dify_oapi.api.workflow.v1.model.file.file_info import FileInfo as FileInfoModel
-
-    file_info = FileInfoModel(type="image", transfer_method="remote_url", url="https://example.com/test.jpg")
+    # Use WorkflowFileInfo for workflow inputs
+    file_info = WorkflowFileInfo(type="image", transfer_method="remote_url", url="https://example.com/test.jpg")
 
     inputs = (
         WorkflowInputs.builder().add_input("prompt", "Describe this image").add_input("images", [file_info]).build()
@@ -807,3 +802,251 @@ def test_stop_workflow_response_serialization() -> None:
     # None values should be excluded
     assert "code" not in serialized
     assert "msg" not in serialized
+
+
+# ===== FILE API MODELS TESTS =====
+
+
+def test_file_info_builder_pattern() -> None:
+    """Test FileInfo builder pattern."""
+    from dify_oapi.api.workflow.v1.model.file.file_info import FileInfo as FileInfoModel
+
+    file_info = (
+        FileInfoModel.builder()
+        .id("file-123")
+        .name("test_document.pdf")
+        .size(1024)
+        .extension("pdf")
+        .mime_type("application/pdf")
+        .created_by("user-456")
+        .created_at(1234567890)
+        .build()
+    )
+
+    assert file_info.id == "file-123"
+    assert file_info.name == "test_document.pdf"
+    assert file_info.size == 1024
+    assert file_info.extension == "pdf"
+    assert file_info.mime_type == "application/pdf"
+    assert file_info.created_by == "user-456"
+    assert file_info.created_at == 1234567890
+
+
+def test_file_info_creation() -> None:
+    """Test FileInfo model creation and validation."""
+    from dify_oapi.api.workflow.v1.model.file.file_info import FileInfo as FileInfoModel
+
+    file_info = FileInfoModel(
+        id="file-789",
+        name="image.jpg",
+        size=2048,
+        extension="jpg",
+        mime_type="image/jpeg",
+        created_by="user-123",
+        created_at=1234567891,
+    )
+
+    assert file_info.id == "file-789"
+    assert file_info.name == "image.jpg"
+    assert file_info.size == 2048
+    assert file_info.extension == "jpg"
+    assert file_info.mime_type == "image/jpeg"
+    assert file_info.created_by == "user-123"
+    assert file_info.created_at == 1234567891
+
+
+def test_upload_file_request_multipart() -> None:
+    """Test UploadFileRequest multipart handling."""
+    from io import BytesIO
+
+    from dify_oapi.api.workflow.v1.model.file.upload_file_request import UploadFileRequest
+    from dify_oapi.api.workflow.v1.model.file.upload_file_request_body import UploadFileRequestBody
+
+    # Create file content
+    file_content = BytesIO(b"test file content")
+    request_body = UploadFileRequestBody.builder().user("user-123").build()
+
+    request = UploadFileRequest.builder().file(file_content, "test.txt").request_body(request_body).build()
+
+    assert request.http_method == HttpMethod.POST
+    assert request.uri == "/v1/files/upload"
+    assert request.file is not None
+    assert request.files is not None
+    assert "file" in request.files
+    assert request.files["file"][0] == "test.txt"
+    assert request.files["file"][1] == file_content
+    assert request.body is not None
+    assert request.body["user"] == "user-123"
+    assert request.request_body is not None
+    assert request.request_body.user == "user-123"
+
+
+def test_upload_file_request_body_validation() -> None:
+    """Test UploadFileRequestBody validation and builder."""
+    from dify_oapi.api.workflow.v1.model.file.upload_file_request_body import UploadFileRequestBody
+
+    request_body = UploadFileRequestBody.builder().user("user-456").build()
+
+    assert request_body.user == "user-456"
+
+
+def test_upload_file_response_model() -> None:
+    """Test UploadFileResponse model."""
+    from dify_oapi.api.workflow.v1.model.file.upload_file_response import UploadFileResponse
+
+    response = UploadFileResponse(
+        id="file-123",
+        name="uploaded.pdf",
+        size=4096,
+        extension="pdf",
+        mime_type="application/pdf",
+        created_by="user-789",
+        created_at=1234567892,
+        success=True,
+        code="200",
+        msg="Upload successful",
+    )
+
+    # Test FileInfo properties
+    assert response.id == "file-123"
+    assert response.name == "uploaded.pdf"
+    assert response.size == 4096
+    assert response.extension == "pdf"
+    assert response.mime_type == "application/pdf"
+    assert response.created_by == "user-789"
+    assert response.created_at == 1234567892
+
+    # Test BaseResponse properties
+    assert response.success is False  # success is False when code is set
+    assert response.code == "200"
+    assert response.msg == "Upload successful"
+
+
+def test_preview_file_request_parameters() -> None:
+    """Test PreviewFileRequest path and query parameters."""
+    from dify_oapi.api.workflow.v1.model.file.preview_file_request import PreviewFileRequest
+
+    request = PreviewFileRequest.builder().file_id("file-456").as_attachment(True).build()
+
+    assert request.http_method == HttpMethod.GET
+    assert request.uri == "/v1/files/:file_id/preview"
+    assert request.file_id == "file-456"
+    assert request.paths["file_id"] == "file-456"
+    # Check query parameter in queries list
+    query_params = dict(request.queries)
+    assert "as_attachment" in query_params
+    assert query_params["as_attachment"] == "true"
+
+
+def test_preview_file_request_without_attachment() -> None:
+    """Test PreviewFileRequest without as_attachment parameter."""
+    from dify_oapi.api.workflow.v1.model.file.preview_file_request import PreviewFileRequest
+
+    request = PreviewFileRequest.builder().file_id("file-789").build()
+
+    assert request.file_id == "file-789"
+    assert request.paths["file_id"] == "file-789"
+    # as_attachment should not be in queries if not set
+    query_params = dict(request.queries)
+    assert "as_attachment" not in query_params
+
+
+def test_preview_file_response_model() -> None:
+    """Test PreviewFileResponse model."""
+    from dify_oapi.api.workflow.v1.model.file.preview_file_response import PreviewFileResponse
+
+    binary_content = b"binary file content"
+    response = PreviewFileResponse(
+        content_type="application/pdf",
+        content_length=len(binary_content),
+        content=binary_content,
+        success=True,
+        code="200",
+        msg="Preview successful",
+    )
+
+    assert response.content_type == "application/pdf"
+    assert response.content_length == len(binary_content)
+    assert response.content == binary_content
+
+    # Test BaseResponse properties
+    assert response.success is False  # success is False when code is set
+    assert response.code == "200"
+    assert response.msg == "Preview successful"
+
+
+def test_upload_file_request_builder_chaining() -> None:
+    """Test UploadFileRequest builder method chaining."""
+    from io import BytesIO
+
+    from dify_oapi.api.workflow.v1.model.file.upload_file_request import UploadFileRequest
+    from dify_oapi.api.workflow.v1.model.file.upload_file_request_body import UploadFileRequestBody
+
+    file_content = BytesIO(b"test content")
+    request_body = UploadFileRequestBody.builder().user("user-123").build()
+
+    # Test method chaining
+    builder = UploadFileRequest.builder()
+    result = builder.file(file_content, "test.txt").request_body(request_body)
+
+    # Verify builder returns self for chaining
+    assert result is builder
+
+    # Build and verify final result
+    request = result.build()
+    assert request.file is not None
+    assert request.files is not None
+    assert request.body is not None
+    assert request.request_body is not None
+
+
+def test_file_info_serialization() -> None:
+    """Test FileInfo serialization."""
+    from dify_oapi.api.workflow.v1.model.file.file_info import FileInfo as FileInfoModel
+
+    file_info = FileInfoModel(
+        id="file-123",
+        name="test.pdf",
+        size=1024,
+        extension="pdf",
+        mime_type="application/pdf",
+        created_by="user-456",
+        created_at=1234567890,
+    )
+
+    serialized = file_info.model_dump(exclude_none=True)
+    assert serialized["id"] == "file-123"
+    assert serialized["name"] == "test.pdf"
+    assert serialized["size"] == 1024
+    assert serialized["extension"] == "pdf"
+    assert serialized["mime_type"] == "application/pdf"
+    assert serialized["created_by"] == "user-456"
+    assert serialized["created_at"] == 1234567890
+
+
+def test_upload_file_request_body_serialization() -> None:
+    """Test UploadFileRequestBody serialization."""
+    from dify_oapi.api.workflow.v1.model.file.upload_file_request_body import UploadFileRequestBody
+
+    request_body = UploadFileRequestBody.builder().user("user-789").build()
+
+    serialized = request_body.model_dump(exclude_none=True, mode="json")
+    assert "user" in serialized
+    assert serialized["user"] == "user-789"
+
+
+def test_upload_file_request_with_default_filename() -> None:
+    """Test UploadFileRequest with default filename."""
+    from io import BytesIO
+
+    from dify_oapi.api.workflow.v1.model.file.upload_file_request import UploadFileRequest
+
+    file_content = BytesIO(b"test content")
+    request = UploadFileRequest.builder().file(file_content).build()  # No filename provided
+
+    assert request.file is not None
+    assert request.files is not None
+    assert "file" in request.files
+    # Should use default filename "upload"
+    assert request.files["file"][0] == "upload"
+    assert request.files["file"][1] == file_content

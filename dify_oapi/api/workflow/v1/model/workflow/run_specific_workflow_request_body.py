@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pydantic import BaseModel
 
-from ..file.file_info import FileInfo
+from .workflow_file_info import WorkflowFileInfo
 from .workflow_inputs import WorkflowInputs
 from .workflow_types import ResponseMode
 
@@ -11,7 +11,7 @@ class RunSpecificWorkflowRequestBody(BaseModel):
     inputs: WorkflowInputs | None = None
     response_mode: ResponseMode | None = None
     user: str | None = None
-    files: list[FileInfo] | None = None
+    files: list[WorkflowFileInfo] | None = None
     trace_id: str | None = None
 
     @staticmethod
@@ -38,7 +38,7 @@ class RunSpecificWorkflowRequestBodyBuilder:
         self._run_specific_workflow_request_body.user = user
         return self
 
-    def files(self, files: list[FileInfo]) -> RunSpecificWorkflowRequestBodyBuilder:
+    def files(self, files: list[WorkflowFileInfo]) -> RunSpecificWorkflowRequestBodyBuilder:
         self._run_specific_workflow_request_body.files = files
         return self
 

@@ -4,7 +4,7 @@ from typing import Union
 
 from pydantic import BaseModel
 
-from ..file.file_info import FileInfo
+from .workflow_file_info import WorkflowFileInfo
 
 # Define specific types for workflow input values
 WorkflowInputValue = Union[
@@ -12,7 +12,7 @@ WorkflowInputValue = Union[
     int,  # Integer values
     float,  # Float values
     bool,  # Boolean values
-    list[FileInfo],  # File list type variables
+    list[WorkflowFileInfo],  # File list type variables
     list[str],  # String arrays
     dict[str, Union[str, int, float, bool]],  # Object values
 ]

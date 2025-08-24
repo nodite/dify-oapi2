@@ -22,9 +22,11 @@ from dify_oapi.api.workflow.v1.model.workflow.workflow_inputs import WorkflowInp
 from dify_oapi.api.workflow.v1.model.workflow.workflow_run_data import WorkflowRunData
 from dify_oapi.api.workflow.v1.model.workflow.workflow_run_info import WorkflowRunInfo
 from dify_oapi.api.workflow.v1.model.workflow.workflow_types import (
+    AppMode,
     CreatedByRole,
     CreatedFrom,
     EventType,
+    IconType,
     LogStatus,
     NodeType,
     ResponseMode,
@@ -1344,3 +1346,580 @@ def test_nested_log_model_relationships() -> None:
     assert log_info.created_by_role == "account"
     assert log_info.created_by_account == "admin@example.com"
     assert log_info.created_at == 1234567891
+
+
+# ===== INFO API MODELS TESTS =====
+
+
+def test_app_info_builder_pattern() -> None:
+    """Test AppInfo builder pattern."""
+    from dify_oapi.api.workflow.v1.model.info.app_info import AppInfo
+
+    app_info = (
+        AppInfo.builder()
+        .name("Test Workflow App")
+        .description("A test workflow application")
+        .tags(["test", "workflow", "ai"])
+        .mode("workflow")
+        .author_name("Test Author")
+        .build()
+    )
+
+    assert app_info.name == "Test Workflow App"
+    assert app_info.description == "A test workflow application"
+    assert app_info.tags is not None
+    assert app_info.tags == ["test", "workflow", "ai"]
+    assert app_info.mode == "workflow"
+    assert app_info.author_name == "Test Author"
+
+
+def test_app_info_creation() -> None:
+    """Test AppInfo model creation and validation."""
+    from dify_oapi.api.workflow.v1.model.info.app_info import AppInfo
+
+    app_info = AppInfo(
+        name="Document Processor",
+        description="Process and analyze documents",
+        tags=["document", "analysis"],
+        mode="workflow",
+        author_name="AI Team",
+    )
+
+    assert app_info.name == "Document Processor"
+    assert app_info.description == "Process and analyze documents"
+    assert app_info.tags == ["document", "analysis"]
+    assert app_info.mode == "workflow"
+    assert app_info.author_name == "AI Team"
+
+
+def test_app_mode_literal_validation() -> None:
+    """Test AppMode literal type validation."""
+    from dify_oapi.api.workflow.v1.model.info.app_info import AppInfo
+
+    # Valid app mode should work
+    valid_mode: AppMode = "workflow"
+    app_info = AppInfo(mode=valid_mode)
+    assert app_info.mode == "workflow"
+
+
+def test_user_input_form_builder_pattern() -> None:
+    """Test UserInputForm builder pattern."""
+    from dify_oapi.api.workflow.v1.model.info.user_input_form import UserInputForm
+
+    form = (
+        UserInputForm.builder()
+        .label("Query Input")
+        .variable("query")
+        .required(True)
+        .default("Enter your question")
+        .options(["option1", "option2", "option3"])
+        .build()
+    )
+
+    assert form.label == "Query Input"
+    assert form.variable == "query"
+    assert form.required is True
+    assert form.default == "Enter your question"
+    assert form.options is not None
+    assert form.options == ["option1", "option2", "option3"]
+
+
+def test_user_input_form_creation() -> None:
+    """Test UserInputForm model creation and validation."""
+    from dify_oapi.api.workflow.v1.model.info.user_input_form import UserInputForm
+
+    form = UserInputForm(
+        label="Temperature",
+        variable="temperature",
+        required=False,
+        default="0.7",
+    )
+
+    assert form.label == "Temperature"
+    assert form.variable == "temperature"
+    assert form.required is False
+    assert form.default == "0.7"
+    assert form.options is None
+
+
+def test_file_upload_config_builder_pattern() -> None:
+    """Test FileUploadConfig builder pattern."""
+    from dify_oapi.api.workflow.v1.model.info.file_upload_config import FileUploadConfig
+
+    config = (
+        FileUploadConfig.builder()
+        .document({"enabled": True, "number_limits": 5, "transfer_methods": ["local_file"]})
+        .image({"enabled": True, "number_limits": 3, "transfer_methods": ["remote_url", "local_file"]})
+        .audio({"enabled": False, "number_limits": 1, "transfer_methods": ["local_file"]})
+        .video({"enabled": False, "number_limits": 1, "transfer_methods": ["local_file"]})
+        .custom({"enabled": True, "number_limits": 2, "transfer_methods": ["local_file"]})
+        .build()
+    )
+
+    assert config.document is not None
+    assert config.document["enabled"] is True
+    assert config.document["number_limits"] == 5
+    assert config.image is not None
+    assert config.image["enabled"] is True
+    assert config.image["number_limits"] == 3
+    assert config.audio is not None
+    assert config.audio["enabled"] is False
+    assert config.video is not None
+    assert config.video["enabled"] is False
+    assert config.custom is not None
+    assert config.custom["enabled"] is True
+
+
+def test_system_parameters_builder_pattern() -> None:
+    """Test SystemParameters builder pattern."""
+    from dify_oapi.api.workflow.v1.model.info.system_parameters import SystemParameters
+
+    params = (
+        SystemParameters.builder()
+        .file_size_limit(50)
+        .image_file_size_limit(10)
+        .audio_file_size_limit(100)
+        .video_file_size_limit(500)
+        .build()
+    )
+
+    assert params.file_size_limit == 50
+    assert params.image_file_size_limit == 10
+    assert params.audio_file_size_limit == 100
+    assert params.video_file_size_limit == 500
+
+
+def test_parameters_info_complex_structure() -> None:
+    """Test ParametersInfo complex nested structure."""
+    from dify_oapi.api.workflow.v1.model.info.file_upload_config import FileUploadConfig
+    from dify_oapi.api.workflow.v1.model.info.parameters_info import ParametersInfo
+    from dify_oapi.api.workflow.v1.model.info.system_parameters import SystemParameters
+    from dify_oapi.api.workflow.v1.model.info.user_input_form import UserInputForm
+
+    # Create nested components
+    form1 = UserInputForm.builder().label("Query").variable("query").required(True).build()
+    form2 = UserInputForm.builder().label("Temperature").variable("temperature").required(False).default("0.7").build()
+
+    file_config = (
+        FileUploadConfig.builder()
+        .document({"enabled": True, "number_limits": 3})
+        .image({"enabled": True, "number_limits": 2})
+        .build()
+    )
+
+    sys_params = SystemParameters.builder().file_size_limit(50).image_file_size_limit(10).build()
+
+    # Create ParametersInfo with nested structure
+    params_info = (
+        ParametersInfo.builder()
+        .user_input_form([form1, form2])
+        .file_upload(file_config)
+        .system_parameters(sys_params)
+        .build()
+    )
+
+    assert params_info.user_input_form is not None
+    assert len(params_info.user_input_form) == 2
+    assert params_info.user_input_form[0].label == "Query"
+    assert params_info.user_input_form[0].required is True
+    assert params_info.user_input_form[1].label == "Temperature"
+    assert params_info.user_input_form[1].required is False
+
+    assert params_info.file_upload is not None
+    assert params_info.file_upload.document is not None
+    assert params_info.file_upload.document["enabled"] is True
+    assert params_info.file_upload.image is not None
+    assert params_info.file_upload.image["number_limits"] == 2
+
+    assert params_info.system_parameters is not None
+    assert params_info.system_parameters.file_size_limit == 50
+    assert params_info.system_parameters.image_file_size_limit == 10
+
+
+def test_site_info_builder_pattern() -> None:
+    """Test SiteInfo builder pattern."""
+    from dify_oapi.api.workflow.v1.model.info.site_info import SiteInfo
+
+    site_info = (
+        SiteInfo.builder()
+        .title("My Workflow App")
+        .icon_type("emoji")
+        .icon("🤖")
+        .icon_background("#FF5733")
+        .icon_url("https://example.com/icon.png")
+        .description("A powerful workflow application")
+        .copyright("© 2024 My Company")
+        .privacy_policy("https://example.com/privacy")
+        .custom_disclaimer("Use at your own risk")
+        .default_language("en")
+        .show_workflow_steps(True)
+        .build()
+    )
+
+    assert site_info.title == "My Workflow App"
+    assert site_info.icon_type == "emoji"
+    assert site_info.icon == "🤖"
+    assert site_info.icon_background == "#FF5733"
+    assert site_info.icon_url == "https://example.com/icon.png"
+    assert site_info.description == "A powerful workflow application"
+    assert site_info.copyright == "© 2024 My Company"
+    assert site_info.privacy_policy == "https://example.com/privacy"
+    assert site_info.custom_disclaimer == "Use at your own risk"
+    assert site_info.default_language == "en"
+    assert site_info.show_workflow_steps is True
+
+
+def test_icon_type_literal_validation() -> None:
+    """Test IconType literal type validation."""
+    from dify_oapi.api.workflow.v1.model.info.site_info import SiteInfo
+
+    # Valid icon types should work
+    valid_types: list[IconType] = ["emoji", "image"]
+    for icon_type in valid_types:
+        site_info = SiteInfo(icon_type=icon_type)
+        assert site_info.icon_type == icon_type
+
+
+def test_get_info_request_builder() -> None:
+    """Test GetInfoRequest builder pattern."""
+    from dify_oapi.api.workflow.v1.model.info.get_info_request import GetInfoRequest
+
+    request = GetInfoRequest.builder().build()
+    assert request.http_method == HttpMethod.GET
+    assert request.uri == "/v1/info"
+
+
+def test_get_info_response_model() -> None:
+    """Test GetInfoResponse model."""
+    from dify_oapi.api.workflow.v1.model.info.get_info_response import GetInfoResponse
+
+    response = GetInfoResponse(
+        name="Test App",
+        description="Test Description",
+        tags=["test", "app"],
+        mode="workflow",
+        author_name="Test Author",
+        success=True,
+        code="200",
+        msg="Success",
+    )
+
+    # Test AppInfo properties
+    assert response.name == "Test App"
+    assert response.description == "Test Description"
+    assert response.tags == ["test", "app"]
+    assert response.mode == "workflow"
+    assert response.author_name == "Test Author"
+
+    # Test BaseResponse properties
+    assert response.success is False  # success is False when code is set
+    assert response.code == "200"
+    assert response.msg == "Success"
+
+
+def test_get_parameters_request_builder() -> None:
+    """Test GetParametersRequest builder pattern."""
+    from dify_oapi.api.workflow.v1.model.info.get_parameters_request import GetParametersRequest
+
+    request = GetParametersRequest.builder().build()
+    assert request.http_method == HttpMethod.GET
+    assert request.uri == "/v1/parameters"
+
+
+def test_get_parameters_response_model() -> None:
+    """Test GetParametersResponse model."""
+    from dify_oapi.api.workflow.v1.model.info.file_upload_config import FileUploadConfig
+    from dify_oapi.api.workflow.v1.model.info.get_parameters_response import GetParametersResponse
+    from dify_oapi.api.workflow.v1.model.info.system_parameters import SystemParameters
+    from dify_oapi.api.workflow.v1.model.info.user_input_form import UserInputForm
+
+    # Create nested components
+    form = UserInputForm.builder().label("Query").variable("query").build()
+    file_config = FileUploadConfig.builder().document({"enabled": True}).build()
+    sys_params = SystemParameters.builder().file_size_limit(50).build()
+
+    response = GetParametersResponse(
+        user_input_form=[form],
+        file_upload=file_config,
+        system_parameters=sys_params,
+        success=True,
+        code="200",
+        msg="Success",
+    )
+
+    # Test ParametersInfo properties
+    assert response.user_input_form is not None
+    assert len(response.user_input_form) == 1
+    assert response.user_input_form[0].label == "Query"
+    assert response.file_upload is not None
+    assert response.file_upload.document is not None
+    assert response.system_parameters is not None
+    assert response.system_parameters.file_size_limit == 50
+
+    # Test BaseResponse properties
+    assert response.success is False  # success is False when code is set
+    assert response.code == "200"
+    assert response.msg == "Success"
+
+
+def test_get_site_request_builder() -> None:
+    """Test GetSiteRequest builder pattern."""
+    from dify_oapi.api.workflow.v1.model.info.get_site_request import GetSiteRequest
+
+    request = GetSiteRequest.builder().build()
+    assert request.http_method == HttpMethod.GET
+    assert request.uri == "/v1/site"
+
+
+def test_get_site_response_model() -> None:
+    """Test GetSiteResponse model."""
+    from dify_oapi.api.workflow.v1.model.info.get_site_response import GetSiteResponse
+
+    response = GetSiteResponse(
+        title="My Site",
+        icon_type="emoji",
+        icon="🚀",
+        icon_background="#00FF00",
+        description="My site description",
+        show_workflow_steps=True,
+        success=True,
+        code="200",
+        msg="Success",
+    )
+
+    # Test SiteInfo properties
+    assert response.title == "My Site"
+    assert response.icon_type == "emoji"
+    assert response.icon == "🚀"
+    assert response.icon_background == "#00FF00"
+    assert response.description == "My site description"
+    assert response.show_workflow_steps is True
+
+    # Test BaseResponse properties
+    assert response.success is False  # success is False when code is set
+    assert response.code == "200"
+    assert response.msg == "Success"
+
+
+def test_info_models_serialization() -> None:
+    """Test Info models serialization."""
+    from dify_oapi.api.workflow.v1.model.info.app_info import AppInfo
+    from dify_oapi.api.workflow.v1.model.info.file_upload_config import FileUploadConfig
+    from dify_oapi.api.workflow.v1.model.info.site_info import SiteInfo
+    from dify_oapi.api.workflow.v1.model.info.system_parameters import SystemParameters
+    from dify_oapi.api.workflow.v1.model.info.user_input_form import UserInputForm
+
+    # Test AppInfo serialization
+    app_info = AppInfo(name="Test App", mode="workflow", tags=["test"])
+    app_serialized = app_info.model_dump(exclude_none=True)
+    assert app_serialized["name"] == "Test App"
+    assert app_serialized["mode"] == "workflow"
+    assert app_serialized["tags"] == ["test"]
+
+    # Test UserInputForm serialization
+    form = UserInputForm(label="Query", variable="query", required=True)
+    form_serialized = form.model_dump(exclude_none=True)
+    assert form_serialized["label"] == "Query"
+    assert form_serialized["variable"] == "query"
+    assert form_serialized["required"] is True
+
+    # Test FileUploadConfig serialization
+    file_config = FileUploadConfig(document={"enabled": True, "number_limits": 3})
+    file_serialized = file_config.model_dump(exclude_none=True)
+    assert "document" in file_serialized
+    assert file_serialized["document"]["enabled"] is True
+
+    # Test SystemParameters serialization
+    sys_params = SystemParameters(file_size_limit=50, image_file_size_limit=10)
+    sys_serialized = sys_params.model_dump(exclude_none=True)
+    assert sys_serialized["file_size_limit"] == 50
+    assert sys_serialized["image_file_size_limit"] == 10
+
+    # Test SiteInfo serialization
+    site_info = SiteInfo(title="My Site", icon_type="emoji", icon="🚀")
+    site_serialized = site_info.model_dump(exclude_none=True)
+    assert site_serialized["title"] == "My Site"
+    assert site_serialized["icon_type"] == "emoji"
+    assert site_serialized["icon"] == "🚀"
+
+
+def test_info_models_builder_chaining() -> None:
+    """Test Info models builder method chaining."""
+    from dify_oapi.api.workflow.v1.model.info.app_info import AppInfo
+    from dify_oapi.api.workflow.v1.model.info.file_upload_config import FileUploadConfig
+    from dify_oapi.api.workflow.v1.model.info.parameters_info import ParametersInfo
+    from dify_oapi.api.workflow.v1.model.info.site_info import SiteInfo
+    from dify_oapi.api.workflow.v1.model.info.system_parameters import SystemParameters
+    from dify_oapi.api.workflow.v1.model.info.user_input_form import UserInputForm
+
+    # Test AppInfo builder chaining
+    app_builder = AppInfo.builder()
+    app_result = app_builder.name("Test").description("Desc").mode("workflow")
+    assert app_result is app_builder
+    app_info = app_result.build()
+    assert app_info.name == "Test"
+    assert app_info.description == "Desc"
+    assert app_info.mode == "workflow"
+
+    # Test UserInputForm builder chaining
+    form_builder = UserInputForm.builder()
+    form_result = form_builder.label("Query").variable("query").required(True)
+    assert form_result is form_builder
+    form = form_result.build()
+    assert form.label == "Query"
+    assert form.required is True
+
+    # Test FileUploadConfig builder chaining
+    config_builder = FileUploadConfig.builder()
+    config_result = config_builder.document({"enabled": True}).image({"enabled": False})
+    assert config_result is config_builder
+    config = config_result.build()
+    assert config.document is not None
+    assert config.image is not None
+
+    # Test SystemParameters builder chaining
+    params_builder = SystemParameters.builder()
+    params_result = params_builder.file_size_limit(50).image_file_size_limit(10)
+    assert params_result is params_builder
+    params = params_result.build()
+    assert params.file_size_limit == 50
+    assert params.image_file_size_limit == 10
+
+    # Test ParametersInfo builder chaining
+    params_info_builder = ParametersInfo.builder()
+    params_info_result = params_info_builder.user_input_form([form]).file_upload(config).system_parameters(params)
+    assert params_info_result is params_info_builder
+    params_info = params_info_result.build()
+    assert params_info.user_input_form is not None
+    assert params_info.file_upload is not None
+    assert params_info.system_parameters is not None
+
+    # Test SiteInfo builder chaining
+    site_builder = SiteInfo.builder()
+    site_result = site_builder.title("Site").icon_type("emoji").icon("🚀")
+    assert site_result is site_builder
+    site_info = site_result.build()
+    assert site_info.title == "Site"
+    assert site_info.icon_type == "emoji"
+    assert site_info.icon == "🚀"
+
+
+def test_info_response_models_multiple_inheritance() -> None:
+    """Test Info response models with multiple inheritance."""
+    from dify_oapi.api.workflow.v1.model.info.get_info_response import GetInfoResponse
+    from dify_oapi.api.workflow.v1.model.info.get_parameters_response import GetParametersResponse
+    from dify_oapi.api.workflow.v1.model.info.get_site_response import GetSiteResponse
+
+    # Test GetInfoResponse multiple inheritance (AppInfo + BaseResponse)
+    info_response = GetInfoResponse(name="Test", mode="workflow")
+    # Should have both AppInfo and BaseResponse properties
+    assert hasattr(info_response, "name")  # from AppInfo
+    assert hasattr(info_response, "mode")  # from AppInfo
+    assert hasattr(info_response, "success")  # from BaseResponse
+    assert hasattr(info_response, "code")  # from BaseResponse
+    assert info_response.name == "Test"
+    assert info_response.mode == "workflow"
+
+    # Test GetParametersResponse multiple inheritance (ParametersInfo + BaseResponse)
+    params_response = GetParametersResponse()
+    # Should have both ParametersInfo and BaseResponse properties
+    assert hasattr(params_response, "user_input_form")  # from ParametersInfo
+    assert hasattr(params_response, "file_upload")  # from ParametersInfo
+    assert hasattr(params_response, "success")  # from BaseResponse
+    assert hasattr(params_response, "code")  # from BaseResponse
+
+    # Test GetSiteResponse multiple inheritance (SiteInfo + BaseResponse)
+    site_response = GetSiteResponse(title="Site", icon_type="emoji")
+    # Should have both SiteInfo and BaseResponse properties
+    assert hasattr(site_response, "title")  # from SiteInfo
+    assert hasattr(site_response, "icon_type")  # from SiteInfo
+    assert hasattr(site_response, "success")  # from BaseResponse
+    assert hasattr(site_response, "code")  # from BaseResponse
+    assert site_response.title == "Site"
+    assert site_response.icon_type == "emoji"
+
+
+def test_complex_file_upload_config_scenarios() -> None:
+    """Test FileUploadConfig with complex scenarios."""
+    from dify_oapi.api.workflow.v1.model.info.file_upload_config import FileUploadConfig
+
+    # Test with all file types enabled
+    config = (
+        FileUploadConfig.builder()
+        .document({"enabled": True, "number_limits": 5, "transfer_methods": ["local_file", "remote_url"]})
+        .image({"enabled": True, "number_limits": 3, "transfer_methods": ["remote_url"]})
+        .audio({"enabled": True, "number_limits": 2, "transfer_methods": ["local_file"]})
+        .video({"enabled": False, "number_limits": 1, "transfer_methods": ["local_file"]})
+        .custom({"enabled": True, "number_limits": 10, "transfer_methods": ["local_file", "remote_url"]})
+        .build()
+    )
+
+    # Verify document config
+    assert config.document is not None
+    assert config.document["enabled"] is True
+    assert config.document["number_limits"] == 5
+    assert config.document["transfer_methods"] == ["local_file", "remote_url"]
+
+    # Verify image config
+    assert config.image is not None
+    assert config.image["enabled"] is True
+    assert config.image["number_limits"] == 3
+    assert config.image["transfer_methods"] == ["remote_url"]
+
+    # Verify audio config
+    assert config.audio is not None
+    assert config.audio["enabled"] is True
+    assert config.audio["number_limits"] == 2
+    assert config.audio["transfer_methods"] == ["local_file"]
+
+    # Verify video config (disabled)
+    assert config.video is not None
+    assert config.video["enabled"] is False
+    assert config.video["number_limits"] == 1
+
+    # Verify custom config
+    assert config.custom is not None
+    assert config.custom["enabled"] is True
+    assert config.custom["number_limits"] == 10
+    assert config.custom["transfer_methods"] == ["local_file", "remote_url"]
+
+
+def test_user_input_form_with_options() -> None:
+    """Test UserInputForm with select options."""
+    from dify_oapi.api.workflow.v1.model.info.user_input_form import UserInputForm
+
+    # Test select control with options
+    select_form = (
+        UserInputForm.builder()
+        .label("Model Selection")
+        .variable("model")
+        .required(True)
+        .default("gpt-3.5-turbo")
+        .options(["gpt-3.5-turbo", "gpt-4", "claude-2", "llama-2"])
+        .build()
+    )
+
+    assert select_form.label == "Model Selection"
+    assert select_form.variable == "model"
+    assert select_form.required is True
+    assert select_form.default == "gpt-3.5-turbo"
+    assert select_form.options is not None
+    assert len(select_form.options) == 4
+    assert "gpt-4" in select_form.options
+    assert "claude-2" in select_form.options
+
+    # Test text input without options
+    text_form = (
+        UserInputForm.builder()
+        .label("Custom Prompt")
+        .variable("prompt")
+        .required(False)
+        .default("Enter your prompt here...")
+        .build()
+    )
+
+    assert text_form.label == "Custom Prompt"
+    assert text_form.variable == "prompt"
+    assert text_form.required is False
+    assert text_form.default == "Enter your prompt here..."
+    assert text_form.options is None

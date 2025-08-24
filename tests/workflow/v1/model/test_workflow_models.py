@@ -481,3 +481,126 @@ def test_run_specific_workflow_path_parameter_handling() -> None:
 
     # Verify URI template is correct
     assert request.uri == "/v1/workflows/:workflow_id/run"
+
+
+def test_workflow_inputs_with_file_list() -> None:
+    """Test WorkflowInputs with file list type variables."""
+    from dify_oapi.api.workflow.v1.model.file.file_info import FileInfo as FileInfoModel
+
+    # Create file list for file type variable
+    file1 = FileInfoModel(type="document", transfer_method="local_file", upload_file_id="file-123")
+    file2 = FileInfoModel(type="image", transfer_method="remote_url", url="https://example.com/image.jpg")
+    file_list = [file1, file2]
+
+    # Test with file list type variable
+    inputs = WorkflowInputs.builder().add_input("documents", file_list).build()
+
+    assert inputs.inputs is not None
+    assert "documents" in inputs.inputs
+    retrieved_files = inputs.get_input("documents")
+    assert isinstance(retrieved_files, list)
+    assert len(retrieved_files) == 2
+    # Type assertion for mypy
+    assert isinstance(retrieved_files[0], FileInfoModel)
+    assert isinstance(retrieved_files[1], FileInfoModel)
+    assert retrieved_files[0].type == "document"
+    assert retrieved_files[0].upload_file_id == "file-123"
+    assert retrieved_files[1].type == "image"
+    assert retrieved_files[1].url == "https://example.com/image.jpg"
+
+
+def test_workflow_inputs_with_various_types() -> None:
+    """Test WorkflowInputs with various supported value types."""
+    inputs = WorkflowInputs()
+
+    # Test different value types
+    inputs.add_input("text_field", "Hello World")
+    inputs.add_input("number_field", 42)
+    inputs.add_input("float_field", 3.14)
+    inputs.add_input("boolean_field", True)
+    inputs.add_input("string_array", ["item1", "item2", "item3"])
+    inputs.add_input("config", {"setting1": "value1", "setting2": "100"})
+
+    # Verify all types are stored correctly
+    assert inputs.get_input("text_field") == "Hello World"
+    assert inputs.get_input("number_field") == 42
+    assert inputs.get_input("float_field") == 3.14
+    assert inputs.get_input("boolean_field") is True
+
+    string_array = inputs.get_input("string_array")
+    assert isinstance(string_array, list)
+    assert string_array == ["item1", "item2", "item3"]
+
+    config = inputs.get_input("config")
+    assert isinstance(config, dict)
+    assert config["setting1"] == "value1"
+    assert config["setting2"] == "100"
+
+
+def test_workflow_inputs_builder_with_mixed_types() -> None:
+    """Test WorkflowInputs builder with mixed value types."""
+    from dify_oapi.api.workflow.v1.model.file.file_info import FileInfo as FileInfoModel
+
+    file_info = FileInfoModel(type="document", transfer_method="local_file", upload_file_id="doc-456")
+
+    inputs = (
+        WorkflowInputs.builder()
+        .add_input("query", "Analyze this document")
+        .add_input("temperature", 0.7)
+        .add_input("max_tokens", 1000)
+        .add_input("stream", True)
+        .add_input("files", [file_info])
+        .add_input("tags", ["analysis", "document"])
+        .add_input("metadata", {"source": "upload", "priority": "1"})
+        .build()
+    )
+
+    assert inputs.inputs is not None
+    assert len(inputs.inputs) == 7
+
+    # Verify each type
+    assert inputs.get_input("query") == "Analyze this document"
+    assert inputs.get_input("temperature") == 0.7
+    assert inputs.get_input("max_tokens") == 1000
+    assert inputs.get_input("stream") is True
+
+    files = inputs.get_input("files")
+    assert isinstance(files, list)
+    assert len(files) == 1
+    # Type assertion for mypy
+    assert isinstance(files[0], FileInfoModel)
+    assert files[0].type == "document"
+
+    tags = inputs.get_input("tags")
+    assert isinstance(tags, list)
+    assert tags == ["analysis", "document"]
+
+    metadata = inputs.get_input("metadata")
+    assert isinstance(metadata, dict)
+    assert metadata["source"] == "upload"
+    assert metadata["priority"] == "1"
+
+
+def test_workflow_inputs_serialization_with_files() -> None:
+    """Test WorkflowInputs serialization with file list types."""
+    from dify_oapi.api.workflow.v1.model.file.file_info import FileInfo as FileInfoModel
+
+    file_info = FileInfoModel(type="image", transfer_method="remote_url", url="https://example.com/test.jpg")
+
+    inputs = (
+        WorkflowInputs.builder().add_input("prompt", "Describe this image").add_input("images", [file_info]).build()
+    )
+
+    # Test serialization
+    serialized = inputs.model_dump(exclude_none=True)
+    assert "inputs" in serialized
+    assert serialized["inputs"]["prompt"] == "Describe this image"
+    assert "images" in serialized["inputs"]
+
+    # Verify file info is properly serialized
+    images_data = serialized["inputs"]["images"]
+    assert isinstance(images_data, list)
+    assert len(images_data) == 1
+    assert images_data[0]["type"] == "image"
+    assert images_data[0]["transfer_method"] == "remote_url"
+    assert images_data[0]["url"] == "https://example.com/test.jpg"

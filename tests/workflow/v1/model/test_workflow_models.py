@@ -8,6 +8,9 @@ from dify_oapi.api.workflow.v1.model.workflow.run_specific_workflow_response imp
 from dify_oapi.api.workflow.v1.model.workflow.run_workflow_request import RunWorkflowRequest
 from dify_oapi.api.workflow.v1.model.workflow.run_workflow_request_body import FileInfo, RunWorkflowRequestBody
 from dify_oapi.api.workflow.v1.model.workflow.run_workflow_response import RunWorkflowResponse
+from dify_oapi.api.workflow.v1.model.workflow.stop_workflow_request import StopWorkflowRequest
+from dify_oapi.api.workflow.v1.model.workflow.stop_workflow_request_body import StopWorkflowRequestBody
+from dify_oapi.api.workflow.v1.model.workflow.stop_workflow_response import StopWorkflowResponse
 from dify_oapi.api.workflow.v1.model.workflow.streaming_event import StreamingEvent
 from dify_oapi.api.workflow.v1.model.workflow.workflow_inputs import WorkflowInputs
 from dify_oapi.api.workflow.v1.model.workflow.workflow_run_data import WorkflowRunData
@@ -712,3 +715,95 @@ def test_workflow_inputs_serialization_with_files() -> None:
     assert images_data[0]["type"] == "image"
     assert images_data[0]["transfer_method"] == "remote_url"
     assert images_data[0]["url"] == "https://example.com/test.jpg"
+
+
+# ===== STOP WORKFLOW API MODELS TESTS =====
+
+
+def test_stop_workflow_request_builder() -> None:
+    """Test StopWorkflowRequest builder pattern."""
+    request = StopWorkflowRequest.builder().task_id("task-123").build()
+    assert request.http_method == HttpMethod.POST
+    assert request.uri == "/v1/workflows/tasks/:task_id/stop"
+    assert request.task_id == "task-123"
+    assert request.paths["task_id"] == "task-123"
+    assert request.request_body is None
+
+
+def test_stop_workflow_request_with_body() -> None:
+    """Test StopWorkflowRequest with request body."""
+    request_body = StopWorkflowRequestBody.builder().user("user-123").build()
+    request = StopWorkflowRequest.builder().task_id("task-456").request_body(request_body).build()
+
+    assert request.task_id == "task-456"
+    assert request.paths["task_id"] == "task-456"
+    assert request.request_body is not None
+    assert request.request_body.user == "user-123"
+    assert request.body is not None
+
+
+def test_stop_workflow_request_body_validation() -> None:
+    """Test StopWorkflowRequestBody validation and builder."""
+    request_body = StopWorkflowRequestBody.builder().user("user-456").build()
+
+    assert request_body.user == "user-456"
+
+
+def test_stop_workflow_response_model() -> None:
+    """Test StopWorkflowResponse model."""
+    response = StopWorkflowResponse(result="success", success=True, code="200", msg="Success")
+
+    # Test response fields
+    assert response.result == "success"
+
+    # Test BaseResponse properties
+    assert response.success is False  # success is False when code is set
+    assert response.code == "200"
+    assert response.msg == "Success"
+
+
+def test_stop_workflow_request_body_builder_chaining() -> None:
+    """Test StopWorkflowRequestBody builder method chaining."""
+    # Test method chaining
+    builder = StopWorkflowRequestBody.builder()
+    result = builder.user("user-789")
+
+    # Verify builder returns self for chaining
+    assert result is builder
+
+    # Build and verify final result
+    request_body = result.build()
+    assert request_body.user == "user-789"
+
+
+def test_stop_workflow_request_path_parameter_handling() -> None:
+    """Test StopWorkflowRequest path parameter handling."""
+    request = StopWorkflowRequest.builder().task_id("task-789").build()
+
+    # Verify path parameter is set correctly
+    assert request.task_id == "task-789"
+    assert "task_id" in request.paths
+    assert request.paths["task_id"] == "task-789"
+
+    # Verify URI template is correct
+    assert request.uri == "/v1/workflows/tasks/:task_id/stop"
+
+
+def test_stop_workflow_request_body_serialization() -> None:
+    """Test StopWorkflowRequestBody serialization."""
+    request_body = StopWorkflowRequestBody.builder().user("user-123").build()
+
+    serialized = request_body.model_dump(exclude_none=True, mode="json")
+    assert "user" in serialized
+    assert serialized["user"] == "user-123"
+
+
+def test_stop_workflow_response_serialization() -> None:
+    """Test StopWorkflowResponse serialization."""
+    response = StopWorkflowResponse(result="success")
+
+    serialized = response.model_dump(exclude_none=True)
+    assert serialized["result"] == "success"
+    # None values should be excluded
+    assert "code" not in serialized
+    assert "msg" not in serialized

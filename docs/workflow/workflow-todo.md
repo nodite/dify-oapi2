@@ -5,9 +5,9 @@ This document tracks the implementation progress of the workflow API module base
 ## Progress Overview
 
 **Total Steps**: 36  
-**Completed**: 8  
+**Completed**: 10  
 **In Progress**: 0  
-**Remaining**: 28
+**Remaining**: 26
 
 ## Implementation Progress
 
@@ -24,8 +24,8 @@ This document tracks the implementation progress of the workflow API module base
 - [x] **Step 6**: Test Run Specific Workflow API Models
 - [x] **Step 7**: Create Get Workflow Run Detail API Models
 - [x] **Step 8**: Test Get Workflow Run Detail API Models
-- [ ] **Step 9**: Create Stop Workflow API Models
-- [ ] **Step 10**: Test Stop Workflow API Models
+- [x] **Step 9**: Create Stop Workflow API Models
+- [x] **Step 10**: Test Stop Workflow API Models
 
 ### Phase 3: File Management APIs (2 APIs)
 

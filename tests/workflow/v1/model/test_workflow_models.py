@@ -1,3 +1,8 @@
+from dify_oapi.api.workflow.v1.model.log.end_user_info import EndUserInfo
+from dify_oapi.api.workflow.v1.model.log.get_workflow_logs_request import GetWorkflowLogsRequest
+from dify_oapi.api.workflow.v1.model.log.get_workflow_logs_response import GetWorkflowLogsResponse
+from dify_oapi.api.workflow.v1.model.log.log_info import LogInfo
+from dify_oapi.api.workflow.v1.model.log.workflow_run_log_info import WorkflowRunLogInfo
 from dify_oapi.api.workflow.v1.model.workflow.execution_metadata import ExecutionMetadata
 from dify_oapi.api.workflow.v1.model.workflow.get_workflow_run_detail_request import GetWorkflowRunDetailRequest
 from dify_oapi.api.workflow.v1.model.workflow.get_workflow_run_detail_response import GetWorkflowRunDetailResponse
@@ -16,7 +21,15 @@ from dify_oapi.api.workflow.v1.model.workflow.workflow_file_info import Workflow
 from dify_oapi.api.workflow.v1.model.workflow.workflow_inputs import WorkflowInputs
 from dify_oapi.api.workflow.v1.model.workflow.workflow_run_data import WorkflowRunData
 from dify_oapi.api.workflow.v1.model.workflow.workflow_run_info import WorkflowRunInfo
-from dify_oapi.api.workflow.v1.model.workflow.workflow_types import EventType, NodeType, ResponseMode, WorkflowStatus
+from dify_oapi.api.workflow.v1.model.workflow.workflow_types import (
+    CreatedByRole,
+    CreatedFrom,
+    EventType,
+    LogStatus,
+    NodeType,
+    ResponseMode,
+    WorkflowStatus,
+)
 from dify_oapi.core.enum import HttpMethod
 
 # ===== SHARED WORKFLOW MODELS TESTS =====
@@ -1050,3 +1063,284 @@ def test_upload_file_request_with_default_filename() -> None:
     # Should use default filename "upload"
     assert request.files["file"][0] == "upload"
     assert request.files["file"][1] == file_content
+
+
+# ===== LOG API MODELS TESTS =====
+
+
+def test_end_user_info_builder_pattern() -> None:
+    """Test EndUserInfo builder pattern."""
+    end_user = (
+        EndUserInfo.builder().id("user-123").type("end_user").is_anonymous(False).session_id("session-456").build()
+    )
+
+    assert end_user.id == "user-123"
+    assert end_user.type == "end_user"
+    assert end_user.is_anonymous is False
+    assert end_user.session_id == "session-456"
+
+
+def test_end_user_info_creation() -> None:
+    """Test EndUserInfo model creation and validation."""
+    end_user = EndUserInfo(id="user-789", type="anonymous", is_anonymous=True, session_id="session-123")
+
+    assert end_user.id == "user-789"
+    assert end_user.type == "anonymous"
+    assert end_user.is_anonymous is True
+    assert end_user.session_id == "session-123"
+
+
+def test_workflow_run_log_info_builder_pattern() -> None:
+    """Test WorkflowRunLogInfo builder pattern."""
+    log_info = (
+        WorkflowRunLogInfo.builder()
+        .id("run-123")
+        .version("1.0")
+        .status("succeeded")
+        .elapsed_time(2.5)
+        .total_tokens(150)
+        .total_steps(5)
+        .created_at(1234567890)
+        .finished_at(1234567892)
+        .build()
+    )
+
+    assert log_info.id == "run-123"
+    assert log_info.version == "1.0"
+    assert log_info.status == "succeeded"
+    assert log_info.elapsed_time == 2.5
+    assert log_info.total_tokens == 150
+    assert log_info.total_steps == 5
+    assert log_info.created_at == 1234567890
+    assert log_info.finished_at == 1234567892
+
+
+def test_workflow_run_log_info_with_error() -> None:
+    """Test WorkflowRunLogInfo with error status."""
+    log_info = (
+        WorkflowRunLogInfo.builder()
+        .id("run-456")
+        .status("failed")
+        .error("Workflow execution failed")
+        .elapsed_time(1.2)
+        .total_steps(3)
+        .build()
+    )
+
+    assert log_info.id == "run-456"
+    assert log_info.status == "failed"
+    assert log_info.error == "Workflow execution failed"
+    assert log_info.elapsed_time == 1.2
+    assert log_info.total_steps == 3
+    assert log_info.total_tokens is None
+    assert log_info.finished_at is None
+
+
+def test_log_status_literal_validation() -> None:
+    """Test LogStatus literal type validation."""
+    # Valid log statuses should work
+    valid_statuses: list[LogStatus] = ["succeeded", "failed", "stopped"]
+    for status in valid_statuses:
+        log_info = WorkflowRunLogInfo(status=status)
+        assert log_info.status == status
+
+
+def test_log_info_builder_pattern() -> None:
+    """Test LogInfo builder pattern."""
+    workflow_run = WorkflowRunLogInfo.builder().id("run-123").status("succeeded").build()
+    end_user = EndUserInfo.builder().id("user-456").session_id("session-789").build()
+
+    log_info = (
+        LogInfo.builder()
+        .id("log-123")
+        .workflow_run(workflow_run)
+        .created_from("service-api")
+        .created_by_role("end_user")
+        .created_by_account("user@example.com")
+        .created_by_end_user(end_user)
+        .created_at(1234567890)
+        .build()
+    )
+
+    assert log_info.id == "log-123"
+    assert log_info.workflow_run is not None
+    assert log_info.workflow_run.id == "run-123"
+    assert log_info.workflow_run.status == "succeeded"
+    assert log_info.created_from == "service-api"
+    assert log_info.created_by_role == "end_user"
+    assert log_info.created_by_account == "user@example.com"
+    assert log_info.created_by_end_user is not None
+    assert log_info.created_by_end_user.id == "user-456"
+    assert log_info.created_at == 1234567890
+
+
+def test_created_from_literal_validation() -> None:
+    """Test CreatedFrom literal type validation."""
+    # Valid created from values should work
+    valid_values: list[CreatedFrom] = ["service-api", "web-app"]
+    for value in valid_values:
+        log_info = LogInfo(created_from=value)
+        assert log_info.created_from == value
+
+
+def test_created_by_role_literal_validation() -> None:
+    """Test CreatedByRole literal type validation."""
+    # Valid created by role values should work
+    valid_roles: list[CreatedByRole] = ["end_user", "account"]
+    for role in valid_roles:
+        log_info = LogInfo(created_by_role=role)
+        assert log_info.created_by_role == role
+
+
+def test_get_workflow_logs_request_query_params() -> None:
+    """Test GetWorkflowLogsRequest query parameter handling."""
+    request = (
+        GetWorkflowLogsRequest.builder()
+        .keyword("test")
+        .status("succeeded")
+        .page(2)
+        .limit(50)
+        .created_by_end_user_session_id("session-123")
+        .created_by_account("user@example.com")
+        .build()
+    )
+
+    assert request.http_method == HttpMethod.GET
+    assert request.uri == "/v1/workflows/logs"
+
+    # Check query parameters
+    query_params = dict(request.queries)
+    assert query_params["keyword"] == "test"
+    assert query_params["status"] == "succeeded"
+    assert query_params["page"] == "2"
+    assert query_params["limit"] == "50"
+    assert query_params["created_by_end_user_session_id"] == "session-123"
+    assert query_params["created_by_account"] == "user@example.com"
+
+
+def test_get_workflow_logs_request_minimal() -> None:
+    """Test GetWorkflowLogsRequest with minimal parameters."""
+    request = GetWorkflowLogsRequest.builder().build()
+
+    assert request.http_method == HttpMethod.GET
+    assert request.uri == "/v1/workflows/logs"
+
+    # Should have no query parameters
+    query_params = dict(request.queries)
+    assert len(query_params) == 0
+
+
+def test_get_workflow_logs_response_model() -> None:
+    """Test GetWorkflowLogsResponse model."""
+    workflow_run = WorkflowRunLogInfo.builder().id("run-123").status("succeeded").build()
+    end_user = EndUserInfo.builder().id("user-456").build()
+    log_info = LogInfo.builder().id("log-123").workflow_run(workflow_run).created_by_end_user(end_user).build()
+
+    response = GetWorkflowLogsResponse(
+        page=1, limit=20, total=100, has_more=True, data=[log_info], success=True, code="200", msg="Success"
+    )
+
+    assert response.page == 1
+    assert response.limit == 20
+    assert response.total == 100
+    assert response.has_more is True
+    assert response.data is not None
+    assert len(response.data) == 1
+    assert response.data[0].id == "log-123"
+    assert response.data[0].workflow_run is not None
+    assert response.data[0].workflow_run.id == "run-123"
+
+    # Test BaseResponse properties
+    assert response.success is False  # success is False when code is set
+    assert response.code == "200"
+    assert response.msg == "Success"
+
+
+def test_get_workflow_logs_response_empty() -> None:
+    """Test GetWorkflowLogsResponse with empty data."""
+    response = GetWorkflowLogsResponse(page=1, limit=20, total=0, has_more=False, data=[])
+
+    assert response.page == 1
+    assert response.limit == 20
+    assert response.total == 0
+    assert response.has_more is False
+    assert response.data is not None
+    assert len(response.data) == 0
+
+
+def test_log_info_serialization() -> None:
+    """Test LogInfo serialization."""
+    workflow_run = WorkflowRunLogInfo(id="run-123", status="succeeded", total_tokens=150, elapsed_time=2.5)
+    end_user = EndUserInfo(id="user-456", session_id="session-789")
+    log_info = LogInfo(
+        id="log-123",
+        workflow_run=workflow_run,
+        created_from="service-api",
+        created_by_role="end_user",
+        created_by_end_user=end_user,
+        created_at=1234567890,
+    )
+
+    serialized = log_info.model_dump(exclude_none=True)
+    assert serialized["id"] == "log-123"
+    assert "workflow_run" in serialized
+    assert serialized["workflow_run"]["id"] == "run-123"
+    assert serialized["workflow_run"]["status"] == "succeeded"
+    assert serialized["created_from"] == "service-api"
+    assert serialized["created_by_role"] == "end_user"
+    assert "created_by_end_user" in serialized
+    assert serialized["created_by_end_user"]["id"] == "user-456"
+    assert serialized["created_at"] == 1234567890
+    # None values should be excluded
+    assert "created_by_account" not in serialized
+
+
+def test_nested_log_model_relationships() -> None:
+    """Test nested log model relationships work correctly."""
+    # Create nested structure
+    workflow_run = (
+        WorkflowRunLogInfo.builder()
+        .id("run-456")
+        .version("2.0")
+        .status("failed")
+        .error("Node execution failed")
+        .elapsed_time(1.8)
+        .total_steps(4)
+        .build()
+    )
+
+    end_user = (
+        EndUserInfo.builder().id("user-789").type("registered").is_anonymous(False).session_id("session-abc").build()
+    )
+
+    log_info = (
+        LogInfo.builder()
+        .id("log-456")
+        .workflow_run(workflow_run)
+        .created_from("web-app")
+        .created_by_role("account")
+        .created_by_account("admin@example.com")
+        .created_by_end_user(end_user)
+        .created_at(1234567891)
+        .build()
+    )
+
+    # Verify relationships
+    assert log_info.workflow_run is not None
+    assert log_info.workflow_run.id == "run-456"
+    assert log_info.workflow_run.version == "2.0"
+    assert log_info.workflow_run.status == "failed"
+    assert log_info.workflow_run.error == "Node execution failed"
+    assert log_info.workflow_run.elapsed_time == 1.8
+    assert log_info.workflow_run.total_steps == 4
+
+    assert log_info.created_by_end_user is not None
+    assert log_info.created_by_end_user.id == "user-789"
+    assert log_info.created_by_end_user.type == "registered"
+    assert log_info.created_by_end_user.is_anonymous is False
+    assert log_info.created_by_end_user.session_id == "session-abc"
+
+    assert log_info.created_from == "web-app"
+    assert log_info.created_by_role == "account"
+    assert log_info.created_by_account == "admin@example.com"
+    assert log_info.created_at == 1234567891

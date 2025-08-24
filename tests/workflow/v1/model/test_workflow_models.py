@@ -1,4 +1,6 @@
 from dify_oapi.api.workflow.v1.model.workflow.execution_metadata import ExecutionMetadata
+from dify_oapi.api.workflow.v1.model.workflow.get_workflow_run_detail_request import GetWorkflowRunDetailRequest
+from dify_oapi.api.workflow.v1.model.workflow.get_workflow_run_detail_response import GetWorkflowRunDetailResponse
 from dify_oapi.api.workflow.v1.model.workflow.node_info import NodeInfo
 from dify_oapi.api.workflow.v1.model.workflow.run_specific_workflow_request import RunSpecificWorkflowRequest
 from dify_oapi.api.workflow.v1.model.workflow.run_specific_workflow_request_body import RunSpecificWorkflowRequestBody
@@ -579,6 +581,112 @@ def test_workflow_inputs_builder_with_mixed_types() -> None:
     assert isinstance(metadata, dict)
     assert metadata["source"] == "upload"
     assert metadata["priority"] == "1"
+
+
+# ===== GET WORKFLOW RUN DETAIL API MODELS TESTS =====
+
+
+def test_get_workflow_run_detail_request_builder() -> None:
+    """Test GetWorkflowRunDetailRequest builder pattern."""
+    request = GetWorkflowRunDetailRequest.builder().workflow_run_id("run-123").build()
+    assert request.http_method == HttpMethod.GET
+    assert request.uri == "/v1/workflows/run/:workflow_run_id"
+    assert request.workflow_run_id == "run-123"
+    assert request.paths["workflow_run_id"] == "run-123"
+
+
+def test_get_workflow_run_detail_request_path_parameter() -> None:
+    """Test GetWorkflowRunDetailRequest path parameter handling."""
+    request = GetWorkflowRunDetailRequest.builder().workflow_run_id("run-456").build()
+
+    # Verify path parameter is set correctly
+    assert request.workflow_run_id == "run-456"
+    assert "workflow_run_id" in request.paths
+    assert request.paths["workflow_run_id"] == "run-456"
+
+    # Verify URI template is correct
+    assert request.uri == "/v1/workflows/run/:workflow_run_id"
+
+
+def test_get_workflow_run_detail_response_model() -> None:
+    """Test GetWorkflowRunDetailResponse model."""
+    response = GetWorkflowRunDetailResponse(
+        id="run-123",
+        workflow_id="workflow-456",
+        status="succeeded",
+        inputs={"query": "test"},
+        outputs={"result": "success"},
+        total_steps=5,
+        total_tokens=150,
+        elapsed_time=2.5,
+        success=True,
+        code="200",
+        msg="Success",
+    )
+
+    # Test response fields
+    assert response.id == "run-123"
+    assert response.workflow_id == "workflow-456"
+    assert response.status == "succeeded"
+    assert response.inputs is not None
+    assert response.inputs["query"] == "test"
+    assert response.outputs is not None
+    assert response.outputs["result"] == "success"
+    assert response.total_steps == 5
+    assert response.total_tokens == 150
+    assert response.elapsed_time == 2.5
+
+    # Test BaseResponse properties
+    assert response.success is False  # success is False when code is set
+    assert response.code == "200"
+    assert response.msg == "Success"
+
+
+def test_get_workflow_run_detail_response_with_error() -> None:
+    """Test GetWorkflowRunDetailResponse with error status."""
+    response = GetWorkflowRunDetailResponse(
+        id="run-789",
+        workflow_id="workflow-123",
+        status="failed",
+        error="Workflow execution failed",
+        total_steps=3,
+        elapsed_time=1.2,
+    )
+
+    assert response.id == "run-789"
+    assert response.workflow_id == "workflow-123"
+    assert response.status == "failed"
+    assert response.error == "Workflow execution failed"
+    assert response.total_steps == 3
+    assert response.elapsed_time == 1.2
+    assert response.outputs is None
+    assert response.total_tokens is None
+
+
+def test_get_workflow_run_detail_response_workflow_status_validation() -> None:
+    """Test GetWorkflowRunDetailResponse WorkflowStatus literal type validation."""
+    # Valid statuses should work
+    valid_statuses: list[WorkflowStatus] = ["running", "succeeded", "failed", "stopped"]
+    for status in valid_statuses:
+        response = GetWorkflowRunDetailResponse(status=status)
+        assert response.status == status
+
+
+def test_get_workflow_run_detail_response_serialization() -> None:
+    """Test GetWorkflowRunDetailResponse serialization."""
+    response = GetWorkflowRunDetailResponse(
+        id="run-123", status="succeeded", inputs={"query": "test"}, outputs={"result": "success"}, total_tokens=100
+    )
+
+    serialized = response.model_dump(exclude_none=True)
+    assert serialized["id"] == "run-123"
+    assert serialized["status"] == "succeeded"
+    assert "inputs" in serialized
+    assert "outputs" in serialized
+    assert serialized["total_tokens"] == 100
+    # None values should be excluded
+    assert "error" not in serialized
+    assert "workflow_id" not in serialized
 
 
 def test_workflow_inputs_serialization_with_files() -> None:

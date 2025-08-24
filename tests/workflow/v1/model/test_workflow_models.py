@@ -1,5 +1,8 @@
 from dify_oapi.api.workflow.v1.model.workflow.execution_metadata import ExecutionMetadata
 from dify_oapi.api.workflow.v1.model.workflow.node_info import NodeInfo
+from dify_oapi.api.workflow.v1.model.workflow.run_specific_workflow_request import RunSpecificWorkflowRequest
+from dify_oapi.api.workflow.v1.model.workflow.run_specific_workflow_request_body import RunSpecificWorkflowRequestBody
+from dify_oapi.api.workflow.v1.model.workflow.run_specific_workflow_response import RunSpecificWorkflowResponse
 from dify_oapi.api.workflow.v1.model.workflow.run_workflow_request import RunWorkflowRequest
 from dify_oapi.api.workflow.v1.model.workflow.run_workflow_request_body import FileInfo, RunWorkflowRequestBody
 from dify_oapi.api.workflow.v1.model.workflow.run_workflow_response import RunWorkflowResponse
@@ -361,3 +364,120 @@ def test_request_body_serialization() -> None:
     # trace_id and files should not be present (None values excluded)
     assert "trace_id" not in serialized
     assert "files" not in serialized
+
+
+# ===== RUN SPECIFIC WORKFLOW API MODELS TESTS =====
+
+
+def test_run_specific_workflow_request_builder() -> None:
+    """Test RunSpecificWorkflowRequest builder pattern."""
+    request = RunSpecificWorkflowRequest.builder().workflow_id("workflow-123").build()
+    assert request.http_method == HttpMethod.POST
+    assert request.uri == "/v1/workflows/:workflow_id/run"
+    assert request.workflow_id == "workflow-123"
+    assert request.paths["workflow_id"] == "workflow-123"
+    assert request.request_body is None
+
+
+def test_run_specific_workflow_request_with_body() -> None:
+    """Test RunSpecificWorkflowRequest with request body."""
+    inputs = WorkflowInputs.builder().add_input("query", "test").build()
+    request_body = (
+        RunSpecificWorkflowRequestBody.builder()
+        .inputs(inputs)
+        .response_mode("blocking")
+        .user("user-123")
+        .trace_id("trace-456")
+        .build()
+    )
+    request = RunSpecificWorkflowRequest.builder().workflow_id("workflow-456").request_body(request_body).build()
+
+    assert request.workflow_id == "workflow-456"
+    assert request.paths["workflow_id"] == "workflow-456"
+    assert request.request_body is not None
+    assert request.request_body.inputs is not None
+    assert request.request_body.response_mode == "blocking"
+    assert request.request_body.user == "user-123"
+    assert request.request_body.trace_id == "trace-456"
+    assert request.body is not None
+
+
+def test_run_specific_workflow_request_body_validation() -> None:
+    """Test RunSpecificWorkflowRequestBody validation and builder."""
+    from dify_oapi.api.workflow.v1.model.file.file_info import FileInfo as FileInfoModel
+
+    file_info = FileInfoModel(type="document", transfer_method="local_file", upload_file_id="file-123")
+    inputs = WorkflowInputs.builder().add_input("content", "test content").build()
+
+    request_body = (
+        RunSpecificWorkflowRequestBody.builder()
+        .inputs(inputs)
+        .response_mode("streaming")
+        .user("user-456")
+        .files([file_info])
+        .build()
+    )
+
+    assert request_body.inputs is not None
+    assert request_body.inputs.get_input("content") == "test content"
+    assert request_body.response_mode == "streaming"
+    assert request_body.user == "user-456"
+    assert request_body.files is not None
+    assert len(request_body.files) == 1
+    assert request_body.files[0].type == "document"
+    assert request_body.files[0].upload_file_id == "file-123"
+
+
+def test_run_specific_workflow_response_model() -> None:
+    """Test RunSpecificWorkflowResponse model."""
+    # Create workflow run data
+    data = WorkflowRunData.builder().id("run-123").status("succeeded").build()
+
+    # Create response using multiple inheritance
+    response = RunSpecificWorkflowResponse(
+        workflow_run_id="run-123", task_id="task-456", data=data, success=True, code="200", msg="Success"
+    )
+
+    # Test WorkflowRunInfo properties
+    assert response.workflow_run_id == "run-123"
+    assert response.task_id == "task-456"
+    assert response.data is not None
+    assert response.data.id == "run-123"
+    assert response.data.status == "succeeded"
+
+    # Test BaseResponse properties
+    assert response.success is False  # success is False when code is set
+    assert response.code == "200"
+    assert response.msg == "Success"
+
+
+def test_run_specific_workflow_request_body_builder_chaining() -> None:
+    """Test RunSpecificWorkflowRequestBody builder method chaining."""
+    inputs = WorkflowInputs.builder().add_input("query", "test").build()
+
+    # Test method chaining
+    builder = RunSpecificWorkflowRequestBody.builder()
+    result = builder.inputs(inputs).response_mode("blocking").user("user-123").trace_id("trace-456")
+
+    # Verify builder returns self for chaining
+    assert result is builder
+
+    # Build and verify final result
+    request_body = result.build()
+    assert request_body.inputs is not None
+    assert request_body.response_mode == "blocking"
+    assert request_body.user == "user-123"
+    assert request_body.trace_id == "trace-456"
+
+
+def test_run_specific_workflow_path_parameter_handling() -> None:
+    """Test RunSpecificWorkflowRequest path parameter handling."""
+    request = RunSpecificWorkflowRequest.builder().workflow_id("workflow-789").build()
+
+    # Verify path parameter is set correctly
+    assert request.workflow_id == "workflow-789"
+    assert "workflow_id" in request.paths
+    assert request.paths["workflow_id"] == "workflow-789"
+
+    # Verify URI template is correct
+    assert request.uri == "/v1/workflows/:workflow_id/run"

@@ -5,9 +5,9 @@ This document tracks the implementation progress of the workflow API module base
 ## Progress Overview
 
 **Total Steps**: 36  
-**Completed**: 2  
+**Completed**: 4  
 **In Progress**: 0  
-**Remaining**: 34
+**Remaining**: 32
 
 ## Implementation Progress
 
@@ -18,8 +18,8 @@ This document tracks the implementation progress of the workflow API module base
 
 ### Phase 2: Workflow Management APIs (4 APIs)
 
-- [ ] **Step 3**: Create Run Workflow API Models
-- [ ] **Step 4**: Test Run Workflow API Models
+- [x] **Step 3**: Create Run Workflow API Models
+- [x] **Step 4**: Test Run Workflow API Models
 - [ ] **Step 5**: Create Run Specific Workflow API Models
 - [ ] **Step 6**: Test Run Specific Workflow API Models
 - [ ] **Step 7**: Create Get Workflow Run Detail API Models

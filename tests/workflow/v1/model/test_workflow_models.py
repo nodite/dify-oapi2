@@ -1,10 +1,14 @@
 from dify_oapi.api.workflow.v1.model.workflow.execution_metadata import ExecutionMetadata
 from dify_oapi.api.workflow.v1.model.workflow.node_info import NodeInfo
+from dify_oapi.api.workflow.v1.model.workflow.run_workflow_request import RunWorkflowRequest
+from dify_oapi.api.workflow.v1.model.workflow.run_workflow_request_body import FileInfo, RunWorkflowRequestBody
+from dify_oapi.api.workflow.v1.model.workflow.run_workflow_response import RunWorkflowResponse
 from dify_oapi.api.workflow.v1.model.workflow.streaming_event import StreamingEvent
 from dify_oapi.api.workflow.v1.model.workflow.workflow_inputs import WorkflowInputs
 from dify_oapi.api.workflow.v1.model.workflow.workflow_run_data import WorkflowRunData
 from dify_oapi.api.workflow.v1.model.workflow.workflow_run_info import WorkflowRunInfo
-from dify_oapi.api.workflow.v1.model.workflow.workflow_types import EventType, NodeType, WorkflowStatus
+from dify_oapi.api.workflow.v1.model.workflow.workflow_types import EventType, NodeType, ResponseMode, WorkflowStatus
+from dify_oapi.core.enum import HttpMethod
 
 # ===== SHARED WORKFLOW MODELS TESTS =====
 
@@ -224,3 +228,136 @@ def test_nested_model_relationships() -> None:
     assert node.execution_metadata is not None
     assert node.execution_metadata.total_tokens == 50
     assert node.execution_metadata.currency == "USD"
+
+
+# ===== RUN WORKFLOW API MODELS TESTS =====
+
+
+def test_run_workflow_request_builder() -> None:
+    """Test RunWorkflowRequest builder pattern."""
+    request = RunWorkflowRequest.builder().build()
+    assert request.http_method == HttpMethod.POST
+    assert request.uri == "/v1/workflows/run"
+    assert request.request_body is None
+
+
+def test_run_workflow_request_with_body() -> None:
+    """Test RunWorkflowRequest with request body."""
+    inputs = WorkflowInputs.builder().add_input("query", "test").build()
+    request_body = (
+        RunWorkflowRequestBody.builder()
+        .inputs(inputs)
+        .response_mode("blocking")
+        .user("user-123")
+        .trace_id("trace-456")
+        .build()
+    )
+    request = RunWorkflowRequest.builder().request_body(request_body).build()
+
+    assert request.request_body is not None
+    assert request.request_body.inputs is not None
+    assert request.request_body.response_mode == "blocking"
+    assert request.request_body.user == "user-123"
+    assert request.request_body.trace_id == "trace-456"
+    assert request.body is not None
+
+
+def test_run_workflow_request_body_validation() -> None:
+    """Test RunWorkflowRequestBody validation and builder."""
+    file_info = FileInfo(type="document", transfer_method="local_file", upload_file_id="file-123")
+    inputs = WorkflowInputs.builder().add_input("content", "test content").build()
+
+    request_body = (
+        RunWorkflowRequestBody.builder()
+        .inputs(inputs)
+        .response_mode("streaming")
+        .user("user-456")
+        .files([file_info])
+        .build()
+    )
+
+    assert request_body.inputs is not None
+    assert request_body.inputs.get_input("content") == "test content"
+    assert request_body.response_mode == "streaming"
+    assert request_body.user == "user-456"
+    assert request_body.files is not None
+    assert len(request_body.files) == 1
+    assert request_body.files[0].type == "document"
+    assert request_body.files[0].upload_file_id == "file-123"
+
+
+def test_response_mode_literal_validation() -> None:
+    """Test ResponseMode literal type validation."""
+    # Valid response modes should work
+    valid_modes: list[ResponseMode] = ["streaming", "blocking"]
+    for mode in valid_modes:
+        request_body = RunWorkflowRequestBody(response_mode=mode)
+        assert request_body.response_mode == mode
+
+
+def test_run_workflow_response_model() -> None:
+    """Test RunWorkflowResponse model."""
+    # Create workflow run data
+    data = WorkflowRunData.builder().id("run-123").status("succeeded").build()
+
+    # Create response using multiple inheritance
+    response = RunWorkflowResponse(
+        workflow_run_id="run-123", task_id="task-456", data=data, success=True, code="200", msg="Success"
+    )
+
+    # Test WorkflowRunInfo properties
+    assert response.workflow_run_id == "run-123"
+    assert response.task_id == "task-456"
+    assert response.data is not None
+    assert response.data.id == "run-123"
+    assert response.data.status == "succeeded"
+
+    # Test BaseResponse properties
+    assert response.success is False  # success is False when code is set
+    assert response.code == "200"
+    assert response.msg == "Success"
+
+
+def test_file_info_model() -> None:
+    """Test FileInfo model creation and validation."""
+    file_info = FileInfo(type="image", transfer_method="remote_url", url="https://example.com/image.jpg")
+
+    assert file_info.type == "image"
+    assert file_info.transfer_method == "remote_url"
+    assert file_info.url == "https://example.com/image.jpg"
+    assert file_info.upload_file_id is None
+
+
+def test_run_workflow_request_body_builder_chaining() -> None:
+    """Test RunWorkflowRequestBody builder method chaining."""
+    inputs = WorkflowInputs.builder().add_input("query", "test").build()
+
+    # Test method chaining
+    builder = RunWorkflowRequestBody.builder()
+    result = builder.inputs(inputs).response_mode("blocking").user("user-123").trace_id("trace-456")
+
+    # Verify builder returns self for chaining
+    assert result is builder
+
+    # Build and verify final result
+    request_body = result.build()
+    assert request_body.inputs is not None
+    assert request_body.response_mode == "blocking"
+    assert request_body.user == "user-123"
+    assert request_body.trace_id == "trace-456"
+
+
+def test_request_body_serialization() -> None:
+    """Test request body serialization."""
+    inputs = WorkflowInputs.builder().add_input("query", "test").build()
+    request_body = RunWorkflowRequestBody.builder().inputs(inputs).response_mode("blocking").user("user-123").build()
+
+    serialized = request_body.model_dump(exclude_none=True, mode="json")
+    assert "inputs" in serialized
+    assert "response_mode" in serialized
+    assert "user" in serialized
+    assert serialized["response_mode"] == "blocking"
+    assert serialized["user"] == "user-123"
+    # trace_id and files should not be present (None values excluded)
+    assert "trace_id" not in serialized
+    assert "files" not in serialized

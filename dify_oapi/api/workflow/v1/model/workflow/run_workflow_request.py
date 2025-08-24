@@ -21,12 +21,12 @@ class RunWorkflowRequestBuilder:
         run_workflow_request = RunWorkflowRequest()
         run_workflow_request.http_method = HttpMethod.POST
         run_workflow_request.uri = "/v1/workflows/run"
-        self._run_workflow_request: RunWorkflowRequest = run_workflow_request
+        self._run_workflow_request = run_workflow_request
+
+    def build(self) -> RunWorkflowRequest:
+        return self._run_workflow_request
 
     def request_body(self, request_body: RunWorkflowRequestBody) -> RunWorkflowRequestBuilder:
         self._run_workflow_request.request_body = request_body
         self._run_workflow_request.body = request_body.model_dump(exclude_none=True, mode="json")
         return self
-
-    def build(self) -> RunWorkflowRequest:
-        return self._run_workflow_request

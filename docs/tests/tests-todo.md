@@ -47,7 +47,7 @@
 - [x] **Step 2.5**: Test Workflow Public Models
 
 ### Resource-Specific Implementation
-- [ ] **Step 2.6**: Create Workflow File Tests
+- [x] **Step 2.6**: Create Workflow File Tests
 - [ ] **Step 2.7**: Test Workflow File Implementation
 - [ ] **Step 2.8**: Create Workflow Log Tests
 - [ ] **Step 2.9**: Test Workflow Log Implementation
@@ -99,12 +99,12 @@
 
 ### Completion Status
 - **Phase 1**: 18/18 steps completed (100.0%)
-- **Phase 2**: 5/14 steps completed (35.7%)
+- **Phase 2**: 6/14 steps completed (42.9%)
 - **Phase 3**: 0/12 steps completed (0%)
 - **Phase 4**: 0/3 steps completed (0%)
 
 ### Overall Progress
-- **Total Steps**: 23/47 completed (48.9%)
+- **Total Steps**: 24/47 completed (51.1%)
 - **Files to Refactor**: 3 large test files
 - **Expected New Files**: ~30+ test files
 - **Estimated Line Reduction**: ~60-70%

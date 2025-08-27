@@ -5,98 +5,216 @@ from dify_oapi.core.http.transport import ATransport, Transport
 from dify_oapi.core.model.config import Config
 from dify_oapi.core.model.request_option import RequestOption
 
-from ..model.get_workflow_log_request import GetWorkflowLogRequest
-from ..model.get_workflow_log_response import GetWorkflowLogResponse
-from ..model.get_workflow_result_request import GetWorkflowResultRequest
-from ..model.get_workflow_result_response import GetWorkflowResultResponse
-from ..model.run_workflow_request import RunWorkflowRequest
-from ..model.run_workflow_response import RunWorkflowResponse
-from ..model.stop_workflow_request import StopWorkflowRequest
-from ..model.stop_workflow_response import StopWorkflowResponse
+from ..model.workflow.get_workflow_run_detail_request import GetWorkflowRunDetailRequest
+from ..model.workflow.get_workflow_run_detail_response import GetWorkflowRunDetailResponse
+from ..model.workflow.run_specific_workflow_request import RunSpecificWorkflowRequest
+from ..model.workflow.run_specific_workflow_response import RunSpecificWorkflowResponse
+from ..model.workflow.run_workflow_request import RunWorkflowRequest
+from ..model.workflow.run_workflow_response import RunWorkflowResponse
+from ..model.workflow.stop_workflow_request import StopWorkflowRequest
+from ..model.workflow.stop_workflow_response import StopWorkflowResponse
 
 
 class Workflow:
     def __init__(self, config: Config) -> None:
-        self.config: Config = config
+        self.config = config
 
     @overload
-    def run(
+    def run_workflow(
         self,
         request: RunWorkflowRequest,
-        option: RequestOption | None,
+        request_option: RequestOption,
         stream: Literal[True],
     ) -> Generator[bytes, None, None]: ...
 
     @overload
-    def run(
+    def run_workflow(
         self,
         request: RunWorkflowRequest,
-        option: RequestOption | None,
-        stream: Literal[False],
+        request_option: RequestOption,
+        stream: Literal[False] = False,
     ) -> RunWorkflowResponse: ...
 
-    @overload
-    def run(self, request: RunWorkflowRequest, option: RequestOption | None) -> RunWorkflowResponse: ...
-
-    def run(
+    def run_workflow(
         self,
         request: RunWorkflowRequest,
-        option: RequestOption | None = None,
+        request_option: RequestOption,
         stream: bool = False,
-    ):
+    ) -> RunWorkflowResponse | Generator[bytes, None, None]:
+        """Execute workflow.
+
+        Args:
+            request: The run workflow request
+            request_option: Request options including API key
+            stream: Whether to use streaming mode
+
+        Returns:
+            RunWorkflowResponse for blocking mode or Generator[bytes, None, None] for streaming mode
+        """
         if stream:
-            return Transport.execute(self.config, request, option=option, stream=True)
-        else:
-            return Transport.execute(self.config, request, unmarshal_as=RunWorkflowResponse, option=option)
+            return Transport.execute(self.config, request, stream=True, option=request_option)
+        return Transport.execute(self.config, request, unmarshal_as=RunWorkflowResponse, option=request_option)
 
     @overload
-    async def arun(
+    async def arun_workflow(
         self,
         request: RunWorkflowRequest,
-        option: RequestOption | None,
+        request_option: RequestOption,
         stream: Literal[True],
     ) -> AsyncGenerator[bytes, None]: ...
 
     @overload
-    async def arun(
+    async def arun_workflow(
         self,
         request: RunWorkflowRequest,
-        option: RequestOption | None,
-        stream: Literal[False],
+        request_option: RequestOption,
+        stream: Literal[False] = False,
     ) -> RunWorkflowResponse: ...
 
-    @overload
-    async def arun(self, request: RunWorkflowRequest, option: RequestOption | None) -> RunWorkflowResponse: ...
-
-    async def arun(
+    async def arun_workflow(
         self,
         request: RunWorkflowRequest,
-        option: RequestOption | None = None,
+        request_option: RequestOption,
         stream: bool = False,
-    ):
+    ) -> RunWorkflowResponse | AsyncGenerator[bytes, None]:
+        """Execute workflow asynchronously.
+
+        Args:
+            request: The run workflow request
+            request_option: Request options including API key
+            stream: Whether to use streaming mode
+
+        Returns:
+            RunWorkflowResponse for blocking mode or AsyncGenerator[bytes, None] for streaming mode
+        """
         if stream:
-            return await ATransport.aexecute(self.config, request, option=option, stream=True)
-        else:
-            return await ATransport.aexecute(self.config, request, unmarshal_as=RunWorkflowResponse, option=option)
+            return await ATransport.aexecute(self.config, request, stream=True, option=request_option)
+        return await ATransport.aexecute(self.config, request, unmarshal_as=RunWorkflowResponse, option=request_option)
 
-    def stop(self, request: StopWorkflowRequest, option: RequestOption | None = None) -> StopWorkflowResponse:
-        return Transport.execute(self.config, request, unmarshal_as=StopWorkflowResponse, option=option)
+    @overload
+    def run_specific_workflow(
+        self,
+        request: RunSpecificWorkflowRequest,
+        request_option: RequestOption,
+        stream: Literal[True],
+    ) -> Generator[bytes, None, None]: ...
 
-    async def astop(self, request: StopWorkflowRequest, option: RequestOption | None = None) -> StopWorkflowResponse:
-        return await ATransport.aexecute(self.config, request, unmarshal_as=StopWorkflowResponse, option=option)
+    @overload
+    def run_specific_workflow(
+        self,
+        request: RunSpecificWorkflowRequest,
+        request_option: RequestOption,
+        stream: Literal[False] = False,
+    ) -> RunSpecificWorkflowResponse: ...
 
-    def result(
-        self, request: GetWorkflowResultRequest, option: RequestOption | None = None
-    ) -> GetWorkflowResultResponse:
-        return Transport.execute(self.config, request, unmarshal_as=GetWorkflowResultResponse, option=option)
+    def run_specific_workflow(
+        self,
+        request: RunSpecificWorkflowRequest,
+        request_option: RequestOption,
+        stream: bool = False,
+    ) -> RunSpecificWorkflowResponse | Generator[bytes, None, None]:
+        """Execute specific version workflow.
 
-    async def aresult(
-        self, request: GetWorkflowResultRequest, option: RequestOption | None = None
-    ) -> GetWorkflowResultResponse:
-        return await ATransport.aexecute(self.config, request, unmarshal_as=GetWorkflowResultResponse, option=option)
+        Args:
+            request: The run specific workflow request
+            request_option: Request options including API key
+            stream: Whether to use streaming mode
 
-    def log(self, request: GetWorkflowLogRequest, option: RequestOption | None = None) -> GetWorkflowLogResponse:
-        return Transport.execute(self.config, request, unmarshal_as=GetWorkflowLogResponse, option=option)
+        Returns:
+            RunSpecificWorkflowResponse for blocking mode or Generator[bytes, None, None] for streaming mode
+        """
+        if stream:
+            return Transport.execute(self.config, request, stream=True, option=request_option)
+        return Transport.execute(self.config, request, unmarshal_as=RunSpecificWorkflowResponse, option=request_option)
 
-    async def alog(self, request: GetWorkflowLogRequest, option: RequestOption | None = None) -> GetWorkflowLogResponse:
-        return await ATransport.aexecute(self.config, request, unmarshal_as=GetWorkflowLogResponse, option=option)
+    @overload
+    async def arun_specific_workflow(
+        self,
+        request: RunSpecificWorkflowRequest,
+        request_option: RequestOption,
+        stream: Literal[True],
+    ) -> AsyncGenerator[bytes, None]: ...
+
+    @overload
+    async def arun_specific_workflow(
+        self,
+        request: RunSpecificWorkflowRequest,
+        request_option: RequestOption,
+        stream: Literal[False] = False,
+    ) -> RunSpecificWorkflowResponse: ...
+
+    async def arun_specific_workflow(
+        self,
+        request: RunSpecificWorkflowRequest,
+        request_option: RequestOption,
+        stream: bool = False,
+    ) -> RunSpecificWorkflowResponse | AsyncGenerator[bytes, None]:
+        """Execute specific version workflow asynchronously.
+
+        Args:
+            request: The run specific workflow request
+            request_option: Request options including API key
+            stream: Whether to use streaming mode
+
+        Returns:
+            RunSpecificWorkflowResponse for blocking mode or AsyncGenerator[bytes, None] for streaming mode
+        """
+        if stream:
+            return await ATransport.aexecute(self.config, request, stream=True, option=request_option)
+        return await ATransport.aexecute(
+            self.config, request, unmarshal_as=RunSpecificWorkflowResponse, option=request_option
+        )
+
+    def get_workflow_run_detail(
+        self, request: GetWorkflowRunDetailRequest, request_option: RequestOption
+    ) -> GetWorkflowRunDetailResponse:
+        """Get workflow execution details.
+
+        Args:
+            request: The get workflow run detail request
+            request_option: Request options including API key
+
+        Returns:
+            GetWorkflowRunDetailResponse with workflow execution details
+        """
+        return Transport.execute(self.config, request, unmarshal_as=GetWorkflowRunDetailResponse, option=request_option)
+
+    async def aget_workflow_run_detail(
+        self, request: GetWorkflowRunDetailRequest, request_option: RequestOption
+    ) -> GetWorkflowRunDetailResponse:
+        """Get workflow execution details asynchronously.
+
+        Args:
+            request: The get workflow run detail request
+            request_option: Request options including API key
+
+        Returns:
+            GetWorkflowRunDetailResponse with workflow execution details
+        """
+        return await ATransport.aexecute(
+            self.config, request, unmarshal_as=GetWorkflowRunDetailResponse, option=request_option
+        )
+
+    def stop_workflow(self, request: StopWorkflowRequest, request_option: RequestOption) -> StopWorkflowResponse:
+        """Stop workflow execution.
+
+        Args:
+            request: The stop workflow request
+            request_option: Request options including API key
+
+        Returns:
+            StopWorkflowResponse with stop result
+        """
+        return Transport.execute(self.config, request, unmarshal_as=StopWorkflowResponse, option=request_option)
+
+    async def astop_workflow(self, request: StopWorkflowRequest, request_option: RequestOption) -> StopWorkflowResponse:
+        """Stop workflow execution asynchronously.
+
+        Args:
+            request: The stop workflow request
+            request_option: Request options including API key
+
+        Returns:
+            StopWorkflowResponse with stop result
+        """
+        return await ATransport.aexecute(self.config, request, unmarshal_as=StopWorkflowResponse, option=request_option)

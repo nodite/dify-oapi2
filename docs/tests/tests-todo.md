@@ -75,8 +75,8 @@
 - [x] **Step 3.7**: Test Dataset Implementation
 
 ### Segment Module
-- [ ] **Step 3.8**: Analyze and Refactor Segment Tests
-- [ ] **Step 3.9**: Test Segment Implementation
+- [x] **Step 3.8**: Analyze and Refactor Segment Tests
+- [x] **Step 3.9**: Test Segment Implementation
 
 ### Metadata and Tag Modules
 - [ ] **Step 3.10**: Refactor Metadata and Tag Tests
@@ -100,11 +100,11 @@
 ### Completion Status
 - **Phase 1**: 18/18 steps completed (100.0%)
 - **Phase 2**: 14/14 steps completed (100.0%)
-- **Phase 3**: 7/12 steps completed (58.3%)
+- **Phase 3**: 9/12 steps completed (75.0%)
 - **Phase 4**: 0/3 steps completed (0%)
 
 ### Overall Progress
-- **Total Steps**: 39/47 completed (83.0%)
+- **Total Steps**: 41/47 completed (87.2%)
 - **Files to Refactor**: 3 large test files
 - **Expected New Files**: ~30+ test files
 - **Estimated Line Reduction**: ~60-70%

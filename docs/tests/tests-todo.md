@@ -71,8 +71,8 @@
 - [x] **Step 3.5**: Test Document Public Models
 
 ### Dataset Module
-- [ ] **Step 3.6**: Analyze and Refactor Dataset Tests
-- [ ] **Step 3.7**: Test Dataset Implementation
+- [x] **Step 3.6**: Analyze and Refactor Dataset Tests
+- [x] **Step 3.7**: Test Dataset Implementation
 
 ### Segment Module
 - [ ] **Step 3.8**: Analyze and Refactor Segment Tests
@@ -100,11 +100,11 @@
 ### Completion Status
 - **Phase 1**: 18/18 steps completed (100.0%)
 - **Phase 2**: 14/14 steps completed (100.0%)
-- **Phase 3**: 5/12 steps completed (41.7%)
+- **Phase 3**: 7/12 steps completed (58.3%)
 - **Phase 4**: 0/3 steps completed (0%)
 
 ### Overall Progress
-- **Total Steps**: 37/47 completed (78.7%)
+- **Total Steps**: 39/47 completed (83.0%)
 - **Files to Refactor**: 3 large test files
 - **Expected New Files**: ~30+ test files
 - **Estimated Line Reduction**: ~60-70%

@@ -642,12 +642,50 @@ class V1:
 - **No Nested Directories**: Avoid creating resource-specific test subdirectories
 
 ### Test File Organization Rules (MANDATORY)
-**Decision**: Test files MUST be organized in a flat structure within the model directory
+**Decision**: Test files MUST be organized using mixed approach - by resource type, then by functionality
+- **Resource Separation**: Each resource gets its own test file (e.g., `test_completion_models.py`, `test_file_models.py`)
+- **API Operation Grouping**: Within each resource file, organize tests by API operation with dedicated test classes
+- **Method Organization**: Within each test class, organize methods by model type (Request, RequestBody, Response)
+- **Public Class Separation**: Create separate files for public/common model tests (e.g., `test_completion_public_models.py`)
 - **Flat Structure**: All model test files are placed directly in `tests/completion/v1/model/` directory
-- **No Subdirectories**: Do NOT create resource-specific subdirectories like `model/completion/`, `model/file/`
-- **Naming Convention**: Use `test_{resource}_models.py` pattern (e.g., `test_completion_models.py`, `test_file_models.py`)
-- **Consistency**: Follow the same pattern across all completion resources
-- **Rationale**: Maintains consistency with existing codebase structure and simplifies test discovery
+- **Naming Convention**: Use `test_{resource}_models.py` and `test_{resource}_public_models.py` patterns
+
+### Test Class Organization Pattern
+**Within each resource test file, organize by API operations:**
+```python
+# test_completion_models.py
+class TestSendMessageModels:
+    # Request tests
+    def test_request_builder(self): ...
+    def test_request_validation(self): ...
+    # RequestBody tests  
+    def test_request_body_builder(self): ...
+    def test_request_body_validation(self): ...
+    # Response tests
+    def test_response_inheritance(self): ...
+    def test_response_data_access(self): ...
+
+class TestStopResponseModels:
+    # Request tests
+    def test_request_builder(self): ...
+    def test_request_validation(self): ...
+    # RequestBody tests
+    def test_request_body_builder(self): ...
+    # Response tests
+    def test_response_inheritance(self): ...
+```
+
+**Public/Common classes get separate files:**
+```python
+# test_completion_public_models.py
+class TestCompletionMessageInfo:
+    def test_builder_pattern(self): ...
+    def test_field_validation(self): ...
+
+class TestUsage:
+    def test_builder_pattern(self): ...
+    def test_field_validation(self): ...
+```
 
 ### Test Directory Structure
 ```
@@ -655,12 +693,18 @@ tests/
 └── completion/
     └── v1/
         ├── model/
-        │   ├── test_completion_models.py    # Completion model tests (flat structure)
-        │   ├── test_file_models.py          # File model tests (flat structure)
-        │   ├── test_feedback_models.py      # Feedback model tests (flat structure)
-        │   ├── test_audio_models.py         # Audio model tests (flat structure)
-        │   ├── test_info_models.py          # Info model tests (flat structure)
-        │   └── test_annotation_models.py    # Annotation model tests (flat structure)
+        │   ├── test_completion_models.py        # SendMessage, StopResponse API tests
+        │   ├── test_completion_public_models.py # CompletionMessageInfo, Usage, etc.
+        │   ├── test_file_models.py              # UploadFile API tests
+        │   ├── test_file_public_models.py       # FileInfo, etc.
+        │   ├── test_feedback_models.py          # MessageFeedback, GetFeedbacks API tests
+        │   ├── test_feedback_public_models.py   # FeedbackInfo, etc.
+        │   ├── test_audio_models.py             # TextToAudio API tests
+        │   ├── test_audio_public_models.py      # AudioInfo, etc.
+        │   ├── test_info_models.py              # GetInfo, GetParameters, GetSite API tests
+        │   ├── test_info_public_models.py       # AppInfo, ParametersInfo, SiteInfo, etc.
+        │   ├── test_annotation_models.py        # All annotation API tests
+        │   └── test_annotation_public_models.py # AnnotationInfo, JobStatusInfo, etc.
         ├── resource/
         │   ├── test_completion_resource.py
         │   ├── test_file_resource.py

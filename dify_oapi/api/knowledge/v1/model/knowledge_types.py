@@ -37,3 +37,9 @@ ProviderType = Literal["system", "custom"]
 
 # Data source types
 DataSourceType = Literal["upload_file", "notion_import", "website_crawl"]
+
+# Document action types
+DocumentAction = Literal["enable", "disable"]
+
+# Segment status filter types
+SegmentStatusFilter = Literal["enabled", "disabled"]

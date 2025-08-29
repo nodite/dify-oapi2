@@ -50,8 +50,8 @@ This document tracks the implementation progress of the Knowledge Base API modul
 - [ ] **Step 9**: Implement Tag Resource Class
 
 ### Model API Implementation (1 API)
-- [ ] **Step 10**: Implement Model API Models (1 API)
-- [ ] **Step 11**: Implement Model Resource Class
+- [x] **Step 10**: Implement Model API Models (1 API)
+- [x] **Step 11**: Implement Model Resource Class
 
 ### Integration and Client Setup
 - [ ] **Step 12**: Implement Version Integration
@@ -100,8 +100,8 @@ This document tracks the implementation progress of the Knowledge Base API modul
 - [ ] **Step 8DT**: Test Complete Tag API Models Integration
 - [ ] **Step 8T**: Test Tag API Models (7 APIs)
 - [ ] **Step 9T**: Test Tag Resource Class
-- [ ] **Step 10T**: Test Model API Models (1 API)
-- [ ] **Step 11T**: Test Model Resource Class
+- [x] **Step 10T**: Test Model API Models (1 API)
+- [x] **Step 11T**: Test Model Resource Class
 - [ ] **Step 12T**: Test Version Integration
 - [ ] **Step 13T**: Test Service Integration
 - [ ] **Step 14T**: Test Client Integration
@@ -121,9 +121,9 @@ This document tracks the implementation progress of the Knowledge Base API modul
 
 - **Total Steps**: 24 main steps + 16 sub-steps + 37 test steps = 77 total tasks
 - **API Coverage**: 33 APIs across 5 resources per knowledge-api.md (6+12+8+7+1)
-- **Completed**: 2/77 total tasks (2.6%)
+- **Completed**: 6/77 total tasks (7.8%)
 - **In Progress**: 0/77 tasks (0%)
-- **Remaining**: 75/77 tasks (97.4%)
+- **Remaining**: 71/77 tasks (92.2%)
 
 ## Documentation and Test Consistency Issues (CRITICAL)
 
@@ -179,9 +179,7 @@ This document tracks the implementation progress of the Knowledge Base API modul
 - [ ] Get Dataset Tags
 
 ### Model Resource (1 API per knowledge-api.md)
-- [ ] Get Text Embedding Models
-
-**Note**: Model API is missing from current examples/README.md but exists in actual files
+- [x] Get Text Embedding Models
 
 ## Notes
 

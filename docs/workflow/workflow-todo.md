@@ -9,8 +9,8 @@ This document tracks the implementation progress of the Workflow API based on th
 - [x] **Migration Planning**: Create detailed migration steps for legacy code consolidation
 
 ### Step 1: Create Workflow Types and Base Models
-- [ ] **Implementation**: Create workflow types definition and core data models
-- [ ] **Testing**: Create comprehensive tests for workflow types and base models
+- [x] **Implementation**: Create workflow types definition and core data models
+- [x] **Testing**: Create comprehensive tests for workflow types and base models
 
 ### Step 2: Implement Run Workflow API Models
 - [ ] **Implementation**: Implement Run Workflow API request, request body, and response models
@@ -61,11 +61,11 @@ This document tracks the implementation progress of the Workflow API based on th
 ## Overall Progress
 
 **Total Steps**: 12 (24 sub-tasks)
-**Completed**: 2
+**Completed**: 4
 **In Progress**: 0
-**Remaining**: 22
+**Remaining**: 20
 
-**Progress**: 8.3% (2/24)
+**Progress**: 16.7% (4/24)
 
 ## Notes
 

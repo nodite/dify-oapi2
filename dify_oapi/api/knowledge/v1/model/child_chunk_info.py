@@ -1,36 +1,24 @@
 """Child chunk information model for Knowledge Base API."""
 
-from datetime import datetime
 from typing import Optional
 
 from pydantic import BaseModel
-
-from .knowledge_types import SegmentStatus
 
 
 class ChildChunkInfo(BaseModel):
     """Child chunk information model with builder pattern."""
 
     id: Optional[str] = None
-    position: Optional[int] = None
-    segment_id: Optional[str] = None
     content: Optional[str] = None
+    position: Optional[int] = None
     word_count: Optional[int] = None
     tokens: Optional[int] = None
     keywords: Optional[list[str]] = None
     index_node_id: Optional[str] = None
     index_node_hash: Optional[str] = None
     hit_count: Optional[int] = None
-    enabled: Optional[bool] = None
-    disabled_at: Optional[datetime] = None
-    disabled_by: Optional[str] = None
-    status: Optional[SegmentStatus] = None
     created_by: Optional[str] = None
-    created_at: Optional[datetime] = None
-    indexing_at: Optional[datetime] = None
-    completed_at: Optional[datetime] = None
-    error: Optional[str] = None
-    stopped_at: Optional[datetime] = None
+    created_at: Optional[int] = None
 
     @staticmethod
     def builder() -> "ChildChunkInfoBuilder":
@@ -50,16 +38,12 @@ class ChildChunkInfoBuilder:
         self._child_chunk_info.id = id
         return self
 
-    def position(self, position: int) -> "ChildChunkInfoBuilder":
-        self._child_chunk_info.position = position
-        return self
-
-    def segment_id(self, segment_id: str) -> "ChildChunkInfoBuilder":
-        self._child_chunk_info.segment_id = segment_id
-        return self
-
     def content(self, content: str) -> "ChildChunkInfoBuilder":
         self._child_chunk_info.content = content
+        return self
+
+    def position(self, position: int) -> "ChildChunkInfoBuilder":
+        self._child_chunk_info.position = position
         return self
 
     def word_count(self, word_count: int) -> "ChildChunkInfoBuilder":
@@ -86,42 +70,10 @@ class ChildChunkInfoBuilder:
         self._child_chunk_info.hit_count = hit_count
         return self
 
-    def enabled(self, enabled: bool) -> "ChildChunkInfoBuilder":
-        self._child_chunk_info.enabled = enabled
-        return self
-
-    def disabled_at(self, disabled_at: datetime) -> "ChildChunkInfoBuilder":
-        self._child_chunk_info.disabled_at = disabled_at
-        return self
-
-    def disabled_by(self, disabled_by: str) -> "ChildChunkInfoBuilder":
-        self._child_chunk_info.disabled_by = disabled_by
-        return self
-
-    def status(self, status: SegmentStatus) -> "ChildChunkInfoBuilder":
-        self._child_chunk_info.status = status
-        return self
-
     def created_by(self, created_by: str) -> "ChildChunkInfoBuilder":
         self._child_chunk_info.created_by = created_by
         return self
 
-    def created_at(self, created_at: datetime) -> "ChildChunkInfoBuilder":
+    def created_at(self, created_at: int) -> "ChildChunkInfoBuilder":
         self._child_chunk_info.created_at = created_at
-        return self
-
-    def indexing_at(self, indexing_at: datetime) -> "ChildChunkInfoBuilder":
-        self._child_chunk_info.indexing_at = indexing_at
-        return self
-
-    def completed_at(self, completed_at: datetime) -> "ChildChunkInfoBuilder":
-        self._child_chunk_info.completed_at = completed_at
-        return self
-
-    def error(self, error: str) -> "ChildChunkInfoBuilder":
-        self._child_chunk_info.error = error
-        return self
-
-    def stopped_at(self, stopped_at: datetime) -> "ChildChunkInfoBuilder":
-        self._child_chunk_info.stopped_at = stopped_at
         return self

@@ -1,9 +1,10 @@
 """File information model for Knowledge Base API."""
 
-from datetime import datetime
 from typing import Optional
 
 from pydantic import BaseModel
+
+from .knowledge_types import FileType
 
 
 class FileInfo(BaseModel):
@@ -14,8 +15,10 @@ class FileInfo(BaseModel):
     size: Optional[int] = None
     extension: Optional[str] = None
     mime_type: Optional[str] = None
+    type: Optional[FileType] = None
     created_by: Optional[str] = None
-    created_at: Optional[datetime] = None
+    created_at: Optional[int] = None
+    upload_file_id: Optional[str] = None
 
     @staticmethod
     def builder() -> "FileInfoBuilder":
@@ -51,10 +54,18 @@ class FileInfoBuilder:
         self._file_info.mime_type = mime_type
         return self
 
+    def type(self, type: FileType) -> "FileInfoBuilder":
+        self._file_info.type = type
+        return self
+
     def created_by(self, created_by: str) -> "FileInfoBuilder":
         self._file_info.created_by = created_by
         return self
 
-    def created_at(self, created_at: datetime) -> "FileInfoBuilder":
+    def created_at(self, created_at: int) -> "FileInfoBuilder":
         self._file_info.created_at = created_at
+        return self
+
+    def upload_file_id(self, upload_file_id: str) -> "FileInfoBuilder":
+        self._file_info.upload_file_id = upload_file_id
         return self

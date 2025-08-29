@@ -12,6 +12,7 @@ class ProcessRule(BaseModel):
 
     mode: Optional[ProcessingMode] = None
     rules: Optional[dict[str, Any]] = None
+    segmentation: Optional[dict[str, Any]] = None
 
     @staticmethod
     def builder() -> "ProcessRuleBuilder":
@@ -33,4 +34,8 @@ class ProcessRuleBuilder:
 
     def rules(self, rules: dict[str, Any]) -> "ProcessRuleBuilder":
         self._process_rule.rules = rules
+        return self
+
+    def segmentation(self, segmentation: dict[str, Any]) -> "ProcessRuleBuilder":
+        self._process_rule.segmentation = segmentation
         return self

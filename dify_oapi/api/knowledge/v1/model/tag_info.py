@@ -1,6 +1,5 @@
 """Tag information model for Knowledge Base API."""
 
-from datetime import datetime
 from typing import Optional
 
 from pydantic import BaseModel
@@ -14,9 +13,8 @@ class TagInfo(BaseModel):
     id: Optional[str] = None
     name: Optional[str] = None
     type: Optional[TagType] = None
-    binding_count: Optional[int] = None
     created_by: Optional[str] = None
-    created_at: Optional[datetime] = None
+    created_at: Optional[int] = None
 
     @staticmethod
     def builder() -> "TagInfoBuilder":
@@ -44,14 +42,10 @@ class TagInfoBuilder:
         self._tag_info.type = type
         return self
 
-    def binding_count(self, binding_count: int) -> "TagInfoBuilder":
-        self._tag_info.binding_count = binding_count
-        return self
-
     def created_by(self, created_by: str) -> "TagInfoBuilder":
         self._tag_info.created_by = created_by
         return self
 
-    def created_at(self, created_at: datetime) -> "TagInfoBuilder":
+    def created_at(self, created_at: int) -> "TagInfoBuilder":
         self._tag_info.created_at = created_at
         return self

@@ -1,6 +1,5 @@
 """Segment information model for Knowledge Base API."""
 
-from datetime import datetime
 from typing import Optional
 
 from pydantic import BaseModel
@@ -23,15 +22,15 @@ class SegmentInfo(BaseModel):
     index_node_hash: Optional[str] = None
     hit_count: Optional[int] = None
     enabled: Optional[bool] = None
-    disabled_at: Optional[datetime] = None
+    disabled_at: Optional[int] = None
     disabled_by: Optional[str] = None
     status: Optional[SegmentStatus] = None
     created_by: Optional[str] = None
-    created_at: Optional[datetime] = None
-    indexing_at: Optional[datetime] = None
-    completed_at: Optional[datetime] = None
+    created_at: Optional[int] = None
+    indexing_at: Optional[int] = None
+    completed_at: Optional[int] = None
     error: Optional[str] = None
-    stopped_at: Optional[datetime] = None
+    stopped_at: Optional[int] = None
 
     @staticmethod
     def builder() -> "SegmentInfoBuilder":
@@ -95,7 +94,7 @@ class SegmentInfoBuilder:
         self._segment_info.enabled = enabled
         return self
 
-    def disabled_at(self, disabled_at: datetime) -> "SegmentInfoBuilder":
+    def disabled_at(self, disabled_at: int) -> "SegmentInfoBuilder":
         self._segment_info.disabled_at = disabled_at
         return self
 
@@ -111,15 +110,15 @@ class SegmentInfoBuilder:
         self._segment_info.created_by = created_by
         return self
 
-    def created_at(self, created_at: datetime) -> "SegmentInfoBuilder":
+    def created_at(self, created_at: int) -> "SegmentInfoBuilder":
         self._segment_info.created_at = created_at
         return self
 
-    def indexing_at(self, indexing_at: datetime) -> "SegmentInfoBuilder":
+    def indexing_at(self, indexing_at: int) -> "SegmentInfoBuilder":
         self._segment_info.indexing_at = indexing_at
         return self
 
-    def completed_at(self, completed_at: datetime) -> "SegmentInfoBuilder":
+    def completed_at(self, completed_at: int) -> "SegmentInfoBuilder":
         self._segment_info.completed_at = completed_at
         return self
 
@@ -127,6 +126,6 @@ class SegmentInfoBuilder:
         self._segment_info.error = error
         return self
 
-    def stopped_at(self, stopped_at: datetime) -> "SegmentInfoBuilder":
+    def stopped_at(self, stopped_at: int) -> "SegmentInfoBuilder":
         self._segment_info.stopped_at = stopped_at
         return self

@@ -4,7 +4,7 @@ from typing import Any, Optional
 
 from pydantic import BaseModel
 
-from .knowledge_types import ModelType
+from .knowledge_types import ModelType, ProviderType
 
 
 class ModelInfo(BaseModel):
@@ -12,7 +12,8 @@ class ModelInfo(BaseModel):
 
     model_name: Optional[str] = None
     model_type: Optional[ModelType] = None
-    provider: Optional[dict[str, Any]] = None
+    provider: Optional[str] = None
+    provider_type: Optional[ProviderType] = None
     credentials: Optional[dict[str, Any]] = None
     load_balancing: Optional[dict[str, Any]] = None
 
@@ -38,8 +39,12 @@ class ModelInfoBuilder:
         self._model_info.model_type = model_type
         return self
 
-    def provider(self, provider: dict[str, Any]) -> "ModelInfoBuilder":
+    def provider(self, provider: str) -> "ModelInfoBuilder":
         self._model_info.provider = provider
+        return self
+
+    def provider_type(self, provider_type: ProviderType) -> "ModelInfoBuilder":
+        self._model_info.provider_type = provider_type
         return self
 
     def credentials(self, credentials: dict[str, Any]) -> "ModelInfoBuilder":

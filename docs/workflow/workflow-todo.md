@@ -17,8 +17,8 @@ This document tracks the implementation progress of the Workflow API based on th
 - [x] **Testing**: Create tests for Run Workflow API models
 
 ### Step 3: Implement Get Workflow Run Detail API Models
-- [ ] **Implementation**: Implement Get Workflow Run Detail API models
-- [ ] **Testing**: Create tests for Get Workflow Run Detail API models
+- [x] **Implementation**: Implement Get Workflow Run Detail API models
+- [x] **Testing**: Create tests for Get Workflow Run Detail API models
 
 ### Step 4: Implement Stop Workflow API Models
 - [ ] **Implementation**: Implement Stop Workflow API models
@@ -61,11 +61,11 @@ This document tracks the implementation progress of the Workflow API based on th
 ## Overall Progress
 
 **Total Steps**: 12 (24 sub-tasks)
-**Completed**: 6
+**Completed**: 8
 **In Progress**: 0
-**Remaining**: 18
+**Remaining**: 16
 
-**Progress**: 25.0% (6/24)
+**Progress**: 33.3% (8/24)
 
 ## Notes
 

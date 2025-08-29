@@ -1,5 +1,7 @@
 """Tests for workflow API models."""
 
+from dify_oapi.api.workflow.v1.model.get_workflow_run_detail_request import GetWorkflowRunDetailRequest
+from dify_oapi.api.workflow.v1.model.get_workflow_run_detail_response import GetWorkflowRunDetailResponse
 from dify_oapi.api.workflow.v1.model.run_workflow_request import RunWorkflowRequest
 from dify_oapi.api.workflow.v1.model.run_workflow_request_body import RunWorkflowRequestBody
 from dify_oapi.api.workflow.v1.model.run_workflow_response import RunWorkflowResponse
@@ -179,3 +181,69 @@ class TestRunWorkflowModels:
         assert request.request_body.files is not None
         assert len(request.request_body.files) == 1
         assert request.body is not None
+
+
+class TestGetWorkflowRunDetailModels:
+    """Test Get Workflow Run Detail API models."""
+
+    def test_request_builder(self) -> None:
+        """Test request builder pattern setup."""
+        request = GetWorkflowRunDetailRequest.builder().build()
+
+        assert request.http_method == HttpMethod.GET
+        assert request.uri == "/v1/workflows/run/:workflow_run_id"
+        assert request.workflow_run_id is None
+
+    def test_request_path_parameters(self) -> None:
+        """Test path parameter handling."""
+        request = GetWorkflowRunDetailRequest.builder().workflow_run_id("run-123").build()
+
+        assert request.workflow_run_id == "run-123"
+        assert request.paths["workflow_run_id"] == "run-123"
+
+    def test_response_inheritance(self) -> None:
+        """Test response inherits from BaseResponse."""
+        response = GetWorkflowRunDetailResponse()
+
+        # Test BaseResponse inheritance
+        assert isinstance(response, BaseResponse)
+        assert hasattr(response, "success")
+        assert hasattr(response, "code")
+        assert hasattr(response, "msg")
+        assert hasattr(response, "raw")
+
+    def test_response_field_types(self) -> None:
+        """Test response field types and validation."""
+        response = GetWorkflowRunDetailResponse()
+
+        # Test all fields are properly defined
+        assert response.id is None
+        assert response.workflow_id is None
+        assert response.status is None
+        assert response.inputs is None
+        assert response.outputs is None
+        assert response.error is None
+        assert response.total_steps is None
+        assert response.total_tokens is None
+        assert response.created_at is None
+        assert response.finished_at is None
+        assert response.elapsed_time is None
+
+    def test_response_data_population(self) -> None:
+        """Test response data population."""
+        response = GetWorkflowRunDetailResponse()
+        response.id = "run-123"
+        response.workflow_id = "workflow-456"
+        response.status = "succeeded"
+        response.inputs = {"query": "test"}
+        response.outputs = {"result": "success"}
+        response.total_tokens = 150
+        response.elapsed_time = 2.5
+
+        assert response.id == "run-123"
+        assert response.workflow_id == "workflow-456"
+        assert response.status == "succeeded"
+        assert response.inputs == {"query": "test"}
+        assert response.outputs == {"result": "success"}
+        assert response.total_tokens == 150
+        assert response.elapsed_time == 2.5

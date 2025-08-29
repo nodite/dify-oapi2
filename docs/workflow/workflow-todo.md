@@ -29,8 +29,8 @@ This document tracks the implementation progress of the Workflow API based on th
 - [x] **Testing**: Create tests for Upload File API models
 
 ### Step 6: Implement Workflow Logs API Models
-- [ ] **Implementation**: Implement Get Workflow Logs API models
-- [ ] **Testing**: Create tests for Workflow Logs API models
+- [x] **Implementation**: Implement Get Workflow Logs API models
+- [x] **Testing**: Create tests for Workflow Logs API models
 
 ### Step 7: Implement Application Info API Models
 - [ ] **Implementation**: Implement Application Information API models (info, parameters, site)
@@ -61,11 +61,11 @@ This document tracks the implementation progress of the Workflow API based on th
 ## Overall Progress
 
 **Total Steps**: 12 (24 sub-tasks)
-**Completed**: 12
+**Completed**: 14
 **In Progress**: 0
-**Remaining**: 12
+**Remaining**: 10
 
-**Progress**: 50.0% (12/24)
+**Progress**: 58.3% (14/24)
 
 ## Notes
 

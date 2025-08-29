@@ -2,9 +2,13 @@
 
 from io import BytesIO
 
+from dify_oapi.api.workflow.v1.model.end_user_info import EndUserInfo
 from dify_oapi.api.workflow.v1.model.file_info import FileInfo
+from dify_oapi.api.workflow.v1.model.get_workflow_logs_request import GetWorkflowLogsRequest
+from dify_oapi.api.workflow.v1.model.get_workflow_logs_response import GetWorkflowLogsResponse
 from dify_oapi.api.workflow.v1.model.get_workflow_run_detail_request import GetWorkflowRunDetailRequest
 from dify_oapi.api.workflow.v1.model.get_workflow_run_detail_response import GetWorkflowRunDetailResponse
+from dify_oapi.api.workflow.v1.model.log_info import LogInfo
 from dify_oapi.api.workflow.v1.model.run_workflow_request import RunWorkflowRequest
 from dify_oapi.api.workflow.v1.model.run_workflow_request_body import RunWorkflowRequestBody
 from dify_oapi.api.workflow.v1.model.run_workflow_response import RunWorkflowResponse
@@ -18,6 +22,7 @@ from dify_oapi.api.workflow.v1.model.workflow_file_info import WorkflowFileInfo
 from dify_oapi.api.workflow.v1.model.workflow_inputs import WorkflowInputs
 from dify_oapi.api.workflow.v1.model.workflow_run_data import WorkflowRunData
 from dify_oapi.api.workflow.v1.model.workflow_run_info import WorkflowRunInfo
+from dify_oapi.api.workflow.v1.model.workflow_run_log_info import WorkflowRunLogInfo
 from dify_oapi.core.enum import HttpMethod
 from dify_oapi.core.model.base_response import BaseResponse
 
@@ -458,3 +463,113 @@ class TestUploadFileModels:
         assert request.request_body.user == "user-upload-789"
         assert request.body is not None
         assert request.body["user"] == "user-upload-789"
+
+
+class TestGetWorkflowLogsModels:
+    """Test Get Workflow Logs API models."""
+
+    def test_request_builder(self) -> None:
+        """Test request builder pattern and query parameter handling."""
+        request = GetWorkflowLogsRequest.builder().build()
+
+        assert request.http_method == HttpMethod.GET
+        assert request.uri == "/v1/workflows/logs"
+
+    def test_request_query_parameters(self) -> None:
+        """Test all query parameter methods."""
+        request = (
+            GetWorkflowLogsRequest.builder()
+            .keyword("test")
+            .status("succeeded")
+            .page(2)
+            .limit(50)
+            .created_by_end_user_session_id("session-123")
+            .created_by_account("account-456")
+            .build()
+        )
+
+        # Verify query parameters are set correctly
+        query_dict = dict(request.queries)
+        assert "keyword" in query_dict
+        assert query_dict["keyword"] == "test"
+        assert "status" in query_dict
+        assert query_dict["status"] == "succeeded"
+        assert "page" in query_dict
+        assert query_dict["page"] == "2"
+        assert "limit" in query_dict
+        assert query_dict["limit"] == "50"
+        assert "created_by_end_user_session_id" in query_dict
+        assert query_dict["created_by_end_user_session_id"] == "session-123"
+        assert "created_by_account" in query_dict
+        assert query_dict["created_by_account"] == "account-456"
+
+    def test_response_inheritance(self) -> None:
+        """Test response inherits from BaseResponse."""
+        response = GetWorkflowLogsResponse()
+
+        # Test BaseResponse inheritance
+        assert isinstance(response, BaseResponse)
+        assert hasattr(response, "success")
+        assert hasattr(response, "code")
+        assert hasattr(response, "msg")
+        assert hasattr(response, "raw")
+
+    def test_response_pagination(self) -> None:
+        """Test pagination fields."""
+        response = GetWorkflowLogsResponse()
+        response.page = 1
+        response.limit = 20
+        response.total = 100
+        response.has_more = True
+        response.data = []
+
+        assert response.page == 1
+        assert response.limit == 20
+        assert response.total == 100
+        assert response.has_more is True
+        assert response.data == []
+
+    def test_response_with_log_data(self) -> None:
+        """Test response with log data."""
+        # Create end user info
+        end_user = (
+            EndUserInfo.builder().id("user-123").type("end_user").is_anonymous(False).session_id("session-456").build()
+        )
+
+        # Create workflow run log info
+        workflow_run = (
+            WorkflowRunLogInfo.builder()
+            .id("run-789")
+            .version("1.0")
+            .status("succeeded")
+            .elapsed_time(2.5)
+            .total_tokens(150)
+            .total_steps(3)
+            .created_at(1640995200)
+            .finished_at(1640995300)
+            .build()
+        )
+
+        # Create log info
+        log_info = (
+            LogInfo.builder()
+            .id("log-123")
+            .workflow_run(workflow_run)
+            .created_from("service-api")
+            .created_by_role("end_user")
+            .created_by_end_user(end_user)
+            .created_at(1640995200)
+            .build()
+        )
+
+        # Create response with data
+        response = GetWorkflowLogsResponse()
+        response.data = [log_info]
+
+        assert response.data is not None
+        assert len(response.data) == 1
+        assert response.data[0].id == "log-123"
+        assert response.data[0].workflow_run is not None
+        assert response.data[0].workflow_run.status == "succeeded"
+        assert response.data[0].created_by_end_user is not None
+        assert response.data[0].created_by_end_user.id == "user-123"

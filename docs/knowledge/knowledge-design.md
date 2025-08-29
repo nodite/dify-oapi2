@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document outlines the design for implementing comprehensive knowledge base functionality in the dify-oapi knowledge module. The implementation will support all 39 knowledge-related APIs covering dataset management, document processing, segment management, metadata handling, and content retrieval.
+This document outlines the design for implementing comprehensive knowledge base functionality in the dify-oapi knowledge module. The implementation will support all 33 knowledge-related APIs covering dataset management, document processing, segment management, metadata handling, and content retrieval.
 
 ## Design Decisions
 
@@ -16,21 +16,21 @@ This document outlines the design for implementing comprehensive knowledge base 
 **Decision**: Implement knowledge APIs across multiple specialized resources
 
 **Multi-Resource Implementation**:
-- `dataset` - Dataset management APIs (8 APIs)
+- `dataset` - Dataset management APIs (6 APIs)
   - Dataset CRUD: `create_dataset`, `list_datasets`, `get_dataset`, `update_dataset`, `delete_dataset`
   - Dataset operations: `retrieve_from_dataset`
-  - Tag management: `get_dataset_tags`, `create_dataset_tag`
-- `document` - Document management APIs (12 APIs)
+- `document` - Document management APIs (10 APIs)
   - Document creation: `create_document_by_file`, `create_document_by_text`
   - Document operations: `list_documents`, `get_document`, `update_document_by_file`, `update_document_by_text`, `delete_document`
   - File operations: `get_upload_file_info`
   - Status management: `update_document_status`, `get_batch_indexing_status`
-- `segment` - Segment management APIs (9 APIs)
+- `segment` - Segment management APIs (8 APIs)
   - Segment operations: `list_segments`, `create_segment`, `get_segment`, `update_segment`, `delete_segment`
   - Child chunk operations: `list_child_chunks`, `create_child_chunk`, `update_child_chunk`, `delete_child_chunk`
-- `tag` - Tag and metadata management APIs (6 APIs)
+- `tag` - Tag and metadata management APIs (7 APIs)
   - Tag operations: `list_tags`, `create_tag`, `update_tag`, `delete_tag`
   - Tag binding: `bind_tags_to_dataset`, `unbind_tags_from_dataset`
+  - Dataset tags: `get_dataset_tags`
 - `model` - Model management APIs (1 API)
   - Model retrieval: `get_text_embedding_models`
 
@@ -446,7 +446,7 @@ model/
 
 ## API Implementation Plan
 
-### Dataset Management APIs (8 APIs)
+### Dataset Management APIs (6 APIs)
 
 #### Dataset Resource Implementation
 1. **POST /datasets** → `dataset.create_dataset()` - Create new dataset
@@ -457,7 +457,7 @@ model/
 6. **POST /datasets/{dataset_id}/retrieve** → `dataset.retrieve_from_dataset()` - Search content
 7. **POST /datasets/{dataset_id}/tags** → `dataset.get_dataset_tags()` - Get dataset tags
 
-### Document Management APIs (12 APIs)
+### Document Management APIs (10 APIs)
 
 #### Document Resource Implementation
 1. **POST /datasets/{dataset_id}/document/create-by-file** → `document.create_document_by_file()` - Upload file
@@ -471,7 +471,7 @@ model/
 9. **PATCH /datasets/{dataset_id}/documents/status/{action}** → `document.update_document_status()` - Enable/disable documents
 10. **GET /datasets/{dataset_id}/documents/{batch}/indexing-status** → `document.get_batch_indexing_status()` - Check processing status
 
-### Segment Management APIs (9 APIs)
+### Segment Management APIs (8 APIs)
 
 #### Segment Resource Implementation
 1. **GET /datasets/{dataset_id}/documents/{document_id}/segments** → `segment.list_segments()` - List segments
@@ -484,7 +484,7 @@ model/
 8. **PATCH /datasets/{dataset_id}/documents/{document_id}/segments/{segment_id}/child_chunks/{child_chunk_id}** → `segment.update_child_chunk()` - Update child chunk
 9. **DELETE /datasets/{dataset_id}/documents/{document_id}/segments/{segment_id}/child_chunks/{child_chunk_id}** → `segment.delete_child_chunk()` - Delete child chunk
 
-### Tag Management APIs (6 APIs)
+### Tag Management APIs (7 APIs)
 
 #### Tag Resource Implementation
 1. **GET /datasets/tags** → `tag.list_tags()` - List all tags
@@ -1035,14 +1035,14 @@ examples/knowledge/
 
 ## Summary
 
-This design provides a comprehensive solution for knowledge base management in dify-oapi, covering all 39 knowledge-related APIs with a clean, maintainable architecture. The implementation prioritizes type safety, consistency, and developer experience while ensuring full compatibility with the latest Dify API specifications.
+This design provides a comprehensive solution for knowledge base management in dify-oapi, covering all 33 knowledge-related APIs with a clean, maintainable architecture. The implementation prioritizes type safety, consistency, and developer experience while ensuring full compatibility with the latest Dify API specifications.
 
 The multi-resource organization, combined with shared common models and descriptive method naming, creates an intuitive and powerful interface for knowledge operations including dataset management, document processing, segment management, tag operations, and model integration.
 
 The examples strategy ensures developers have clear, educational references for every API operation, supporting both learning and integration testing needs with comprehensive sync/async coverage. The code minimalism approach optimizes all examples for clarity while maintaining full functionality and safety features.
 
 ### Key Features
-- **Comprehensive Coverage**: Full implementation of all 39 knowledge base APIs with consistent architecture
+- **Comprehensive Coverage**: Full implementation of all 33 knowledge base APIs with consistent architecture
 - **Multi-resource Organization**: Logical separation of concerns across dataset, document, segment, tag, and model resources
 - **Advanced Type Safety**: Strict typing with Literal types for all predefined values
 - **Enhanced File Processing**: Complete file upload, processing, and management capabilities

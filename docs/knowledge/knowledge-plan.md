@@ -4,11 +4,11 @@ This document provides step-by-step prompts for implementing the complete Knowle
 
 ## Overview
 
-The Knowledge Base API module implements 39 APIs across 5 specialized resources:
-- **Dataset Resource**: 8 APIs for dataset management
-- **Document Resource**: 12 APIs for document processing
-- **Segment Resource**: 9 APIs for content segmentation
-- **Tag Resource**: 6 APIs for metadata and tagging
+The Knowledge Base API module implements 33 APIs across 5 specialized resources:
+- **Dataset Resource**: 6 APIs for dataset management
+- **Document Resource**: 10 APIs for document processing
+- **Segment Resource**: 8 APIs for content segmentation
+- **Tag Resource**: 7 APIs for metadata and tagging
 - **Model Resource**: 1 API for embedding models
 
 ## Prerequisites
@@ -72,7 +72,7 @@ Requirements:
 2. Plan implementation strategy:
    - Multi-resource architecture (dataset, document, segment, tag, model)
    - Flat model structure in v1/model/
-   - 39 API endpoints across 5 resources
+   - 33 API endpoints across 5 resources
    - Complex nested path parameters for segments and child chunks
    - File upload handling for document APIs
 
@@ -456,8 +456,8 @@ Requirements:
 Complete the Dataset API models implementation and integration.
 
 Requirements:
-1. Ensure all 8 dataset API models are properly integrated
-2. Update model __init__.py files to export all classes
+1. Ensure all 6 dataset API models are properly integrated
+2. Keep __init__.py files minimal and clean
 3. Verify all imports work correctly
 4. Test cross-model dependencies (DatasetInfo, TagInfo, etc.)
 5. Validate URI patterns and HTTP methods

@@ -33,8 +33,8 @@ This document tracks the implementation progress of the Workflow API based on th
 - [x] **Testing**: Create tests for Workflow Logs API models
 
 ### Step 7: Implement Application Info API Models
-- [ ] **Implementation**: Implement Application Information API models (info, parameters, site)
-- [ ] **Testing**: Create tests for Application Info API models
+- [x] **Implementation**: Implement Application Information API models (info, parameters, site)
+- [x] **Testing**: Create tests for Application Info API models
 
 ### Step 8: Migrate and Consolidate Workflow Resource Classes
 - [ ] **Migration**: Migrate existing resource classes into single consolidated Workflow resource
@@ -65,11 +65,11 @@ This document tracks the implementation progress of the Workflow API based on th
 ## Overall Progress
 
 **Total Steps**: 13 (26 sub-tasks)
-**Completed**: 16
+**Completed**: 18
 **In Progress**: 0
-**Remaining**: 10
+**Remaining**: 8
 
-**Progress**: 61.5% (16/26)
+**Progress**: 69.2% (18/26)
 
 ## Notes
 

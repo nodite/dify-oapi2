@@ -2,21 +2,33 @@
 
 from io import BytesIO
 
+from dify_oapi.api.workflow.v1.model.app_info import AppInfo
 from dify_oapi.api.workflow.v1.model.end_user_info import EndUserInfo
+from dify_oapi.api.workflow.v1.model.file_upload_config import FileUploadConfig
 from dify_oapi.api.workflow.v1.model.file_upload_info import FileUploadInfo
+from dify_oapi.api.workflow.v1.model.get_info_request import GetInfoRequest
+from dify_oapi.api.workflow.v1.model.get_info_response import GetInfoResponse
+from dify_oapi.api.workflow.v1.model.get_parameters_request import GetParametersRequest
+from dify_oapi.api.workflow.v1.model.get_parameters_response import GetParametersResponse
+from dify_oapi.api.workflow.v1.model.get_site_request import GetSiteRequest
+from dify_oapi.api.workflow.v1.model.get_site_response import GetSiteResponse
 from dify_oapi.api.workflow.v1.model.get_workflow_logs_request import GetWorkflowLogsRequest
 from dify_oapi.api.workflow.v1.model.get_workflow_logs_response import GetWorkflowLogsResponse
 from dify_oapi.api.workflow.v1.model.get_workflow_run_detail_request import GetWorkflowRunDetailRequest
 from dify_oapi.api.workflow.v1.model.get_workflow_run_detail_response import GetWorkflowRunDetailResponse
+from dify_oapi.api.workflow.v1.model.parameters_info import ParametersInfo
 from dify_oapi.api.workflow.v1.model.run_workflow_request import RunWorkflowRequest
 from dify_oapi.api.workflow.v1.model.run_workflow_request_body import RunWorkflowRequestBody
 from dify_oapi.api.workflow.v1.model.run_workflow_response import RunWorkflowResponse
+from dify_oapi.api.workflow.v1.model.site_info import SiteInfo
 from dify_oapi.api.workflow.v1.model.stop_workflow_request import StopWorkflowRequest
 from dify_oapi.api.workflow.v1.model.stop_workflow_request_body import StopWorkflowRequestBody
 from dify_oapi.api.workflow.v1.model.stop_workflow_response import StopWorkflowResponse
+from dify_oapi.api.workflow.v1.model.system_parameters import SystemParameters
 from dify_oapi.api.workflow.v1.model.upload_file_request import UploadFileRequest
 from dify_oapi.api.workflow.v1.model.upload_file_request_body import UploadFileRequestBody
 from dify_oapi.api.workflow.v1.model.upload_file_response import UploadFileResponse
+from dify_oapi.api.workflow.v1.model.user_input_form import UserInputForm
 from dify_oapi.api.workflow.v1.model.workflow_file_info import WorkflowFileInfo
 from dify_oapi.api.workflow.v1.model.workflow_inputs import WorkflowInputs
 from dify_oapi.api.workflow.v1.model.workflow_log_info import WorkflowLogInfo
@@ -573,3 +585,140 @@ class TestGetWorkflowLogsModels:
         assert response.data[0].workflow_run.status == "succeeded"
         assert response.data[0].created_by_end_user is not None
         assert response.data[0].created_by_end_user.id == "user-123"
+
+
+class TestGetInfoModels:
+    """Test Get Info API models."""
+
+    def test_request_builder(self) -> None:
+        """Test request builder pattern setup."""
+        request = GetInfoRequest.builder().build()
+
+        assert request.http_method == HttpMethod.GET
+        assert request.uri == "/v1/info"
+
+    def test_response_inheritance(self) -> None:
+        """Test response inherits from BaseResponse."""
+        response = GetInfoResponse()
+
+        # Test BaseResponse inheritance
+        assert isinstance(response, BaseResponse)
+        assert hasattr(response, "success")
+        assert hasattr(response, "code")
+        assert hasattr(response, "msg")
+        assert hasattr(response, "raw")
+
+        # Test AppInfo inheritance
+        assert isinstance(response, AppInfo)
+        assert hasattr(response, "name")
+        assert hasattr(response, "description")
+        assert hasattr(response, "tags")
+
+    def test_response_app_info_fields(self) -> None:
+        """Test app info fields."""
+        response = GetInfoResponse()
+        response.name = "Test Workflow App"
+        response.description = "A test workflow application"
+        response.tags = ["test", "workflow"]
+        response.mode = "workflow"
+
+        assert response.name == "Test Workflow App"
+        assert response.description == "A test workflow application"
+        assert response.tags == ["test", "workflow"]
+        assert response.mode == "workflow"
+
+
+class TestGetParametersModels:
+    """Test Get Parameters API models."""
+
+    def test_request_builder(self) -> None:
+        """Test request builder pattern setup."""
+        request = GetParametersRequest.builder().build()
+
+        assert request.http_method == HttpMethod.GET
+        assert request.uri == "/v1/parameters"
+
+    def test_response_inheritance(self) -> None:
+        """Test response inherits from BaseResponse."""
+        response = GetParametersResponse()
+
+        # Test BaseResponse inheritance
+        assert isinstance(response, BaseResponse)
+        assert hasattr(response, "success")
+        assert hasattr(response, "code")
+        assert hasattr(response, "msg")
+        assert hasattr(response, "raw")
+
+        # Test ParametersInfo inheritance
+        assert isinstance(response, ParametersInfo)
+        assert hasattr(response, "user_input_form")
+        assert hasattr(response, "file_upload")
+        assert hasattr(response, "system_parameters")
+
+    def test_response_parameters_data(self) -> None:
+        """Test parameters response data."""
+        # Create user input form
+        user_form = UserInputForm.builder().label("Query").variable("query").required(True).default("").build()
+
+        # Create file upload config
+        file_config = (
+            FileUploadConfig.builder().image({"enabled": True, "number_limits": 3}).document({"enabled": False}).build()
+        )
+
+        # Create system parameters
+        sys_params = SystemParameters.builder().file_size_limit(10).image_file_size_limit(5).build()
+
+        response = GetParametersResponse()
+        response.user_input_form = [user_form]
+        response.file_upload = file_config
+        response.system_parameters = sys_params
+
+        assert response.user_input_form is not None
+        assert len(response.user_input_form) == 1
+        assert response.user_input_form[0].label == "Query"
+        assert response.file_upload is not None
+        assert response.system_parameters is not None
+        assert response.system_parameters.file_size_limit == 10
+
+
+class TestGetSiteModels:
+    """Test Get Site API models."""
+
+    def test_request_builder(self) -> None:
+        """Test request builder pattern setup."""
+        request = GetSiteRequest.builder().build()
+
+        assert request.http_method == HttpMethod.GET
+        assert request.uri == "/v1/site"
+
+    def test_response_inheritance(self) -> None:
+        """Test response inherits from BaseResponse."""
+        response = GetSiteResponse()
+
+        # Test BaseResponse inheritance
+        assert isinstance(response, BaseResponse)
+        assert hasattr(response, "success")
+        assert hasattr(response, "code")
+        assert hasattr(response, "msg")
+        assert hasattr(response, "raw")
+
+        # Test SiteInfo inheritance
+        assert isinstance(response, SiteInfo)
+        assert hasattr(response, "title")
+        assert hasattr(response, "icon_type")
+        assert hasattr(response, "description")
+
+    def test_response_site_info_fields(self) -> None:
+        """Test site info fields."""
+        response = GetSiteResponse()
+        response.title = "My Workflow App"
+        response.icon_type = "emoji"
+        response.icon = "🚀"
+        response.description = "A powerful workflow application"
+        response.show_workflow_steps = True
+
+        assert response.title == "My Workflow App"
+        assert response.icon_type == "emoji"
+        assert response.icon == "🚀"
+        assert response.description == "A powerful workflow application"
+        assert response.show_workflow_steps is True

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from dify_oapi.core.model.base_response import BaseResponse
 
-from .log_info import LogInfo
+from .workflow_log_info import WorkflowLogInfo
 
 
 class GetWorkflowLogsResponse(BaseResponse):
@@ -10,4 +10,4 @@ class GetWorkflowLogsResponse(BaseResponse):
     limit: int | None = None
     total: int | None = None
     has_more: bool | None = None
-    data: list[LogInfo] | None = None
+    data: list[WorkflowLogInfo] | None = None

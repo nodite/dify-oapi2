@@ -78,6 +78,15 @@ Create the workflow types definition file and core data models for the workflow 
 
 Requirements:
 1. Create `dify_oapi/api/workflow/v1/model/workflow_types.py` with all Literal types:
+
+**CRITICAL: Class Naming Conflict Resolution**
+All classes must use domain-specific prefixes to avoid naming conflicts:
+- File-related: `WorkflowFile*` (e.g., `WorkflowFileInfo`)
+- Log-related: `WorkflowLog*` (e.g., `WorkflowLogInfo`) 
+- User-related: `WorkflowUser*` (e.g., `WorkflowEndUserInfo`)
+- App-related: `WorkflowApp*` (e.g., `WorkflowAppInfo`)
+
+2. Create `dify_oapi/api/workflow/v1/model/workflow_types.py` with all Literal types:
    - ResponseMode: "streaming" | "blocking"
    - FileType: "document" | "image" | "audio" | "video" | "custom"
    - TransferMethod: "remote_url" | "local_file"
@@ -85,24 +94,26 @@ Requirements:
    - EventType: "workflow_started" | "node_started" | "text_chunk" | "node_finished" | "workflow_finished" | "tts_message" | "tts_message_end" | "ping"
    - IconType: "emoji" | "image"
 
-2. Create core data models with builder patterns:
+3. Create core data models with builder patterns (using context-specific names):
    - `workflow_inputs.py`: Dynamic workflow input container
-   - `file_info.py`: File information model with type, transfer_method, url, upload_file_id
-   - `node_info.py`: Workflow node information
-   - `execution_metadata.py`: Execution metadata with tokens, price, currency
+   - `workflow_file_info.py`: File information model for workflow execution
+   - `file_upload_info.py`: File information model for upload responses
+   - `workflow_node_info.py`: Workflow node information  
+   - `workflow_execution_metadata.py`: Execution metadata with tokens, price, currency
 
-3. All models must:
+4. All models must:
    - Inherit from pydantic.BaseModel
    - Include builder patterns with proper type hints
    - Use Literal types from workflow_types.py
-   - Follow the established naming conventions
+   - Follow prefixed naming conventions to avoid conflicts
 
 File structure:
 - dify_oapi/api/workflow/v1/model/workflow_types.py
 - dify_oapi/api/workflow/v1/model/workflow_inputs.py
-- dify_oapi/api/workflow/v1/model/file_info.py
-- dify_oapi/api/workflow/v1/model/node_info.py
-- dify_oapi/api/workflow/v1/model/execution_metadata.py
+- dify_oapi/api/workflow/v1/model/workflow_file_info.py
+- dify_oapi/api/workflow/v1/model/file_upload_info.py
+- dify_oapi/api/workflow/v1/model/workflow_node_info.py
+- dify_oapi/api/workflow/v1/model/workflow_execution_metadata.py
 ```
 
 **Testing Prompt:**
@@ -111,11 +122,12 @@ Create comprehensive tests for the workflow types and base models.
 
 Requirements:
 1. Create `tests/workflow/v1/model/test_workflow_public_models.py`
-2. Test classes for each model:
+2. Test classes for each model (using context-specific names):
    - TestWorkflowInputs: builder pattern, field validation
-   - TestFileInfo: builder pattern, type validation, transfer method validation
-   - TestNodeInfo: builder pattern, field validation
-   - TestExecutionMetadata: builder pattern, numeric field validation
+   - TestWorkflowFileInfo: builder pattern, type validation, transfer method validation
+   - TestFileUploadInfo: builder pattern, file metadata validation
+   - TestWorkflowNodeInfo: builder pattern, field validation
+   - TestWorkflowExecutionMetadata: builder pattern, numeric field validation
 
 3. Test coverage must include:
    - Builder pattern functionality
@@ -689,7 +701,54 @@ Requirements:
 9. Validate migration completeness and correctness
 ```
 
-### Step 12: Documentation and Final Validation
+### Step 12: Resolve Class Naming Conflicts
+
+**Implementation Prompt:**
+```
+Resolve all class naming conflicts by adding domain-specific prefixes.
+
+Requirements:
+1. Rename conflicting classes with context-specific names:
+   - `FileInfo` → `FileUploadInfo` (for file upload responses)
+   - `LogInfo` → `WorkflowLogInfo` (for workflow log entries)
+   - Keep `EndUserInfo` (no conflicts detected)
+   - Keep `WorkflowRunLogInfo` (already context-specific)
+   - Any other conflicting classes discovered during implementation
+
+2. Update all import statements and references:
+   - Update model files that import renamed classes
+   - Update test files to use new class names
+   - Update request/response models that reference renamed classes
+
+3. Ensure consistency:
+   - All workflow-domain classes use `Workflow*` prefix
+   - No naming conflicts remain in the module
+   - All tests pass with new class names
+
+4. File operations:
+   - Rename model files if needed for consistency
+   - Update __init__.py exports
+   - Verify no broken imports
+```
+
+**Testing Prompt:**
+```
+Update all tests to use the new prefixed class names.
+
+Requirements:
+1. Update test imports to use new class names
+2. Update test class names to match new model names
+3. Update all test method references to new classes
+4. Ensure all tests pass with renamed classes
+5. Verify no import errors or naming conflicts
+
+Validation:
+- All existing tests must pass
+- No naming conflicts in test files
+- Consistent use of prefixed names throughout
+```
+
+### Step 13: Documentation and Final Validation
 
 **Implementation Prompt:**
 ```
@@ -729,6 +788,7 @@ Requirements:
 2. Validate test coverage meets requirements (>90%)
 3. Run integration tests against mock API responses
 4. Verify examples work correctly with proper environment setup
+5. Confirm no class naming conflicts remain
 
 Acceptance criteria:
 1. All 8 workflow APIs fully functional
@@ -739,12 +799,14 @@ Acceptance criteria:
 6. Documentation complete and accurate
 7. Type safety maintained throughout
 8. Performance meets expectations
+9. No class naming conflicts in entire module
 
 Create final test report documenting:
 - Test coverage statistics
 - Performance benchmarks
 - Known limitations or issues
 - Recommendations for future improvements
+- Class naming conflict resolution summary
 ```
 
 ## Success Criteria

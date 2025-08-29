@@ -3,12 +3,11 @@
 from io import BytesIO
 
 from dify_oapi.api.workflow.v1.model.end_user_info import EndUserInfo
-from dify_oapi.api.workflow.v1.model.file_info import FileInfo
+from dify_oapi.api.workflow.v1.model.file_upload_info import FileUploadInfo
 from dify_oapi.api.workflow.v1.model.get_workflow_logs_request import GetWorkflowLogsRequest
 from dify_oapi.api.workflow.v1.model.get_workflow_logs_response import GetWorkflowLogsResponse
 from dify_oapi.api.workflow.v1.model.get_workflow_run_detail_request import GetWorkflowRunDetailRequest
 from dify_oapi.api.workflow.v1.model.get_workflow_run_detail_response import GetWorkflowRunDetailResponse
-from dify_oapi.api.workflow.v1.model.log_info import LogInfo
 from dify_oapi.api.workflow.v1.model.run_workflow_request import RunWorkflowRequest
 from dify_oapi.api.workflow.v1.model.run_workflow_request_body import RunWorkflowRequestBody
 from dify_oapi.api.workflow.v1.model.run_workflow_response import RunWorkflowResponse
@@ -20,6 +19,7 @@ from dify_oapi.api.workflow.v1.model.upload_file_request_body import UploadFileR
 from dify_oapi.api.workflow.v1.model.upload_file_response import UploadFileResponse
 from dify_oapi.api.workflow.v1.model.workflow_file_info import WorkflowFileInfo
 from dify_oapi.api.workflow.v1.model.workflow_inputs import WorkflowInputs
+from dify_oapi.api.workflow.v1.model.workflow_log_info import WorkflowLogInfo
 from dify_oapi.api.workflow.v1.model.workflow_run_data import WorkflowRunData
 from dify_oapi.api.workflow.v1.model.workflow_run_info import WorkflowRunInfo
 from dify_oapi.api.workflow.v1.model.workflow_run_log_info import WorkflowRunLogInfo
@@ -412,8 +412,8 @@ class TestUploadFileModels:
         assert hasattr(response, "msg")
         assert hasattr(response, "raw")
 
-        # Test FileInfo inheritance
-        assert isinstance(response, FileInfo)
+        # Test FileUploadInfo inheritance
+        assert isinstance(response, FileUploadInfo)
         assert hasattr(response, "id")
         assert hasattr(response, "name")
         assert hasattr(response, "size")
@@ -552,7 +552,7 @@ class TestGetWorkflowLogsModels:
 
         # Create log info
         log_info = (
-            LogInfo.builder()
+            WorkflowLogInfo.builder()
             .id("log-123")
             .workflow_run(workflow_run)
             .created_from("service-api")

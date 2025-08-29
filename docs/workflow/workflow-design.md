@@ -56,7 +56,47 @@ This document outlines the design for implementing comprehensive workflow applic
 - Log operations: `get_workflow_logs`
 - Info operations: `get_info`, `get_parameters`, `get_site`
 
-### 6. Response Model Inheritance Rules (CRITICAL - ZERO TOLERANCE)
+### 6. Class Naming Conflict Resolution (MANDATORY)
+**Decision**: When class names conflict across different functional domains, add domain-specific prefixes
+
+**MANDATORY RULE**: Classes with identical names across different API domains MUST use domain prefixes to avoid conflicts
+- **Rationale**: Prevents import conflicts and ensures clear class identification
+- **Implementation**: Add functional domain prefix to conflicting class names
+- **Zero Exceptions**: All conflicting classes must be renamed with appropriate prefixes
+- **Validation**: No two classes in the workflow module may have identical names
+
+**Conflict Resolution Patterns**:
+```python
+# ❌ WRONG: Conflicting class names
+class FileInfo(BaseModel):  # from file domain
+    pass
+
+class LogInfo(BaseModel):   # conflicts with potential LogInfo from other domains
+    pass
+
+# ✅ CORRECT: Domain-prefixed class names
+class WorkflowFileInfo(BaseModel):  # file info specific to workflow domain
+    pass
+
+class WorkflowLogInfo(BaseModel):   # log info specific to workflow domain
+    pass
+```
+
+**Required Naming Patterns for Workflow Module**:
+- **File upload classes**: `FileUpload*` (e.g., `FileUploadInfo`, `FileUploadConfig`)
+- **Workflow log classes**: `WorkflowLog*` (e.g., `WorkflowLogInfo`, `WorkflowRunLogInfo`)
+- **Application info classes**: `App*` or `WorkflowApp*` (e.g., `AppInfo`, `WorkflowAppConfig`)
+- **User-related classes**: Context-specific naming (e.g., `EndUserInfo` for end users)
+- **Parameter classes**: `*Parameters` (e.g., `SystemParameters`, `WorkflowParameters`)
+- **Workflow-specific classes**: `Workflow*` prefix when needed for disambiguation
+
+**Migration Requirements**:
+- All existing conflicting classes must be renamed with appropriate prefixes
+- Update all import statements and references
+- Update test files to use new class names
+- Ensure backward compatibility during transition
+
+### 7. Response Model Inheritance Rules (CRITICAL - ZERO TOLERANCE)
 **Decision**: ALL Response classes MUST inherit from BaseResponse for error handling
 
 **MANDATORY RULE**: Every single Response class in the workflow module MUST inherit from `BaseResponse`
@@ -81,7 +121,7 @@ class RunWorkflowResponse(BaseModel):  # NEVER DO THIS
     pass
 ```
 
-### 7. Request/Response Model Code Style Rules (MANDATORY)
+### 8. Request/Response Model Code Style Rules (MANDATORY)
 **Decision**: Strict adherence to established patterns for consistency across all workflow APIs
 
 #### Request Model Architecture
@@ -189,7 +229,7 @@ class UploadFileRequest(BaseRequest):
 - Response classes MUST NOT have Builder patterns (unlike Request classes)
 - **CRITICAL**: NEVER inherit from `pydantic.BaseModel` directly - ALWAYS use `BaseResponse`
 
-### 8. Strict Type Safety Rules (MANDATORY - ZERO TOLERANCE)
+### 9. Strict Type Safety Rules (MANDATORY - ZERO TOLERANCE)
 **Decision**: ALL API fields MUST use strict typing with Literal types instead of generic strings
 
 **MANDATORY RULE**: Every field that has predefined values MUST use Literal types for type safety
@@ -286,7 +326,7 @@ class RunWorkflowRequestBody(BaseModel):
 - **Refactoring Safety**: Type-safe refactoring across the codebase
 - **API Consistency**: Ensures consistent usage of predefined values
 
-### 9. Public Class Builder Pattern Rules (MANDATORY)
+### 10. Public Class Builder Pattern Rules (MANDATORY)
 **Decision**: All public classes MUST implement builder patterns for consistency and usability
 
 #### Builder Pattern Implementation Requirements
@@ -322,7 +362,7 @@ class PublicClassBuilder:
         return self
 ```
 
-### 10. Model File Organization
+### 11. Model File Organization
 **Decision**: Flat model structure without resource grouping
 
 **Migration from Current Structure**:

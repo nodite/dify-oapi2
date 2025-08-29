@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from dify_oapi.core.model.base_response import BaseResponse
 
-from .file_info import FileInfo
+from .file_upload_info import FileUploadInfo
 
 
-class UploadFileResponse(FileInfo, BaseResponse):
+class UploadFileResponse(FileUploadInfo, BaseResponse):
     pass

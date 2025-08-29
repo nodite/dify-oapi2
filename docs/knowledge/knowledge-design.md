@@ -58,7 +58,7 @@ This document outlines the design for implementing comprehensive knowledge base 
 ### 5. Method Naming Convention
 **Decision**: Use simple, concise method names for clarity
 - Dataset operations: `create`, `list`, `get`, `update`, `delete`, `retrieve`, `tags`
-- Document operations: `create_by_file`, `create_by_text`, `list`, `get`, `update_by_file`, `update_by_text`, `delete`, `status`, `batch_status`, `file_info`
+- Document operations: `create_by_file`, `create_by_text`, `list`, `get`, `update_by_file`, `update_by_text`, `delete`, `update_status`, `get_batch_status`, `file_info`
 - Segment operations: `list`, `create`, `get`, `update`, `delete`, `list_chunks`, `create_chunk`, `update_chunk`, `delete_chunk`
 - Tag operations: `list`, `create`, `update`, `delete`, `bind`, `unbind`
 - Model operations: `embedding_models`
@@ -68,6 +68,16 @@ This document outlines the design for implementing comprehensive knowledge base 
 - Avoid redundant prefixes (e.g., `create` instead of `create_dataset` in Dataset resource)
 - Use underscores only when necessary for clarity
 - Async methods use `a` prefix (e.g., `acreate`, `alist`, `aget`)
+
+**Ambiguity Resolution Rules (MANDATORY)**:
+- When multiple operations in the same resource could cause naming ambiguity, use descriptive prefixes
+- Update operations use `update_` prefix (e.g., `update_status` for document status updates)
+- Get operations use `get_` prefix when needed for clarity (e.g., `get_batch_status` for batch indexing status)
+- Maintain method names concise but unambiguous within the resource context
+- Examples:
+  - `update_status()` vs `get_batch_status()` - clearly different operations
+  - `create_by_file()` vs `create_by_text()` - different creation methods
+  - `update_by_file()` vs `update_by_text()` - different update methods
 
 ### 6. Class Naming Conflict Resolution (MANDATORY)
 **Decision**: When class names conflict across different functional domains, add domain-specific prefixes

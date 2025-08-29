@@ -62,6 +62,16 @@ This document outlines the design for implementing comprehensive workflow applic
 - Use underscores only when necessary for clarity
 - Async methods use `a` prefix (e.g., `arun`, `adetail`, `astop`)
 
+**Ambiguity Resolution Rules (MANDATORY)**:
+- When multiple operations in the same resource could cause naming ambiguity, use descriptive prefixes
+- Update operations use `update_` prefix (e.g., `update_status` for document status updates)
+- Get operations use `get_` prefix when needed for clarity (e.g., `get_batch_status` for batch indexing status)
+- Maintain method names concise but unambiguous within the resource context
+- Examples:
+  - `update_status()` vs `get_batch_status()` - clearly different operations
+  - `create_by_file()` vs `create_by_text()` - different creation methods
+  - `update_by_file()` vs `update_by_text()` - different update methods
+
 ### 6. Class Naming Conflict Resolution (MANDATORY)
 **Decision**: When class names conflict across different functional domains, add domain-specific prefixes
 
@@ -447,14 +457,14 @@ model/
 ### All Workflow APIs (8 APIs)
 
 #### Single Workflow Resource Implementation
-1. **POST /workflows/run** → `workflow.run_workflow()` - Execute workflow
-2. **GET /workflows/run/:workflow_run_id** → `workflow.get_workflow_run_detail()` - Get workflow execution details
-3. **POST /workflows/tasks/:task_id/stop** → `workflow.stop_workflow()` - Stop workflow execution
-4. **POST /files/upload** → `workflow.upload_file()` - Upload files for multimodal support
-5. **GET /workflows/logs** → `workflow.get_workflow_logs()` - Get workflow execution logs
-6. **GET /info** → `workflow.get_info()` - Get application basic information
-7. **GET /parameters** → `workflow.get_parameters()` - Get application parameters
-8. **GET /site** → `workflow.get_site()` - Get WebApp settings
+1. **POST /workflows/run** → `workflow.run()` - Execute workflow
+2. **GET /workflows/run/:workflow_run_id** → `workflow.detail()` - Get workflow execution details
+3. **POST /workflows/tasks/:task_id/stop** → `workflow.stop()` - Stop workflow execution
+4. **POST /files/upload** → `workflow.upload()` - Upload files for multimodal support
+5. **GET /workflows/logs** → `workflow.logs()` - Get workflow execution logs
+6. **GET /info** → `workflow.info()` - Get application basic information
+7. **GET /parameters** → `workflow.parameters()` - Get application parameters
+8. **GET /site** → `workflow.site()` - Get WebApp settings
 
 ## Technical Implementation Details
 

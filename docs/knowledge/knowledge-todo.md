@@ -30,7 +30,7 @@ This document tracks the implementation progress of the Knowledge Base API modul
 - [x] **Step 4G**: Implement Document Status and Batch APIs Models
 - [x] **Step 4H**: Complete Document API Models Integration
 - [x] **Step 4**: Implement Document API Models (12 APIs)
-- [ ] **Step 5**: Implement Document Resource Class
+- [x] **Step 5**: Implement Document Resource Class
 
 ### Segment API Implementation (9 APIs)
 - [ ] **Step 6A**: Implement List Segments API Models
@@ -77,9 +77,9 @@ This document tracks the implementation progress of the Knowledge Base API modul
 
 - **Total Steps**: 24 main steps + 16 sub-steps = 40 total tasks
 - **API Coverage**: 38 APIs across 5 resources (8+12+9+6+1)
-- **Completed**: 19/40 tasks (48%)
+- **Completed**: 20/40 tasks (50%)
 - **In Progress**: 0/40 tasks (0%)
-- **Remaining**: 21/40 tasks (52%)
+- **Remaining**: 20/40 tasks (50%)
 
 ## Resource Breakdown
 

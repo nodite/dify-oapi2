@@ -33,6 +33,16 @@ Before starting, ensure you understand:
 - Avoid redundant prefixes (e.g., `run` instead of `run_workflow` in Workflow resource)
 - Async methods use `a` prefix (e.g., `arun`, `adetail`, `astop`)
 
+**Ambiguity Resolution Rules (MANDATORY)**:
+- When multiple operations in the same resource could cause naming ambiguity, use descriptive prefixes
+- Update operations use `update_` prefix (e.g., `update_status` for document status updates)
+- Get operations use `get_` prefix when needed for clarity (e.g., `get_batch_status` for batch indexing status)
+- Maintain method names concise but unambiguous within the resource context
+- Examples:
+  - `update_status()` vs `get_batch_status()` - clearly different operations
+  - `create_by_file()` vs `create_by_text()` - different creation methods
+  - `update_by_file()` vs `update_by_text()` - different update methods
+
 ## Implementation Steps
 
 ### Step 0: Analyze and Plan Legacy Code Migration

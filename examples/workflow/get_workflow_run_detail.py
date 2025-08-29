@@ -28,6 +28,8 @@ def get_workflow_run_detail_sync() -> None:
 
         if response.success:
             print(f"Workflow detail: {response.status} - {response.elapsed_time}s")
+            print(f"Inputs: {response.inputs}")
+            print(f"Outputs: {response.outputs}")
         else:
             print(f"Error: {response.msg}")
 
@@ -55,6 +57,8 @@ async def get_workflow_run_detail_async() -> None:
 
         if response.success:
             print(f"Workflow detail: {response.status} - {response.elapsed_time}s")
+            print(f"Inputs: {response.inputs}")
+            print(f"Outputs: {response.outputs}")
         else:
             print(f"Error: {response.msg}")
 

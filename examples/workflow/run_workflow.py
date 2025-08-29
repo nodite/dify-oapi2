@@ -3,9 +3,9 @@
 import asyncio
 import os
 
-from dify_oapi.api.workflow.v1.model.workflow.run_workflow_request import RunWorkflowRequest
-from dify_oapi.api.workflow.v1.model.workflow.run_workflow_request_body import RunWorkflowRequestBody
-from dify_oapi.api.workflow.v1.model.workflow.workflow_inputs import WorkflowInputs
+from dify_oapi.api.workflow.v1.model.run_workflow_request import RunWorkflowRequest
+from dify_oapi.api.workflow.v1.model.run_workflow_request_body import RunWorkflowRequestBody
+from dify_oapi.api.workflow.v1.model.workflow_inputs import WorkflowInputs
 from dify_oapi.client import Client
 from dify_oapi.core.model.request_option import RequestOption
 

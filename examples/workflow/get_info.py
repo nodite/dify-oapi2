@@ -3,12 +3,12 @@
 import asyncio
 import os
 
-from dify_oapi.api.workflow.v1.model.info.get_site_request import GetSiteRequest
+from dify_oapi.api.workflow.v1.model.get_info_request import GetInfoRequest
 from dify_oapi.client import Client
 from dify_oapi.core.model.request_option import RequestOption
 
 
-def get_site_sync() -> None:
+def get_info_sync() -> None:
     try:
         # Check required environment variables (MUST be first)
         api_key = os.getenv("API_KEY")
@@ -17,13 +17,13 @@ def get_site_sync() -> None:
 
         client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
-        req = GetSiteRequest.builder().build()
+        req = GetInfoRequest.builder().build()
         req_option = RequestOption.builder().api_key(api_key).build()
 
-        response = client.workflow.v1.info.get_site(req, req_option)
+        response = client.workflow.v1.workflow.get_info(req, req_option)
 
         if response.success:
-            print(f"Site info: {response.title} - {response.icon_type}")
+            print(f"App info: {response.name} - {response.description}")
         else:
             print(f"Error: {response.msg}")
 
@@ -31,7 +31,7 @@ def get_site_sync() -> None:
         print(f"Error: {e}")
 
 
-async def get_site_async() -> None:
+async def get_info_async() -> None:
     try:
         # Check required environment variables (MUST be first)
         api_key = os.getenv("API_KEY")
@@ -40,13 +40,13 @@ async def get_site_async() -> None:
 
         client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
-        req = GetSiteRequest.builder().build()
+        req = GetInfoRequest.builder().build()
         req_option = RequestOption.builder().api_key(api_key).build()
 
-        response = await client.workflow.v1.info.aget_site(req, req_option)
+        response = await client.workflow.v1.workflow.aget_info(req, req_option)
 
         if response.success:
-            print(f"Site info: {response.title} - {response.icon_type}")
+            print(f"App info: {response.name} - {response.description}")
         else:
             print(f"Error: {response.msg}")
 
@@ -55,8 +55,8 @@ async def get_site_async() -> None:
 
 
 if __name__ == "__main__":
-    print("=== Get Site Sync ===")
-    get_site_sync()
+    print("=== Get Info Sync ===")
+    get_info_sync()
 
-    print("\n=== Get Site Async ===")
-    asyncio.run(get_site_async())
+    print("\n=== Get Info Async ===")
+    asyncio.run(get_info_async())

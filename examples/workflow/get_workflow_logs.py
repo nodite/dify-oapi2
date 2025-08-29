@@ -3,31 +3,27 @@
 import asyncio
 import os
 
-from dify_oapi.api.workflow.v1.model.file.preview_file_request import PreviewFileRequest
+from dify_oapi.api.workflow.v1.model.get_workflow_logs_request import GetWorkflowLogsRequest
 from dify_oapi.client import Client
 from dify_oapi.core.model.request_option import RequestOption
 
 
-def preview_file_sync() -> None:
+def get_workflow_logs_sync() -> None:
     try:
         # Check required environment variables (MUST be first)
         api_key = os.getenv("API_KEY")
         if not api_key:
             raise ValueError("API_KEY environment variable is required")
 
-        file_id = os.getenv("FILE_ID")
-        if not file_id:
-            raise ValueError("FILE_ID environment variable is required")
-
         client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
-        req = PreviewFileRequest.builder().file_id(file_id).build()
+        req = GetWorkflowLogsRequest.builder().page(1).limit(10).build()
         req_option = RequestOption.builder().api_key(api_key).build()
 
-        response = client.workflow.v1.file.preview_file(req, req_option)
+        response = client.workflow.v1.workflow.get_workflow_logs(req, req_option)
 
         if response.success:
-            print(f"File preview: {response.content_type}")
+            print(f"Logs retrieved: {response.total} total, {len(response.data or [])} on page")
         else:
             print(f"Error: {response.msg}")
 
@@ -35,26 +31,22 @@ def preview_file_sync() -> None:
         print(f"Error: {e}")
 
 
-async def preview_file_async() -> None:
+async def get_workflow_logs_async() -> None:
     try:
         # Check required environment variables (MUST be first)
         api_key = os.getenv("API_KEY")
         if not api_key:
             raise ValueError("API_KEY environment variable is required")
 
-        file_id = os.getenv("FILE_ID")
-        if not file_id:
-            raise ValueError("FILE_ID environment variable is required")
-
         client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
-        req = PreviewFileRequest.builder().file_id(file_id).build()
+        req = GetWorkflowLogsRequest.builder().page(1).limit(10).build()
         req_option = RequestOption.builder().api_key(api_key).build()
 
-        response = await client.workflow.v1.file.apreview_file(req, req_option)
+        response = await client.workflow.v1.workflow.aget_workflow_logs(req, req_option)
 
         if response.success:
-            print(f"File preview: {response.content_type}")
+            print(f"Logs retrieved: {response.total} total, {len(response.data or [])} on page")
         else:
             print(f"Error: {response.msg}")
 
@@ -62,26 +54,22 @@ async def preview_file_async() -> None:
         print(f"Error: {e}")
 
 
-def preview_file_as_attachment() -> None:
+def get_workflow_logs_filtered() -> None:
     try:
         # Check required environment variables (MUST be first)
         api_key = os.getenv("API_KEY")
         if not api_key:
             raise ValueError("API_KEY environment variable is required")
 
-        file_id = os.getenv("FILE_ID")
-        if not file_id:
-            raise ValueError("FILE_ID environment variable is required")
-
         client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
-        req = PreviewFileRequest.builder().file_id(file_id).as_attachment(True).build()
+        req = GetWorkflowLogsRequest.builder().keyword("[Example]").status("succeeded").page(1).limit(5).build()
         req_option = RequestOption.builder().api_key(api_key).build()
 
-        response = client.workflow.v1.file.preview_file(req, req_option)
+        response = client.workflow.v1.workflow.get_workflow_logs(req, req_option)
 
         if response.success:
-            print(f"File download: {response.content_type}")
+            print(f"Filtered logs: {response.total} total, {len(response.data or [])} on page")
         else:
             print(f"Error: {response.msg}")
 
@@ -90,11 +78,11 @@ def preview_file_as_attachment() -> None:
 
 
 if __name__ == "__main__":
-    print("=== Preview File Sync ===")
-    preview_file_sync()
+    print("=== Get Workflow Logs Sync ===")
+    get_workflow_logs_sync()
 
-    print("\n=== Preview File Async ===")
-    asyncio.run(preview_file_async())
+    print("\n=== Get Workflow Logs Async ===")
+    asyncio.run(get_workflow_logs_async())
 
-    print("\n=== Preview File as Attachment ===")
-    preview_file_as_attachment()
+    print("\n=== Get Workflow Logs Filtered ===")
+    get_workflow_logs_filtered()

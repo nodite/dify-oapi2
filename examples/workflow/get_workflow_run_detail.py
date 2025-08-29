@@ -3,7 +3,7 @@
 import asyncio
 import os
 
-from dify_oapi.api.workflow.v1.model.workflow.get_workflow_run_detail_request import GetWorkflowRunDetailRequest
+from dify_oapi.api.workflow.v1.model.get_workflow_run_detail_request import GetWorkflowRunDetailRequest
 from dify_oapi.client import Client
 from dify_oapi.core.model.request_option import RequestOption
 
@@ -12,9 +12,10 @@ def get_workflow_run_detail_sync() -> None:
     try:
         # Check required environment variables (MUST be first)
         api_key = os.getenv("API_KEY")
-        workflow_run_id = os.getenv("WORKFLOW_RUN_ID")
         if not api_key:
             raise ValueError("API_KEY environment variable is required")
+
+        workflow_run_id = os.getenv("WORKFLOW_RUN_ID")
         if not workflow_run_id:
             raise ValueError("WORKFLOW_RUN_ID environment variable is required")
 
@@ -26,8 +27,7 @@ def get_workflow_run_detail_sync() -> None:
         response = client.workflow.v1.workflow.get_workflow_run_detail(req, req_option)
 
         if response.success:
-            print(f"Workflow status: {response.status}")
-            print(f"Elapsed time: {response.elapsed_time}s")
+            print(f"Workflow detail: {response.status} - {response.elapsed_time}s")
         else:
             print(f"Error: {response.msg}")
 
@@ -39,9 +39,10 @@ async def get_workflow_run_detail_async() -> None:
     try:
         # Check required environment variables (MUST be first)
         api_key = os.getenv("API_KEY")
-        workflow_run_id = os.getenv("WORKFLOW_RUN_ID")
         if not api_key:
             raise ValueError("API_KEY environment variable is required")
+
+        workflow_run_id = os.getenv("WORKFLOW_RUN_ID")
         if not workflow_run_id:
             raise ValueError("WORKFLOW_RUN_ID environment variable is required")
 
@@ -53,8 +54,7 @@ async def get_workflow_run_detail_async() -> None:
         response = await client.workflow.v1.workflow.aget_workflow_run_detail(req, req_option)
 
         if response.success:
-            print(f"Workflow status: {response.status}")
-            print(f"Elapsed time: {response.elapsed_time}s")
+            print(f"Workflow detail: {response.status} - {response.elapsed_time}s")
         else:
             print(f"Error: {response.msg}")
 

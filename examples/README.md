@@ -65,3 +65,24 @@ This directory contains example code for using the Dify-OAPI SDK.
 
 ### Documentation
 - [Knowledge Base README](./knowledge/README.md): Comprehensive usage guide with examples and best practices
+
+## Workflow Examples
+
+### Workflow Execution
+- [Run Workflow](./workflow/run_workflow.py): Execute workflows with blocking and streaming modes
+- [Get Workflow Run Detail](./workflow/get_workflow_run_detail.py): Retrieve workflow execution details and status
+- [Stop Workflow](./workflow/stop_workflow.py): Stop running workflow executions
+
+### File Management
+- [Upload File](./workflow/upload_file.py): Upload files for multimodal workflow support
+
+### Logging and Monitoring
+- [Get Workflow Logs](./workflow/get_workflow_logs.py): Retrieve workflow execution logs with filtering
+
+### Application Configuration
+- [Get Application Info](./workflow/get_info.py): Retrieve basic application information
+- [Get Application Parameters](./workflow/get_parameters.py): Get application parameter configuration
+- [Get WebApp Settings](./workflow/get_site.py): Retrieve WebApp settings and theming
+
+### Documentation
+- [Workflow README](./workflow/README.md): Comprehensive workflow API usage guide with safety features

@@ -1802,6 +1802,11 @@ Requirements:
    - Demonstrate both sync and async usage
    - Include proper error handling
    - Use realistic test data
+
+3. Fix examples documentation inconsistencies:
+   - Verify all 6 dataset APIs have example files
+   - Remove any duplicate or redundant files
+   - Standardize file naming conventions
 ```
 
 **Testing Prompt:**
@@ -1819,6 +1824,7 @@ Requirements:
 
 3. Mock external API calls
 4. Verify example completeness and accuracy
+5. Ensure all 6 dataset APIs are covered
 ```
 
 ### Step 16: Create Document Examples
@@ -1839,9 +1845,14 @@ Requirements:
    - update_document_status.py: Status management examples
    - get_batch_indexing_status.py: Processing status examples
    - get_upload_file_info.py: File info examples
+   - [2 additional document APIs]: Add missing examples to reach 12 total
 
 2. Include file handling examples with proper multipart handling
 3. Follow same safety and quality standards as dataset examples
+4. Fix documentation inconsistencies:
+   - Ensure all 12 document APIs have example files (not 10)
+   - Remove any metadata/ examples that should be part of document APIs
+   - Verify no duplicate functionality between document/ and metadata/ directories
 ```
 
 **Testing Prompt:**
@@ -1853,6 +1864,8 @@ Requirements:
 2. Test all document examples including file handling
 3. Mock file operations and multipart uploads
 4. Verify safety measures and error handling
+5. Ensure all 12 document APIs are covered (not 10)
+6. Validate no conflicts with metadata examples
 ```
 
 ### Step 17: Create Segment, Tag, and Model Examples
@@ -1864,15 +1877,26 @@ Create comprehensive examples for Segment, Tag, and Model APIs.
 Requirements:
 1. Create examples in `examples/knowledge/segment/`:
    - All 8 segment API examples (list, create, get, update, delete segments and child chunks)
+   - Add segment management section to examples/knowledge/README.md
 
 2. Create examples in `examples/knowledge/tag/`:
-   - All 6 tag API examples (list, create, update, delete, bind, unbind)
+   - All 7 tag API examples (list, create, update, delete, bind, unbind, get_dataset_tags)
+   - Verify tag API count matches knowledge-api.md specification
 
 3. Create examples in `examples/knowledge/model/`:
    - get_text_embedding_models.py example
+   - Add model management section to examples/knowledge/README.md
 
 4. Follow same patterns and safety standards
 5. Include comprehensive sync/async coverage
+6. Fix documentation inconsistencies:
+   - Update examples/knowledge/README.md to include all missing sections
+   - Correct total API count from 29 to 33
+   - Ensure all resource categories are properly documented
+7. Fix test structure inconsistencies:
+   - Add missing Model API tests
+   - Clarify metadata vs document test separation
+   - Ensure all 33 APIs have corresponding tests
 ```
 
 **Testing Prompt:**
@@ -1882,7 +1906,11 @@ Create tests to validate all remaining examples (Segment, Tag, Model).
 Requirements:
 1. Create corresponding test files for each example category
 2. Validate all examples for correctness and safety
-3. Ensure comprehensive coverage of all 39 APIs
+3. Ensure comprehensive coverage of all 33 APIs (not 29)
+4. Verify examples/knowledge/README.md accuracy
+5. Test that all documented APIs have corresponding example files
+6. Verify all 33 APIs have corresponding test files
+7. Ensure test structure matches final API specifications
 ```
 
 ### Step 18: Create Comprehensive Integration Tests
@@ -1903,6 +1931,10 @@ Requirements:
 4. Mock external API calls appropriately
 5. Verify end-to-end functionality
 6. Test error propagation and handling
+7. Fix test structure inconsistencies:
+   - Add missing Model API integration tests
+   - Clarify metadata vs document test coverage
+   - Ensure all 33 APIs are covered (not 29)
 ```
 
 **Testing Prompt:**
@@ -1912,7 +1944,7 @@ Create final validation tests for the complete Knowledge Base implementation.
 Requirements:
 1. Create `tests/knowledge/v1/integration/test_comprehensive_integration.py`
 2. Validate complete module integration:
-   - All 39 APIs are accessible
+   - All 33 APIs are accessible (not 39)
    - All resources are properly integrated
    - Client integration works correctly
    - Examples are functional
@@ -1921,6 +1953,10 @@ Requirements:
 3. Performance and reliability testing
 4. Edge case and error scenario testing
 5. Compatibility testing with existing modules
+6. Verify test structure consistency:
+   - All 33 APIs have corresponding tests
+   - Test structure matches final resource organization
+   - No duplicate or missing test coverage
 ```
 
 ### Step 19: Resolve Class Naming Conflicts
@@ -1980,10 +2016,16 @@ Update project documentation to include the Knowledge Base API module.
 
 Requirements:
 1. Update `examples/README.md` to include knowledge base examples
-2. Create `examples/knowledge/README.md` with comprehensive usage guide
+2. Fix `examples/knowledge/README.md` with comprehensive usage guide:
+   - Correct total API count from 29 to 33
+   - Add missing Segment Management section (8 APIs)
+   - Add missing Model Management section (1 API)
+   - Correct Document Management to 12 APIs
+   - Remove or clarify Metadata Management section
 3. Update main project README.md to highlight knowledge base capabilities
 4. Ensure all documentation is consistent and accurate
 5. Include usage examples and best practices
+6. Verify all 33 APIs are properly documented with examples
 ```
 
 **Testing Prompt:**
@@ -1992,9 +2034,11 @@ Validate all documentation for accuracy and completeness.
 
 Requirements:
 1. Test all code examples in documentation
-2. Verify API coverage is complete
+2. Verify API coverage is complete (33 APIs, not 29)
 3. Check for consistency across all documentation
 4. Validate example code syntax and functionality
+5. Ensure examples/knowledge/README.md matches knowledge-api.md specifications
+6. Verify all documented APIs have corresponding example files
 ```
 
 ### Step 21: Final Quality Assurance and Validation
@@ -2009,6 +2053,7 @@ Requirements:
    - Run all integration tests and verify functionality
    - Run all example validation tests
    - Verify test coverage meets project standards (>95%)
+   - Ensure all 33 APIs have corresponding tests
 
 2. Code quality validation:
    - Run linting tools (ruff) and ensure compliance
@@ -2017,7 +2062,7 @@ Requirements:
    - Verify code formatting and style consistency
 
 3. Functionality validation:
-   - Test all 39 APIs end-to-end
+   - Test all 33 APIs end-to-end (not 39)
    - Verify all 5 resources work correctly
    - Test complex nested resource paths
    - Validate file upload and multipart handling
@@ -2038,11 +2083,12 @@ Requirements:
 6. Documentation validation:
    - Verify all examples work correctly
    - Test all code snippets in documentation
-   - Validate API coverage is complete
+   - Validate API coverage is complete (33 APIs)
    - Check documentation accuracy and completeness
+   - Verify test structure consistency
 
 7. Final deliverables checklist:
-   - [ ] 39 fully implemented and tested APIs
+   - [ ] 33 fully implemented and tested APIs (not 39)
    - [ ] 5 resource classes with comprehensive functionality
    - [ ] Complete integration with dify-oapi2 client
    - [ ] Comprehensive examples for all APIs
@@ -2050,6 +2096,7 @@ Requirements:
    - [ ] Updated documentation and usage guides
    - [ ] Performance benchmarks and optimization guide
    - [ ] Security validation and compliance report
+   - [ ] Test structure consistency validation
 ```
 
 ### Step 22: Performance and Load Testing
@@ -2248,7 +2295,22 @@ Upon successful completion, the following deliverables will be provided:
 
 ## Summary
 
-This comprehensive implementation plan provides a systematic approach to building the complete Knowledge Base API module with 39 APIs across 5 resources. The plan includes 24 detailed implementation steps, each with specific requirements and corresponding test validation.
+This comprehensive implementation plan provides a systematic approach to building the complete Knowledge Base API module with 33 APIs across 5 resources. The plan includes 24 detailed implementation steps, each with specific requirements and corresponding test validation.
+
+### Documentation and Test Consistency Requirements
+
+**Critical Issues Identified**: Multiple consistency issues must be resolved:
+
+**Examples Documentation Inconsistencies**:
+- **knowledge-api.md**: Documents 33 APIs (6+12+8+7+1)
+- **examples/README.md**: Claims 29 APIs (6+10+7+7+0)
+- **Required Fixes**: Update examples documentation, add missing sections, verify file completeness
+
+**Test Structure Inconsistencies**:
+- **Missing Model Tests**: No tests for Model Management API (1 API)
+- **Metadata vs Document**: Unclear separation between metadata and document tests
+- **Test Coverage Gaps**: May not cover all 33 APIs comprehensively
+- **Required Fixes**: Add missing tests, clarify test structure, ensure complete coverage
 
 ### Key Implementation Principles:
 - **Type Safety**: Strict typing with Literal types throughout all 39 APIs
@@ -2263,7 +2325,7 @@ This comprehensive implementation plan provides a systematic approach to buildin
 - **Maintainability**: Clean, extensible architecture supporting future growth
 
 ### Implementation Scope:
-- **39 APIs** implemented across 5 specialized resources
+- **33 APIs** implemented across 5 specialized resources
 - **100+ Model Classes** with comprehensive type safety
 - **Complex Nested Paths** supporting up to 5-level resource nesting
 - **File Upload Support** with multipart/form-data handling
@@ -2271,5 +2333,6 @@ This comprehensive implementation plan provides a systematic approach to buildin
 - **Tag Management** with binding and unbinding operations
 - **Batch Operations** with status monitoring and management
 - **Complete Integration** with existing dify-oapi2 architecture
+- **Documentation Consistency** with accurate API counts and complete example coverage
 
-The implementation will result in a robust, type-safe, well-tested, and highly performant Knowledge Base API module that seamlessly integrates with the existing dify-oapi2 architecture while providing comprehensive knowledge management capabilities for AI applications.
+The implementation will result in a robust, type-safe, well-tested, and highly performant Knowledge Base API module that seamlessly integrates with the existing dify-oapi2 architecture while providing comprehensive knowledge management capabilities for AI applications. All documentation inconsistencies will be resolved to ensure accurate API coverage and complete example availability.

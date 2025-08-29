@@ -923,6 +923,62 @@ tests/
 - **Avoid Verbose Implementations**: Remove any code that doesn't directly contribute to the core demonstration
 - **Maintain Core Functionality**: Ensure all essential features and safety checks remain intact
 
+### Examples Documentation Consistency (CRITICAL)
+**Issue Identified**: Current examples documentation has inconsistencies
+- **knowledge-api.md**: Documents 33 APIs (6+12+8+7+1)
+- **examples/README.md**: Claims 29 APIs (6+10+7+7+0)
+- **Actual files**: Approximately 29 example files
+
+**Required Fixes**:
+1. **Update examples/knowledge/README.md**:
+   - Correct total API count to 33 APIs
+   - Add missing Segment Management section (8 APIs)
+   - Add missing Model Management section (1 API)
+   - Correct Document Management to 12 APIs
+   - Remove or clarify Metadata Management (may be part of Document APIs)
+
+2. **Verify Example File Completeness**:
+   - Ensure all 33 APIs have corresponding example files
+   - Remove duplicate or redundant files
+   - Standardize file naming conventions
+
+### Tests Structure Consistency (CRITICAL)
+**Issue Identified**: Tests structure also has inconsistencies with API specifications
+- **Current test structure**: Includes separate metadata/ tests and resources
+- **API specification**: Metadata may be part of Document APIs (12 total)
+- **Missing tests**: No model/ tests for Model Management API
+
+**Test Structure Issues**:
+1. **Model Tests Missing**:
+   - No `test_model_models.py` for Model Management API
+   - No `test_model_resource.py` for Model resource
+   - Missing model API integration tests
+
+2. **Metadata vs Document Confusion**:
+   - Separate `test_metadata_models.py` and `test_metadata_resource.py`
+   - May overlap with Document API functionality
+   - Need clarification if metadata is separate or part of Document APIs
+
+3. **Test Coverage Gaps**:
+   - Integration tests may not cover all 33 APIs
+   - Resource tests may not match final resource structure
+
+**Required Test Fixes**:
+1. **Add Missing Model Tests**:
+   - Create `test_model_models.py` for Model API
+   - Create `test_model_resource.py` for Model resource
+   - Add model integration tests
+
+2. **Clarify Metadata vs Document Tests**:
+   - Determine if metadata tests should be merged with document tests
+   - Ensure no duplicate test coverage
+   - Align test structure with final API specification
+
+3. **Verify Test Completeness**:
+   - Ensure all 33 APIs have corresponding tests
+   - Verify resource tests match final resource structure
+   - Update integration tests for complete API coverage
+
 ### Examples Directory Structure
 ```
 examples/knowledge/
@@ -982,6 +1038,16 @@ examples/knowledge/
 - **Real-world Data**: Use realistic but simple test data with "[Example]" prefix
 - **Safety First**: All resource creation uses "[Example]" prefix, all deletion checks for this prefix
 - **Cleanup Functions**: Delete examples include functions to clean up all example resources
+- **Complete Coverage**: All 33 APIs must have corresponding example files
+- **Documentation Accuracy**: Examples README must accurately reflect all implemented APIs
+
+### Test Content Strategy
+- **Complete API Coverage**: All 33 APIs must have corresponding test files
+- **Resource Structure Alignment**: Test structure must match final resource organization
+- **Model Test Completeness**: All model classes must have comprehensive tests
+- **Integration Test Coverage**: All APIs must be covered in integration tests
+- **Resource Test Accuracy**: Resource tests must match final resource implementations
+- **Test Documentation**: Test structure must be documented and consistent
 
 ## Latest Improvements and Optimizations
 
@@ -1033,6 +1099,21 @@ examples/knowledge/
 - **Performance Monitoring**: Real-time model performance monitoring
 - **Cost Optimization**: Cost-aware model selection and usage optimization
 
+### 7. Examples and Tests Documentation Improvements
+**Documentation Consistency Fixes**:
+- **API Count Correction**: Updated examples documentation to reflect all 33 APIs
+- **Missing Sections**: Added Segment Management (8 APIs) and Model Management (1 API) sections
+- **File Verification**: Ensured all APIs have corresponding example files
+- **Naming Standardization**: Consistent file naming across all example categories
+- **README Accuracy**: Examples README now matches API documentation specifications
+
+**Test Structure Improvements**:
+- **Missing Model Tests**: Added Model API tests for complete coverage
+- **Test Structure Alignment**: Aligned test structure with final API specifications
+- **Metadata Clarification**: Resolved metadata vs document test overlap
+- **Complete Coverage**: Ensured all 33 APIs have corresponding test files
+- **Resource Test Accuracy**: Updated resource tests to match final resource structure
+
 ## Summary
 
 This design provides a comprehensive solution for knowledge base management in dify-oapi, covering all 33 knowledge-related APIs with a clean, maintainable architecture. The implementation prioritizes type safety, consistency, and developer experience while ensuring full compatibility with the latest Dify API specifications.
@@ -1054,3 +1135,13 @@ The examples strategy ensures developers have clear, educational references for 
 - **Safety Features**: Comprehensive validation and error handling mechanisms
 - **Educational Focus**: Examples focus purely on demonstrating API functionality
 - **Consistent Patterns**: Uniform architecture and naming conventions across all resources
+
+### Documentation Consistency Requirements
+- **Examples Documentation**: Must be updated to reflect all 33 APIs accurately
+- **File Completeness**: All APIs must have corresponding example files
+- **Naming Standardization**: Consistent file naming across all example categories
+- **README Accuracy**: Examples README must match API documentation specifications
+- **Test Structure Consistency**: Test structure must align with final API specifications
+- **Test Coverage Completeness**: All 33 APIs must have corresponding test files
+- **Resource Test Alignment**: Resource tests must match final resource organization
+- **Integration Test Coverage**: All APIs must be covered in integration tests

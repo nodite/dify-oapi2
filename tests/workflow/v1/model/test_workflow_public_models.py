@@ -5,6 +5,8 @@ from dify_oapi.api.workflow.v1.model.file_info import FileInfo
 from dify_oapi.api.workflow.v1.model.node_info import NodeInfo
 from dify_oapi.api.workflow.v1.model.workflow_file_info import WorkflowFileInfo
 from dify_oapi.api.workflow.v1.model.workflow_inputs import WorkflowInputs
+from dify_oapi.api.workflow.v1.model.workflow_run_data import WorkflowRunData
+from dify_oapi.api.workflow.v1.model.workflow_run_info import WorkflowRunInfo
 
 
 class TestWorkflowInputs:
@@ -164,3 +166,61 @@ class TestWorkflowFileInfo:
         file_info = WorkflowFileInfo.builder().type("document").transfer_method("local_file").build()
         assert file_info.type == "document"
         assert file_info.transfer_method == "local_file"
+
+
+class TestWorkflowRunInfo:
+    """Test WorkflowRunInfo model."""
+
+    def test_builder_pattern(self) -> None:
+        """Test builder pattern functionality."""
+        run_data = WorkflowRunData.builder().id("run-123").status("succeeded").build()
+
+        run_info = (
+            WorkflowRunInfo.builder().workflow_run_id("workflow-run-456").task_id("task-789").data(run_data).build()
+        )
+
+        assert run_info.workflow_run_id == "workflow-run-456"
+        assert run_info.task_id == "task-789"
+        assert run_info.data is not None
+        assert run_info.data.id == "run-123"
+
+    def test_field_validation(self) -> None:
+        """Test field validation."""
+        run_info = WorkflowRunInfo()
+        assert run_info.workflow_run_id is None
+        assert run_info.task_id is None
+        assert run_info.data is None
+
+
+class TestWorkflowRunData:
+    """Test WorkflowRunData model."""
+
+    def test_builder_pattern(self) -> None:
+        """Test builder pattern functionality."""
+        run_data = (
+            WorkflowRunData.builder()
+            .id("run-123")
+            .workflow_id("workflow-456")
+            .status("succeeded")
+            .outputs({"result": "success"})
+            .total_tokens(150)
+            .elapsed_time(2.5)
+            .created_at(1640995200)
+            .finished_at(1640995300)
+            .build()
+        )
+
+        assert run_data.id == "run-123"
+        assert run_data.workflow_id == "workflow-456"
+        assert run_data.status == "succeeded"
+        assert run_data.outputs == {"result": "success"}
+        assert run_data.total_tokens == 150
+        assert run_data.elapsed_time == 2.5
+        assert run_data.created_at == 1640995200
+        assert run_data.finished_at == 1640995300
+
+    def test_field_validation(self) -> None:
+        """Test field validation."""
+        run_data = WorkflowRunData.builder().status("failed").error("Test error").build()
+        assert run_data.status == "failed"
+        assert run_data.error == "Test error"

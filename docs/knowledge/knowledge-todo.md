@@ -21,15 +21,15 @@ This document tracks the implementation progress of the Knowledge Base API modul
 - [x] **Step 3**: Implement Dataset Resource Class
 
 ### Document API Implementation (12 APIs)
-- [ ] **Step 4A**: Implement Create Document by File API Models
-- [ ] **Step 4B**: Implement Create Document by Text API Models
-- [ ] **Step 4C**: Implement List Documents API Models
-- [ ] **Step 4D**: Implement Get Document API Models
-- [ ] **Step 4E**: Implement Update Document APIs Models
-- [ ] **Step 4F**: Implement Delete Document and File Info API Models
-- [ ] **Step 4G**: Implement Document Status and Batch APIs Models
-- [ ] **Step 4H**: Complete Document API Models Integration
-- [ ] **Step 4**: Implement Document API Models (12 APIs)
+- [x] **Step 4A**: Implement Create Document by File API Models
+- [x] **Step 4B**: Implement Create Document by Text API Models
+- [x] **Step 4C**: Implement List Documents API Models
+- [x] **Step 4D**: Implement Get Document API Models
+- [x] **Step 4E**: Implement Update Document APIs Models
+- [x] **Step 4F**: Implement Delete Document and File Info API Models
+- [x] **Step 4G**: Implement Document Status and Batch APIs Models
+- [x] **Step 4H**: Complete Document API Models Integration
+- [x] **Step 4**: Implement Document API Models (12 APIs)
 - [ ] **Step 5**: Implement Document Resource Class
 
 ### Segment API Implementation (9 APIs)
@@ -77,9 +77,9 @@ This document tracks the implementation progress of the Knowledge Base API modul
 
 - **Total Steps**: 24 main steps + 16 sub-steps = 40 total tasks
 - **API Coverage**: 38 APIs across 5 resources (8+12+9+6+1)
-- **Completed**: 11/40 tasks (28%)
+- **Completed**: 19/40 tasks (48%)
 - **In Progress**: 0/40 tasks (0%)
-- **Remaining**: 29/40 tasks (72%)
+- **Remaining**: 21/40 tasks (52%)
 
 ## Resource Breakdown
 

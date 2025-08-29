@@ -39,29 +39,29 @@ This directory contains example code for using the Dify-OAPI SDK.
 ## Knowledge Base Examples
 
 ### Dataset Management
-- [Create Dataset](./knowledge_base/dataset/create.py): Create new datasets with various configurations
-- [List Datasets](./knowledge_base/dataset/list.py): List datasets with pagination and search
-- [Get Dataset](./knowledge_base/dataset/get.py): Get detailed dataset information
-- [Update Dataset](./knowledge_base/dataset/update.py): Update dataset configuration and settings
-- [Delete Dataset](./knowledge_base/dataset/delete.py): Delete datasets with confirmation prompts
-- [Retrieve from Dataset](./knowledge_base/dataset/retrieve.py): Perform retrieval search with different methods
+- [Create Dataset](./knowledge/dataset/create.py): Create new datasets with various configurations
+- [List Datasets](./knowledge/dataset/list.py): List datasets with pagination and search
+- [Get Dataset](./knowledge/dataset/get.py): Get detailed dataset information
+- [Update Dataset](./knowledge/dataset/update.py): Update dataset configuration and settings
+- [Delete Dataset](./knowledge/dataset/delete.py): Delete datasets with confirmation prompts
+- [Retrieve from Dataset](./knowledge/dataset/retrieve.py): Perform retrieval search with different methods
 
 ### Metadata Management
-- [Create Metadata](./knowledge_base/metadata/create.py): Create custom metadata fields
-- [List Metadata](./knowledge_base/metadata/list.py): List metadata configuration and usage
-- [Update Metadata](./knowledge_base/metadata/update.py): Update metadata field names
-- [Delete Metadata](./knowledge_base/metadata/delete.py): Delete metadata fields with warnings
-- [Toggle Built-in Metadata](./knowledge_base/metadata/toggle_builtin.py): Enable/disable built-in metadata
-- [Update Document Metadata](./knowledge_base/metadata/update_document.py): Update document metadata values
+- [Create Metadata](./knowledge/metadata/create.py): Create custom metadata fields
+- [List Metadata](./knowledge/metadata/list.py): List metadata configuration and usage
+- [Update Metadata](./knowledge/metadata/update.py): Update metadata field names
+- [Delete Metadata](./knowledge/metadata/delete.py): Delete metadata fields with warnings
+- [Toggle Built-in Metadata](./knowledge/metadata/toggle_builtin.py): Enable/disable built-in metadata
+- [Update Document Metadata](./knowledge/metadata/update_document.py): Update document metadata values
 
 ### Tag Management
-- [Create Tags](./knowledge_base/tag/create.py): Create knowledge type tags
-- [List Tags](./knowledge_base/tag/list.py): List all available tags
-- [Update Tags](./knowledge_base/tag/update.py): Update tag names
-- [Delete Tags](./knowledge_base/tag/delete.py): Delete tags with confirmation
-- [Bind Tags](./knowledge_base/tag/bind.py): Bind tags to datasets
-- [Unbind Tags](./knowledge_base/tag/unbind.py): Unbind tags from datasets
-- [Query Bound Tags](./knowledge_base/tag/query_bound.py): Query tags bound to datasets
+- [Create Tags](./knowledge/tag/create.py): Create knowledge type tags
+- [List Tags](./knowledge/tag/list.py): List all available tags
+- [Update Tags](./knowledge/tag/update.py): Update tag names
+- [Delete Tags](./knowledge/tag/delete.py): Delete tags with confirmation
+- [Bind Tags](./knowledge/tag/bind.py): Bind tags to datasets
+- [Unbind Tags](./knowledge/tag/unbind.py): Unbind tags from datasets
+- [Query Bound Tags](./knowledge/tag/query_bound.py): Query tags bound to datasets
 
 ### Documentation
-- [Knowledge Base README](./knowledge_base/README.md): Comprehensive usage guide with examples and best practices
+- [Knowledge Base README](./knowledge/README.md): Comprehensive usage guide with examples and best practices

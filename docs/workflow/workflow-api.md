@@ -1,11 +1,11 @@
 # Workflow Application APIs
 
-This document covers all workflow application APIs. Workflow applications have no conversation support and are suitable for translation, article writing, summarization AI, etc.
+This document covers all workflow application APIs based on the official Dify OpenAPI specification. Workflow applications offer non-session support and are ideal for translation, article writing, summarization AI, and more.
 
 ## Base URL
 
 ```
-http://localhost/v1
+https://api.dify.ai/v1
 ```
 
 ## Authentication
@@ -18,6 +18,24 @@ All API requests should include your `API-Key` in the **`Authorization`** HTTP H
 Authorization: Bearer {API_KEY}
 ```
 
+## API Overview
+
+The Workflow API provides 8 main endpoints organized into 3 categories:
+
+### Workflow Execution (4 APIs)
+- Execute Workflow - Run a published workflow
+- Get Workflow Run Detail - Retrieve execution results
+- Stop Workflow Task Generation - Stop streaming execution
+- Get Workflow Logs - Retrieve execution history
+
+### Files (1 API)
+- File Upload - Upload files for workflow use
+
+### Application (3 APIs)
+- Get Application Basic Information - App metadata
+- Get Application Parameters Information - Input configuration
+- Get Application WebApp Settings - UI settings
+
 ## APIs
 
 ### 1. Execute Workflow
@@ -27,26 +45,51 @@ Authorization: Bearer {API_KEY}
 Executes a workflow. Cannot be executed without a published workflow.
 
 #### Request Body
-- `inputs` (object, required): Allows passing values for variables defined in the App. The inputs parameter contains multiple key-value pairs, where each key corresponds to a specific variable and each value is the specific value of that variable. Variables can be file list types.
-  File list type variables are suitable for passing files combined with text understanding and answering questions, only available when the model supports the file parsing capability of that type. If the variable is a file list type, the corresponding value should be in list format, with each element containing the following:
-  - `type` (string): Supported types:
-    - `document`: Specific types include: 'TXT', 'MD', 'MARKDOWN', 'PDF', 'HTML', 'XLSX', 'XLS', 'DOCX', 'CSV', 'EML', 'MSG', 'PPTX', 'PPT', 'XML', 'EPUB'
-    - `image`: Specific types include: 'JPG', 'JPEG', 'PNG', 'GIF', 'WEBP', 'SVG'
-    - `audio`: Specific types include: 'MP3', 'M4A', 'WAV', 'WEBM', 'AMR'
-    - `video`: Specific types include: 'MP4', 'MOV', 'MPEG', 'MPGA'
-    - `custom`: Specific types include: other file types
-  - `transfer_method` (string): Transfer method, `remote_url` for image URL / `local_file` for uploaded file
-  - `url` (string): Image URL (only when transfer method is `remote_url`)
-  - `upload_file_id` (string): Upload file ID (only when transfer method is `local_file`)
+- `inputs` (object, required): Key/value pairs for workflow variables. Value for a file array type variable should be a list of InputFileObjectWorkflow.
+  - For file list variables, each element should contain:
+    - `type` (string): File type - `document`, `image`, `audio`, `video`, `custom`
+    - `transfer_method` (string): Transfer method - `remote_url` or `local_file`
+    - `url` (string): Image URL (when transfer_method is `remote_url`)
+    - `upload_file_id` (string): Upload file ID (when transfer_method is `local_file`)
 - `response_mode` (string, required): Response mode
-  - `streaming`: Streaming mode (recommended). Implements typewriter-style streaming output based on SSE (Server-Sent Events)
-  - `blocking`: Blocking mode, waits for execution to complete before returning results. (Requests may be interrupted if the process is lengthy). *Due to Cloudflare limitations, requests will be interrupted after 100 seconds without response.*
-- `user` (string, required): User identifier, used to define the identity of the end user for retrieval and statistics. Defined by developers, must ensure user identifier is unique within the application. API cannot access sessions created by WebApp.
-- `files` (array[object], optional): Uploaded files
-- `trace_id` (string, optional): Trace ID. Suitable for integrating with existing trace components in business systems to achieve end-to-end distributed tracing scenarios. If not specified, the system will automatically generate a `trace_id`. Supports the following three ways of passing, with priority in order:
-  1. Header: Recommended to pass through HTTP Header `X-Trace-Id`, highest priority
-  2. Query parameter: Pass through URL query parameter `trace_id`
-  3. Request Body: Pass through request body field `trace_id` (this field)
+  - `streaming`: Streaming mode (recommended). Based on SSE (Server-Sent Events)
+  - `blocking`: Blocking mode, waits for execution to complete before returning results. *Due to Cloudflare limitations, requests will be interrupted after 100 seconds without response.*
+- `user` (string, required): User identifier, used to define the identity of the end user. Must be unique within the application.
+
+#### Example Requests
+
+**Basic Execution:**
+```json
+{
+  "inputs": {
+    "query": "Summarize this text: ..."
+  },
+  "response_mode": "streaming",
+  "user": "user_workflow_123"
+}
+```
+
+**With File Array Variable:**
+```json
+{
+  "inputs": {
+    "my_documents": [
+      {
+        "type": "document",
+        "transfer_method": "local_file",
+        "upload_file_id": "uploaded_file_id_abc"
+      },
+      {
+        "type": "image",
+        "transfer_method": "remote_url",
+        "url": "https://example.com/image.jpg"
+      }
+    ]
+  },
+  "response_mode": "blocking",
+  "user": "user_workflow_456"
+}
+```
 
 #### Response
 
@@ -173,147 +216,86 @@ Streaming blocks have different structures based on different `event` types:
 - 400, `workflow_request_error`: Workflow execution failed
 - 500: Internal server error
 
-### 2. Execute Specific Version Workflow
+### 2. Get Workflow Run Detail
 
-**POST** `/workflows/:workflow_id/run`
+**GET** `/workflows/run/{workflow_run_id}`
 
-Executes a specific version of the workflow by specifying the workflow ID through path parameters.
-
-#### Path Parameters
-- `workflow_id` (string, required): Workflow ID, used to specify a specific version of the workflow
-  How to obtain: You can query the workflow ID of a specific version in the version history.
-
-#### Request Body
-Same as Execute Workflow API above.
-
-#### Response
-Same as Execute Workflow API above.
-
-#### Errors
-- 400, `invalid_param`: Invalid parameters
-- 400, `app_unavailable`: App configuration unavailable
-- 400, `provider_not_initialize`: No available model credential configuration
-- 400, `provider_quota_exceeded`: Model call quota exceeded
-- 400, `model_currently_not_support`: Current model unavailable
-- 400, `workflow_not_found`: Specified workflow version not found
-- 400, `draft_workflow_error`: Cannot use draft workflow version
-- 400, `workflow_id_format_error`: Workflow ID format error, UUID format required
-- 400, `workflow_request_error`: Workflow execution failed
-- 500: Internal server error
-
-### 3. Get Workflow Execution Details
-
-**GET** `/workflows/run/:workflow_run_id`
-
-Gets the current execution result of a workflow task based on the workflow execution ID.
+Retrieve the current execution results of a workflow task based on the workflow execution ID.
 
 #### Path Parameters
-- `workflow_run_id` (string, required): Workflow execution ID, can be obtained from streaming return Chunk
+- `workflow_run_id` (string, required): Workflow Run ID, can be obtained from workflow execution response or streaming events (UUID format)
 
 #### Response
-- `id` (string): Workflow execution ID
-- `workflow_id` (string): Associated Workflow ID
+- `id` (string): Workflow execution ID (UUID)
+- `workflow_id` (string): Associated Workflow ID (UUID)
 - `status` (string): Execution status `running` / `succeeded` / `failed` / `stopped`
-- `inputs` (json): Task input content
-- `outputs` (json): Task output content
-- `error` (string): Error reason
+- `inputs` (string): JSON string of input content
+- `outputs` (object): JSON object of output content (nullable)
+- `error` (string): Error reason (nullable)
 - `total_steps` (int): Total task execution steps
 - `total_tokens` (int): Total task execution tokens
-- `created_at` (timestamp): Task start time
-- `finished_at` (timestamp): Task end time
-- `elapsed_time` (float): Time consumed (s)
+- `created_at` (timestamp): Task start time (int64)
+- `finished_at` (timestamp): Task end time (int64, nullable)
+- `elapsed_time` (float): Time consumed in seconds (nullable)
 
-### 4. Stop Response
+#### Errors
+- 404: Workflow run not found
 
-**POST** `/workflows/tasks/:task_id/stop`
+### 3. Stop Workflow Task Generation
 
-Only supports streaming mode.
+**POST** `/workflows/tasks/{task_id}/stop`
+
+Stops a workflow task generation. Only supported in streaming mode.
 
 #### Path Parameters
-- `task_id` (string, required): Task ID, can be obtained from streaming return Chunk
+- `task_id` (string, required): Task ID from the streaming chunk (UUID format)
 
 #### Request Body
-- `user` (string, required): User identifier, used to define the identity of the end user, must be consistent with the user passed in the send message interface. API cannot access sessions created by WebApp.
+- `user` (string, required): User identifier
 
 #### Response
 - `result` (string): Fixed return "success"
 
-### 5. Upload File
+### 4. File Upload for Workflow
 
 **POST** `/files/upload`
 
-Uploads files for use when sending messages, enabling multimodal understanding.
-Supports any format supported by your workflow.
-*Uploaded files are only available for the current end user.*
+Upload a file for use in workflows. Supports any formats supported by your workflow. Uploaded files are for the current end-user only.
 
 #### Request Body (multipart/form-data)
-- `file` (file, required): File to upload
-- `user` (string, required): User identifier, used to define the identity of the end user, must be consistent with the user passed in the send message interface
+- `file` (binary, required): The file to be uploaded
+- `user` (string, required): User identifier
 
 #### Response
 
 After successful upload, the server returns the file ID and related information.
 
-- `id` (uuid): ID
+- `id` (uuid): File ID
 - `name` (string): File name
 - `size` (int): File size (bytes)
 - `extension` (string): File extension
 - `mime_type` (string): File mime-type
 - `created_by` (uuid): Uploader ID
-- `created_at` (timestamp): Upload time
+- `created_at` (timestamp): Upload time (int64)
 
 #### Errors
-- 400, `no_file_uploaded`: Must provide file
-- 400, `too_many_files`: Currently only accepts one file
-- 400, `unsupported_preview`: This file does not support preview
-- 400, `unsupported_estimate`: This file does not support estimation
-- 413, `file_too_large`: File too large
-- 415, `unsupported_file_type`: Unsupported extension, currently only accepts document files
-- 503, `s3_connection_failed`: Unable to connect to S3 service
-- 503, `s3_permission_denied`: No permission to upload files to S3
-- 503, `s3_file_too_large`: File exceeds S3 size limit
-
-### 6. File Preview
-
-**GET** `/files/:file_id/preview`
-
-Preview or download uploaded files. This endpoint allows you to access files previously uploaded through the file upload API.
-*Files can only be accessed within the scope of messages belonging to the requesting application.*
-
-#### Path Parameters
-- `file_id` (string, required): Unique identifier of the file to preview, obtained from the file upload API response
-
-#### Query Parameters
-- `as_attachment` (boolean, optional): Whether to force download the file as an attachment. Default is `false` (preview in browser)
-
-#### Response
-Returns file content with appropriate headers for browser display or download.
-
-- `Content-Type`: Set according to file MIME type
-- `Content-Length`: File size in bytes (if available)
-- `Content-Disposition`: Set to "attachment" if `as_attachment=true`
-- `Cache-Control`: Cache headers for performance
-- `Accept-Ranges`: Set to "bytes" for audio/video files
-
-#### Errors
-- 400, `invalid_param`: Invalid parameters
-- 403, `file_access_denied`: File access denied or file does not belong to current application
-- 404, `file_not_found`: File not found or has been deleted
+- 400: Bad Request for file operation
+- 413: File is too large
+- 415: Unsupported file type for upload
 - 500: Internal server error
+- 503: S3 storage error
 
-### 7. Get Workflow Logs
+### 5. Get Workflow Logs
 
 **GET** `/workflows/logs`
 
-Returns workflow logs in reverse order.
+Returns workflow logs, with the first page returning the latest `{limit}` messages, i.e., in reverse order.
 
 #### Query Parameters
-- `keyword` (string, optional): Keyword
-- `status` (string, optional): Execution status succeeded/failed/stopped
+- `keyword` (string, optional): Keyword to search
+- `status` (string, optional): Filter by status: `succeeded`, `failed`, `stopped`, `running`
 - `page` (int, optional): Current page number, default 1
-- `limit` (int, optional): Records per page, default 20
-- `created_by_end_user_session_id` (string, optional): Created by which endUser, e.g., `abc-123`
-- `created_by_account` (string, optional): Created by which email account, e.g., lizb@test.com
+- `limit` (int, optional): Number of items per page, default 20
 
 #### Response
 - `page` (int): Current page number
@@ -321,45 +303,43 @@ Returns workflow logs in reverse order.
 - `total` (int): Total records
 - `has_more` (bool): Whether there is more data
 - `data` (array[object]): Current page data
-  - `id` (string): Identifier
+  - `id` (string): Identifier (UUID)
   - `workflow_run` (object): Workflow execution log
-    - `id` (string): Identifier
+    - `id` (string): Identifier (UUID)
     - `version` (string): Version
     - `status` (string): Execution status, `running` / `succeeded` / `failed` / `stopped`
-    - `error` (string, optional): Error
+    - `error` (string, nullable): Error
     - `elapsed_time` (float): Time consumed, in seconds
     - `total_tokens` (int): Number of tokens consumed
     - `total_steps` (int): Execution step length
-    - `created_at` (timestamp): Start time
-    - `finished_at` (timestamp): End time
+    - `created_at` (timestamp): Start time (int64)
+    - `finished_at` (timestamp): End time (int64, nullable)
   - `created_from` (string): Source
   - `created_by_role` (string): Role
-  - `created_by_account` (string, optional): Account
-  - `created_by_end_user` (object): User
-    - `id` (string): Identifier
+  - `created_by_account` (string, nullable): Account (UUID)
+  - `created_by_end_user` (object): End user summary
+    - `id` (string): Identifier (UUID)
     - `type` (string): Type
     - `is_anonymous` (bool): Whether anonymous
     - `session_id` (string): Session identifier
-  - `created_at` (timestamp): Creation time
+  - `created_at` (timestamp): Creation time (int64)
 
-### 8. Get Application Basic Information
+### 6. Get Application Basic Information
 
 **GET** `/info`
 
-Used to get basic information of the application.
+Get basic information of the application.
 
 #### Response
 - `name` (string): Application name
 - `description` (string): Application description
 - `tags` (array[string]): Application tags
-- `mode` (string): Application mode
-- `author_name` (string): Author name
 
-### 9. Get Application Parameters
+### 7. Get Application Parameters Information
 
 **GET** `/parameters`
 
-Used to get function switches, input parameter names, types and default values when entering the page.
+Get application parameters information including input configuration and file upload settings.
 
 #### Response
 - `user_input_form` (array[object]): User input form configuration
@@ -380,51 +360,32 @@ Used to get function switches, input parameter names, types and default values w
     - `default` (string): Default value
     - `options` (array[string]): Option values
 - `file_upload` (object): File upload configuration
-  - `document` (object): Document settings
-    Currently only supports document types: `txt`, `md`, `markdown`, `pdf`, `html`, `xlsx`, `xls`, `docx`, `csv`, `eml`, `msg`, `pptx`, `ppt`, `xml`, `epub`
-    - `enabled` (bool): Whether enabled
-    - `number_limits` (int): Document quantity limit, default 3
-    - `transfer_methods` (array[string]): Transfer method list, remote_url, local_file, must choose one
   - `image` (object): Image settings
-    Currently only supports image types: `png`, `jpg`, `jpeg`, `webp`, `gif`
     - `enabled` (bool): Whether enabled
-    - `number_limits` (int): Image quantity limit, default 3
-    - `transfer_methods` (array[string]): Transfer method list, remote_url, local_file, must choose one
-  - `audio` (object): Audio settings
-    Currently only supports audio types: `mp3`, `m4a`, `wav`, `webm`, `amr`
-    - `enabled` (bool): Whether enabled
-    - `number_limits` (int): Audio quantity limit, default 3
-    - `transfer_methods` (array[string]): Transfer method list, remote_url, local_file, must choose one
-  - `video` (object): Video settings
-    Currently only supports video types: `mp4`, `mov`, `mpeg`, `mpga`
-    - `enabled` (bool): Whether enabled
-    - `number_limits` (int): Video quantity limit, default 3
-    - `transfer_methods` (array[string]): Transfer method list, remote_url, local_file, must choose one
-  - `custom` (object): Custom settings
-    - `enabled` (bool): Whether enabled
-    - `number_limits` (int): Custom quantity limit, default 3
-    - `transfer_methods` (array[string]): Transfer method list, remote_url, local_file, must choose one
+    - `number_limits` (int): Image quantity limit
+    - `detail` (string): Detail level
+    - `transfer_methods` (array[string]): Transfer method list (`remote_url`, `local_file`)
 - `system_parameters` (object): System parameters
   - `file_size_limit` (int): Document upload size limit (MB)
   - `image_file_size_limit` (int): Image file upload size limit (MB)
   - `audio_file_size_limit` (int): Audio file upload size limit (MB)
   - `video_file_size_limit` (int): Video file upload size limit (MB)
 
-### 10. Get Application WebApp Settings
+### 8. Get Application WebApp Settings
 
 **GET** `/site`
 
-Used to get application's WebApp settings.
+Get application's WebApp settings.
 
 #### Response
 - `title` (string): WebApp name
-- `icon_type` (string): Icon type, `emoji`-emoji, `image`-image
+- `icon_type` (string): Icon type, `emoji` or `image`
 - `icon` (string): Icon, if `emoji` type, then emoji symbol, if `image` type, then image URL
 - `icon_background` (string): Background color in hex format
-- `icon_url` (string): Icon URL
+- `icon_url` (string): Icon URL (nullable)
 - `description` (string): Description
 - `copyright` (string): Copyright information
 - `privacy_policy` (string): Privacy policy link
 - `custom_disclaimer` (string): Custom disclaimer
 - `default_language` (string): Default language
-- `show_workflow_steps` (bool): Whether to show workflow details
+- `show_workflow_steps` (bool): Whether to show workflow steps

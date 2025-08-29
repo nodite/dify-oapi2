@@ -10,6 +10,9 @@ repos:
     rev: v1.17.1
     hooks:
       - id: mypy
+        args: [--config-file=pyproject.toml]
+        files: ^dify_oapi/
+        exclude: ^(examples/|tests/)
 
   - repo: https://github.com/pylint-dev/pylint
     rev: v3.3.8

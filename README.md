@@ -137,7 +137,7 @@ Explore comprehensive examples in the [examples directory](./examples):
 - [**Basic Completion**](./examples/completion/basic_completion.py) - Text generation
 
 ### Knowledge Base Examples
-- [**List Datasets**](./examples/knowledge_base/list_datasets.py) - Dataset management
+- [**List Datasets**](./examples/knowledge/list_datasets.py) - Dataset management
 
 For detailed examples and usage patterns, see the [examples README](./examples/README.md).
 
@@ -227,7 +227,7 @@ dify-oapi/
 │   │   ├── chat/        # Chat API
 │   │   ├── completion/  # Completion API
 │   │   ├── dify/        # Core Dify API
-│   │   ├── knowledge_base/ # Knowledge Base API (39 APIs)
+│   │   ├── knowledge/ # Knowledge Base API (39 APIs)
 │   │   └── workflow/    # Workflow API
 │   ├── core/            # Core functionality
 │   │   ├── http/        # HTTP transport layer

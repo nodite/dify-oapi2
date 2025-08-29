@@ -1,1 +1,0 @@
-"""Integration tests for knowledge_base v1."""

@@ -9,19 +9,26 @@ This document outlines the design for implementing comprehensive workflow applic
 ### 1. Module Organization
 **Decision**: Extend existing `workflow/v1/` module structure
 - Continue using the established version-based API organization
-- Maintain consistency with existing chat, completion, and knowledge_base modules
+- Maintain consistency with existing chat, completion, and knowledge modules
 - Leverage existing infrastructure and patterns
 
 ### 2. Resource Structure
-**Decision**: Create comprehensive resource classes within workflow module
+**Decision**: Implement all workflow APIs within single workflow resource
 
-**Extended Existing Resources**:
-- `workflow` - Extend existing resource with new methods (4 APIs total)
+**Single Resource Implementation**:
+- `workflow` - All 8 workflow APIs in one resource class
+  - Workflow execution: `run_workflow`, `get_workflow_run_detail`, `stop_workflow`
+  - File operations: `upload_file`
+  - Logging: `get_workflow_logs`
+  - Application info: `get_info`, `get_parameters`, `get_site`
 
-**New Resource Classes**:
-- `file` - File upload and management (2 APIs)
-- `log` - Workflow execution logs (1 API)
-- `info` - Application information and configuration (3 APIs)
+**Legacy Code Migration (MANDATORY)**:
+- **Existing Structure**: Current implementation has separate resources (workflow, file, log, info)
+- **Migration Required**: Consolidate all existing functionality into single workflow resource
+- **Backward Compatibility**: Maintain existing API signatures during migration
+- **Model Consolidation**: Move all models from subdirectories to flat structure
+- **Resource Cleanup**: Remove separate resource classes (file.py, log.py, info.py)
+- **Version Update**: Update V1 class to only expose single workflow resource
 
 ### 3. Response Model Strategy
 **Decision**: Create dedicated Response models for every API
@@ -119,7 +126,7 @@ class RunWorkflowResponse(BaseModel):  # NEVER DO THIS
 # For APIs with file uploads (e.g., upload_file)
 class UploadFileRequestBody(BaseModel):
     user: str | None = None
-    
+
     def user(self, user: str) -> UploadFileRequestBodyBuilder:
         self._request_body.user = user
         return self
@@ -128,13 +135,13 @@ class UploadFileRequest(BaseRequest):
     def __init__(self) -> None:
         super().__init__()
         self.file: BytesIO | None = None
-        
+
     def file(self, file: BytesIO, file_name: str | None = None) -> UploadFileRequestBuilder:
         self._request.file = file
         file_name = file_name or "upload"
         self._request.files = {"file": (file_name, file)}
         return self
-        
+
     def request_body(self, request_body: UploadFileRequestBody) -> UploadFileRequestBuilder:
         if request_body.user:
             self._request.body = {"user": request_body.user}
@@ -157,20 +164,12 @@ class UploadFileRequest(BaseRequest):
 - Consistent across all HTTP methods and operation types
 
 #### URI and HTTP Method Configuration
-**Workflow APIs**:
+**All Workflow APIs**:
 - `POST /v1/workflows/run` → `RunWorkflowRequest`
-- `POST /v1/workflows/:workflow_id/run` → `RunSpecificWorkflowRequest`
 - `GET /v1/workflows/run/:workflow_run_id` → `GetWorkflowRunDetailRequest`
 - `POST /v1/workflows/tasks/:task_id/stop` → `StopWorkflowRequest`
-
-**File APIs**:
 - `POST /v1/files/upload` → `UploadFileRequest`
-- `GET /v1/files/:file_id/preview` → `PreviewFileRequest`
-
-**Log APIs**:
 - `GET /v1/workflows/logs` → `GetWorkflowLogsRequest`
-
-**Info APIs**:
 - `GET /v1/info` → `GetInfoRequest`
 - `GET /v1/parameters` → `GetParametersRequest`
 - `GET /v1/site` → `GetSiteRequest`
@@ -259,7 +258,7 @@ class RunWorkflowRequestBody(BaseModel):
 class WorkflowInputs(BaseModel):
     # Dynamic inputs based on workflow configuration
     # Can contain any key-value pairs defined by the workflow
-    
+
     @staticmethod
     def builder() -> WorkflowInputsBuilder:
         return WorkflowInputsBuilder()
@@ -302,7 +301,7 @@ class PublicClass(BaseModel):
     field1: str | None = None
     field2: int | None = None
     # ... other fields
-    
+
     @staticmethod
     def builder() -> PublicClassBuilder:
         return PublicClassBuilder()
@@ -310,95 +309,88 @@ class PublicClass(BaseModel):
 class PublicClassBuilder:
     def __init__(self):
         self._public_class = PublicClass()
-    
+
     def build(self) -> PublicClass:
         return self._public_class
-    
+
     def field1(self, field1: str) -> PublicClassBuilder:
         self._public_class.field1 = field1
         return self
-    
+
     def field2(self, field2: int) -> PublicClassBuilder:
         self._public_class.field2 = field2
         return self
 ```
 
 ### 10. Model File Organization
-**Decision**: Organize models by resource grouping with shared common models
+**Decision**: Flat model structure without resource grouping
 
+**Migration from Current Structure**:
 ```
+Current (nested):
 model/
-├── workflow/        # Core workflow functionality
-│   ├── run_workflow_request.py
-│   ├── run_workflow_request_body.py
-│   ├── run_workflow_response.py
-│   ├── run_specific_workflow_request.py
-│   ├── run_specific_workflow_request_body.py
-│   ├── run_specific_workflow_response.py
-│   ├── get_workflow_run_detail_request.py
-│   ├── get_workflow_run_detail_response.py
-│   ├── stop_workflow_request.py
-│   ├── stop_workflow_request_body.py
-│   ├── stop_workflow_response.py
-│   ├── workflow_run_info.py
-│   ├── workflow_inputs.py
-│   ├── node_info.py
-│   ├── execution_metadata.py
-│   └── streaming_event.py
-├── file/            # File management
-│   ├── upload_file_request.py
-│   ├── upload_file_request_body.py
-│   ├── upload_file_response.py
-│   ├── preview_file_request.py
-│   ├── preview_file_response.py
-│   └── file_info.py
-├── log/             # Workflow logs
-│   ├── get_workflow_logs_request.py
-│   ├── get_workflow_logs_response.py
-│   ├── log_info.py
-│   └── end_user_info.py
-└── info/            # Application information
-    ├── get_info_request.py
-    ├── get_info_response.py
-    ├── get_parameters_request.py
-    ├── get_parameters_response.py
-    ├── get_site_request.py
-    ├── get_site_response.py
-    ├── app_info.py
-    ├── parameters_info.py
-    ├── site_info.py
-    ├── user_input_form.py
-    ├── file_upload_config.py
-    └── system_parameters.py
+├── workflow/     # Move all files to root
+├── file/         # Move all files to root  
+├── log/          # Move all files to root
+└── info/         # Move all files to root
+
+Target (flat):
+model/
+├── run_workflow_request.py
+├── run_workflow_request_body.py
+├── run_workflow_response.py
+├── get_workflow_run_detail_request.py
+├── get_workflow_run_detail_response.py
+├── stop_workflow_request.py
+├── stop_workflow_request_body.py
+├── stop_workflow_response.py
+├── upload_file_request.py
+├── upload_file_request_body.py
+├── upload_file_response.py
+├── get_workflow_logs_request.py
+├── get_workflow_logs_response.py
+├── get_info_request.py
+├── get_info_response.py
+├── get_parameters_request.py
+├── get_parameters_response.py
+├── get_site_request.py
+├── get_site_response.py
+├── workflow_run_info.py
+├── workflow_inputs.py
+├── node_info.py
+├── execution_metadata.py
+├── streaming_event.py
+├── file_info.py
+├── log_info.py
+├── end_user_info.py
+├── app_info.py
+├── parameters_info.py
+├── site_info.py
+├── user_input_form.py
+├── file_upload_config.py
+├── system_parameters.py
+└── workflow_types.py
 ```
+
+**Migration Steps**:
+1. Move all model files from subdirectories to root model/ directory
+2. Update all import statements to reflect new flat structure
+3. Remove empty subdirectories (workflow/, file/, log/, info/)
+4. Update __init__.py files to export from new locations
 
 ## API Implementation Plan
 
-### Workflow Management APIs (4 APIs)
+### All Workflow APIs (8 APIs)
 
-#### Core Workflow Operations
+#### Single Workflow Resource Implementation
 1. **POST /workflows/run** → `workflow.run_workflow()` - Execute workflow
-2. **POST /workflows/:workflow_id/run** → `workflow.run_specific_workflow()` - Execute specific version workflow
-3. **GET /workflows/run/:workflow_run_id** → `workflow.get_workflow_run_detail()` - Get workflow execution details
-4. **POST /workflows/tasks/:task_id/stop** → `workflow.stop_workflow()` - Stop workflow execution
-
-### File Management APIs (2 APIs)
-
-#### File Upload Operations
-5. **POST /files/upload** → `file.upload_file()` - Upload files for multimodal support
-6. **GET /files/:file_id/preview** → `file.preview_file()` - Preview or download uploaded files
-
-### Log Management APIs (1 API)
-
-#### Log Operations
-7. **GET /workflows/logs** → `log.get_workflow_logs()` - Get workflow execution logs
-
-### Application Information APIs (3 APIs)
-
-#### Info Operations
-8. **GET /info** → `info.get_info()` - Get application basic information
-9. **GET /parameters** → `info.get_parameters()` - Get application parameters
-10. **GET /site** → `info.get_site()` - Get WebApp settings
+2. **GET /workflows/run/:workflow_run_id** → `workflow.get_workflow_run_detail()` - Get workflow execution details
+3. **POST /workflows/tasks/:task_id/stop** → `workflow.stop_workflow()` - Stop workflow execution
+4. **POST /files/upload** → `workflow.upload_file()` - Upload files for multimodal support
+5. **GET /workflows/logs** → `workflow.get_workflow_logs()` - Get workflow execution logs
+6. **GET /info** → `workflow.get_info()` - Get application basic information
+7. **GET /parameters** → `workflow.get_parameters()` - Get application parameters
+8. **GET /site** → `workflow.get_site()` - Get WebApp settings
 
 ## Technical Implementation Details
 
@@ -582,15 +574,30 @@ class GetWorkflowLogsRequestBuilder:
 ```
 
 ### Version Integration
-Update `v1/version.py` to include new resources:
+Migrate from current multi-resource to single workflow resource:
+
+**Current Structure**:
 ```python
 class V1:
     def __init__(self, config: Config):
-        self.workflow = Workflow(config)
-        self.file = File(config)           # New
-        self.log = Log(config)             # New
-        self.info = Info(config)           # New
+        self.workflow: Workflow = Workflow(config)
+        self.file: File = File(config)
+        self.log: Log = Log(config)
+        self.info: Info = Info(config)
 ```
+
+**Target Structure**:
+```python
+class V1:
+    def __init__(self, config: Config):
+        self.workflow = Workflow(config)  # Extended with all 8 APIs
+```
+
+**Migration Steps**:
+1. Consolidate all methods from File, Log, Info resources into Workflow resource
+2. Remove separate resource class files (file.py, log.py, info.py)
+3. Update V1 class to only expose workflow resource
+4. Ensure all existing method signatures are preserved in consolidated Workflow class
 
 ## Quality Assurance
 
@@ -615,37 +622,27 @@ class V1:
 - **No Nested Directories**: Avoid creating resource-specific test subdirectories
 
 ### Test File Organization Rules (MANDATORY)
-**Decision**: Test files MUST be organized using mixed approach - by resource type, then by functionality
-- **Resource Separation**: Each resource gets its own test file (e.g., `test_workflow_models.py`, `test_file_models.py`)
-- **API Operation Grouping**: Within each resource file, organize tests by API operation with dedicated test classes
+**Decision**: Test files MUST be organized by API functionality without resource grouping
+- **API Operation Grouping**: Organize tests by API operation with dedicated test classes
 - **Method Organization**: Within each test class, organize methods by model type (Request, RequestBody, Response)
-- **Public Class Separation**: Create separate files for public/common model tests (e.g., `test_workflow_public_models.py`)
+- **Public Class Separation**: Create separate files for public/common model tests
 - **Flat Structure**: All model test files are placed directly in `tests/workflow/v1/model/` directory
-- **Naming Convention**: Use `test_{resource}_models.py` and `test_{resource}_public_models.py` patterns
+- **Naming Convention**: Use `test_workflow_models.py` and `test_workflow_public_models.py` patterns
 
 ### Test Class Organization Pattern
-**Within each resource test file, organize by API operations:**
+**Within workflow test file, organize by API operations:**
 ```python
 # test_workflow_models.py
 class TestRunWorkflowModels:
     # Request tests
     def test_request_builder(self): ...
     def test_request_validation(self): ...
-    # RequestBody tests  
+    # RequestBody tests
     def test_request_body_builder(self): ...
     def test_request_body_validation(self): ...
     # Response tests
     def test_response_inheritance(self): ...
     def test_response_data_access(self): ...
-
-class TestRunSpecificWorkflowModels:
-    # Request tests
-    def test_request_builder(self): ...
-    def test_request_validation(self): ...
-    # RequestBody tests
-    def test_request_body_builder(self): ...
-    # Response tests
-    def test_response_inheritance(self): ...
 
 class TestGetWorkflowRunDetailModels:
     # Request tests (GET - no RequestBody)
@@ -659,6 +656,38 @@ class TestStopWorkflowModels:
     def test_request_builder(self): ...
     # RequestBody tests
     def test_request_body_builder(self): ...
+    # Response tests
+    def test_response_inheritance(self): ...
+
+class TestUploadFileModels:
+    # Request tests
+    def test_request_builder(self): ...
+    # RequestBody tests
+    def test_request_body_builder(self): ...
+    # Response tests
+    def test_response_inheritance(self): ...
+
+class TestGetWorkflowLogsModels:
+    # Request tests
+    def test_request_builder(self): ...
+    # Response tests
+    def test_response_inheritance(self): ...
+
+class TestGetInfoModels:
+    # Request tests
+    def test_request_builder(self): ...
+    # Response tests
+    def test_response_inheritance(self): ...
+
+class TestGetParametersModels:
+    # Request tests
+    def test_request_builder(self): ...
+    # Response tests
+    def test_response_inheritance(self): ...
+
+class TestGetSiteModels:
+    # Request tests
+    def test_request_builder(self): ...
     # Response tests
     def test_response_inheritance(self): ...
 ```
@@ -677,6 +706,18 @@ class TestNodeInfo:
 class TestExecutionMetadata:
     def test_builder_pattern(self): ...
     def test_field_validation(self): ...
+
+class TestFileInfo:
+    def test_builder_pattern(self): ...
+    def test_field_validation(self): ...
+
+class TestLogInfo:
+    def test_builder_pattern(self): ...
+    def test_field_validation(self): ...
+
+class TestAppInfo:
+    def test_builder_pattern(self): ...
+    def test_field_validation(self): ...
 ```
 
 ### Test Directory Structure
@@ -685,24 +726,12 @@ tests/
 └── workflow/
     └── v1/
         ├── model/
-        │   ├── test_workflow_models.py          # RunWorkflow, RunSpecificWorkflow, GetWorkflowRunDetail, StopWorkflow API tests
-        │   ├── test_workflow_public_models.py   # WorkflowRunInfo, NodeInfo, ExecutionMetadata, etc.
-        │   ├── test_file_models.py              # UploadFile, PreviewFile API tests
-        │   ├── test_file_public_models.py       # FileInfo, etc.
-        │   ├── test_log_models.py               # GetWorkflowLogs API tests
-        │   ├── test_log_public_models.py        # LogInfo, EndUserInfo, etc.
-        │   ├── test_info_models.py              # GetInfo, GetParameters, GetSite API tests
-        │   └── test_info_public_models.py       # AppInfo, ParametersInfo, SiteInfo, etc.
+        │   ├── test_workflow_models.py          # All 8 workflow API tests
+        │   └── test_workflow_public_models.py   # All public models (WorkflowRunInfo, FileInfo, LogInfo, AppInfo, etc.)
         ├── resource/
-        │   ├── test_workflow_resource.py
-        │   ├── test_file_resource.py
-        │   ├── test_log_resource.py
-        │   └── test_info_resource.py
+        │   └── test_workflow_resource.py        # Single workflow resource tests
         ├── integration/
-        │   ├── test_workflow_api_integration.py
-        │   ├── test_file_api_integration.py
-        │   ├── test_log_api_integration.py
-        │   ├── test_info_api_integration.py
+        │   ├── test_workflow_api_integration.py # All workflow API integration tests
         │   ├── test_comprehensive_integration.py
         │   ├── test_examples_validation.py
         │   └── test_version_integration.py
@@ -755,21 +784,15 @@ tests/
 ### Examples Directory Structure
 ```
 examples/workflow/
-├── workflow/
-│   ├── run_workflow.py              # Run workflow examples (sync + async)
-│   ├── run_specific_workflow.py     # Run specific workflow examples (sync + async)
-│   ├── get_workflow_run_detail.py   # Get workflow run detail examples (sync + async)
-│   └── stop_workflow.py             # Stop workflow examples (sync + async)
-├── file/
-│   ├── upload_file.py               # Upload file examples (sync + async)
-│   └── preview_file.py              # Preview file examples (sync + async)
-├── log/
-│   └── get_workflow_logs.py         # Get workflow logs examples (sync + async)
-├── info/
-│   ├── get_info.py                  # Get info examples (sync + async)
-│   ├── get_parameters.py            # Get parameters examples (sync + async)
-│   └── get_site.py                  # Get site examples (sync + async)
-└── README.md                        # Examples overview and usage guide
+├── run_workflow.py              # Run workflow examples (sync + async)
+├── get_workflow_run_detail.py   # Get workflow run detail examples (sync + async)
+├── stop_workflow.py             # Stop workflow examples (sync + async)
+├── upload_file.py               # Upload file examples (sync + async)
+├── get_workflow_logs.py         # Get workflow logs examples (sync + async)
+├── get_info.py                  # Get info examples (sync + async)
+├── get_parameters.py            # Get parameters examples (sync + async)
+├── get_site.py                  # Get site examples (sync + async)
+└── README.md                    # Examples overview and usage guide
 ```
 
 ### Environment Variable Validation (MANDATORY)

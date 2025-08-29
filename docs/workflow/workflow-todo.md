@@ -21,8 +21,8 @@ This document tracks the implementation progress of the Workflow API based on th
 - [x] **Testing**: Create tests for Get Workflow Run Detail API models
 
 ### Step 4: Implement Stop Workflow API Models
-- [ ] **Implementation**: Implement Stop Workflow API models
-- [ ] **Testing**: Create tests for Stop Workflow API models
+- [x] **Implementation**: Implement Stop Workflow API models
+- [x] **Testing**: Create tests for Stop Workflow API models
 
 ### Step 5: Implement Upload File API Models
 - [ ] **Implementation**: Implement Upload File API models with multipart/form-data support
@@ -61,11 +61,11 @@ This document tracks the implementation progress of the Workflow API based on th
 ## Overall Progress
 
 **Total Steps**: 12 (24 sub-tasks)
-**Completed**: 8
+**Completed**: 10
 **In Progress**: 0
-**Remaining**: 16
+**Remaining**: 14
 
-**Progress**: 33.3% (8/24)
+**Progress**: 41.7% (10/24)
 
 ## Notes
 

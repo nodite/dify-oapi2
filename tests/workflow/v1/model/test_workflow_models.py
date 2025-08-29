@@ -5,6 +5,9 @@ from dify_oapi.api.workflow.v1.model.get_workflow_run_detail_response import Get
 from dify_oapi.api.workflow.v1.model.run_workflow_request import RunWorkflowRequest
 from dify_oapi.api.workflow.v1.model.run_workflow_request_body import RunWorkflowRequestBody
 from dify_oapi.api.workflow.v1.model.run_workflow_response import RunWorkflowResponse
+from dify_oapi.api.workflow.v1.model.stop_workflow_request import StopWorkflowRequest
+from dify_oapi.api.workflow.v1.model.stop_workflow_request_body import StopWorkflowRequestBody
+from dify_oapi.api.workflow.v1.model.stop_workflow_response import StopWorkflowResponse
 from dify_oapi.api.workflow.v1.model.workflow_file_info import WorkflowFileInfo
 from dify_oapi.api.workflow.v1.model.workflow_inputs import WorkflowInputs
 from dify_oapi.api.workflow.v1.model.workflow_run_data import WorkflowRunData
@@ -247,3 +250,89 @@ class TestGetWorkflowRunDetailModels:
         assert response.outputs == {"result": "success"}
         assert response.total_tokens == 150
         assert response.elapsed_time == 2.5
+
+
+class TestStopWorkflowModels:
+    """Test Stop Workflow API models."""
+
+    def test_request_builder(self) -> None:
+        """Test request builder pattern and path parameter handling."""
+        request = StopWorkflowRequest.builder().build()
+
+        assert request.http_method == HttpMethod.POST
+        assert request.uri == "/v1/workflows/tasks/:task_id/stop"
+        assert request.task_id is None
+        assert request.request_body is None
+
+    def test_request_path_parameters(self) -> None:
+        """Test path parameter handling."""
+        request = StopWorkflowRequest.builder().task_id("task-123").build()
+
+        assert request.task_id == "task-123"
+        assert request.paths["task_id"] == "task-123"
+
+    def test_request_body_integration(self) -> None:
+        """Test request body integration."""
+        request_body = StopWorkflowRequestBody.builder().user("user-456").build()
+        request = StopWorkflowRequest.builder().task_id("task-123").request_body(request_body).build()
+
+        assert request.task_id == "task-123"
+        assert request.request_body is not None
+        assert request.request_body.user == "user-456"
+        assert request.body is not None
+        assert request.body["user"] == "user-456"
+
+    def test_request_body_builder(self) -> None:
+        """Test request body builder methods."""
+        request_body = StopWorkflowRequestBody.builder().user("test-user").build()
+
+        assert request_body.user == "test-user"
+
+    def test_request_body_validation(self) -> None:
+        """Test request body field validation."""
+        # Test empty request body
+        request_body = StopWorkflowRequestBody.builder().build()
+        assert request_body.user is None
+
+        # Test with user
+        request_body = StopWorkflowRequestBody.builder().user("user-789").build()
+        assert request_body.user == "user-789"
+
+    def test_response_inheritance(self) -> None:
+        """Test response inherits from BaseResponse."""
+        response = StopWorkflowResponse()
+
+        # Test BaseResponse inheritance
+        assert isinstance(response, BaseResponse)
+        assert hasattr(response, "success")
+        assert hasattr(response, "code")
+        assert hasattr(response, "msg")
+        assert hasattr(response, "raw")
+
+        # Test response fields
+        assert response.result is None
+
+    def test_response_success_result(self) -> None:
+        """Test fixed success result."""
+        response = StopWorkflowResponse()
+        response.result = "success"
+
+        assert response.result == "success"
+
+    def test_complete_stop_workflow_cycle(self) -> None:
+        """Test complete stop workflow request building cycle."""
+        # Build request body
+        request_body = StopWorkflowRequestBody.builder().user("user-stop-123").build()
+
+        # Build request
+        request = StopWorkflowRequest.builder().task_id("task-stop-456").request_body(request_body).build()
+
+        # Validate complete structure
+        assert request.http_method == HttpMethod.POST
+        assert request.uri == "/v1/workflows/tasks/:task_id/stop"
+        assert request.task_id == "task-stop-456"
+        assert request.paths["task_id"] == "task-stop-456"
+        assert request.request_body is not None
+        assert request.request_body.user == "user-stop-123"
+        assert request.body is not None
+        assert request.body["user"] == "user-stop-123"

@@ -24,8 +24,8 @@ class TestSegmentExamplesValidation:
 
     @pytest.fixture
     def example_files(self, examples_dir: Path) -> list[Path]:
-        """Get all example Python files."""
-        return list(examples_dir.glob("*.py"))
+        """Get all example Python files, excluding __init__.py."""
+        return [f for f in examples_dir.glob("*.py") if f.name != "__init__.py"]
 
     def test_examples_directory_exists(self, examples_dir: Path) -> None:
         """Test that the examples directory exists."""

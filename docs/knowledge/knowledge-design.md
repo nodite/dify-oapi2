@@ -56,11 +56,18 @@ This document outlines the design for implementing comprehensive knowledge base 
 - Use consistent naming without domain prefixes
 
 ### 5. Method Naming Convention
-**Decision**: Use descriptive method names for clarity
-- Dataset operations: `create_dataset`, `list_datasets`, `get_dataset`, `update_dataset`, `delete_dataset`, `retrieve_from_dataset`
-- Document operations: `create_document_by_file`, `create_document_by_text`, `list_documents`, `get_document`, `update_document_by_file`, `update_document_by_text`, `delete_document`
-- Segment operations: `list_segments`, `create_segment`, `get_segment`, `update_segment`, `delete_segment`
-- Tag operations: `list_tags`, `create_tag`, `update_tag`, `delete_tag`, `bind_tags_to_dataset`, `unbind_tags_from_dataset`
+**Decision**: Use simple, concise method names for clarity
+- Dataset operations: `create`, `list`, `get`, `update`, `delete`, `retrieve`, `tags`
+- Document operations: `create_by_file`, `create_by_text`, `list`, `get`, `update_by_file`, `update_by_text`, `delete`, `status`, `batch_status`, `file_info`
+- Segment operations: `list`, `create`, `get`, `update`, `delete`, `list_chunks`, `create_chunk`, `update_chunk`, `delete_chunk`
+- Tag operations: `list`, `create`, `update`, `delete`, `bind`, `unbind`
+- Model operations: `embedding_models`
+
+**Naming Rules**:
+- Use the shortest meaningful name possible
+- Avoid redundant prefixes (e.g., `create` instead of `create_dataset` in Dataset resource)
+- Use underscores only when necessary for clarity
+- Async methods use `a` prefix (e.g., `acreate`, `alist`, `aget`)
 
 ### 6. Class Naming Conflict Resolution (MANDATORY)
 **Decision**: When class names conflict across different functional domains, add domain-specific prefixes
@@ -287,23 +294,36 @@ DataSourceType = Literal["upload_file", "notion_import", "website_crawl"]
 - **Target Classes**: `DatasetInfo`, `DocumentInfo`, `SegmentInfo`, `TagInfo`, `ModelInfo`, `FileInfo`, `ProcessRule`, `RetrievalModel`, and all other public model classes
 - **Exclusions**: Request, RequestBody, and Response classes (which have their own builder rules)
 
-### 11. Model File Organization
-**Decision**: Flat model structure without resource grouping
+### 11. File Organization Strategy
+**Decision**: Different organization strategies for models vs resources
 
-**Migration from Current Structure**:
+#### Model Organization: Flat Structure
+**Models use flat structure without grouping**:
 ```
-Current (if nested):
 model/
-├── dataset/      # Move all files to root
-├── document/     # Move all files to root  
-├── segment/      # Move all files to root
-├── tag/          # Move all files to root
-└── model/        # Move all files to root
+├── create_dataset_request.py
+├── create_dataset_request_body.py
+├── create_dataset_response.py
+├── list_datasets_request.py
+├── dataset_info.py
+├── knowledge_types.py
+└── [all other model files in flat structure]
+```
 
-Target (flat):
-model/
-├── [all model files in flat structure]
+#### Resource Organization: Functional Grouping
+**Resources are grouped by functionality**:
 ```
+resource/
+├── dataset.py     # Dataset management operations
+├── document.py    # Document processing operations
+├── segment.py     # Segment and chunk operations
+├── tag.py         # Tag and metadata operations
+└── model.py       # Model information operations
+```
+
+**Rationale**:
+- **Models**: Flat structure for easy imports and reduced nesting
+- **Resources**: Grouped by domain for logical separation of concerns
 
 **Target Structure**:
 ```

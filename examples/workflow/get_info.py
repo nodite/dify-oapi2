@@ -20,7 +20,7 @@ def get_info_sync() -> None:
         req = GetInfoRequest.builder().build()
         req_option = RequestOption.builder().api_key(api_key).build()
 
-        response = client.workflow.v1.workflow.get_info(req, req_option)
+        response = client.workflow.v1.workflow.info(req, req_option)
 
         if response.success:
             print(f"App info: {response.name} - {response.description}")
@@ -43,7 +43,7 @@ async def get_info_async() -> None:
         req = GetInfoRequest.builder().build()
         req_option = RequestOption.builder().api_key(api_key).build()
 
-        response = await client.workflow.v1.workflow.aget_info(req, req_option)
+        response = await client.workflow.v1.workflow.ainfo(req, req_option)
 
         if response.success:
             print(f"App info: {response.name} - {response.description}")

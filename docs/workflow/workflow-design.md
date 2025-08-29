@@ -50,11 +50,17 @@ This document outlines the design for implementing comprehensive workflow applic
 - No central `common/` directory - models belong to their primary use domain
 
 ### 5. Method Naming Convention
-**Decision**: Use descriptive method names for clarity
-- Core operations: `run_workflow`, `run_specific_workflow`, `get_workflow_run_detail`, `stop_workflow`
-- File operations: `upload_file`, `preview_file`
-- Log operations: `get_workflow_logs`
-- Info operations: `get_info`, `get_parameters`, `get_site`
+**Decision**: Use simple, concise method names for clarity
+- Core operations: `run`, `detail`, `stop`
+- File operations: `upload`
+- Log operations: `logs`
+- Info operations: `info`, `parameters`, `site`
+
+**Naming Rules**:
+- Use the shortest meaningful name possible
+- Avoid redundant prefixes (e.g., `run` instead of `run_workflow` in Workflow resource)
+- Use underscores only when necessary for clarity
+- Async methods use `a` prefix (e.g., `arun`, `adetail`, `astop`)
 
 ### 6. Class Naming Conflict Resolution (MANDATORY)
 **Decision**: When class names conflict across different functional domains, add domain-specific prefixes
@@ -362,19 +368,12 @@ class PublicClassBuilder:
         return self
 ```
 
-### 11. Model File Organization
-**Decision**: Flat model structure without resource grouping
+### 11. File Organization Strategy
+**Decision**: Different organization strategies for models vs resources
 
-**Migration from Current Structure**:
+#### Model Organization: Flat Structure
+**Models use flat structure without grouping**:
 ```
-Current (nested):
-model/
-├── workflow/     # Move all files to root
-├── file/         # Move all files to root  
-├── log/          # Move all files to root
-└── info/         # Move all files to root
-
-Target (flat):
 model/
 ├── run_workflow_request.py
 ├── run_workflow_request_body.py
@@ -410,6 +409,31 @@ model/
 ├── file_upload_config.py
 ├── system_parameters.py
 └── workflow_types.py
+```
+
+#### Resource Organization: Functional Grouping
+**Resources are grouped by functionality**:
+```
+resource/
+└── workflow.py    # All workflow operations consolidated
+```
+
+**Rationale**:
+- **Models**: Flat structure for easy imports and reduced nesting
+- **Resources**: Single consolidated resource for all workflow operations
+
+**Migration from Current Structure**:
+```
+Current (nested):
+model/
+├── workflow/     # Move all files to root
+├── file/         # Move all files to root  
+├── log/          # Move all files to root
+└── info/         # Move all files to root
+
+Target (flat):
+model/
+├── [all model files in flat structure]
 ```
 
 **Migration Steps**:

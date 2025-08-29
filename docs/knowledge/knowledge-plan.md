@@ -21,7 +21,27 @@ Before starting, ensure you understand:
 - Type safety with Literal types
 - BaseRequest and BaseResponse inheritance patterns
 - Multi-resource architecture requirements
-- Flat model structure requirements
+- File organization strategy: flat models, grouped resources
+- Simple method naming convention
+
+## File Organization Strategy
+
+**Models**: Use flat structure in `v1/model/` directory
+- All model files are placed directly in the model directory
+- No subdirectories or grouping for models
+- Enables easy imports and reduces nesting complexity
+
+**Resources**: Use functional grouping in `v1/resource/` directory
+- `dataset.py` - Dataset management operations (create, list, get, update, delete, retrieve, tags)
+- `document.py` - Document processing operations (create_by_file, create_by_text, list, get, update_by_file, update_by_text, delete, status, batch_status, file_info)
+- `segment.py` - Segment and chunk operations (list, create, get, update, delete, list_chunks, create_chunk, update_chunk, delete_chunk)
+- `tag.py` - Tag and metadata operations (list, create, update, delete, bind, unbind)
+- `model.py` - Model information operations (embedding_models)
+
+**Method Naming**: Use simple, concise names
+- Avoid redundant prefixes (e.g., `create` instead of `create_dataset` in Dataset resource)
+- Use underscores only when necessary for clarity
+- Async methods use `a` prefix (e.g., `acreate`, `alist`, `aget`)
 
 ## Implementation Steps
 
@@ -553,20 +573,20 @@ Implement the Dataset resource class with all 8 dataset management APIs.
 Requirements:
 1. Create `dify_oapi/api/knowledge/v1/resource/dataset.py`
 2. Implement Dataset class with methods:
-   - create_dataset(request: CreateDatasetRequest, request_option: RequestOption) -> CreateDatasetResponse
-   - acreate_dataset(request: CreateDatasetRequest, request_option: RequestOption) -> CreateDatasetResponse
-   - list_datasets(request: ListDatasetsRequest, request_option: RequestOption) -> ListDatasetsResponse
-   - alist_datasets(request: ListDatasetsRequest, request_option: RequestOption) -> ListDatasetsResponse
-   - get_dataset(request: GetDatasetRequest, request_option: RequestOption) -> GetDatasetResponse
-   - aget_dataset(request: GetDatasetRequest, request_option: RequestOption) -> GetDatasetResponse
-   - update_dataset(request: UpdateDatasetRequest, request_option: RequestOption) -> UpdateDatasetResponse
-   - aupdate_dataset(request: UpdateDatasetRequest, request_option: RequestOption) -> UpdateDatasetResponse
-   - delete_dataset(request: DeleteDatasetRequest, request_option: RequestOption) -> DeleteDatasetResponse
-   - adelete_dataset(request: DeleteDatasetRequest, request_option: RequestOption) -> DeleteDatasetResponse
-   - retrieve_from_dataset(request: RetrieveFromDatasetRequest, request_option: RequestOption) -> RetrieveFromDatasetResponse
-   - aretrieve_from_dataset(request: RetrieveFromDatasetRequest, request_option: RequestOption) -> RetrieveFromDatasetResponse
-   - get_dataset_tags(request: GetDatasetTagsRequest, request_option: RequestOption) -> GetDatasetTagsResponse
-   - aget_dataset_tags(request: GetDatasetTagsRequest, request_option: RequestOption) -> GetDatasetTagsResponse
+   - create(request: CreateDatasetRequest, request_option: RequestOption) -> CreateDatasetResponse
+   - acreate(request: CreateDatasetRequest, request_option: RequestOption) -> CreateDatasetResponse
+   - list(request: ListDatasetsRequest, request_option: RequestOption) -> ListDatasetsResponse
+   - alist(request: ListDatasetsRequest, request_option: RequestOption) -> ListDatasetsResponse
+   - get(request: GetDatasetRequest, request_option: RequestOption) -> GetDatasetResponse
+   - aget(request: GetDatasetRequest, request_option: RequestOption) -> GetDatasetResponse
+   - update(request: UpdateDatasetRequest, request_option: RequestOption) -> UpdateDatasetResponse
+   - aupdate(request: UpdateDatasetRequest, request_option: RequestOption) -> UpdateDatasetResponse
+   - delete(request: DeleteDatasetRequest, request_option: RequestOption) -> DeleteDatasetResponse
+   - adelete(request: DeleteDatasetRequest, request_option: RequestOption) -> DeleteDatasetResponse
+   - retrieve(request: RetrieveFromDatasetRequest, request_option: RequestOption) -> RetrieveFromDatasetResponse
+   - aretrieve(request: RetrieveFromDatasetRequest, request_option: RequestOption) -> RetrieveFromDatasetResponse
+   - tags(request: GetDatasetTagsRequest, request_option: RequestOption) -> GetDatasetTagsResponse
+   - atags(request: GetDatasetTagsRequest, request_option: RequestOption) -> GetDatasetTagsResponse
 
 3. Use Transport.execute() for sync and ATransport.aexecute() for async
 4. Follow existing resource patterns from chat/completion modules
@@ -581,20 +601,20 @@ Implement the Dataset resource class with all 8 dataset management APIs.
 Requirements:
 1. Create `dify_oapi/api/knowledge/v1/resource/dataset.py`
 2. Implement Dataset class with methods:
-   - create_dataset(request, request_option) -> CreateDatasetResponse
-   - acreate_dataset(request, request_option) -> CreateDatasetResponse
-   - list_datasets(request, request_option) -> ListDatasetsResponse
-   - alist_datasets(request, request_option) -> ListDatasetsResponse
-   - get_dataset(request, request_option) -> GetDatasetResponse
-   - aget_dataset(request, request_option) -> GetDatasetResponse
-   - update_dataset(request, request_option) -> UpdateDatasetResponse
-   - aupdate_dataset(request, request_option) -> UpdateDatasetResponse
-   - delete_dataset(request, request_option) -> DeleteDatasetResponse
-   - adelete_dataset(request, request_option) -> DeleteDatasetResponse
-   - retrieve_from_dataset(request, request_option) -> RetrieveFromDatasetResponse
-   - aretrieve_from_dataset(request, request_option) -> RetrieveFromDatasetResponse
-   - get_dataset_tags(request, request_option) -> GetDatasetTagsResponse
-   - aget_dataset_tags(request, request_option) -> GetDatasetTagsResponse
+   - create(request, request_option) -> CreateDatasetResponse
+   - acreate(request, request_option) -> CreateDatasetResponse
+   - list(request, request_option) -> ListDatasetsResponse
+   - alist(request, request_option) -> ListDatasetsResponse
+   - get(request, request_option) -> GetDatasetResponse
+   - aget(request, request_option) -> GetDatasetResponse
+   - update(request, request_option) -> UpdateDatasetResponse
+   - aupdate(request, request_option) -> UpdateDatasetResponse
+   - delete(request, request_option) -> DeleteDatasetResponse
+   - adelete(request, request_option) -> DeleteDatasetResponse
+   - retrieve(request, request_option) -> RetrieveFromDatasetResponse
+   - aretrieve(request, request_option) -> RetrieveFromDatasetResponse
+   - tags(request, request_option) -> GetDatasetTagsResponse
+   - atags(request, request_option) -> GetDatasetTagsResponse
 
 3. Use Transport.execute() for sync and ATransport.aexecute() for async
 4. Follow existing resource patterns from chat/completion modules

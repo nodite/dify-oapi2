@@ -12,6 +12,26 @@ Before starting, ensure you understand:
 - Type safety with Literal types
 - BaseRequest and BaseResponse inheritance patterns
 - Migration requirements from nested to flat model structure
+- File organization strategy: flat models, grouped resources
+- Simple method naming convention
+
+## File Organization Strategy
+
+**Models**: Use flat structure in `v1/model/` directory
+- All model files are placed directly in the model directory
+- No subdirectories or grouping for models
+- Enables easy imports and reduces nesting complexity
+
+**Resources**: Use functional grouping in `v1/resource/` directory
+- `workflow.py` - All workflow operations consolidated (run, detail, stop, upload, logs, info, parameters, site)
+
+**Method Naming**: Use simple, concise names
+- Core operations: `run`, `detail`, `stop`
+- File operations: `upload`
+- Log operations: `logs`
+- Info operations: `info`, `parameters`, `site`
+- Avoid redundant prefixes (e.g., `run` instead of `run_workflow` in Workflow resource)
+- Async methods use `a` prefix (e.g., `arun`, `adetail`, `astop`)
 
 ## Implementation Steps
 
@@ -433,14 +453,14 @@ Requirements:
    - Update import statements for new model locations
 
 3. New consolidated methods:
-   - run_workflow(request, request_option, stream=False)
-   - get_workflow_run_detail(request, request_option)
-   - stop_workflow(request, request_option)
-   - upload_file(request, request_option) # from File class
-   - get_workflow_logs(request, request_option) # from Log class
-   - get_info(request, request_option) # from Info class
-   - get_parameters(request, request_option) # from Info class
-   - get_site(request, request_option) # from Info class
+   - run(request, request_option, stream=False)
+   - detail(request, request_option)
+   - stop(request, request_option)
+   - upload(request, request_option) # from File class
+   - logs(request, request_option) # from Log class
+   - info(request, request_option) # from Info class
+   - parameters(request, request_option) # from Info class
+   - site(request, request_option) # from Info class
 
 4. Remove obsolete resource files after migration
 ```
@@ -457,9 +477,9 @@ Requirements:
    - Update imports to use flat model structure
 
 2. Each method must have:
-   - Sync and async versions (arun_workflow, etc.)
+   - Sync and async versions (arun, etc.)
    - Proper type hints for parameters and return types
-   - Stream support for run_workflow (Iterator[str] | AsyncIterator[str])
+   - Stream support for run (Iterator[str] | AsyncIterator[str])
    - Transport.execute() for non-streaming
    - Transport.stream() for streaming
 
@@ -476,16 +496,16 @@ Create comprehensive tests for the Workflow resource class.
 Requirements:
 1. Create `tests/workflow/v1/resource/test_workflow_resource.py`
 2. Test class TestWorkflowResource with methods:
-   - test_run_workflow_sync: Test sync execution
-   - test_run_workflow_async: Test async execution
-   - test_run_workflow_streaming: Test streaming mode
-   - test_get_workflow_run_detail: Test detail retrieval
-   - test_stop_workflow: Test workflow stopping
-   - test_upload_file: Test file upload
-   - test_get_workflow_logs: Test log retrieval
-   - test_get_info: Test app info
-   - test_get_parameters: Test parameters
-   - test_get_site: Test site settings
+   - test_run_sync: Test sync execution
+   - test_run_async: Test async execution
+   - test_run_streaming: Test streaming mode
+   - test_detail: Test detail retrieval
+   - test_stop: Test workflow stopping
+   - test_upload: Test file upload
+   - test_logs: Test log retrieval
+   - test_info: Test app info
+   - test_parameters: Test parameters
+   - test_site: Test site settings
 
 3. Use mock objects for Transport.execute() and Transport.stream()
 4. Test both sync and async versions of all methods

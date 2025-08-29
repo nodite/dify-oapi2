@@ -20,7 +20,7 @@ def get_site_sync() -> None:
         req = GetSiteRequest.builder().build()
         req_option = RequestOption.builder().api_key(api_key).build()
 
-        response = client.workflow.v1.workflow.get_site(req, req_option)
+        response = client.workflow.v1.workflow.site(req, req_option)
 
         if response.success:
             print(f"Site settings: {response.title} - {response.icon_type}")
@@ -43,7 +43,7 @@ async def get_site_async() -> None:
         req = GetSiteRequest.builder().build()
         req_option = RequestOption.builder().api_key(api_key).build()
 
-        response = await client.workflow.v1.workflow.aget_site(req, req_option)
+        response = await client.workflow.v1.workflow.asite(req, req_option)
 
         if response.success:
             print(f"Site settings: {response.title} - {response.icon_type}")

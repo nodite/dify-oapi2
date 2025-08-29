@@ -26,7 +26,7 @@ def stop_workflow_sync() -> None:
         req = StopWorkflowRequest.builder().task_id(task_id).request_body(req_body).build()
         req_option = RequestOption.builder().api_key(api_key).build()
 
-        response = client.workflow.v1.workflow.stop_workflow(req, req_option)
+        response = client.workflow.v1.workflow.stop(req, req_option)
 
         if response.success:
             print(f"Workflow stopped: {response.result}")
@@ -54,7 +54,7 @@ async def stop_workflow_async() -> None:
         req = StopWorkflowRequest.builder().task_id(task_id).request_body(req_body).build()
         req_option = RequestOption.builder().api_key(api_key).build()
 
-        response = await client.workflow.v1.workflow.astop_workflow(req, req_option)
+        response = await client.workflow.v1.workflow.astop(req, req_option)
 
         if response.success:
             print(f"Workflow stopped: {response.result}")

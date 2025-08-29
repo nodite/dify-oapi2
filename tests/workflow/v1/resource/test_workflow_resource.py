@@ -39,7 +39,7 @@ class TestWorkflowResource:
         """Create request option."""
         return RequestOption.builder().api_key("test-api-key").build()
 
-    def test_run_workflow_sync(self, workflow_resource: Workflow, request_option: RequestOption) -> None:
+    def test_run_sync(self, workflow_resource: Workflow, request_option: RequestOption) -> None:
         """Test sync workflow execution."""
         request = RunWorkflowRequest.builder().build()
 
@@ -48,12 +48,12 @@ class TestWorkflowResource:
             mock_transport.execute.return_value = RunWorkflowResponse()
             m.setattr("dify_oapi.api.workflow.v1.resource.workflow.Transport", mock_transport)
 
-            result = workflow_resource.run_workflow(request, request_option, False)
+            result = workflow_resource.run(request, request_option, False)
 
             assert isinstance(result, RunWorkflowResponse)
             mock_transport.execute.assert_called_once()
 
-    def test_get_workflow_run_detail(self, workflow_resource: Workflow, request_option: RequestOption) -> None:
+    def test_detail(self, workflow_resource: Workflow, request_option: RequestOption) -> None:
         """Test get workflow run detail."""
         request = GetWorkflowRunDetailRequest.builder().workflow_run_id("run-123").build()
 
@@ -62,12 +62,12 @@ class TestWorkflowResource:
             mock_transport.execute.return_value = GetWorkflowRunDetailResponse()
             m.setattr("dify_oapi.api.workflow.v1.resource.workflow.Transport", mock_transport)
 
-            result = workflow_resource.get_workflow_run_detail(request, request_option)
+            result = workflow_resource.detail(request, request_option)
 
             assert isinstance(result, GetWorkflowRunDetailResponse)
             mock_transport.execute.assert_called_once()
 
-    def test_stop_workflow(self, workflow_resource: Workflow, request_option: RequestOption) -> None:
+    def test_stop(self, workflow_resource: Workflow, request_option: RequestOption) -> None:
         """Test stop workflow."""
         request = StopWorkflowRequest.builder().task_id("task-123").build()
 
@@ -76,12 +76,12 @@ class TestWorkflowResource:
             mock_transport.execute.return_value = StopWorkflowResponse()
             m.setattr("dify_oapi.api.workflow.v1.resource.workflow.Transport", mock_transport)
 
-            result = workflow_resource.stop_workflow(request, request_option)
+            result = workflow_resource.stop(request, request_option)
 
             assert isinstance(result, StopWorkflowResponse)
             mock_transport.execute.assert_called_once()
 
-    def test_upload_file(self, workflow_resource: Workflow, request_option: RequestOption) -> None:
+    def test_upload(self, workflow_resource: Workflow, request_option: RequestOption) -> None:
         """Test file upload."""
         request = UploadFileRequest.builder().build()
 
@@ -90,12 +90,12 @@ class TestWorkflowResource:
             mock_transport.execute.return_value = UploadFileResponse()
             m.setattr("dify_oapi.api.workflow.v1.resource.workflow.Transport", mock_transport)
 
-            result = workflow_resource.upload_file(request, request_option)
+            result = workflow_resource.upload(request, request_option)
 
             assert isinstance(result, UploadFileResponse)
             mock_transport.execute.assert_called_once()
 
-    def test_get_workflow_logs(self, workflow_resource: Workflow, request_option: RequestOption) -> None:
+    def test_logs(self, workflow_resource: Workflow, request_option: RequestOption) -> None:
         """Test get workflow logs."""
         request = GetWorkflowLogsRequest.builder().build()
 
@@ -104,12 +104,12 @@ class TestWorkflowResource:
             mock_transport.execute.return_value = GetWorkflowLogsResponse()
             m.setattr("dify_oapi.api.workflow.v1.resource.workflow.Transport", mock_transport)
 
-            result = workflow_resource.get_workflow_logs(request, request_option)
+            result = workflow_resource.logs(request, request_option)
 
             assert isinstance(result, GetWorkflowLogsResponse)
             mock_transport.execute.assert_called_once()
 
-    def test_get_info(self, workflow_resource: Workflow, request_option: RequestOption) -> None:
+    def test_info(self, workflow_resource: Workflow, request_option: RequestOption) -> None:
         """Test get application info."""
         request = GetInfoRequest.builder().build()
 
@@ -118,12 +118,12 @@ class TestWorkflowResource:
             mock_transport.execute.return_value = GetInfoResponse()
             m.setattr("dify_oapi.api.workflow.v1.resource.workflow.Transport", mock_transport)
 
-            result = workflow_resource.get_info(request, request_option)
+            result = workflow_resource.info(request, request_option)
 
             assert isinstance(result, GetInfoResponse)
             mock_transport.execute.assert_called_once()
 
-    def test_get_parameters(self, workflow_resource: Workflow, request_option: RequestOption) -> None:
+    def test_parameters(self, workflow_resource: Workflow, request_option: RequestOption) -> None:
         """Test get application parameters."""
         request = GetParametersRequest.builder().build()
 
@@ -132,12 +132,12 @@ class TestWorkflowResource:
             mock_transport.execute.return_value = GetParametersResponse()
             m.setattr("dify_oapi.api.workflow.v1.resource.workflow.Transport", mock_transport)
 
-            result = workflow_resource.get_parameters(request, request_option)
+            result = workflow_resource.parameters(request, request_option)
 
             assert isinstance(result, GetParametersResponse)
             mock_transport.execute.assert_called_once()
 
-    def test_get_site(self, workflow_resource: Workflow, request_option: RequestOption) -> None:
+    def test_site(self, workflow_resource: Workflow, request_option: RequestOption) -> None:
         """Test get site settings."""
         request = GetSiteRequest.builder().build()
 
@@ -146,7 +146,7 @@ class TestWorkflowResource:
             mock_transport.execute.return_value = GetSiteResponse()
             m.setattr("dify_oapi.api.workflow.v1.resource.workflow.Transport", mock_transport)
 
-            result = workflow_resource.get_site(request, request_option)
+            result = workflow_resource.site(request, request_option)
 
             assert isinstance(result, GetSiteResponse)
             mock_transport.execute.assert_called_once()

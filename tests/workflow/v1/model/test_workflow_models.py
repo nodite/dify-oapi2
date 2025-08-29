@@ -1,5 +1,8 @@
 """Tests for workflow API models."""
 
+from io import BytesIO
+
+from dify_oapi.api.workflow.v1.model.file_info import FileInfo
 from dify_oapi.api.workflow.v1.model.get_workflow_run_detail_request import GetWorkflowRunDetailRequest
 from dify_oapi.api.workflow.v1.model.get_workflow_run_detail_response import GetWorkflowRunDetailResponse
 from dify_oapi.api.workflow.v1.model.run_workflow_request import RunWorkflowRequest
@@ -8,6 +11,9 @@ from dify_oapi.api.workflow.v1.model.run_workflow_response import RunWorkflowRes
 from dify_oapi.api.workflow.v1.model.stop_workflow_request import StopWorkflowRequest
 from dify_oapi.api.workflow.v1.model.stop_workflow_request_body import StopWorkflowRequestBody
 from dify_oapi.api.workflow.v1.model.stop_workflow_response import StopWorkflowResponse
+from dify_oapi.api.workflow.v1.model.upload_file_request import UploadFileRequest
+from dify_oapi.api.workflow.v1.model.upload_file_request_body import UploadFileRequestBody
+from dify_oapi.api.workflow.v1.model.upload_file_response import UploadFileResponse
 from dify_oapi.api.workflow.v1.model.workflow_file_info import WorkflowFileInfo
 from dify_oapi.api.workflow.v1.model.workflow_inputs import WorkflowInputs
 from dify_oapi.api.workflow.v1.model.workflow_run_data import WorkflowRunData
@@ -336,3 +342,119 @@ class TestStopWorkflowModels:
         assert request.request_body.user == "user-stop-123"
         assert request.body is not None
         assert request.body["user"] == "user-stop-123"
+
+
+class TestUploadFileModels:
+    """Test Upload File API models."""
+
+    def test_request_builder(self) -> None:
+        """Test request builder pattern and multipart handling."""
+        request = UploadFileRequest.builder().build()
+
+        assert request.http_method == HttpMethod.POST
+        assert request.uri == "/v1/files/upload"
+        assert request.file is None
+        assert request.request_body is None
+
+    def test_request_file_handling(self) -> None:
+        """Test file upload mechanics."""
+        file_content = BytesIO(b"test file content")
+        request = UploadFileRequest.builder().file(file_content, "test.txt").build()
+
+        assert request.file == file_content
+        assert request.files is not None
+        assert "file" in request.files
+        assert request.files["file"][0] == "test.txt"
+        assert request.files["file"][1] == file_content
+
+    def test_request_file_default_name(self) -> None:
+        """Test file upload with default name."""
+        file_content = BytesIO(b"test content")
+        request = UploadFileRequest.builder().file(file_content).build()
+
+        assert request.files is not None
+        assert request.files["file"][0] == "upload"
+
+    def test_request_body_builder(self) -> None:
+        """Test request body builder."""
+        request_body = UploadFileRequestBody.builder().user("test-user").build()
+
+        assert request_body.user == "test-user"
+
+    def test_request_body_integration(self) -> None:
+        """Test request body integration with multipart."""
+        file_content = BytesIO(b"test file")
+        request_body = UploadFileRequestBody.builder().user("upload-user").build()
+
+        request = UploadFileRequest.builder().file(file_content, "document.pdf").request_body(request_body).build()
+
+        assert request.file == file_content
+        assert request.request_body is not None
+        assert request.request_body.user == "upload-user"
+        assert request.body is not None
+        assert request.body["user"] == "upload-user"
+        assert request.files is not None
+        assert request.files["file"][0] == "document.pdf"
+
+    def test_response_inheritance(self) -> None:
+        """Test response inherits from BaseResponse."""
+        response = UploadFileResponse()
+
+        # Test BaseResponse inheritance
+        assert isinstance(response, BaseResponse)
+        assert hasattr(response, "success")
+        assert hasattr(response, "code")
+        assert hasattr(response, "msg")
+        assert hasattr(response, "raw")
+
+        # Test FileInfo inheritance
+        assert isinstance(response, FileInfo)
+        assert hasattr(response, "id")
+        assert hasattr(response, "name")
+        assert hasattr(response, "size")
+        assert hasattr(response, "extension")
+        assert hasattr(response, "mime_type")
+        assert hasattr(response, "created_by")
+        assert hasattr(response, "created_at")
+
+    def test_response_file_metadata(self) -> None:
+        """Test file metadata fields."""
+        response = UploadFileResponse()
+        response.id = "file-123"
+        response.name = "test.pdf"
+        response.size = 1024
+        response.extension = "pdf"
+        response.mime_type = "application/pdf"
+        response.created_by = "user-456"
+        response.created_at = 1640995200
+
+        assert response.id == "file-123"
+        assert response.name == "test.pdf"
+        assert response.size == 1024
+        assert response.extension == "pdf"
+        assert response.mime_type == "application/pdf"
+        assert response.created_by == "user-456"
+        assert response.created_at == 1640995200
+
+    def test_complete_upload_file_cycle(self) -> None:
+        """Test complete file upload request cycle."""
+        # Create file content
+        file_content = BytesIO(b"Sample document content for upload")
+
+        # Build request body
+        request_body = UploadFileRequestBody.builder().user("user-upload-789").build()
+
+        # Build complete request
+        request = UploadFileRequest.builder().file(file_content, "sample.docx").request_body(request_body).build()
+
+        # Validate complete structure
+        assert request.http_method == HttpMethod.POST
+        assert request.uri == "/v1/files/upload"
+        assert request.file == file_content
+        assert request.files is not None
+        assert request.files["file"][0] == "sample.docx"
+        assert request.files["file"][1] == file_content
+        assert request.request_body is not None
+        assert request.request_body.user == "user-upload-789"
+        assert request.body is not None
+        assert request.body["user"] == "user-upload-789"

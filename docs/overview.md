@@ -23,7 +23,7 @@ dify-oapi2/
 │   │   │       └── resource/    # 资源实现
 │   │   ├── completion/          # 文本补全 API 服务
 │   │   ├── dify/                # 核心 Dify API 服务
-│   │   ├── knowledge_base/      # 知识库 API 服务 (39个API)
+│   │   ├── knowledge/      # 知识库 API 服务 (39个API)
 │   │   │   └── v1/
 │   │   │       └── model/
 │   │   │           ├── dataset/     # 数据集模型
@@ -56,9 +56,9 @@ dify-oapi2/
 ├── examples/                    # 使用示例
 │   ├── chat/                    # 聊天示例
 │   ├── completion/              # 补全示例
-│   └── knowledge_base/          # 知识库示例
+│   └── knowledge/          # 知识库示例
 ├── tests/                       # 测试套件
-│   └── knowledge_base/          # 知识库测试
+│   └── knowledge/          # 知识库测试
 ├── .github/workflows/           # GitHub Actions
 ├── pyproject.toml               # 项目配置
 ├── Makefile                     # 构建脚本

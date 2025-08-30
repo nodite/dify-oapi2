@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from pydantic import BaseModel
 
+from .completion_types import CurrencyType
+
 
 class Usage(BaseModel):
     prompt_tokens: int | None = None
@@ -14,7 +16,7 @@ class Usage(BaseModel):
     completion_price: str | None = None
     total_tokens: int | None = None
     total_price: str | None = None
-    currency: str | None = None
+    currency: CurrencyType | None = None
     latency: float | None = None
 
     @staticmethod
@@ -69,7 +71,7 @@ class UsageBuilder:
         self._usage.total_price = total_price
         return self
 
-    def currency(self, currency: str) -> UsageBuilder:
+    def currency(self, currency: CurrencyType) -> UsageBuilder:
         self._usage.currency = currency
         return self
 

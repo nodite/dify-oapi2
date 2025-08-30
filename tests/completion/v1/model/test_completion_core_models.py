@@ -41,7 +41,7 @@ class TestSendMessageModels:
             SendMessageRequestBody.builder().inputs(inputs).response_mode("blocking").user("user-123").build()
         )
 
-        assert request_body.inputs == inputs.to_dict()
+        assert request_body.inputs == inputs.model_dump()
         assert request_body.inputs["query"] == "What is AI?"
         assert request_body.response_mode == "blocking"
         assert request_body.user == "user-123"

@@ -21,32 +21,32 @@ class CompletionInputs(BaseModel):
     def builder() -> CompletionInputsBuilder:
         return CompletionInputsBuilder()
 
-    def to_dict(self) -> dict[str, Any]:
-        """Convert to dictionary format expected by API."""
-        result: dict[str, Any] = self.model_dump()
+    def with_variables(self, **kwargs: Any) -> CompletionInputs:
+        result: CompletionInputs = self.model_copy(update=kwargs)
         return result
 
 
 class CompletionInputsBuilder:
     def __init__(self):
-        self._data: dict[str, Any] = {}
+        self._inputs: CompletionInputs | None = None
 
     def build(self) -> CompletionInputs:
-        if "query" not in self._data:
+        if self._inputs is None:
             raise ValueError("query field is required for CompletionInputs")
-        return CompletionInputs(**self._data)
+        return self._inputs
 
     def query(self, query: str) -> CompletionInputsBuilder:
-        """Set the required query field."""
-        self._data["query"] = query
+        self._inputs = CompletionInputs(query=query)
         return self
 
-    def add_variable(self, key: str, value: str) -> CompletionInputsBuilder:
-        """Add a custom variable to the inputs."""
-        self._data[key] = value
+    def add_variable(self, key: str, value: Any) -> CompletionInputsBuilder:
+        if self._inputs is None:
+            raise ValueError("Must set query first")
+        self._inputs = self._inputs.with_variables(**{key: value})
         return self
 
-    def variables(self, variables: dict[str, str]) -> CompletionInputsBuilder:
-        """Add multiple custom variables to the inputs."""
-        self._data.update(variables)
+    def variables(self, **kwargs: Any) -> CompletionInputsBuilder:
+        if self._inputs is None:
+            raise ValueError("Must set query first")
+        self._inputs = self._inputs.with_variables(**kwargs)
         return self

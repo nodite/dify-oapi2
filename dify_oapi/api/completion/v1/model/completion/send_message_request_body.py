@@ -44,7 +44,7 @@ class SendMessageRequestBodyBuilder:
     def inputs(self, inputs: CompletionInputs | dict[str, Any]) -> SendMessageRequestBodyBuilder:
         """Set inputs from CompletionInputs object or dictionary."""
         if isinstance(inputs, CompletionInputs):
-            self._send_message_request_body.inputs = inputs.to_dict()
+            self._send_message_request_body.inputs = inputs.model_dump()
         else:
             self._send_message_request_body.inputs = inputs
         return self

@@ -35,7 +35,7 @@ class UserInputForm(BaseModel):
     """User input form configuration supporting different control types."""
 
     # Use discriminated union to support different form control types
-    text_input: TextInputControl | None = Field(None, alias="text-input")
+    text_input: TextInputControl | None = Field(default=None, alias="text-input")
     paragraph: ParagraphControl | None = None
     select: SelectControl | None = None
 
@@ -81,7 +81,9 @@ class TextInputFormBuilder:
         self._control = TextInputControl(label="", variable="", required=False)
 
     def build(self) -> UserInputForm:
-        return UserInputForm(text_input=self._control)
+        form = UserInputForm()
+        form.text_input = self._control
+        return form
 
     def label(self, label: str) -> TextInputFormBuilder:
         self._control.label = label
@@ -105,7 +107,9 @@ class ParagraphFormBuilder:
         self._control = ParagraphControl(label="", variable="", required=False)
 
     def build(self) -> UserInputForm:
-        return UserInputForm(paragraph=self._control)
+        form = UserInputForm()
+        form.paragraph = self._control
+        return form
 
     def label(self, label: str) -> ParagraphFormBuilder:
         self._control.label = label
@@ -129,7 +133,9 @@ class SelectFormBuilder:
         self._control = SelectControl(label="", variable="", required=False, options=[])
 
     def build(self) -> UserInputForm:
-        return UserInputForm(select=self._control)
+        form = UserInputForm()
+        form.select = self._control
+        return form
 
     def label(self, label: str) -> SelectFormBuilder:
         self._control.label = label

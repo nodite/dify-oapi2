@@ -12,7 +12,7 @@ def delete_example_tags():
     if not api_key:
         raise ValueError("API_KEY environment variable is required")
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
     req_option = RequestOption.builder().api_key(api_key).build()
 
     # List tags to find example ones
@@ -36,7 +36,7 @@ async def adelete_example_tags():
     if not api_key:
         raise ValueError("API_KEY environment variable is required")
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
     req_option = RequestOption.builder().api_key(api_key).build()
 
     # List tags to find example ones

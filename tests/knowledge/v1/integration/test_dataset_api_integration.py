@@ -3,23 +3,27 @@ from unittest.mock import AsyncMock, Mock
 
 import pytest
 
-from dify_oapi.api.knowledge.v1.model.dataset.create_request import CreateRequest
-from dify_oapi.api.knowledge.v1.model.dataset.create_request_body import CreateRequestBody
-from dify_oapi.api.knowledge.v1.model.dataset.create_response import CreateResponse
-from dify_oapi.api.knowledge.v1.model.dataset.dataset_info import DatasetInfo
-from dify_oapi.api.knowledge.v1.model.dataset.delete_request import DeleteRequest
-from dify_oapi.api.knowledge.v1.model.dataset.delete_response import DeleteResponse
-from dify_oapi.api.knowledge.v1.model.dataset.get_request import GetRequest
-from dify_oapi.api.knowledge.v1.model.dataset.get_response import GetResponse
-from dify_oapi.api.knowledge.v1.model.dataset.list_request import ListRequest
-from dify_oapi.api.knowledge.v1.model.dataset.list_response import ListResponse
-from dify_oapi.api.knowledge.v1.model.dataset.retrieval_model import RetrievalModel
-from dify_oapi.api.knowledge.v1.model.dataset.retrieve_request import RetrieveRequest
-from dify_oapi.api.knowledge.v1.model.dataset.retrieve_request_body import RetrieveRequestBody
-from dify_oapi.api.knowledge.v1.model.dataset.retrieve_response import QueryInfo, RetrieveResponse
-from dify_oapi.api.knowledge.v1.model.dataset.update_request import UpdateRequest
-from dify_oapi.api.knowledge.v1.model.dataset.update_request_body import UpdateRequestBody
-from dify_oapi.api.knowledge.v1.model.dataset.update_response import UpdateResponse
+from dify_oapi.api.knowledge.v1.model.create_dataset_request import CreateDatasetRequest as CreateRequest
+from dify_oapi.api.knowledge.v1.model.create_dataset_request_body import CreateDatasetRequestBody as CreateRequestBody
+from dify_oapi.api.knowledge.v1.model.create_dataset_response import CreateDatasetResponse as CreateResponse
+from dify_oapi.api.knowledge.v1.model.dataset_info import DatasetInfo
+from dify_oapi.api.knowledge.v1.model.delete_dataset_request import DeleteDatasetRequest as DeleteRequest
+from dify_oapi.api.knowledge.v1.model.delete_dataset_response import DeleteDatasetResponse as DeleteResponse
+from dify_oapi.api.knowledge.v1.model.get_dataset_request import GetDatasetRequest as GetRequest
+from dify_oapi.api.knowledge.v1.model.get_dataset_response import GetDatasetResponse as GetResponse
+from dify_oapi.api.knowledge.v1.model.list_datasets_request import ListDatasetsRequest as ListRequest
+from dify_oapi.api.knowledge.v1.model.list_datasets_response import ListDatasetsResponse as ListResponse
+from dify_oapi.api.knowledge.v1.model.retrieval_model import RetrievalModel
+from dify_oapi.api.knowledge.v1.model.retrieve_from_dataset_request import RetrieveFromDatasetRequest as RetrieveRequest
+from dify_oapi.api.knowledge.v1.model.retrieve_from_dataset_request_body import (
+    RetrieveFromDatasetRequestBody as RetrieveRequestBody,
+)
+from dify_oapi.api.knowledge.v1.model.retrieve_from_dataset_response import (
+    RetrieveFromDatasetResponse as RetrieveResponse,
+)
+from dify_oapi.api.knowledge.v1.model.update_dataset_request import UpdateDatasetRequest as UpdateRequest
+from dify_oapi.api.knowledge.v1.model.update_dataset_request_body import UpdateDatasetRequestBody as UpdateRequestBody
+from dify_oapi.api.knowledge.v1.model.update_dataset_response import UpdateDatasetResponse as UpdateResponse
 from dify_oapi.api.knowledge.v1.resource.dataset import Dataset
 from dify_oapi.core.model.config import Config
 from dify_oapi.core.model.request_option import RequestOption
@@ -68,7 +72,7 @@ class TestDatasetAPIIntegration:
         Mock(return_value=update_response)
 
         # Mock retrieve dataset
-        retrieve_response = RetrieveResponse(query=QueryInfo(content="test query"), records=[])
+        retrieve_response = RetrieveResponse(query="test query", records=[])
         Mock(return_value=retrieve_response)
 
         # Mock delete dataset
@@ -104,7 +108,7 @@ class TestDatasetAPIIntegration:
         retrieve_body = RetrieveRequestBody.builder().query("test query").build()
         retrieve_request = RetrieveRequest.builder().dataset_id(dataset_id).request_body(retrieve_body).build()
         search_result = dataset_resource.retrieve(retrieve_request, request_option)
-        assert search_result.query.content == "test query"
+        assert search_result.query == "test query"
         assert search_result.records == []
 
         # 5. Delete dataset
@@ -125,7 +129,7 @@ class TestDatasetAPIIntegration:
         create_response = CreateResponse(id=dataset_id, name="Async Dataset")
         get_response = GetResponse(id=dataset_id, name="Async Dataset")
         update_response = UpdateResponse(id=dataset_id, name="Updated Async Dataset")
-        retrieve_response = RetrieveResponse(query=QueryInfo(content="async query"), records=[])
+        retrieve_response = RetrieveResponse(query="async query", records=[])
         delete_response = DeleteResponse()
 
         mock_aexecute = AsyncMock()
@@ -150,7 +154,7 @@ class TestDatasetAPIIntegration:
         retrieve_body = RetrieveRequestBody.builder().query("async query").build()
         retrieve_request = RetrieveRequest.builder().dataset_id(dataset_id).request_body(retrieve_body).build()
         search_result = await dataset_resource.aretrieve(retrieve_request, request_option)
-        assert search_result.query.content == "async query"
+        assert search_result.query == "async query"
 
         delete_request = DeleteRequest.builder().dataset_id(dataset_id).build()
         await dataset_resource.adelete(delete_request, request_option)
@@ -180,7 +184,7 @@ class TestDatasetAPIIntegration:
         self, dataset_resource: Dataset, request_option: RequestOption, monkeypatch: Any
     ) -> None:
         """Test dataset retrieval with advanced retrieval configuration"""
-        from dify_oapi.api.knowledge.v1.model.dataset.reranking_model import RerankingModel
+        from dify_oapi.api.knowledge.v1.model.reranking_model import RerankingModel
 
         # Create advanced retrieval model
         reranking_model = RerankingModel(reranking_provider_name="cohere", reranking_model_name="rerank-english-v2.0")
@@ -193,7 +197,7 @@ class TestDatasetAPIIntegration:
             score_threshold=0.7,
         )
 
-        retrieve_response = RetrieveResponse(query=QueryInfo(content="advanced query"), records=[])
+        retrieve_response = RetrieveResponse(query="advanced query", records=[])
         mock_execute = Mock(return_value=retrieve_response)
         monkeypatch.setattr("dify_oapi.core.http.transport.Transport.execute", mock_execute)
 
@@ -201,7 +205,7 @@ class TestDatasetAPIIntegration:
         retrieve_request = RetrieveRequest.builder().dataset_id("test-id").request_body(retrieve_body).build()
         result = dataset_resource.retrieve(retrieve_request, request_option)
 
-        assert result.query.content == "advanced query"
+        assert result.query == "advanced query"
 
     def test_error_scenarios(self, dataset_resource: Dataset, request_option: RequestOption, monkeypatch: Any) -> None:
         """Test error handling scenarios"""

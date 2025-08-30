@@ -8,8 +8,8 @@ This example demonstrates how to create child chunks for a segment using the Dif
 import asyncio
 import os
 
-from dify_oapi.api.knowledge.v1.model.segment.create_child_chunk_request import CreateChildChunkRequest
-from dify_oapi.api.knowledge.v1.model.segment.create_child_chunk_request_body import CreateChildChunkRequestBody
+from dify_oapi.api.knowledge.v1.model.create_child_chunk_request import CreateChildChunkRequest
+from dify_oapi.api.knowledge.v1.model.create_child_chunk_request_body import CreateChildChunkRequestBody
 from dify_oapi.client import Client
 from dify_oapi.core.model.request_option import RequestOption
 
@@ -38,7 +38,7 @@ def create_child_chunk_sync() -> None:
 
         request_body = (
             CreateChildChunkRequestBody.builder()
-            .content("[Example] This is a test child chunk content for demonstration.")
+            .add_chunk("[Example] This is a test child chunk content for demonstration.", ["example", "test", "chunk"])
             .build()
         )
 
@@ -53,19 +53,21 @@ def create_child_chunk_sync() -> None:
 
         request_option = RequestOption.builder().api_key(api_key).build()
 
-        response = client.knowledge.v1.segment.create_child_chunk(request, request_option)
+        response = client.knowledge.v1.chunk.create(request, request_option)
 
         if not response.success:
             print(f"API Error: {response.code} - {response.msg}")
             return
 
-        child_chunk = response.data
-        if child_chunk:
+        if response.data and len(response.data) > 0:
+            child_chunk = response.data[0]  # Get first chunk from array
             print("Child chunk created successfully:")
             print(f"  ID: {child_chunk.id}")
-            print(f"  Segment ID: {child_chunk.segment_id}")
-            print(f"  Status: {child_chunk.status}")
             print(f"  Content: {child_chunk.content}")
+            print(f"  Keywords: {child_chunk.keywords}")
+            print(f"  Created At: {child_chunk.created_at}")
+        else:
+            print("Child chunk created but no data returned")
 
     except Exception as e:
         print(f"Error creating child chunk: {e}")
@@ -95,7 +97,7 @@ async def create_child_chunk_async() -> None:
 
         request_body = (
             CreateChildChunkRequestBody.builder()
-            .content("[Example] This is an async test child chunk content.")
+            .add_chunk("[Example] This is an async test child chunk content.", ["example", "async", "chunk"])
             .build()
         )
 
@@ -110,18 +112,21 @@ async def create_child_chunk_async() -> None:
 
         request_option = RequestOption.builder().api_key(api_key).build()
 
-        response = await client.knowledge.v1.segment.acreate_child_chunk(request, request_option)
+        response = await client.knowledge.v1.chunk.acreate(request, request_option)
 
         if not response.success:
             print(f"API Error (async): {response.code} - {response.msg}")
             return
 
-        child_chunk = response.data
-        if child_chunk:
+        if response.data and len(response.data) > 0:
+            child_chunk = response.data[0]  # Get first chunk from array
             print("Child chunk created successfully (async):")
             print(f"  ID: {child_chunk.id}")
-            print(f"  Segment ID: {child_chunk.segment_id}")
             print(f"  Content: {child_chunk.content}")
+            print(f"  Keywords: {child_chunk.keywords}")
+            print(f"  Created At: {child_chunk.created_at}")
+        else:
+            print("Child chunk created (async) but no data returned")
 
     except Exception as e:
         print(f"Error creating child chunk (async): {e}")

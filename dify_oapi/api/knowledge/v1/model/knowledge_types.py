@@ -24,7 +24,7 @@ FileType = Literal["document", "image", "audio", "video", "custom"]
 TransferMethod = Literal["remote_url", "local_file"]
 
 # Tag types
-TagType = Literal["knowledge_type", "custom"]
+TagType = Literal["knowledge", "custom"]
 
 # Segment status types
 SegmentStatus = Literal["waiting", "parsing", "cleaning", "splitting", "indexing", "completed", "error", "paused"]
@@ -44,9 +44,18 @@ ProviderType = Literal["vendor", "external"]
 # Data source types
 DataSourceType = Literal["upload_file", "notion_import", "website_crawl"]
 
+# Dataset types
+DatasetType = Literal["knowledge_base", "external_api"]
+
 # Indexing status types
 IndexingStatus = Literal["waiting", "parsing", "cleaning", "splitting", "indexing", "completed", "error", "paused"]
 
 # Reranking model configuration types
 RerankingProviderName = str  # Dynamic provider names
 RerankingModelName = str  # Dynamic model names
+
+# Preprocessing rule types
+PreprocessingRuleId = Literal["remove_extra_spaces", "remove_urls_emails"]
+
+# Parent mode types for hierarchical processing
+ParentMode = Literal["full-doc", "paragraph"]

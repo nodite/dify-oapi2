@@ -10,7 +10,7 @@ def list_datasets_example():
     if not api_key:
         raise ValueError("API_KEY environment variable is required")
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
     req = ListDatasetsRequest.builder().page(1).limit(10).build()
     req_option = RequestOption.builder().api_key(api_key).build()
@@ -26,7 +26,7 @@ async def alist_datasets_example():
     if not api_key:
         raise ValueError("API_KEY environment variable is required")
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
     req = ListDatasetsRequest.builder().page(1).limit(10).build()
     req_option = RequestOption.builder().api_key(api_key).build()

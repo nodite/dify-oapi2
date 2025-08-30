@@ -107,9 +107,13 @@ class TestCreateChildChunkModels:
 
     def test_request_body_validation(self) -> None:
         """Test CreateChildChunkRequestBody validation."""
-        request_body = CreateChildChunkRequestBody(chunks=[{"content": "Test content"}])
+        from dify_oapi.api.knowledge.v1.model.create_child_chunk_request_body import ChunkContent
+
+        chunk_content = ChunkContent(content="Test content", keywords=["test"])
+        request_body = CreateChildChunkRequestBody(chunks=[chunk_content])
         assert request_body.chunks is not None
         assert len(request_body.chunks) == 1
+        assert request_body.chunks[0].content == "Test content"
 
     def test_response_inheritance(self) -> None:
         """Test CreateChildChunkResponse inherits from BaseResponse."""

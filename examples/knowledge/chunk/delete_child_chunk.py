@@ -8,7 +8,7 @@ This example demonstrates how to delete a child chunk using the Dify API.
 import asyncio
 import os
 
-from dify_oapi.api.knowledge.v1.model.segment.delete_child_chunk_request import DeleteChildChunkRequest
+from dify_oapi.api.knowledge.v1.model.delete_child_chunk_request import DeleteChildChunkRequest
 from dify_oapi.client import Client
 from dify_oapi.core.model.request_option import RequestOption
 
@@ -37,12 +37,37 @@ def delete_child_chunk_sync() -> None:
         if not child_chunk_id:
             raise ValueError("CHILD_CHUNK_ID environment variable is required")
 
-        # Safety check: only delete child chunks with [Example] prefix
-        if not child_chunk_id.startswith("[Example]"):
-            print("Safety check: Only child chunks with '[Example]' prefix can be deleted")
+        client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
+        request_option = RequestOption.builder().api_key(api_key).build()
+
+        # First, get the child chunk to check its content for safety
+        from dify_oapi.api.knowledge.v1.model.list_child_chunks_request import ListChildChunksRequest
+
+        list_request = (
+            ListChildChunksRequest.builder()
+            .dataset_id(dataset_id)
+            .document_id(document_id)
+            .segment_id(segment_id)
+            .build()
+        )
+
+        list_response = client.knowledge.v1.chunk.list(list_request, request_option)
+
+        # Find the specific child chunk and check if it contains [Example]
+        target_chunk = None
+        if list_response.data:
+            for chunk in list_response.data:
+                if chunk.id == child_chunk_id:
+                    target_chunk = chunk
+                    break
+
+        if not target_chunk:
+            print(f"Child chunk {child_chunk_id} not found")
             return
 
-        client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
+        if not target_chunk.content or "[Example]" not in target_chunk.content:
+            print("Safety check: Only child chunks with '[Example]' in content can be deleted")
+            return
 
         request = (
             DeleteChildChunkRequest.builder()
@@ -53,9 +78,7 @@ def delete_child_chunk_sync() -> None:
             .build()
         )
 
-        request_option = RequestOption.builder().api_key(api_key).build()
-
-        response = client.knowledge.v1.segment.delete_child_chunk(request, request_option)
+        response = client.knowledge.v1.chunk.delete(request, request_option)
 
         if not response.success:
             print(f"API Error: {response.code} - {response.msg}")
@@ -91,12 +114,37 @@ async def delete_child_chunk_async() -> None:
         if not child_chunk_id:
             raise ValueError("CHILD_CHUNK_ID environment variable is required")
 
-        # Safety check: only delete child chunks with [Example] prefix
-        if not child_chunk_id.startswith("[Example]"):
-            print("Safety check: Only child chunks with '[Example]' prefix can be deleted")
+        client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
+        request_option = RequestOption.builder().api_key(api_key).build()
+
+        # First, get the child chunk to check its content for safety
+        from dify_oapi.api.knowledge.v1.model.list_child_chunks_request import ListChildChunksRequest
+
+        list_request = (
+            ListChildChunksRequest.builder()
+            .dataset_id(dataset_id)
+            .document_id(document_id)
+            .segment_id(segment_id)
+            .build()
+        )
+
+        list_response = await client.knowledge.v1.chunk.alist(list_request, request_option)
+
+        # Find the specific child chunk and check if it contains [Example]
+        target_chunk = None
+        if list_response.data:
+            for chunk in list_response.data:
+                if chunk.id == child_chunk_id:
+                    target_chunk = chunk
+                    break
+
+        if not target_chunk:
+            print(f"Child chunk {child_chunk_id} not found (async)")
             return
 
-        client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
+        if not target_chunk.content or "[Example]" not in target_chunk.content:
+            print("Safety check: Only child chunks with '[Example]' in content can be deleted (async)")
+            return
 
         request = (
             DeleteChildChunkRequest.builder()
@@ -107,9 +155,7 @@ async def delete_child_chunk_async() -> None:
             .build()
         )
 
-        request_option = RequestOption.builder().api_key(api_key).build()
-
-        response = await client.knowledge.v1.segment.adelete_child_chunk(request, request_option)
+        response = await client.knowledge.v1.chunk.adelete(request, request_option)
 
         if not response.success:
             print(f"API Error (async): {response.code} - {response.msg}")

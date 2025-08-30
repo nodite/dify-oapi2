@@ -17,7 +17,7 @@ class FileInfo(BaseModel):
     mime_type: Optional[str] = None
     type: Optional[FileType] = None
     created_by: Optional[str] = None
-    created_at: Optional[int] = None
+    created_at: Optional[float] = None
     upload_file_id: Optional[str] = None
 
     @staticmethod
@@ -62,7 +62,7 @@ class FileInfoBuilder:
         self._file_info.created_by = created_by
         return self
 
-    def created_at(self, created_at: int) -> "FileInfoBuilder":
+    def created_at(self, created_at: float) -> "FileInfoBuilder":
         self._file_info.created_at = created_at
         return self
 

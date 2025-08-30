@@ -11,7 +11,7 @@ def delete_example_datasets():
     if not api_key:
         raise ValueError("API_KEY environment variable is required")
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
     req_option = RequestOption.builder().api_key(api_key).build()
 
     # List datasets to find example ones

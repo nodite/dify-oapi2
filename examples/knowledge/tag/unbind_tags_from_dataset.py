@@ -8,14 +8,14 @@ This example demonstrates how to unbind datasets from knowledge type tags using 
 import asyncio
 import os
 
-from dify_oapi.api.knowledge.v1.model.tag.unbind_request import UnbindRequest
-from dify_oapi.api.knowledge.v1.model.tag.unbind_request_body import UnbindRequestBody
+from dify_oapi.api.knowledge.v1.model.unbind_tags_from_dataset_request import UnbindTagsFromDatasetRequest
+from dify_oapi.api.knowledge.v1.model.unbind_tags_from_dataset_request_body import UnbindTagsFromDatasetRequestBody
 from dify_oapi.client import Client
 from dify_oapi.core.model.request_option import RequestOption
 
 
-def unbind_tag_sync() -> None:
-    """Unbind tag from dataset synchronously."""
+def unbind_tags_sync() -> None:
+    """Unbind tags from dataset synchronously."""
     try:
         api_key = os.getenv("API_KEY")
         if not api_key:
@@ -25,26 +25,33 @@ def unbind_tag_sync() -> None:
         if not dataset_id:
             raise ValueError("DATASET_ID environment variable is required")
 
-        tag_id = os.getenv("TAG_ID")
-        if not tag_id:
-            raise ValueError("TAG_ID environment variable is required")
+        tag_ids = os.getenv("TAG_IDS")
+        if not tag_ids:
+            raise ValueError("TAG_IDS environment variable is required (comma-separated list of tag IDs)")
+
+        # Use first tag ID (unbind API only supports single tag)
+        tag_id = tag_ids.split(",")[0].strip()
 
         client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
-        request_body = UnbindRequestBody.builder().target_id(dataset_id).tag_id(tag_id).build()
+        request_body = UnbindTagsFromDatasetRequestBody.builder().target_id(dataset_id).tag_id(tag_id).build()
 
-        request = UnbindRequest.builder().request_body(request_body).build()
+        request = UnbindTagsFromDatasetRequest.builder().request_body(request_body).build()
         request_option = RequestOption.builder().api_key(api_key).build()
-        client.knowledge.v1.tag.unbind_tag(request, request_option)
+        response = client.knowledge.v1.tag.unbind(request, request_option)
 
-        print("Tag unbound from dataset")
+        if not response.success:
+            print(f"API Error: {response.code} - {response.msg}")
+            return
+
+        print("Tags unbound from dataset successfully")
 
     except Exception as e:
-        print(f"Error unbinding tag: {e}")
+        print(f"Error unbinding tags: {e}")
 
 
-async def unbind_tag_async() -> None:
-    """Unbind tag from dataset asynchronously."""
+async def unbind_tags_async() -> None:
+    """Unbind tags from dataset asynchronously."""
     try:
         api_key = os.getenv("API_KEY")
         if not api_key:
@@ -54,33 +61,40 @@ async def unbind_tag_async() -> None:
         if not dataset_id:
             raise ValueError("DATASET_ID environment variable is required")
 
-        tag_id = os.getenv("TAG_ID")
-        if not tag_id:
-            raise ValueError("TAG_ID environment variable is required")
+        tag_ids = os.getenv("TAG_IDS")
+        if not tag_ids:
+            raise ValueError("TAG_IDS environment variable is required (comma-separated list of tag IDs)")
+
+        # Use first tag ID (unbind API only supports single tag)
+        tag_id = tag_ids.split(",")[0].strip()
 
         client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
-        request_body = UnbindRequestBody.builder().target_id(dataset_id).tag_id(tag_id).build()
+        request_body = UnbindTagsFromDatasetRequestBody.builder().target_id(dataset_id).tag_id(tag_id).build()
 
-        request = UnbindRequest.builder().request_body(request_body).build()
+        request = UnbindTagsFromDatasetRequest.builder().request_body(request_body).build()
         request_option = RequestOption.builder().api_key(api_key).build()
-        await client.knowledge.v1.tag.aunbind_tag(request, request_option)
+        response = await client.knowledge.v1.tag.aunbind(request, request_option)
 
-        print("Tag unbound from dataset (async)")
+        if not response.success:
+            print(f"API Error (async): {response.code} - {response.msg}")
+            return
+
+        print("Tags unbound from dataset successfully (async)")
 
     except Exception as e:
-        print(f"Error unbinding tag (async): {e}")
+        print(f"Error unbinding tags (async): {e}")
 
 
 def main() -> None:
     """Main function to run examples."""
     print("=== Tag Unbind Examples ===\n")
 
-    print("1. Unbinding tag synchronously...")
-    unbind_tag_sync()
+    print("1. Unbinding tags synchronously...")
+    unbind_tags_sync()
 
-    print("\n2. Unbinding tag asynchronously...")
-    asyncio.run(unbind_tag_async())
+    print("\n2. Unbinding tags asynchronously...")
+    asyncio.run(unbind_tags_async())
 
 
 if __name__ == "__main__":

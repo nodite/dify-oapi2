@@ -9,31 +9,31 @@ from unittest.mock import patch
 
 import pytest
 
-from dify_oapi.api.knowledge.v1.model.segment.child_chunk_info import ChildChunkInfo
-from dify_oapi.api.knowledge.v1.model.segment.create_child_chunk_request import CreateChildChunkRequest
-from dify_oapi.api.knowledge.v1.model.segment.create_child_chunk_request_body import CreateChildChunkRequestBody
-from dify_oapi.api.knowledge.v1.model.segment.create_child_chunk_response import CreateChildChunkResponse
-from dify_oapi.api.knowledge.v1.model.segment.create_request import CreateRequest
-from dify_oapi.api.knowledge.v1.model.segment.create_request_body import CreateRequestBody
-from dify_oapi.api.knowledge.v1.model.segment.create_response import CreateResponse
-from dify_oapi.api.knowledge.v1.model.segment.delete_child_chunk_request import DeleteChildChunkRequest
-from dify_oapi.api.knowledge.v1.model.segment.delete_child_chunk_response import DeleteChildChunkResponse
-from dify_oapi.api.knowledge.v1.model.segment.delete_request import DeleteRequest
-from dify_oapi.api.knowledge.v1.model.segment.delete_response import DeleteResponse
-from dify_oapi.api.knowledge.v1.model.segment.get_request import GetRequest
-from dify_oapi.api.knowledge.v1.model.segment.get_response import GetResponse
-from dify_oapi.api.knowledge.v1.model.segment.list_child_chunks_request import ListChildChunksRequest
-from dify_oapi.api.knowledge.v1.model.segment.list_child_chunks_response import ListChildChunksResponse
-from dify_oapi.api.knowledge.v1.model.segment.list_request import ListRequest
-from dify_oapi.api.knowledge.v1.model.segment.list_response import ListResponse
-from dify_oapi.api.knowledge.v1.model.segment.segment_data import SegmentData
-from dify_oapi.api.knowledge.v1.model.segment.segment_info import SegmentInfo
-from dify_oapi.api.knowledge.v1.model.segment.update_child_chunk_request import UpdateChildChunkRequest
-from dify_oapi.api.knowledge.v1.model.segment.update_child_chunk_request_body import UpdateChildChunkRequestBody
-from dify_oapi.api.knowledge.v1.model.segment.update_child_chunk_response import UpdateChildChunkResponse
-from dify_oapi.api.knowledge.v1.model.segment.update_request import UpdateRequest
-from dify_oapi.api.knowledge.v1.model.segment.update_request_body import UpdateRequestBody
-from dify_oapi.api.knowledge.v1.model.segment.update_response import UpdateResponse
+from dify_oapi.api.knowledge.v1.model.child_chunk_info import ChildChunkInfo
+from dify_oapi.api.knowledge.v1.model.create_child_chunk_request import CreateChildChunkRequest
+from dify_oapi.api.knowledge.v1.model.create_child_chunk_request_body import CreateChildChunkRequestBody
+from dify_oapi.api.knowledge.v1.model.create_child_chunk_response import CreateChildChunkResponse
+from dify_oapi.api.knowledge.v1.model.create_segment_request import CreateSegmentRequest as CreateRequest
+from dify_oapi.api.knowledge.v1.model.create_segment_request_body import CreateSegmentRequestBody as CreateRequestBody
+from dify_oapi.api.knowledge.v1.model.create_segment_response import CreateSegmentResponse as CreateResponse
+from dify_oapi.api.knowledge.v1.model.delete_child_chunk_request import DeleteChildChunkRequest
+from dify_oapi.api.knowledge.v1.model.delete_child_chunk_response import DeleteChildChunkResponse
+from dify_oapi.api.knowledge.v1.model.delete_segment_request import DeleteSegmentRequest as DeleteRequest
+from dify_oapi.api.knowledge.v1.model.delete_segment_response import DeleteSegmentResponse as DeleteResponse
+from dify_oapi.api.knowledge.v1.model.get_segment_request import GetSegmentRequest as GetRequest
+from dify_oapi.api.knowledge.v1.model.get_segment_response import GetSegmentResponse as GetResponse
+from dify_oapi.api.knowledge.v1.model.list_child_chunks_request import ListChildChunksRequest
+from dify_oapi.api.knowledge.v1.model.list_child_chunks_response import ListChildChunksResponse
+from dify_oapi.api.knowledge.v1.model.list_segments_request import ListSegmentsRequest as ListRequest
+from dify_oapi.api.knowledge.v1.model.list_segments_response import ListSegmentsResponse as ListResponse
+from dify_oapi.api.knowledge.v1.model.segment_content import SegmentContent as SegmentData
+from dify_oapi.api.knowledge.v1.model.segment_info import SegmentInfo
+from dify_oapi.api.knowledge.v1.model.update_child_chunk_request import UpdateChildChunkRequest
+from dify_oapi.api.knowledge.v1.model.update_child_chunk_request_body import UpdateChildChunkRequestBody
+from dify_oapi.api.knowledge.v1.model.update_child_chunk_response import UpdateChildChunkResponse
+from dify_oapi.api.knowledge.v1.model.update_segment_request import UpdateSegmentRequest as UpdateRequest
+from dify_oapi.api.knowledge.v1.model.update_segment_request_body import UpdateSegmentRequestBody as UpdateRequestBody
+from dify_oapi.api.knowledge.v1.model.update_segment_response import UpdateSegmentResponse as UpdateResponse
 from dify_oapi.api.knowledge.v1.resource.segment import Segment
 from dify_oapi.core.model.config import Config
 from dify_oapi.core.model.request_option import RequestOption

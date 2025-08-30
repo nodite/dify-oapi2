@@ -11,7 +11,7 @@ def list_documents_example():
     if not api_key or not dataset_id:
         raise ValueError("API_KEY and DATASET_ID environment variables are required")
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
     req = ListDocumentsRequest.builder().dataset_id(dataset_id).page(1).limit(10).build()
     req_option = RequestOption.builder().api_key(api_key).build()

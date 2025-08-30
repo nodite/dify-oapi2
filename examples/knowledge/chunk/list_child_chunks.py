@@ -8,7 +8,7 @@ This example demonstrates how to list child chunks from a segment using the Dify
 import asyncio
 import os
 
-from dify_oapi.api.knowledge.v1.model.segment.list_child_chunks_request import ListChildChunksRequest
+from dify_oapi.api.knowledge.v1.model.list_child_chunks_request import ListChildChunksRequest
 from dify_oapi.client import Client
 from dify_oapi.core.model.request_option import RequestOption
 
@@ -40,21 +40,20 @@ def list_child_chunks_sync() -> None:
             .dataset_id(dataset_id)
             .document_id(document_id)
             .segment_id(segment_id)
-            .limit(10)
             .build()
         )
 
         request_option = RequestOption.builder().api_key(api_key).build()
 
-        response = client.knowledge.v1.segment.list_child_chunks(request, request_option)
+        response = client.knowledge.v1.chunk.list(request, request_option)
 
         if not response.success:
             print(f"API Error: {response.code} - {response.msg}")
             return
 
-        print(f"Found {response.total} child chunks (showing {len(response.data or [])})")
+        print(f"Found {len(response.data or [])} child chunks")
         for chunk in response.data or []:
-            print(f"  - ID: {chunk.id}, Status: {chunk.status}, Content: {chunk.content[:50]}...")
+            print(f"  - ID: {chunk.id}, Content: {chunk.content[:50] if chunk.content else 'No content'}...")
 
     except Exception as e:
         print(f"Error listing child chunks: {e}")
@@ -87,22 +86,20 @@ async def list_child_chunks_async() -> None:
             .dataset_id(dataset_id)
             .document_id(document_id)
             .segment_id(segment_id)
-            .keyword("example")
-            .limit(5)
             .build()
         )
 
         request_option = RequestOption.builder().api_key(api_key).build()
 
-        response = await client.knowledge.v1.segment.alist_child_chunks(request, request_option)
+        response = await client.knowledge.v1.chunk.alist(request, request_option)
 
         if not response.success:
             print(f"API Error (async): {response.code} - {response.msg}")
             return
 
-        print(f"Found {response.total} child chunks with keyword 'example' (async)")
+        print(f"Found {len(response.data or [])} child chunks (async)")
         for chunk in response.data or []:
-            print(f"  - ID: {chunk.id}, Status: {chunk.status}, Content: {chunk.content[:50]}...")
+            print(f"  - ID: {chunk.id}, Content: {chunk.content[:50] if chunk.content else 'No content'}...")
 
     except Exception as e:
         print(f"Error listing child chunks (async): {e}")

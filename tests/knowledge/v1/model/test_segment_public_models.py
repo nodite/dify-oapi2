@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-from dify_oapi.api.knowledge.v1.model.segment.child_chunk_info import ChildChunkInfo
-from dify_oapi.api.knowledge.v1.model.segment.segment_data import SegmentData
-from dify_oapi.api.knowledge.v1.model.segment.segment_info import SegmentInfo
+from dify_oapi.api.knowledge.v1.model.child_chunk_info import ChildChunkInfo
+from dify_oapi.api.knowledge.v1.model.segment_content import SegmentContent as SegmentData
+from dify_oapi.api.knowledge.v1.model.segment_info import SegmentInfo
 
 
 class TestSegmentInfo:

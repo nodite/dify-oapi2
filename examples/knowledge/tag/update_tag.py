@@ -15,7 +15,7 @@ def update_tag_example():
     if not tag_id:
         raise ValueError("TAG_ID environment variable is required")
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
     req_body = UpdateTagRequestBody.builder().tag_id(tag_id).name("[Example] Updated Tag Name").build()
 
@@ -23,7 +23,10 @@ def update_tag_example():
     req_option = RequestOption.builder().api_key(api_key).build()
 
     response = client.knowledge.v1.tag.update(req, req_option)
-    print(f"Tag updated: {response.name} (ID: {response.id})")
+    if response.success:
+        print(f"Tag updated: {response.name} (ID: {response.id})")
+    else:
+        print(f"API Error: {response.code} - {response.msg}")
     return response
 
 
@@ -36,7 +39,7 @@ async def aupdate_tag_example():
     if not tag_id:
         raise ValueError("TAG_ID environment variable is required")
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
     req_body = UpdateTagRequestBody.builder().tag_id(tag_id).name("[Example] Updated Tag Name (Async)").build()
 
@@ -44,7 +47,10 @@ async def aupdate_tag_example():
     req_option = RequestOption.builder().api_key(api_key).build()
 
     response = await client.knowledge.v1.tag.aupdate(req, req_option)
-    print(f"Tag updated (async): {response.name} (ID: {response.id})")
+    if response.success:
+        print(f"Tag updated (async): {response.name} (ID: {response.id})")
+    else:
+        print(f"API Error (async): {response.code} - {response.msg}")
     return response
 
 

@@ -4,7 +4,11 @@ from typing import Optional
 
 from pydantic import BaseModel
 
+from .document_metadata import DocumentMetadata
+from .external_knowledge_info import ExternalKnowledgeInfo
 from .knowledge_types import DataSourceType, IndexingTechnique, Permission
+from .retrieval_model import RetrievalModel
+from .tag_info import TagInfo
 
 
 class DatasetInfo(BaseModel):
@@ -13,16 +17,27 @@ class DatasetInfo(BaseModel):
     id: Optional[str] = None
     name: Optional[str] = None
     description: Optional[str] = None
-    indexing_technique: Optional[IndexingTechnique] = None
+    provider: Optional[str] = None
     permission: Optional[Permission] = None
     data_source_type: Optional[DataSourceType] = None
-    provider: Optional[str] = None
-    model: Optional[str] = None
-    created_by: Optional[str] = None
-    created_at: Optional[int] = None
-    updated_at: Optional[int] = None
+    indexing_technique: Optional[IndexingTechnique] = None
+    app_count: Optional[int] = None
     document_count: Optional[int] = None
     word_count: Optional[int] = None
+    created_by: Optional[str] = None
+    created_at: Optional[float] = None
+    updated_by: Optional[str] = None
+    updated_at: Optional[float] = None
+    embedding_model: Optional[str] = None
+    embedding_model_provider: Optional[str] = None
+    embedding_available: Optional[bool] = None
+    retrieval_model_dict: Optional[RetrievalModel] = None
+    tags: Optional[list[TagInfo]] = None
+    doc_form: Optional[str] = None
+    external_knowledge_info: Optional[ExternalKnowledgeInfo] = None
+    external_retrieval_model: Optional[RetrievalModel] = None
+    doc_metadata: Optional[list[DocumentMetadata]] = None
+    built_in_field_enabled: Optional[bool] = None
 
     @staticmethod
     def builder() -> "DatasetInfoBuilder":
@@ -66,19 +81,23 @@ class DatasetInfoBuilder:
         self._dataset_info.provider = provider
         return self
 
-    def model(self, model: str) -> "DatasetInfoBuilder":
-        self._dataset_info.model = model
+    def app_count(self, app_count: int) -> "DatasetInfoBuilder":
+        self._dataset_info.app_count = app_count
         return self
 
     def created_by(self, created_by: str) -> "DatasetInfoBuilder":
         self._dataset_info.created_by = created_by
         return self
 
-    def created_at(self, created_at: int) -> "DatasetInfoBuilder":
+    def created_at(self, created_at: float) -> "DatasetInfoBuilder":
         self._dataset_info.created_at = created_at
         return self
 
-    def updated_at(self, updated_at: int) -> "DatasetInfoBuilder":
+    def updated_by(self, updated_by: str) -> "DatasetInfoBuilder":
+        self._dataset_info.updated_by = updated_by
+        return self
+
+    def updated_at(self, updated_at: float) -> "DatasetInfoBuilder":
         self._dataset_info.updated_at = updated_at
         return self
 
@@ -88,4 +107,16 @@ class DatasetInfoBuilder:
 
     def word_count(self, word_count: int) -> "DatasetInfoBuilder":
         self._dataset_info.word_count = word_count
+        return self
+
+    def embedding_model(self, embedding_model: str) -> "DatasetInfoBuilder":
+        self._dataset_info.embedding_model = embedding_model
+        return self
+
+    def embedding_model_provider(self, embedding_model_provider: str) -> "DatasetInfoBuilder":
+        self._dataset_info.embedding_model_provider = embedding_model_provider
+        return self
+
+    def embedding_available(self, embedding_available: bool) -> "DatasetInfoBuilder":
+        self._dataset_info.embedding_available = embedding_available
         return self

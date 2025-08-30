@@ -1,18 +1,20 @@
 """Process rule model for Knowledge Base API."""
 
-from typing import Any, Optional
+from typing import Optional
 
 from pydantic import BaseModel
 
 from .knowledge_types import ProcessingMode
+from .process_rules import ProcessRules
+from .segmentation_rule import SegmentationRule
 
 
 class ProcessRule(BaseModel):
     """Process rule model with builder pattern."""
 
     mode: Optional[ProcessingMode] = None
-    rules: Optional[dict[str, Any]] = None
-    segmentation: Optional[dict[str, Any]] = None
+    rules: Optional[ProcessRules] = None
+    segmentation: Optional[SegmentationRule] = None
 
     @staticmethod
     def builder() -> "ProcessRuleBuilder":
@@ -32,10 +34,10 @@ class ProcessRuleBuilder:
         self._process_rule.mode = mode
         return self
 
-    def rules(self, rules: dict[str, Any]) -> "ProcessRuleBuilder":
+    def rules(self, rules: ProcessRules) -> "ProcessRuleBuilder":
         self._process_rule.rules = rules
         return self
 
-    def segmentation(self, segmentation: dict[str, Any]) -> "ProcessRuleBuilder":
+    def segmentation(self, segmentation: SegmentationRule) -> "ProcessRuleBuilder":
         self._process_rule.segmentation = segmentation
         return self

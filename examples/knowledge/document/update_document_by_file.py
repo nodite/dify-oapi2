@@ -9,9 +9,9 @@ import asyncio
 import os
 import tempfile
 
-from dify_oapi.api.knowledge.v1.model.document.process_rule import ProcessRule
-from dify_oapi.api.knowledge.v1.model.document.update_by_file_request import UpdateByFileRequest
-from dify_oapi.api.knowledge.v1.model.document.update_by_file_request_body import UpdateByFileRequestBody
+from dify_oapi.api.knowledge.v1.model.process_rule import ProcessRule
+from dify_oapi.api.knowledge.v1.model.update_document_by_file_request import UpdateDocumentByFileRequest
+from dify_oapi.api.knowledge.v1.model.update_document_by_file_request_body import UpdateDocumentByFileRequestBody
 from dify_oapi.client import Client
 from dify_oapi.core.model.request_option import RequestOption
 
@@ -45,24 +45,28 @@ def update_document_by_file_sync() -> None:
         file_path = create_sample_file()
 
         try:
+            from io import BytesIO
+
+            # Read file content
+            with open(file_path, "rb") as f:
+                file_content = f.read()
+            file_io = BytesIO(file_content)
+
             process_rule = ProcessRule.builder().mode("automatic").build()
 
-            request_body = UpdateByFileRequestBody.builder().process_rule(process_rule).file(file_path).build()
+            request_body = UpdateDocumentByFileRequestBody.builder().process_rule(process_rule).build()
 
             request = (
-                UpdateByFileRequest.builder()
+                UpdateDocumentByFileRequest.builder()
                 .dataset_id(dataset_id)
                 .document_id(document_id)
                 .request_body(request_body)
+                .file(file_io, os.path.basename(file_path))
                 .build()
             )
             request_option = RequestOption.builder().api_key(api_key).build()
 
             response = client.knowledge.v1.document.update_by_file(request, request_option)
-
-            if not response.success:
-                print(f"API Error: {response.code} - {response.msg}")
-                return
 
             if not response.success:
                 print(f"API Error: {response.code} - {response.msg}")
@@ -100,24 +104,28 @@ async def update_document_by_file_async() -> None:
         file_path = create_sample_file()
 
         try:
+            from io import BytesIO
+
+            # Read file content
+            with open(file_path, "rb") as f:
+                file_content = f.read()
+            file_io = BytesIO(file_content)
+
             process_rule = ProcessRule.builder().mode("automatic").build()
 
-            request_body = UpdateByFileRequestBody.builder().process_rule(process_rule).file(file_path).build()
+            request_body = UpdateDocumentByFileRequestBody.builder().process_rule(process_rule).build()
 
             request = (
-                UpdateByFileRequest.builder()
+                UpdateDocumentByFileRequest.builder()
                 .dataset_id(dataset_id)
                 .document_id(document_id)
                 .request_body(request_body)
+                .file(file_io, os.path.basename(file_path))
                 .build()
             )
             request_option = RequestOption.builder().api_key(api_key).build()
 
             response = await client.knowledge.v1.document.aupdate_by_file(request, request_option)
-
-            if not response.success:
-                print(f"API Error (async): {response.code} - {response.msg}")
-                return
 
             if not response.success:
                 print(f"API Error (async): {response.code} - {response.msg}")

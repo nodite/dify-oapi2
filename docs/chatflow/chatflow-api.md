@@ -2,6 +2,8 @@
 
 This document covers all chatflow APIs based on the official Dify OpenAPI specification. Chatflow APIs provide advanced chat functionality with workflow events, file support, conversation management, and comprehensive application settings.
 
+> **Updated with Detailed Data Types**: This documentation has been enhanced with comprehensive schema definitions and detailed data types extracted from the official Dify OpenAPI specification (openapi_chatflow.json).
+
 ## Base URL
 
 ```
@@ -72,37 +74,92 @@ The Chatflow API provides 17 endpoints organized into 6 main categories:
 Send a request to the advanced chat application, supporting various file types and workflow events.
 
 #### Request Body (application/json)
+
+**Schema**: `AdvancedChatRequest`
+
 ```json
 {
   "query": "string (required) - User input/question content",
-  "inputs": "object (optional) - Key/value pairs for app variables, default: {}",
-  "response_mode": "string (optional) - Response mode, default: streaming",
+  "inputs": {
+    "type": "object (optional)",
+    "description": "Key/value pairs for app variables. For file type variables, value should be an InputFileObject",
+    "additionalProperties": {
+      "oneOf": [
+        {"type": "string"},
+        {"type": "number"},
+        {"type": "boolean"},
+        {"$ref": "InputFileObjectAdvanced"}
+      ]
+    },
+    "default": {}
+  },
+  "response_mode": {
+    "type": "string (optional)",
+    "enum": ["streaming", "blocking"],
+    "default": "streaming",
+    "description": "Response mode. Cloudflare timeout is 100s for blocking"
+  },
   "user": "string (required) - User identifier",
   "conversation_id": "string (optional) - Conversation ID to continue",
-  "files": "array (optional) - List of files for Vision-capable models or general file input",
-  "auto_generate_name": "boolean (optional) - Auto-generate conversation title, default: true"
+  "files": {
+    "type": "array (optional)",
+    "items": {"$ref": "InputFileObjectAdvanced"},
+    "description": "List of files for Vision-capable models or general file input"
+  },
+  "auto_generate_name": {
+    "type": "boolean (optional)",
+    "default": true,
+    "description": "Auto-generate conversation title"
+  }
 }
 ```
 
-**Response Mode Enum Values**: `"streaming"`, `"blocking"`
-
-**File Object Schema**:
+**InputFileObjectAdvanced Schema**:
 ```json
 {
-  "type": "string (required) - File type",
-  "transfer_method": "string (required) - Transfer method",
-  "url": "string (conditional) - File URL (required when transfer_method is remote_url)",
-  "upload_file_id": "string (conditional) - Uploaded file ID (required when transfer_method is local_file)"
+  "type": "object",
+  "required": ["type", "transfer_method"],
+  "properties": {
+    "type": {
+      "type": "string",
+      "enum": ["document", "image", "audio", "video", "custom"],
+      "description": "Type of the file. 'document' covers TXT, MD, PDF, HTML, XLSX, DOCX, CSV, EML, MSG, PPTX, XML, EPUB. 'image' covers JPG, PNG, GIF, WEBP, SVG. 'audio' covers MP3, M4A, WAV, WEBM, AMR. 'video' covers MP4, MOV, MPEG, MPGA."
+    },
+    "transfer_method": {
+      "type": "string",
+      "enum": ["remote_url", "local_file"],
+      "description": "Transfer method, remote_url for file URL / local_file for file upload"
+    },
+    "url": {
+      "type": "string",
+      "format": "url",
+      "description": "File URL (when the transfer method is remote_url)"
+    },
+    "upload_file_id": {
+      "type": "string",
+      "description": "Uploaded file ID, which must be obtained by uploading through the File Upload API in advance (when the transfer method is local_file)"
+    }
+  },
+  "anyOf": [
+    {
+      "properties": {
+        "transfer_method": {"enum": ["remote_url"]},
+        "url": {"type": "string", "format": "url"}
+      },
+      "required": ["url"],
+      "not": {"required": ["upload_file_id"]}
+    },
+    {
+      "properties": {
+        "transfer_method": {"enum": ["local_file"]},
+        "upload_file_id": {"type": "string"}
+      },
+      "required": ["upload_file_id"],
+      "not": {"required": ["url"]}
+    }
+  ]
 }
 ```
-
-**File Type Enum Values**: `"document"`, `"image"`, `"audio"`, `"video"`, `"custom"`
-- `document`: TXT, MD, PDF, HTML, XLSX, DOCX, CSV, EML, MSG, PPTX, XML, EPUB
-- `image`: JPG, PNG, GIF, WEBP, SVG
-- `audio`: MP3, M4A, WAV, WEBM, AMR
-- `video`: MP4, MOV, MPEG, MPGA
-
-**Transfer Method Enum Values**: `"remote_url"`, `"local_file"`
 
 #### Example Request
 ```json
@@ -127,71 +184,623 @@ Send a request to the advanced chat application, supporting various file types a
 
 **Success (200)**
 
-**Blocking Mode (application/json)**:
+**Blocking Mode (application/json)** - Schema: `ChatCompletionResponse`:
 ```json
 {
-  "event": "string",
-  "task_id": "string (uuid)",
-  "id": "string (uuid)",
-  "message_id": "string (uuid)",
-  "conversation_id": "string (uuid)",
-  "mode": "string",
-  "answer": "string",
-  "metadata": {
-    "usage": {
-      "prompt_tokens": "integer",
-      "prompt_unit_price": "string",
-      "prompt_price_unit": "string",
-      "prompt_price": "string",
-      "completion_tokens": "integer",
-      "completion_unit_price": "string",
-      "completion_price_unit": "string",
-      "completion_price": "string",
-      "total_tokens": "integer",
-      "total_price": "string",
-      "currency": "string",
-      "latency": "number"
-    },
-    "retriever_resources": [
-      {
-        "position": "integer",
-        "dataset_id": "string (uuid)",
-        "dataset_name": "string",
-        "document_id": "string (uuid)",
-        "document_name": "string",
-        "segment_id": "string (uuid)",
-        "score": "number",
-        "content": "string"
-      }
-    ]
+  "event": {
+    "type": "string",
+    "example": "message"
   },
-  "created_at": "integer (timestamp)"
+  "task_id": {
+    "type": "string",
+    "format": "uuid"
+  },
+  "id": {
+    "type": "string",
+    "format": "uuid",
+    "description": "Unique ID of this response event"
+  },
+  "message_id": {
+    "type": "string",
+    "format": "uuid"
+  },
+  "conversation_id": {
+    "type": "string",
+    "format": "uuid"
+  },
+  "mode": {
+    "type": "string",
+    "example": "chat"
+  },
+  "answer": {
+    "type": "string"
+  },
+  "metadata": {
+    "$ref": "ResponseMetadata"
+  },
+  "created_at": {
+    "type": "integer",
+    "format": "int64"
+  }
 }
 ```
 
-**Streaming Mode (text/event-stream)**:
+**ResponseMetadata Schema**:
+```json
+{
+  "type": "object",
+  "properties": {
+    "usage": {"$ref": "Usage"},
+    "retriever_resources": {
+      "type": "array",
+      "items": {"$ref": "RetrieverResource"}
+    }
+  }
+}
+```
 
-Stream of Server-Sent Events with the following event types:
+**Usage Schema**:
+```json
+{
+  "type": "object",
+  "properties": {
+    "prompt_tokens": {"type": "integer"},
+    "prompt_unit_price": {"type": "string"},
+    "prompt_price_unit": {"type": "string"},
+    "prompt_price": {"type": "string"},
+    "completion_tokens": {"type": "integer"},
+    "completion_unit_price": {"type": "string"},
+    "completion_price_unit": {"type": "string"},
+    "completion_price": {"type": "string"},
+    "total_tokens": {"type": "integer"},
+    "total_price": {"type": "string"},
+    "currency": {"type": "string"},
+    "latency": {
+      "type": "number",
+      "format": "double"
+    }
+  }
+}
+```
 
-**Stream Event Enum Values**: `"message"`, `"message_file"`, `"message_end"`, `"tts_message"`, `"tts_message_end"`, `"message_replace"`, `"workflow_started"`, `"node_started"`, `"node_finished"`, `"workflow_finished"`, `"error"`, `"ping"`
+**RetrieverResource Schema**:
+```json
+{
+  "type": "object",
+  "properties": {
+    "position": {"type": "integer"},
+    "dataset_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "dataset_name": {"type": "string"},
+    "document_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "document_name": {"type": "string"},
+    "segment_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "score": {
+      "type": "number",
+      "format": "float"
+    },
+    "content": {"type": "string"}
+  }
+}
+```
 
-**Message File Belongs To Enum Values** (for message_file events): `"assistant"`
+**Streaming Mode (text/event-stream)** - Schema: `ChunkAdvancedChatEvent`:
 
-- `message` - Chat message content chunk
-- `message_file` - File attachment information
-- `message_end` - End of message with metadata
-- `tts_message` - Text-to-speech audio chunk (Base64 encoded)
-- `tts_message_end` - End of TTS conversion
-- `message_replace` - Replace message content
-- `workflow_started` - Workflow execution started
-- `node_started` - Workflow node started
-- `node_finished` - Workflow node finished
-- `workflow_finished` - Workflow execution finished
-- `error` - Error occurred
-- `ping` - Keep-alive ping
+Stream of Server-Sent Events with discriminated union based on `event` property:
 
-**Node Status Enum Values**: `"running"`, `"succeeded"`, `"failed"`, `"stopped"`
-**Workflow Status Enum Values**: `"running"`, `"succeeded"`, `"failed"`, `"stopped"`
+**Base Event Schema**:
+```json
+{
+  "type": "object",
+  "required": ["event"],
+  "properties": {
+    "event": {
+      "type": "string",
+      "enum": ["message", "message_file", "message_end", "tts_message", "tts_message_end", "message_replace", "workflow_started", "node_started", "node_finished", "workflow_finished", "error", "ping"]
+    }
+  }
+}
+```
+
+**StreamEventBaseAdv** (common properties):
+```json
+{
+  "type": "object",
+  "properties": {
+    "task_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "message_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "conversation_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "created_at": {
+      "type": "integer",
+      "format": "int64"
+    }
+  }
+}
+```
+
+**Event Type Schemas**:
+
+1. **message** - `StreamEventAdvChatMessage`:
+```json
+{
+  "allOf": [
+    {"$ref": "ChunkAdvancedChatEvent"},
+    {"$ref": "StreamEventBaseAdv"},
+    {
+      "type": "object",
+      "required": ["answer"],
+      "properties": {
+        "answer": {"type": "string"}
+      }
+    }
+  ]
+}
+```
+
+2. **message_file** - `StreamEventAdvMessageFile`:
+```json
+{
+  "allOf": [
+    {"$ref": "ChunkAdvancedChatEvent"},
+    {
+      "type": "object",
+      "required": ["id", "type", "belongs_to", "url", "conversation_id"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "type": {
+          "type": "string",
+          "description": "File type, e.g., 'image'"
+        },
+        "belongs_to": {
+          "type": "string",
+          "enum": ["assistant"]
+        },
+        "url": {
+          "type": "string",
+          "format": "url"
+        },
+        "conversation_id": {
+          "type": "string",
+          "format": "uuid"
+        }
+      }
+    }
+  ]
+}
+```
+
+3. **message_end** - `StreamEventAdvMessageEnd`:
+```json
+{
+  "allOf": [
+    {"$ref": "ChunkAdvancedChatEvent"},
+    {"$ref": "StreamEventBaseAdv"},
+    {
+      "type": "object",
+      "required": ["metadata"],
+      "properties": {
+        "metadata": {"$ref": "ResponseMetadata"}
+      }
+    }
+  ]
+}
+```
+
+4. **tts_message** - `StreamEventAdvTtsMessage`:
+```json
+{
+  "allOf": [
+    {"$ref": "ChunkAdvancedChatEvent"},
+    {"$ref": "StreamEventBaseAdv"},
+    {
+      "type": "object",
+      "required": ["audio"],
+      "properties": {
+        "audio": {
+          "type": "string",
+          "format": "byte",
+          "description": "Base64 encoded audio"
+        }
+      }
+    }
+  ]
+}
+```
+
+5. **tts_message_end** - `StreamEventAdvTtsMessageEnd`:
+```json
+{
+  "allOf": [
+    {"$ref": "ChunkAdvancedChatEvent"},
+    {"$ref": "StreamEventBaseAdv"},
+    {
+      "type": "object",
+      "required": ["audio"],
+      "properties": {
+        "audio": {
+          "type": "string",
+          "description": "Empty string"
+        }
+      }
+    }
+  ]
+}
+```
+
+6. **message_replace** - `StreamEventAdvMessageReplace`:
+```json
+{
+  "allOf": [
+    {"$ref": "ChunkAdvancedChatEvent"},
+    {"$ref": "StreamEventBaseAdv"},
+    {
+      "type": "object",
+      "required": ["answer"],
+      "properties": {
+        "answer": {
+          "type": "string",
+          "description": "Replacement content"
+        }
+      }
+    }
+  ]
+}
+```
+
+7. **workflow_started** - `StreamEventAdvWorkflowStarted`:
+```json
+{
+  "allOf": [
+    {"$ref": "ChunkAdvancedChatEvent"},
+    {
+      "type": "object",
+      "required": ["task_id", "workflow_run_id", "data"],
+      "properties": {
+        "task_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "workflow_run_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "data": {"$ref": "WorkflowStartedData"}
+      }
+    }
+  ]
+}
+```
+
+**WorkflowStartedData Schema**:
+```json
+{
+  "type": "object",
+  "required": ["id", "workflow_id", "sequence_number", "created_at"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "workflow_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "sequence_number": {"type": "integer"},
+    "created_at": {
+      "type": "integer",
+      "format": "int64"
+    }
+  }
+}
+```
+
+8. **node_started** - `StreamEventAdvNodeStarted`:
+```json
+{
+  "allOf": [
+    {"$ref": "ChunkAdvancedChatEvent"},
+    {
+      "type": "object",
+      "required": ["task_id", "workflow_run_id", "data"],
+      "properties": {
+        "task_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "workflow_run_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "data": {"$ref": "NodeStartedData"}
+      }
+    }
+  ]
+}
+```
+
+**NodeStartedData Schema**:
+```json
+{
+  "type": "object",
+  "required": ["id", "node_id", "node_type", "title", "index", "created_at"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Unique ID of this node execution instance"
+    },
+    "node_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "ID of the node definition"
+    },
+    "node_type": {"type": "string"},
+    "title": {"type": "string"},
+    "index": {"type": "integer"},
+    "predecessor_node_id": {
+      "type": "string",
+      "format": "uuid",
+      "nullable": true
+    },
+    "inputs": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Variables used by the node"
+    },
+    "created_at": {
+      "type": "integer",
+      "format": "int64"
+    }
+  }
+}
+```
+
+9. **node_finished** - `StreamEventAdvNodeFinished`:
+```json
+{
+  "allOf": [
+    {"$ref": "ChunkAdvancedChatEvent"},
+    {
+      "type": "object",
+      "required": ["task_id", "workflow_run_id", "data"],
+      "properties": {
+        "task_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "workflow_run_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "data": {"$ref": "NodeFinishedData"}
+      }
+    }
+  ]
+}
+```
+
+**NodeFinishedData Schema**:
+```json
+{
+  "type": "object",
+  "required": ["id", "node_id", "node_type", "title", "index", "status", "created_at"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "node_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "node_type": {"type": "string"},
+    "title": {"type": "string"},
+    "index": {"type": "integer"},
+    "predecessor_node_id": {
+      "type": "string",
+      "format": "uuid",
+      "nullable": true
+    },
+    "inputs": {
+      "type": "object",
+      "additionalProperties": true,
+      "nullable": true
+    },
+    "process_data": {
+      "type": "object",
+      "additionalProperties": true,
+      "nullable": true,
+      "description": "Node process data (JSON)"
+    },
+    "outputs": {
+      "type": "object",
+      "additionalProperties": true,
+      "nullable": true,
+      "description": "Output content (JSON)"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["running", "succeeded", "failed", "stopped"]
+    },
+    "error": {
+      "type": "string",
+      "nullable": true
+    },
+    "elapsed_time": {
+      "type": "number",
+      "format": "float",
+      "nullable": true
+    },
+    "execution_metadata": {
+      "$ref": "NodeExecutionMetadata",
+      "nullable": true
+    },
+    "created_at": {
+      "type": "integer",
+      "format": "int64"
+    }
+  }
+}
+```
+
+**NodeExecutionMetadata Schema**:
+```json
+{
+  "type": "object",
+  "properties": {
+    "total_tokens": {
+      "type": "integer",
+      "nullable": true
+    },
+    "total_price": {
+      "type": "number",
+      "format": "float",
+      "nullable": true,
+      "description": "Using float for price compatibility"
+    },
+    "currency": {
+      "type": "string",
+      "nullable": true,
+      "example": "USD"
+    }
+  }
+}
+```
+
+10. **workflow_finished** - `StreamEventAdvWorkflowFinished`:
+```json
+{
+  "allOf": [
+    {"$ref": "ChunkAdvancedChatEvent"},
+    {
+      "type": "object",
+      "required": ["task_id", "workflow_run_id", "data"],
+      "properties": {
+        "task_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "workflow_run_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "data": {"$ref": "WorkflowFinishedData"}
+      }
+    }
+  ]
+}
+```
+
+**WorkflowFinishedData Schema**:
+```json
+{
+  "type": "object",
+  "required": ["id", "workflow_id", "status", "created_at", "finished_at"],
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "workflow_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["running", "succeeded", "failed", "stopped"]
+    },
+    "outputs": {
+      "type": "object",
+      "additionalProperties": true,
+      "nullable": true,
+      "description": "Output content (JSON)"
+    },
+    "error": {
+      "type": "string",
+      "nullable": true
+    },
+    "elapsed_time": {
+      "type": "number",
+      "format": "float",
+      "nullable": true
+    },
+    "total_tokens": {
+      "type": "integer",
+      "nullable": true
+    },
+    "total_steps": {
+      "type": "integer",
+      "default": 0
+    },
+    "created_at": {
+      "type": "integer",
+      "format": "int64"
+    },
+    "finished_at": {
+      "type": "integer",
+      "format": "int64"
+    }
+  }
+}
+```
+
+11. **error** - `StreamEventAdvError`:
+```json
+{
+  "allOf": [
+    {"$ref": "ChunkAdvancedChatEvent"},
+    {
+      "type": "object",
+      "required": ["task_id", "status", "code", "message"],
+      "properties": {
+        "task_id": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "message_id": {
+          "type": "string",
+          "format": "uuid",
+          "nullable": true,
+          "description": "May not always be present in a generic error"
+        },
+        "status": {"type": "integer"},
+        "code": {"type": "string"},
+        "message": {"type": "string"}
+      }
+    }
+  ]
+}
+```
+
+12. **ping** - `StreamEventAdvPing`:
+```json
+{
+  "allOf": [
+    {"$ref": "ChunkAdvancedChatEvent"},
+    {"type": "object"}
+  ]
+}
+```
 
 **Error Responses**
 - **400**: Bad Request - Invalid parameters
@@ -237,11 +846,20 @@ Get next questions suggestions for the current message.
 
 #### Response
 
-**Success (200)**
+**Success (200)** - Schema: `SuggestedQuestionsResponse`:
 ```json
 {
-  "result": "success",
-  "data": ["string"]
+  "type": "object",
+  "properties": {
+    "result": {
+      "type": "string",
+      "example": "success"
+    },
+    "data": {
+      "type": "array",
+      "items": {"type": "string"}
+    }
+  }
 }
 ```
 
@@ -259,16 +877,28 @@ Upload a file for use when sending messages, enabling multimodal understanding. 
 
 #### Response
 
-**Success (200)**
+**Success (200)** - Schema: `FileUploadResponse`:
 ```json
 {
-  "id": "string (uuid)",
-  "name": "string",
-  "size": "integer",
-  "extension": "string",
-  "mime_type": "string",
-  "created_by": "string (uuid)",
-  "created_at": "integer (timestamp)"
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "name": {"type": "string"},
+    "size": {"type": "integer"},
+    "extension": {"type": "string"},
+    "mime_type": {"type": "string"},
+    "created_by": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "created_at": {
+      "type": "integer",
+      "format": "int64"
+    }
+  }
 }
 ```
 
@@ -290,16 +920,25 @@ Provide feedback for a message.
 #### Path Parameters
 - `message_id` (string, required): Message ID
 
-#### Request Body (application/json)
+#### Request Body (application/json) - Schema: `MessageFeedbackRequest`:
 ```json
 {
-  "rating": "string (optional, nullable) - User rating",
-  "user": "string (required) - User identifier",
-  "content": "string (optional, nullable) - Feedback content/comment"
+  "type": "object",
+  "required": ["user"],
+  "properties": {
+    "rating": {
+      "type": "string",
+      "enum": ["like", "dislike", null],
+      "nullable": true
+    },
+    "user": {"type": "string"},
+    "content": {
+      "type": "string",
+      "nullable": true
+    }
+  }
 }
 ```
-
-**Rating Enum Values**: `"like"`, `"dislike"`, `null`
 
 #### Response
 
@@ -322,28 +961,67 @@ Get application's feedbacks.
 
 #### Response
 
-**Success (200)**
+**Success (200)** - Schema: `AppFeedbacksResponse`:
 ```json
 {
-  "data": [
-    {
-      "id": "string (uuid)",
-      "app_id": "string (uuid)",
-      "conversation_id": "string (uuid)",
-      "message_id": "string (uuid)",
-      "rating": "string (nullable)",
-      "content": "string",
-      "from_source": "string",
-      "from_end_user_id": "string (uuid)",
-      "from_account_id": "string (uuid, nullable)",
-      "created_at": "string (datetime)",
-      "updated_at": "string (datetime)"
+  "type": "object",
+  "properties": {
+    "data": {
+      "type": "array",
+      "items": {"$ref": "FeedbackItem"}
     }
-  ]
+  }
 }
 ```
 
-**Feedback Rating Enum Values**: `"like"`, `"dislike"`, `null`
+**FeedbackItem Schema**:
+```json
+{
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "app_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "conversation_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "message_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "rating": {
+      "type": "string",
+      "enum": ["like", "dislike", null],
+      "nullable": true
+    },
+    "content": {"type": "string"},
+    "from_source": {"type": "string"},
+    "from_end_user_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "from_account_id": {
+      "type": "string",
+      "format": "uuid",
+      "nullable": true
+    },
+    "created_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updated_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}
+```
 
 ### Conversations
 
@@ -361,49 +1039,87 @@ Returns historical chat records in a scrolling load format.
 
 #### Response
 
-**Success (200)**
+**Success (200)** - Schema: `ConversationHistoryResponse`:
 ```json
 {
-  "limit": "integer",
-  "has_more": "boolean",
-  "data": [
-    {
-      "id": "string (uuid)",
-      "conversation_id": "string (uuid)",
-      "inputs": "object",
-      "query": "string",
-      "answer": "string",
-      "message_files": [
-        {
-          "id": "string (uuid)",
-          "type": "string",
-          "url": "string (url)",
-          "belongs_to": "string"
-        }
-      ],
-      "feedback": {
-        "rating": "string"
-      },
-      "retriever_resources": [
-        {
-          "position": "integer",
-          "dataset_id": "string (uuid)",
-          "dataset_name": "string",
-          "document_id": "string (uuid)",
-          "document_name": "string",
-          "segment_id": "string (uuid)",
-          "score": "number",
-          "content": "string"
-        }
-      ],
-      "created_at": "integer (timestamp)"
+  "type": "object",
+  "properties": {
+    "limit": {"type": "integer"},
+    "has_more": {"type": "boolean"},
+    "data": {
+      "type": "array",
+      "items": {"$ref": "ConversationMessageItem"}
     }
-  ]
+  }
 }
 ```
 
-**Message File Belongs To Enum Values**: `"user"`, `"assistant"`
-**Message Feedback Rating Enum Values**: `"like"`, `"dislike"`
+**ConversationMessageItem Schema**:
+```json
+{
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "conversation_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "inputs": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "query": {"type": "string"},
+    "answer": {"type": "string"},
+    "message_files": {
+      "type": "array",
+      "items": {"$ref": "MessageFileItem"}
+    },
+    "feedback": {
+      "type": "object",
+      "nullable": true,
+      "properties": {
+        "rating": {
+          "type": "string",
+          "enum": ["like", "dislike"]
+        }
+      }
+    },
+    "retriever_resources": {
+      "type": "array",
+      "items": {"$ref": "RetrieverResource"}
+    },
+    "created_at": {
+      "type": "integer",
+      "format": "int64"
+    }
+  }
+}
+```
+
+**MessageFileItem Schema**:
+```json
+{
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "type": {"type": "string"},
+    "url": {
+      "type": "string",
+      "format": "url"
+    },
+    "belongs_to": {
+      "type": "string",
+      "enum": ["user", "assistant"]
+    }
+  }
+}
+```
 
 #### 2. Get Conversations List
 
@@ -421,22 +1137,49 @@ Retrieve the conversation list for the current user.
 
 #### Response
 
-**Success (200)**
+**Success (200)** - Schema: `ConversationsListResponse`:
 ```json
 {
-  "limit": "integer",
-  "has_more": "boolean",
-  "data": [
-    {
-      "id": "string (uuid)",
-      "name": "string",
-      "inputs": "object",
-      "status": "string",
-      "introduction": "string (nullable)",
-      "created_at": "integer (timestamp)",
-      "updated_at": "integer (timestamp)"
+  "type": "object",
+  "properties": {
+    "limit": {"type": "integer"},
+    "has_more": {"type": "boolean"},
+    "data": {
+      "type": "array",
+      "items": {"$ref": "ConversationListItem"}
     }
-  ]
+  }
+}
+```
+
+**ConversationListItem Schema**:
+```json
+{
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "name": {"type": "string"},
+    "inputs": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "status": {"type": "string"},
+    "introduction": {
+      "type": "string",
+      "nullable": true
+    },
+    "created_at": {
+      "type": "integer",
+      "format": "int64"
+    },
+    "updated_at": {
+      "type": "integer",
+      "format": "int64"
+    }
+  }
 }
 ```
 
@@ -470,27 +1213,55 @@ Rename the session.
 #### Path Parameters
 - `conversation_id` (string, required): Conversation ID
 
-#### Request Body (application/json)
+#### Request Body (application/json) - Schema: `ConversationRenameRequest`:
 ```json
 {
-  "name": "string (optional, nullable) - New conversation name",
-  "auto_generate": "boolean (optional) - Auto-generate name, default: false",
-  "user": "string (required) - User identifier"
+  "type": "object",
+  "required": ["user"],
+  "properties": {
+    "name": {
+      "type": "string",
+      "nullable": true
+    },
+    "auto_generate": {
+      "type": "boolean",
+      "default": false
+    },
+    "user": {"type": "string"}
+  }
 }
 ```
 
 #### Response
 
-**Success (200)**
+**Success (200)** - Schema: `ConversationRenameResponse` (same as `ConversationListItem`):
 ```json
 {
-  "id": "string (uuid)",
-  "name": "string",
-  "inputs": "object",
-  "status": "string",
-  "introduction": "string (nullable)",
-  "created_at": "integer (timestamp)",
-  "updated_at": "integer (timestamp)"
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "name": {"type": "string"},
+    "inputs": {
+      "type": "object",
+      "additionalProperties": true
+    },
+    "status": {"type": "string"},
+    "introduction": {
+      "type": "string",
+      "nullable": true
+    },
+    "created_at": {
+      "type": "integer",
+      "format": "int64"
+    },
+    "updated_at": {
+      "type": "integer",
+      "format": "int64"
+    }
+  }
 }
 ```
 
@@ -511,22 +1282,46 @@ Retrieve variables from a specific conversation.
 
 #### Response
 
-**Success (200)**
+**Success (200)** - Schema: `ConversationVariablesResponse`:
 ```json
 {
-  "limit": "integer",
-  "has_more": "boolean",
-  "data": [
-    {
-      "id": "string (uuid)",
-      "name": "string",
-      "value_type": "string",
-      "value": "string",
-      "description": "string (nullable)",
-      "created_at": "integer (timestamp)",
-      "updated_at": "integer (timestamp)"
+  "type": "object",
+  "properties": {
+    "limit": {"type": "integer"},
+    "has_more": {"type": "boolean"},
+    "data": {
+      "type": "array",
+      "items": {"$ref": "ConversationVariableItem"}
     }
-  ]
+  }
+}
+```
+
+**ConversationVariableItem Schema**:
+```json
+{
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "name": {"type": "string"},
+    "value_type": {"type": "string"},
+    "value": {"type": "string"},
+    "description": {
+      "type": "string",
+      "nullable": true
+    },
+    "created_at": {
+      "type": "integer",
+      "format": "int64"
+    },
+    "updated_at": {
+      "type": "integer",
+      "format": "int64"
+    }
+  }
 }
 ```
 
@@ -541,18 +1336,31 @@ Retrieve variables from a specific conversation.
 
 Convert audio file to text. File size limit: 15MB.
 
-#### Request Body (multipart/form-data)
-- `file` (binary, required): Audio file, max 15MB
-- `user` (string, required): User identifier
-
-**Supported Audio Formats**: mp3, mp4, mpeg, mpga, m4a, wav, webm
+#### Request Body (multipart/form-data) - Schema: `AudioToTextRequest`:
+```json
+{
+  "type": "object",
+  "required": ["file", "user"],
+  "properties": {
+    "file": {
+      "type": "string",
+      "format": "binary",
+      "description": "Audio file. Formats: mp3, mp4, mpeg, mpga, m4a, wav, webm. Limit: 15MB."
+    },
+    "user": {"type": "string"}
+  }
+}
+```
 
 #### Response
 
-**Success (200)**
+**Success (200)** - Schema: `AudioToTextResponse`:
 ```json
 {
-  "text": "string"
+  "type": "object",
+  "properties": {
+    "text": {"type": "string"}
+  }
 }
 ```
 
@@ -562,17 +1370,31 @@ Convert audio file to text. File size limit: 15MB.
 
 Convert text to speech.
 
-#### Request Body (application/json)
+#### Request Body (application/json) - Schema: `TextToAudioJsonRequest`:
 ```json
 {
-  "message_id": "string (optional) - Message ID (priority)",
-  "text": "string (optional) - Speech content",
-  "user": "string (required) - User identifier",
-  "streaming": "boolean (optional) - Stream audio chunks, default: false"
+  "type": "object",
+  "required": ["user"],
+  "properties": {
+    "message_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "Message ID (priority)."
+    },
+    "text": {
+      "type": "string",
+      "description": "Speech content."
+    },
+    "user": {"type": "string"},
+    "streaming": {
+      "type": "boolean",
+      "default": false,
+      "description": "If true, response will be a stream of audio chunks."
+    }
+  },
+  "description": "Requires user. Provide message_id or text."
 }
 ```
-
-**Note**: Requires `user`. Provide `message_id` or `text`.
 
 #### Response
 
@@ -592,12 +1414,18 @@ Get basic application information.
 
 #### Response
 
-**Success (200)**
+**Success (200)** - Schema: `AppInfoResponse`:
 ```json
 {
-  "name": "string",
-  "description": "string",
-  "tags": ["string"]
+  "type": "object",
+  "properties": {
+    "name": {"type": "string"},
+    "description": {"type": "string"},
+    "tags": {
+      "type": "array",
+      "items": {"type": "string"}
+    }
+  }
 }
 ```
 
@@ -609,75 +1437,179 @@ Get application parameters.
 
 #### Response
 
-**Success (200)**
+**Success (200)** - Schema: `ChatAppParametersResponse`:
 ```json
 {
-  "opening_statement": "string",
-  "suggested_questions": ["string"],
-  "suggested_questions_after_answer": {
-    "enabled": "boolean"
-  },
-  "speech_to_text": {
-    "enabled": "boolean"
-  },
-  "text_to_speech": {
-    "enabled": "boolean",
-    "voice": "string",
-    "language": "string",
-    "autoPlay": "string"
-  },
-  "retriever_resource": {
-    "enabled": "boolean"
-  },
-  "annotation_reply": {
-    "enabled": "boolean"
-  },
-  "user_input_form": [
-    {
-      "text-input": {
-        "label": "string",
-        "variable": "string",
-        "required": "boolean",
-        "default": "string"
+  "type": "object",
+  "properties": {
+    "opening_statement": {"type": "string"},
+    "suggested_questions": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "suggested_questions_after_answer": {
+      "type": "object",
+      "properties": {
+        "enabled": {"type": "boolean"}
       }
     },
-    {
-      "paragraph": {
-        "label": "string",
-        "variable": "string",
-        "required": "boolean",
-        "default": "string"
+    "speech_to_text": {
+      "type": "object",
+      "properties": {
+        "enabled": {"type": "boolean"}
       }
     },
-    {
-      "select": {
-        "label": "string",
-        "variable": "string",
-        "required": "boolean",
-        "default": "string",
-        "options": ["string"]
+    "text_to_speech": {
+      "type": "object",
+      "properties": {
+        "enabled": {"type": "boolean"},
+        "voice": {"type": "string"},
+        "language": {"type": "string"},
+        "autoPlay": {
+          "type": "string",
+          "enum": ["enabled", "disabled"]
+        }
+      }
+    },
+    "retriever_resource": {
+      "type": "object",
+      "properties": {
+        "enabled": {"type": "boolean"}
+      }
+    },
+    "annotation_reply": {
+      "type": "object",
+      "properties": {
+        "enabled": {"type": "boolean"}
+      }
+    },
+    "user_input_form": {
+      "type": "array",
+      "items": {"$ref": "UserInputFormItem"}
+    },
+    "file_upload": {
+      "type": "object",
+      "properties": {
+        "image": {
+          "type": "object",
+          "properties": {
+            "enabled": {"type": "boolean"},
+            "number_limits": {"type": "integer"},
+            "detail": {"type": "string"},
+            "transfer_methods": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": ["remote_url", "local_file"]
+              }
+            }
+          }
+        }
+      }
+    },
+    "system_parameters": {
+      "type": "object",
+      "properties": {
+        "file_size_limit": {"type": "integer"},
+        "image_file_size_limit": {"type": "integer"},
+        "audio_file_size_limit": {"type": "integer"},
+        "video_file_size_limit": {"type": "integer"}
       }
     }
-  ],
-  "file_upload": {
-    "image": {
-      "enabled": "boolean",
-      "number_limits": "integer",
-      "detail": "string",
-      "transfer_methods": ["string"]
-    }
-  },
-  "system_parameters": {
-    "file_size_limit": "integer",
-    "image_file_size_limit": "integer",
-    "audio_file_size_limit": "integer",
-    "video_file_size_limit": "integer"
   }
 }
 ```
 
-**AutoPlay Enum Values**: `"enabled"`, `"disabled"`
-**Transfer Methods Enum Values**: `"remote_url"`, `"local_file"`
+**UserInputFormItem Schema** (oneOf):
+```json
+{
+  "type": "object",
+  "oneOf": [
+    {"$ref": "TextInputControlWrapper"},
+    {"$ref": "ParagraphControlWrapper"},
+    {"$ref": "SelectControlWrapper"}
+  ]
+}
+```
+
+**TextInputControlWrapper Schema**:
+```json
+{
+  "type": "object",
+  "properties": {
+    "text-input": {"$ref": "TextInputControl"}
+  },
+  "required": ["text-input"]
+}
+```
+
+**ParagraphControlWrapper Schema**:
+```json
+{
+  "type": "object",
+  "properties": {
+    "paragraph": {"$ref": "ParagraphControl"}
+  },
+  "required": ["paragraph"]
+}
+```
+
+**SelectControlWrapper Schema**:
+```json
+{
+  "type": "object",
+  "properties": {
+    "select": {"$ref": "SelectControl"}
+  },
+  "required": ["select"]
+}
+```
+
+**TextInputControl Schema**:
+```json
+{
+  "type": "object",
+  "required": ["label", "variable", "required"],
+  "properties": {
+    "label": {"type": "string"},
+    "variable": {"type": "string"},
+    "required": {"type": "boolean"},
+    "default": {"type": "string"}
+  }
+}
+```
+
+**ParagraphControl Schema**:
+```json
+{
+  "type": "object",
+  "required": ["label", "variable", "required"],
+  "properties": {
+    "label": {"type": "string"},
+    "variable": {"type": "string"},
+    "required": {"type": "boolean"},
+    "default": {"type": "string"}
+  }
+}
+```
+
+**SelectControl Schema**:
+```json
+{
+  "type": "object",
+  "required": ["label", "variable", "required", "options"],
+  "properties": {
+    "label": {"type": "string"},
+    "variable": {"type": "string"},
+    "required": {"type": "boolean"},
+    "default": {"type": "string"},
+    "options": {
+      "type": "array",
+      "items": {"type": "string"}
+    }
+  }
+}
+```
 
 #### 3. Get Application Meta Information
 
@@ -687,22 +1619,34 @@ Get application meta information (tool icons).
 
 #### Response
 
-**Success (200)**
+**Success (200)** - Schema: `AppMetaResponse`:
 ```json
 {
-  "tool_icons": {
-    "additionalProperties": {
-      "oneOf": [
-        {
-          "type": "string",
-          "format": "url"
-        },
-        {
-          "background": "string",
-          "content": "string"
-        }
-      ]
+  "type": "object",
+  "properties": {
+    "tool_icons": {
+      "type": "object",
+      "additionalProperties": {
+        "oneOf": [
+          {
+            "type": "string",
+            "format": "url"
+          },
+          {"$ref": "ToolIconDetail"}
+        ]
+      }
     }
+  }
+}
+```
+
+**ToolIconDetail Schema**:
+```json
+{
+  "type": "object",
+  "properties": {
+    "background": {"type": "string"},
+    "content": {"type": "string"}
   }
 }
 ```
@@ -715,27 +1659,35 @@ Get WebApp settings.
 
 #### Response
 
-**Success (200)**
+**Success (200)** - Schema: `WebAppSettingsResponse`:
 ```json
 {
-  "title": "string",
-  "chat_color_theme": "string",
-  "chat_color_theme_inverted": "boolean",
-  "icon_type": "string",
-  "icon": "string",
-  "icon_background": "string",
-  "icon_url": "string (url, nullable)",
-  "description": "string",
-  "copyright": "string",
-  "privacy_policy": "string",
-  "custom_disclaimer": "string",
-  "default_language": "string",
-  "show_workflow_steps": "boolean",
-  "use_icon_as_answer_icon": "boolean"
+  "type": "object",
+  "properties": {
+    "title": {"type": "string"},
+    "chat_color_theme": {"type": "string"},
+    "chat_color_theme_inverted": {"type": "boolean"},
+    "icon_type": {
+      "type": "string",
+      "enum": ["emoji", "image"]
+    },
+    "icon": {"type": "string"},
+    "icon_background": {"type": "string"},
+    "icon_url": {
+      "type": "string",
+      "format": "url",
+      "nullable": true
+    },
+    "description": {"type": "string"},
+    "copyright": {"type": "string"},
+    "privacy_policy": {"type": "string"},
+    "custom_disclaimer": {"type": "string"},
+    "default_language": {"type": "string"},
+    "show_workflow_steps": {"type": "boolean"},
+    "use_icon_as_answer_icon": {"type": "boolean"}
+  }
 }
 ```
-
-**Icon Type Enum Values**: `"emoji"`, `"image"`
 
 ### Annotations
 
@@ -751,22 +1703,40 @@ Get annotation list.
 
 #### Response
 
-**Success (200)**
+**Success (200)** - Schema: `AnnotationListResponse`:
 ```json
 {
-  "data": [
-    {
-      "id": "string (uuid)",
-      "question": "string",
-      "answer": "string",
-      "hit_count": "integer",
-      "created_at": "integer (timestamp)"
+  "type": "object",
+  "properties": {
+    "data": {
+      "type": "array",
+      "items": {"$ref": "AnnotationItem"}
+    },
+    "has_more": {"type": "boolean"},
+    "limit": {"type": "integer"},
+    "total": {"type": "integer"},
+    "page": {"type": "integer"}
+  }
+}
+```
+
+**AnnotationItem Schema**:
+```json
+{
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "question": {"type": "string"},
+    "answer": {"type": "string"},
+    "hit_count": {"type": "integer"},
+    "created_at": {
+      "type": "integer",
+      "format": "int64"
     }
-  ],
-  "has_more": "boolean",
-  "limit": "integer",
-  "total": "integer",
-  "page": "integer"
+  }
 }
 ```
 
@@ -776,24 +1746,37 @@ Get annotation list.
 
 Create annotation.
 
-#### Request Body (application/json)
+#### Request Body (application/json) - Schema: `CreateAnnotationRequest`:
 ```json
 {
-  "question": "string (required) - Annotation question",
-  "answer": "string (required) - Annotation answer"
+  "type": "object",
+  "required": ["question", "answer"],
+  "properties": {
+    "question": {"type": "string"},
+    "answer": {"type": "string"}
+  }
 }
 ```
 
 #### Response
 
-**Success (200/201)**
+**Success (200/201)** - Schema: `AnnotationItem`:
 ```json
 {
-  "id": "string (uuid)",
-  "question": "string",
-  "answer": "string",
-  "hit_count": "integer",
-  "created_at": "integer (timestamp)"
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "question": {"type": "string"},
+    "answer": {"type": "string"},
+    "hit_count": {"type": "integer"},
+    "created_at": {
+      "type": "integer",
+      "format": "int64"
+    }
+  }
 }
 ```
 
@@ -806,24 +1789,37 @@ Update annotation.
 #### Path Parameters
 - `annotation_id` (string, required): Annotation ID (UUID)
 
-#### Request Body (application/json)
+#### Request Body (application/json) - Schema: `UpdateAnnotationRequest`:
 ```json
 {
-  "question": "string (required) - Updated annotation question",
-  "answer": "string (required) - Updated annotation answer"
+  "type": "object",
+  "required": ["question", "answer"],
+  "properties": {
+    "question": {"type": "string"},
+    "answer": {"type": "string"}
+  }
 }
 ```
 
 #### Response
 
-**Success (200)**
+**Success (200)** - Schema: `AnnotationItem`:
 ```json
 {
-  "id": "string (uuid)",
-  "question": "string",
-  "answer": "string",
-  "hit_count": "integer",
-  "created_at": "integer (timestamp)"
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "question": {"type": "string"},
+    "answer": {"type": "string"},
+    "hit_count": {"type": "integer"},
+    "created_at": {
+      "type": "integer",
+      "format": "int64"
+    }
+  }
 }
 ```
 
@@ -852,22 +1848,41 @@ Initial annotation reply settings.
 
 **Action Enum Values**: `"enable"`, `"disable"`
 
-#### Request Body (application/json)
+#### Request Body (application/json) - Schema: `InitialAnnotationReplySettingsRequest`:
 ```json
 {
-  "embedding_provider_name": "string (optional, nullable) - Embedding provider name",
-  "embedding_model_name": "string (optional, nullable) - Embedding model name",
-  "score_threshold": "number (required) - Score threshold for matching"
+  "type": "object",
+  "required": ["score_threshold"],
+  "properties": {
+    "embedding_provider_name": {
+      "type": "string",
+      "nullable": true
+    },
+    "embedding_model_name": {
+      "type": "string",
+      "nullable": true
+    },
+    "score_threshold": {
+      "type": "number",
+      "format": "float"
+    }
+  }
 }
 ```
 
 #### Response
 
-**Success (200/202)**
+**Success (200/202)** - Schema: `InitialAnnotationReplySettingsResponse`:
 ```json
 {
-  "job_id": "string (uuid)",
-  "job_status": "string"
+  "type": "object",
+  "properties": {
+    "job_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "job_status": {"type": "string"}
+  }
 }
 ```
 
@@ -885,24 +1900,42 @@ Query initial annotation reply settings task status.
 
 #### Response
 
-**Success (200)**
+**Success (200)** - Schema: `InitialAnnotationReplySettingsStatusResponse`:
 ```json
 {
-  "job_id": "string (uuid)",
-  "job_status": "string",
-  "error_msg": "string (nullable)"
+  "type": "object",
+  "properties": {
+    "job_id": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "job_status": {"type": "string"},
+    "error_msg": {
+      "type": "string",
+      "nullable": true
+    }
+  }
 }
 ```
 
 ## Error Responses
 
-All APIs may return the following error responses:
+All APIs may return the following error responses - Schema: `ErrorResponse`:
 
 ```json
 {
-  "status": "integer (nullable)",
-  "code": "string (nullable)",
-  "message": "string"
+  "type": "object",
+  "properties": {
+    "status": {
+      "type": "integer",
+      "nullable": true
+    },
+    "code": {
+      "type": "string",
+      "nullable": true
+    },
+    "message": {"type": "string"}
+  }
 }
 ```
 

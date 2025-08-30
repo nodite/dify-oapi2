@@ -8,8 +8,8 @@ This example demonstrates how to batch update document status.
 import asyncio
 import os
 
-from dify_oapi.api.knowledge.v1.model.document.update_status_request import UpdateStatusRequest
-from dify_oapi.api.knowledge.v1.model.document.update_status_request_body import UpdateStatusRequestBody
+from dify_oapi.api.knowledge.v1.model.update_document_status_request import UpdateDocumentStatusRequest
+from dify_oapi.api.knowledge.v1.model.update_document_status_request_body import UpdateDocumentStatusRequestBody
 from dify_oapi.client import Client
 from dify_oapi.core.model.request_option import RequestOption
 
@@ -39,9 +39,15 @@ def update_document_status_sync() -> None:
 
         client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
-        request_body = UpdateStatusRequestBody.builder().document_ids(document_id_list).build()
+        request_body = UpdateDocumentStatusRequestBody.builder().document_ids(document_id_list).build()
 
-        request = UpdateStatusRequest.builder().dataset_id(dataset_id).action(action).request_body(request_body).build()
+        request = (
+            UpdateDocumentStatusRequest.builder()
+            .dataset_id(dataset_id)
+            .action(action)
+            .request_body(request_body)
+            .build()
+        )
         request_option = RequestOption.builder().api_key(api_key).build()
 
         response = client.knowledge.v1.document.update_status(request, request_option)
@@ -50,10 +56,7 @@ def update_document_status_sync() -> None:
             print(f"API Error: {response.code} - {response.msg}")
             return
 
-        print(f"Documents status updated with action '{action}':")
-        print(f"  Success: {response.success}")
-        if not response.success and response.error:
-            print(f"  Error: {response.error}")
+        print(f"Documents status updated with action '{action}': Success")
 
     except Exception as e:
         print(f"Error updating document status: {e}")
@@ -84,9 +87,15 @@ async def update_document_status_async() -> None:
 
         client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
-        request_body = UpdateStatusRequestBody.builder().document_ids(document_id_list).build()
+        request_body = UpdateDocumentStatusRequestBody.builder().document_ids(document_id_list).build()
 
-        request = UpdateStatusRequest.builder().dataset_id(dataset_id).action(action).request_body(request_body).build()
+        request = (
+            UpdateDocumentStatusRequest.builder()
+            .dataset_id(dataset_id)
+            .action(action)
+            .request_body(request_body)
+            .build()
+        )
         request_option = RequestOption.builder().api_key(api_key).build()
 
         response = await client.knowledge.v1.document.aupdate_status(request, request_option)
@@ -95,10 +104,7 @@ async def update_document_status_async() -> None:
             print(f"API Error (async): {response.code} - {response.msg}")
             return
 
-        print(f"\nDocuments status updated asynchronously with action '{action}':")
-        print(f"  Success: {response.success}")
-        if not response.success and response.error:
-            print(f"  Error: {response.error}")
+        print(f"Documents status updated asynchronously with action '{action}': Success")
 
     except Exception as e:
         print(f"Error updating document status asynchronously: {e}")

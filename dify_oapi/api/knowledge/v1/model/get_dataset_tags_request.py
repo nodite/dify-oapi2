@@ -15,7 +15,7 @@ class GetDatasetTagsRequest(BaseRequest):
 class GetDatasetTagsRequestBuilder:
     def __init__(self) -> None:
         get_dataset_tags_request = GetDatasetTagsRequest()
-        get_dataset_tags_request.http_method = HttpMethod.POST
+        get_dataset_tags_request.http_method = HttpMethod.GET
         get_dataset_tags_request.uri = "/v1/datasets/:dataset_id/tags"
         self._get_dataset_tags_request = get_dataset_tags_request
 

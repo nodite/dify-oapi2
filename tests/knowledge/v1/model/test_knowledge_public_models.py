@@ -252,37 +252,29 @@ class TestChildChunkInfo:
             ChildChunkInfo.builder()
             .id("chunk_id")
             .content("chunk content")
-            .position(1)
-            .word_count(25)
             .keywords(["key1", "key2"])
+            .created_at(1234567890)
             .build()
         )
 
         assert chunk.id == "chunk_id"
         assert chunk.content == "chunk content"
-        assert chunk.position == 1
-        assert chunk.word_count == 25
         assert chunk.keywords == ["key1", "key2"]
+        assert chunk.created_at == 1234567890
 
     def test_field_validation(self) -> None:
         """Test ChildChunkInfo field validation."""
         chunk = ChildChunkInfo(
             id="chunk_id",
             content="chunk content",
-            position=1,
-            word_count=25,
-            tokens=6,
             keywords=["keyword1"],
-            hit_count=5,
+            created_at=1234567890,
         )
 
         assert chunk.id == "chunk_id"
         assert chunk.content == "chunk content"
-        assert chunk.position == 1
-        assert chunk.word_count == 25
-        assert chunk.tokens == 6
         assert chunk.keywords == ["keyword1"]
-        assert chunk.hit_count == 5
+        assert chunk.created_at == 1234567890
 
     def test_serialization(self) -> None:
         """Test ChildChunkInfo serialization."""
@@ -350,59 +342,54 @@ class TestModelInfo:
 
     def test_builder_pattern(self) -> None:
         """Test ModelInfo builder pattern functionality."""
-        model = (
-            ModelInfo.builder()
-            .model_name("text-embedding-3")
-            .model_type("text-embedding")
-            .provider("openai")
-            .provider_type("vendor")
-            .build()
-        )
+        model = ModelInfo.builder().provider("openai").status("active").label({"en": "OpenAI"}).build()
 
-        assert model.model_name == "text-embedding-3"
-        assert model.model_type == "text-embedding"
         assert model.provider == "openai"
-        assert model.provider_type == "vendor"
+        assert model.status == "active"
+        assert model.label == {"en": "OpenAI"}
 
     def test_field_validation(self) -> None:
         """Test ModelInfo field validation."""
+        from dify_oapi.api.knowledge.v1.model.model_info import EmbeddingModelDetails
+
+        model_details = EmbeddingModelDetails(model="text-embedding-3", model_type="text-embedding", status="active")
+
         model = ModelInfo(
-            model_name="text-embedding-3",
-            model_type="text-embedding",
             provider="openai",
-            provider_type="vendor",
-            credentials={"api_key": "test"},
+            status="active",
+            label={"en": "OpenAI"},
+            models=[model_details],
         )
 
-        assert model.model_name == "text-embedding-3"
-        assert model.model_type == "text-embedding"
         assert model.provider == "openai"
-        assert model.provider_type == "vendor"
-        assert model.credentials == {"api_key": "test"}
+        assert model.status == "active"
+        assert model.label == {"en": "OpenAI"}
+        assert len(model.models) == 1
+        assert model.models[0].model == "text-embedding-3"
 
     def test_type_safety(self) -> None:
         """Test ModelInfo type safety with Literal types."""
         model = ModelInfo(
-            model_type="text-embedding",
-            provider_type="external",
+            provider="openai",
+            status="active",
         )
-        assert model.model_type == "text-embedding"
-        assert model.provider_type == "external"
+        assert model.provider == "openai"
+        assert model.status == "active"
 
     def test_serialization(self) -> None:
         """Test ModelInfo serialization."""
-        model = ModelInfo(model_name="test_model", provider="test_provider")
+        model = ModelInfo(provider="test_provider", status="active")
         data = model.model_dump()
-        assert data["model_name"] == "test_model"
         assert data["provider"] == "test_provider"
+        assert data["status"] == "active"
 
     def test_direct_instantiation(self) -> None:
         """Test ModelInfo direct instantiation alongside builder."""
-        direct = ModelInfo(model_name="model", provider="provider")
-        builder = ModelInfo.builder().model_name("model").provider("provider").build()
+        direct = ModelInfo(provider="provider", status="active")
+        builder = ModelInfo.builder().provider("provider").status("active").build()
 
-        assert direct.model_name == builder.model_name
         assert direct.provider == builder.provider
+        assert direct.status == builder.status
 
 
 class TestFileInfo:
@@ -675,46 +662,52 @@ class TestBatchInfo:
 
     def test_builder_pattern(self) -> None:
         """Test BatchInfo builder pattern functionality."""
-        batch = BatchInfo.builder().batch("batch_123").total(100).completed(80).failed(5).processing(15).build()
+        batch = (
+            BatchInfo.builder()
+            .id("batch_123")
+            .indexing_status("completed")
+            .completed_segments(80)
+            .total_segments(100)
+            .build()
+        )
 
-        assert batch.batch == "batch_123"
-        assert batch.total == 100
-        assert batch.completed == 80
-        assert batch.failed == 5
-        assert batch.processing == 15
+        assert batch.id == "batch_123"
+        assert batch.indexing_status == "completed"
+        assert batch.completed_segments == 80
+        assert batch.total_segments == 100
 
     def test_field_validation(self) -> None:
         """Test BatchInfo field validation."""
         batch = BatchInfo(
-            batch="batch_123",
-            data=[{"id": "1", "status": "completed"}],
-            total=50,
-            completed=40,
-            failed=2,
-            processing=8,
+            id="batch_123",
+            indexing_status="indexing",
+            processing_started_at=1234567890.0,
+            completed_segments=40,
+            total_segments=50,
+            error=None,
         )
 
-        assert batch.batch == "batch_123"
-        assert batch.data == [{"id": "1", "status": "completed"}]
-        assert batch.total == 50
-        assert batch.completed == 40
-        assert batch.failed == 2
-        assert batch.processing == 8
+        assert batch.id == "batch_123"
+        assert batch.indexing_status == "indexing"
+        assert batch.processing_started_at == 1234567890.0
+        assert batch.completed_segments == 40
+        assert batch.total_segments == 50
+        assert batch.error is None
 
     def test_serialization(self) -> None:
         """Test BatchInfo serialization."""
-        batch = BatchInfo(batch="test_batch", total=10)
+        batch = BatchInfo(id="test_batch", total_segments=10)
         data = batch.model_dump()
-        assert data["batch"] == "test_batch"
-        assert data["total"] == 10
+        assert data["id"] == "test_batch"
+        assert data["total_segments"] == 10
 
     def test_direct_instantiation(self) -> None:
         """Test BatchInfo direct instantiation alongside builder."""
-        direct = BatchInfo(batch="batch", total=10)
-        builder = BatchInfo.builder().batch("batch").total(10).build()
+        direct = BatchInfo(id="batch", total_segments=10)
+        builder = BatchInfo.builder().id("batch").total_segments(10).build()
 
-        assert direct.batch == builder.batch
-        assert direct.total == builder.total
+        assert direct.id == builder.id
+        assert direct.total_segments == builder.total_segments
 
 
 class TestPaginationInfo:

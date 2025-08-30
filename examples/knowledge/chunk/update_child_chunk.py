@@ -8,8 +8,8 @@ This example demonstrates how to update a child chunk using the Dify API.
 import asyncio
 import os
 
-from dify_oapi.api.knowledge.v1.model.segment.update_child_chunk_request import UpdateChildChunkRequest
-from dify_oapi.api.knowledge.v1.model.segment.update_child_chunk_request_body import UpdateChildChunkRequestBody
+from dify_oapi.api.knowledge.v1.model.update_child_chunk_request import UpdateChildChunkRequest
+from dify_oapi.api.knowledge.v1.model.update_child_chunk_request_body import UpdateChildChunkRequestBody
 from dify_oapi.client import Client
 from dify_oapi.core.model.request_option import RequestOption
 
@@ -58,7 +58,7 @@ def update_child_chunk_sync() -> None:
 
         request_option = RequestOption.builder().api_key(api_key).build()
 
-        response = client.knowledge.v1.segment.update_child_chunk(request, request_option)
+        response = client.knowledge.v1.chunk.update(request, request_option)
 
         if not response.success:
             print(f"API Error: {response.code} - {response.msg}")
@@ -68,8 +68,9 @@ def update_child_chunk_sync() -> None:
         if child_chunk:
             print("Child chunk updated successfully:")
             print(f"  ID: {child_chunk.id}")
-            print(f"  Status: {child_chunk.status}")
+            print(f"  Segment ID: {child_chunk.segment_id}")
             print(f"  Content: {child_chunk.content}")
+            print(f"  Position: {child_chunk.position}")
 
     except Exception as e:
         print(f"Error updating child chunk: {e}")
@@ -117,7 +118,7 @@ async def update_child_chunk_async() -> None:
 
         request_option = RequestOption.builder().api_key(api_key).build()
 
-        response = await client.knowledge.v1.segment.aupdate_child_chunk(request, request_option)
+        response = await client.knowledge.v1.chunk.aupdate(request, request_option)
 
         if not response.success:
             print(f"API Error (async): {response.code} - {response.msg}")
@@ -127,8 +128,9 @@ async def update_child_chunk_async() -> None:
         if child_chunk:
             print("Child chunk updated successfully (async):")
             print(f"  ID: {child_chunk.id}")
-            print(f"  Status: {child_chunk.status}")
+            print(f"  Segment ID: {child_chunk.segment_id}")
             print(f"  Content: {child_chunk.content}")
+            print(f"  Position: {child_chunk.position}")
 
     except Exception as e:
         print(f"Error updating child chunk (async): {e}")

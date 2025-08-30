@@ -1,13 +1,14 @@
 from pydantic import BaseModel
 
 from .embedding_model_parameters import EmbeddingModelParameters
-from .knowledge_types import IndexingTechnique, Permission
+from .knowledge_types import DatasetType, IndexingTechnique, Permission
 from .retrieval_model import RetrievalModel
 
 
 class CreateDatasetRequestBody(BaseModel):
     name: str | None = None
     description: str | None = None
+    type: DatasetType | None = None
     indexing_technique: IndexingTechnique | None = None
     permission: Permission | None = None
     provider: str | None = None
@@ -33,6 +34,10 @@ class CreateDatasetRequestBodyBuilder:
 
     def description(self, description: str) -> "CreateDatasetRequestBodyBuilder":
         self._create_dataset_request_body.description = description
+        return self
+
+    def type(self, type: DatasetType) -> "CreateDatasetRequestBodyBuilder":
+        self._create_dataset_request_body.type = type
         return self
 
     def indexing_technique(self, indexing_technique: IndexingTechnique) -> "CreateDatasetRequestBodyBuilder":

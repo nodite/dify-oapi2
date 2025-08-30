@@ -14,7 +14,7 @@ def get_dataset_example():
     if not dataset_id:
         raise ValueError("DATASET_ID environment variable is required")
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
     req = GetDatasetRequest.builder().dataset_id(dataset_id).build()
     req_option = RequestOption.builder().api_key(api_key).build()
@@ -34,7 +34,7 @@ async def aget_dataset_example():
     if not dataset_id:
         raise ValueError("DATASET_ID environment variable is required")
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
     req = GetDatasetRequest.builder().dataset_id(dataset_id).build()
     req_option = RequestOption.builder().api_key(api_key).build()

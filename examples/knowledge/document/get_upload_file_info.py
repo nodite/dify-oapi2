@@ -8,7 +8,7 @@ This example demonstrates how to get upload file information for a document.
 import asyncio
 import os
 
-from dify_oapi.api.knowledge.v1.model.document.get_upload_file_request import GetUploadFileRequest
+from dify_oapi.api.knowledge.v1.model.get_upload_file_info_request import GetUploadFileInfoRequest
 from dify_oapi.client import Client
 from dify_oapi.core.model.request_option import RequestOption
 
@@ -30,14 +30,10 @@ def get_document_upload_file_sync() -> None:
 
         client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
-        request = GetUploadFileRequest.builder().dataset_id(dataset_id).document_id(document_id).build()
+        request = GetUploadFileInfoRequest.builder().dataset_id(dataset_id).document_id(document_id).build()
         request_option = RequestOption.builder().api_key(api_key).build()
 
-        response = client.knowledge.v1.document.get_upload_file(request, request_option)
-
-        if not response.success:
-            print(f"API Error: {response.code} - {response.msg}")
-            return
+        response = client.knowledge.v1.document.file_info(request, request_option)
 
         if not response.success:
             print(f"API Error: {response.code} - {response.msg}")
@@ -52,12 +48,6 @@ def get_document_upload_file_sync() -> None:
             print(f"  MIME Type: {response.mime_type}")
             print(f"  Created By: {response.created_by}")
             print(f"  Created At: {response.created_at}")
-
-            if response.url:
-                print(f"  URL: {response.url}")
-
-            if response.download_url:
-                print(f"  Download URL: {response.download_url}")
         else:
             print("No upload file information available or document was not created from a file upload")
 
@@ -82,10 +72,10 @@ async def get_document_upload_file_async() -> None:
 
         client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
-        request = GetUploadFileRequest.builder().dataset_id(dataset_id).document_id(document_id).build()
+        request = GetUploadFileInfoRequest.builder().dataset_id(dataset_id).document_id(document_id).build()
         request_option = RequestOption.builder().api_key(api_key).build()
 
-        response = await client.knowledge.v1.document.aget_upload_file(request, request_option)
+        response = await client.knowledge.v1.document.afile_info(request, request_option)
 
         if not response.success:
             print(f"API Error (async): {response.code} - {response.msg}")

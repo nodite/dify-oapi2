@@ -5,3 +5,4 @@ from .tag_info import TagInfo
 
 class GetDatasetTagsResponse(BaseResponse):
     data: list[TagInfo] | None = None
+    total: int | None = None

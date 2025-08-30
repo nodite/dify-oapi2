@@ -1,10 +1,10 @@
 from pydantic import BaseModel
 
-from .segment_info import SegmentInfo
+from .retrieval_segment_info import RetrievalSegmentInfo
 
 
 class RetrievalRecord(BaseModel):
-    segment: SegmentInfo | None = None
+    segment: RetrievalSegmentInfo | None = None
     score: float | None = None
 
     @staticmethod
@@ -19,7 +19,7 @@ class RetrievalRecordBuilder:
     def build(self) -> RetrievalRecord:
         return self._retrieval_record
 
-    def segment(self, segment: SegmentInfo) -> "RetrievalRecordBuilder":
+    def segment(self, segment: RetrievalSegmentInfo) -> "RetrievalRecordBuilder":
         self._retrieval_record.segment = segment
         return self
 

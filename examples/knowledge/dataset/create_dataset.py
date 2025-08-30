@@ -1,4 +1,5 @@
 import os
+import time
 
 from dify_oapi.api.knowledge.v1.model.create_dataset_request import CreateDatasetRequest
 from dify_oapi.api.knowledge.v1.model.create_dataset_request_body import CreateDatasetRequestBody
@@ -11,12 +12,14 @@ def create_dataset_example():
     if not api_key:
         raise ValueError("API_KEY environment variable is required")
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
+    timestamp = int(time.time())
     req_body = (
         CreateDatasetRequestBody.builder()
-        .name("[Example] Product Documentation")
-        .description("Example knowledge base for product documentation")
+        .name(f"[Example] KB {timestamp}")
+        .description("Example knowledge base")
+        .type("knowledge_base")
         .indexing_technique("high_quality")
         .permission("only_me")
         .build()
@@ -26,7 +29,10 @@ def create_dataset_example():
     req_option = RequestOption.builder().api_key(api_key).build()
 
     response = client.knowledge.v1.dataset.create(req, req_option)
-    print(f"Dataset created: {response.name} (ID: {response.id})")
+    if response.success:
+        print(f"Dataset created: {response.name} (ID: {response.id})")
+    else:
+        print(f"Error creating dataset: {response.code} - {response.msg}")
     return response
 
 
@@ -35,12 +41,14 @@ async def acreate_dataset_example():
     if not api_key:
         raise ValueError("API_KEY environment variable is required")
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
+    timestamp = int(time.time())
     req_body = (
         CreateDatasetRequestBody.builder()
-        .name("[Example] Async Product Documentation")
+        .name(f"[Example] Async KB {timestamp}")
         .description("Example async knowledge base")
+        .type("knowledge_base")
         .indexing_technique("high_quality")
         .permission("only_me")
         .build()
@@ -50,7 +58,10 @@ async def acreate_dataset_example():
     req_option = RequestOption.builder().api_key(api_key).build()
 
     response = await client.knowledge.v1.dataset.acreate(req, req_option)
-    print(f"Dataset created async: {response.name} (ID: {response.id})")
+    if response.success:
+        print(f"Dataset created async: {response.name} (ID: {response.id})")
+    else:
+        print(f"Error creating dataset async: {response.code} - {response.msg}")
     return response
 
 

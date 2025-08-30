@@ -5,7 +5,8 @@ from dify_oapi.core.model.base_response import BaseResponse
 from .segment_info import SegmentInfo
 
 
-class UpdateSegmentResponse(SegmentInfo, BaseResponse):
+class UpdateSegmentResponse(BaseResponse):
     """Response model for update segment API."""
 
-    pass
+    data: SegmentInfo | None = None
+    doc_form: str | None = None

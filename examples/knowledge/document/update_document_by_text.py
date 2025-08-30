@@ -8,9 +8,9 @@ This example demonstrates how to update an existing document using text content.
 import asyncio
 import os
 
-from dify_oapi.api.knowledge.v1.model.document.process_rule import ProcessRule
-from dify_oapi.api.knowledge.v1.model.document.update_by_text_request import UpdateByTextRequest
-from dify_oapi.api.knowledge.v1.model.document.update_by_text_request_body import UpdateByTextRequestBody
+from dify_oapi.api.knowledge.v1.model.process_rule import ProcessRule
+from dify_oapi.api.knowledge.v1.model.update_document_by_text_request import UpdateDocumentByTextRequest
+from dify_oapi.api.knowledge.v1.model.update_document_by_text_request_body import UpdateDocumentByTextRequestBody
 from dify_oapi.client import Client
 from dify_oapi.core.model.request_option import RequestOption
 
@@ -35,7 +35,7 @@ def update_document_by_text_sync() -> None:
         process_rule = ProcessRule.builder().mode("automatic").build()
 
         request_body = (
-            UpdateByTextRequestBody.builder()
+            UpdateDocumentByTextRequestBody.builder()
             .name("[Example] Updated API Documentation")
             .text(
                 "[Example] This is updated text content. The document has been modified with new information through the Dify API."
@@ -45,7 +45,7 @@ def update_document_by_text_sync() -> None:
         )
 
         request = (
-            UpdateByTextRequest.builder()
+            UpdateDocumentByTextRequest.builder()
             .dataset_id(dataset_id)
             .document_id(document_id)
             .request_body(request_body)
@@ -54,10 +54,6 @@ def update_document_by_text_sync() -> None:
         request_option = RequestOption.builder().api_key(api_key).build()
 
         response = client.knowledge.v1.document.update_by_text(request, request_option)
-
-        if not response.success:
-            print(f"API Error: {response.code} - {response.msg}")
-            return
 
         if not response.success:
             print(f"API Error: {response.code} - {response.msg}")
@@ -92,7 +88,7 @@ async def update_document_by_text_async() -> None:
         process_rule = ProcessRule.builder().mode("automatic").build()
 
         request_body = (
-            UpdateByTextRequestBody.builder()
+            UpdateDocumentByTextRequestBody.builder()
             .name("[Example] Updated API Documentation (Async)")
             .text(
                 "[Example] This is updated text content using async methods. The document has been modified asynchronously through the Dify API."
@@ -102,7 +98,7 @@ async def update_document_by_text_async() -> None:
         )
 
         request = (
-            UpdateByTextRequest.builder()
+            UpdateDocumentByTextRequest.builder()
             .dataset_id(dataset_id)
             .document_id(document_id)
             .request_body(request_body)
@@ -111,10 +107,6 @@ async def update_document_by_text_async() -> None:
         request_option = RequestOption.builder().api_key(api_key).build()
 
         response = await client.knowledge.v1.document.aupdate_by_text(request, request_option)
-
-        if not response.success:
-            print(f"API Error (async): {response.code} - {response.msg}")
-            return
 
         if not response.success:
             print(f"API Error (async): {response.code} - {response.msg}")

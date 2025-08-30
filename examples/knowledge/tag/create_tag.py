@@ -11,7 +11,7 @@ def create_tag_example():
     if not api_key:
         raise ValueError("API_KEY environment variable is required")
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
     req_body = CreateTagRequestBody.builder().name("[Example] Test Tag").type("knowledge").build()
 

@@ -8,7 +8,7 @@ This example demonstrates how to check the indexing status of a document batch.
 import asyncio
 import os
 
-from dify_oapi.api.knowledge.v1.model.document.indexing_status_request import IndexingStatusRequest
+from dify_oapi.api.knowledge.v1.model.get_batch_indexing_status_request import GetBatchIndexingStatusRequest
 from dify_oapi.client import Client
 from dify_oapi.core.model.request_option import RequestOption
 
@@ -30,51 +30,42 @@ def check_indexing_status_sync() -> None:
 
         client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
-        request = IndexingStatusRequest.builder().dataset_id(dataset_id).batch(batch_id).build()
+        request = GetBatchIndexingStatusRequest.builder().dataset_id(dataset_id).batch(batch_id).build()
         request_option = RequestOption.builder().api_key(api_key).build()
 
-        response = client.knowledge.v1.document.indexing_status(request, request_option)
+        response = client.knowledge.v1.document.get_batch_status(request, request_option)
 
         if not response.success:
             print(f"API Error: {response.code} - {response.msg}")
             return
 
         print(f"Indexing Status for Batch: {batch_id}")
-        if response.data:
-            for idx, status_info in enumerate(response.data, 1):
-                print(f"\nDocument {idx}:")
-                print(f"  ID: {status_info.id}")
-                print(f"  Status: {status_info.indexing_status}")
+        print(f"  ID: {response.id}")
+        print(f"  Status: {response.indexing_status}")
 
-                if status_info.processing_started_at:
-                    print(f"  Processing Started: {status_info.processing_started_at}")
+        if response.processing_started_at:
+            print(f"  Processing Started: {response.processing_started_at}")
 
-                if status_info.parsing_completed_at:
-                    print(f"  Parsing Completed: {status_info.parsing_completed_at}")
+        if response.parsing_completed_at:
+            print(f"  Parsing Completed: {response.parsing_completed_at}")
 
-                if status_info.cleaning_completed_at:
-                    print(f"  Cleaning Completed: {status_info.cleaning_completed_at}")
+        if response.cleaning_completed_at:
+            print(f"  Cleaning Completed: {response.cleaning_completed_at}")
 
-                if status_info.splitting_completed_at:
-                    print(f"  Splitting Completed: {status_info.splitting_completed_at}")
+        if response.splitting_completed_at:
+            print(f"  Splitting Completed: {response.splitting_completed_at}")
 
-                if status_info.completed_at:
-                    print(f"  Indexing Completed: {status_info.completed_at}")
+        if response.completed_at:
+            print(f"  Indexing Completed: {response.completed_at}")
 
-                if status_info.error:
-                    print(f"  Error: {status_info.error}")
+        if response.error:
+            print(f"  Error: {response.error}")
 
-                if status_info.completed_segments is not None and status_info.total_segments is not None:
-                    progress = (
-                        (status_info.completed_segments / status_info.total_segments * 100)
-                        if status_info.total_segments > 0
-                        else 0
-                    )
-                    print(
-                        f"  Progress: {status_info.completed_segments}/{status_info.total_segments} segments ({progress:.1f}%)"
-                    )
-        else:
-            print("No indexing status information available")
+        if response.completed_segments is not None and response.total_segments is not None:
+            progress = (
+                (response.completed_segments / response.total_segments * 100) if response.total_segments > 0 else 0
+            )
+            print(f"  Progress: {response.completed_segments}/{response.total_segments} segments ({progress:.1f}%)")
 
     except Exception as e:
         print(f"Error checking indexing status: {e}")
@@ -97,33 +88,24 @@ async def check_indexing_status_async() -> None:
 
         client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
-        request = IndexingStatusRequest.builder().dataset_id(dataset_id).batch(batch_id).build()
+        request = GetBatchIndexingStatusRequest.builder().dataset_id(dataset_id).batch(batch_id).build()
         request_option = RequestOption.builder().api_key(api_key).build()
 
-        response = await client.knowledge.v1.document.aindexing_status(request, request_option)
+        response = await client.knowledge.v1.document.aget_batch_status(request, request_option)
 
         if not response.success:
             print(f"API Error (async): {response.code} - {response.msg}")
             return
 
         print(f"\nAsync Indexing Status for Batch: {batch_id}")
-        if response.data:
-            for idx, status_info in enumerate(response.data, 1):
-                print(f"\nDocument {idx} (Async):")
-                print(f"  ID: {status_info.id}")
-                print(f"  Status: {status_info.indexing_status}")
+        print(f"  ID: {response.id}")
+        print(f"  Status: {response.indexing_status}")
 
-                if status_info.completed_segments is not None and status_info.total_segments is not None:
-                    progress = (
-                        (status_info.completed_segments / status_info.total_segments * 100)
-                        if status_info.total_segments > 0
-                        else 0
-                    )
-                    print(
-                        f"  Progress: {status_info.completed_segments}/{status_info.total_segments} segments ({progress:.1f}%)"
-                    )
-        else:
-            print("No indexing status information available (async)")
+        if response.completed_segments is not None and response.total_segments is not None:
+            progress = (
+                (response.completed_segments / response.total_segments * 100) if response.total_segments > 0 else 0
+            )
+            print(f"  Progress: {response.completed_segments}/{response.total_segments} segments ({progress:.1f}%)")
 
     except Exception as e:
         print(f"Error checking indexing status asynchronously: {e}")

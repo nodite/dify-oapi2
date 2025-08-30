@@ -3,30 +3,34 @@ from unittest.mock import AsyncMock, Mock
 
 import pytest
 
-from dify_oapi.api.knowledge.v1.model.tag.bind_request import BindRequest
-from dify_oapi.api.knowledge.v1.model.tag.bind_request_body import BindRequestBody
-from dify_oapi.api.knowledge.v1.model.tag.bind_response import BindResponse
-from dify_oapi.api.knowledge.v1.model.tag.create_request import CreateRequest
-from dify_oapi.api.knowledge.v1.model.tag.create_request_body import CreateRequestBody
-from dify_oapi.api.knowledge.v1.model.tag.create_response import CreateResponse
-from dify_oapi.api.knowledge.v1.model.tag.delete_request import DeleteRequest
-from dify_oapi.api.knowledge.v1.model.tag.delete_request_body import DeleteRequestBody
-from dify_oapi.api.knowledge.v1.model.tag.delete_response import DeleteResponse
-from dify_oapi.api.knowledge.v1.model.tag.list_request import ListRequest
-from dify_oapi.api.knowledge.v1.model.tag.list_response import ListResponse
-from dify_oapi.api.knowledge.v1.model.tag.query_bound_request import (
-    QueryBoundRequest,
+from dify_oapi.api.knowledge.v1.model.bind_tags_to_dataset_request import BindTagsToDatasetRequest as BindRequest
+from dify_oapi.api.knowledge.v1.model.bind_tags_to_dataset_request_body import (
+    BindTagsToDatasetRequestBody as BindRequestBody,
 )
-from dify_oapi.api.knowledge.v1.model.tag.query_bound_response import (
-    QueryBoundResponse,
+from dify_oapi.api.knowledge.v1.model.bind_tags_to_dataset_response import BindTagsToDatasetResponse as BindResponse
+from dify_oapi.api.knowledge.v1.model.create_tag_request import CreateTagRequest as CreateRequest
+from dify_oapi.api.knowledge.v1.model.create_tag_request_body import CreateTagRequestBody as CreateRequestBody
+from dify_oapi.api.knowledge.v1.model.create_tag_response import CreateTagResponse as CreateResponse
+from dify_oapi.api.knowledge.v1.model.delete_tag_request import DeleteTagRequest as DeleteRequest
+from dify_oapi.api.knowledge.v1.model.delete_tag_request_body import DeleteTagRequestBody as DeleteRequestBody
+from dify_oapi.api.knowledge.v1.model.delete_tag_response import DeleteTagResponse as DeleteResponse
+from dify_oapi.api.knowledge.v1.model.get_dataset_tags_request import GetDatasetTagsRequest as QueryBoundRequest
+from dify_oapi.api.knowledge.v1.model.get_dataset_tags_response import GetDatasetTagsResponse as QueryBoundResponse
+from dify_oapi.api.knowledge.v1.model.list_tags_request import ListTagsRequest as ListRequest
+from dify_oapi.api.knowledge.v1.model.list_tags_response import ListTagsResponse as ListResponse
+from dify_oapi.api.knowledge.v1.model.tag_info import TagInfo
+from dify_oapi.api.knowledge.v1.model.unbind_tags_from_dataset_request import (
+    UnbindTagsFromDatasetRequest as UnbindRequest,
 )
-from dify_oapi.api.knowledge.v1.model.tag.tag_info import TagInfo
-from dify_oapi.api.knowledge.v1.model.tag.unbind_request import UnbindRequest
-from dify_oapi.api.knowledge.v1.model.tag.unbind_request_body import UnbindRequestBody
-from dify_oapi.api.knowledge.v1.model.tag.unbind_response import UnbindResponse
-from dify_oapi.api.knowledge.v1.model.tag.update_request import UpdateRequest
-from dify_oapi.api.knowledge.v1.model.tag.update_request_body import UpdateRequestBody
-from dify_oapi.api.knowledge.v1.model.tag.update_response import UpdateResponse
+from dify_oapi.api.knowledge.v1.model.unbind_tags_from_dataset_request_body import (
+    UnbindTagsFromDatasetRequestBody as UnbindRequestBody,
+)
+from dify_oapi.api.knowledge.v1.model.unbind_tags_from_dataset_response import (
+    UnbindTagsFromDatasetResponse as UnbindResponse,
+)
+from dify_oapi.api.knowledge.v1.model.update_tag_request import UpdateTagRequest as UpdateRequest
+from dify_oapi.api.knowledge.v1.model.update_tag_request_body import UpdateTagRequestBody as UpdateRequestBody
+from dify_oapi.api.knowledge.v1.model.update_tag_response import UpdateTagResponse as UpdateResponse
 from dify_oapi.api.knowledge.v1.resource.tag import Tag
 from dify_oapi.core.model.config import Config
 from dify_oapi.core.model.request_option import RequestOption

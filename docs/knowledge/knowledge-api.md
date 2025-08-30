@@ -707,6 +707,666 @@ Retrieves all segments (chunks) of a document.
 - `document_id` (string, required): Document ID (UUID)
 
 #### Query Parameters
+- `keyword` (string, optional): Keyword to filter segments by content
+- `status` (string, optional): Filter segments by their indexing status (e.g., "completed")
+- `page` (integer, optional): Page number, default 1
+- `limit` (integer, optional): Items per page, default 20, max 100
+
+#### Response
+
+**Success (200)**
+```json
+{
+  "data": [
+    {
+      "id": "string (uuid)",
+      "position": "integer",
+      "document_id": "string (uuid)",
+      "content": "string",
+      "answer": "string (nullable)",
+      "word_count": "integer",
+      "tokens": "integer",
+      "keywords": ["string"],
+      "index_node_id": "string",
+      "index_node_hash": "string",
+      "hit_count": "integer",
+      "enabled": "boolean",
+      "disabled_at": "integer (int64, nullable)",
+      "disabled_by": "string (uuid, nullable)",
+      "status": "string",
+      "created_by": "string (uuid)",
+      "created_at": "integer (int64)",
+      "indexing_at": "integer (int64)",
+      "completed_at": "integer (int64)",
+      "error": "string (nullable)",
+      "stopped_at": "integer (int64, nullable)"
+    }
+  ],
+  "doc_form": "string",
+  "has_more": "boolean",
+  "limit": "integer",
+  "total": "integer",
+  "page": "integer"
+}
+```
+
+#### 18. Create Segments
+
+**POST** `/datasets/{dataset_id}/documents/{document_id}/segments`
+
+Adds one or more new chunks (segments) to a specific document.
+
+#### Path Parameters
+- `dataset_id` (string, required): Dataset ID (UUID)
+- `document_id` (string, required): Document ID (UUID)
+
+#### Request Body (application/json)
+```json
+{
+  "segments": [
+    {
+      "content": {
+        "type": "string",
+        "required": true,
+        "description": "The text content of the chunk (or question in Q&A mode)"
+      },
+      "answer": {
+        "type": "string",
+        "description": "The answer content, required if the document is in Q&A mode"
+      },
+      "keywords": {
+        "type": "array",
+        "items": {"type": "string"},
+        "description": "Keywords associated with the chunk"
+      }
+    }
+  ]
+}
+```
+
+#### Response
+
+**Success (200)**
+```json
+{
+  "data": [
+    {
+      "$ref": "Segment schema (same as List Segments response)"
+    }
+  ],
+  "doc_form": "string"
+}
+```
+
+#### 19. Get Segment Detail
+
+**GET** `/datasets/{dataset_id}/documents/{document_id}/segments/{segment_id}`
+
+Retrieves detailed information about a specific segment.
+
+#### Path Parameters
+- `dataset_id` (string, required): Dataset ID (UUID)
+- `document_id` (string, required): Document ID (UUID)
+- `segment_id` (string, required): Segment ID (UUID)
+
+#### Response
+
+**Success (200)**
+```json
+{
+  "data": {
+    "$ref": "Segment schema (same as List Segments response)"
+  },
+  "doc_form": "string"
+}
+```
+
+#### 20. Update Segment
+
+**POST** `/datasets/{dataset_id}/documents/{document_id}/segments/{segment_id}`
+
+Updates the content, keywords, or status of a specific segment.
+
+#### Path Parameters
+- `dataset_id` (string, required): Dataset ID (UUID)
+- `document_id` (string, required): Document ID (UUID)
+- `segment_id` (string, required): Segment ID (UUID)
+
+#### Request Body (application/json)
+```json
+{
+  "segment": {
+    "content": {
+      "type": "string",
+      "required": true
+    },
+    "answer": {
+      "type": "string"
+    },
+    "keywords": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "enabled": {
+      "type": "boolean"
+    },
+    "regenerate_child_chunks": {
+      "type": "boolean",
+      "description": "Whether to regenerate child chunks (hierarchical mode)"
+    }
+  }
+}
+```
+
+#### Response
+
+**Success (200)**
+Same structure as Get Segment Detail.
+
+#### 21. Delete Segment
+
+**DELETE** `/datasets/{dataset_id}/documents/{document_id}/segments/{segment_id}`
+
+Deletes a specific segment from a document.
+
+#### Path Parameters
+- `dataset_id` (string, required): Dataset ID (UUID)
+- `document_id` (string, required): Document ID (UUID)
+- `segment_id` (string, required): Segment ID (UUID)
+
+#### Response
+
+**Success (204)**
+No content - successfully deleted.
+
+### Child Chunk Management
+
+#### 22. Create Child Chunk
+
+**POST** `/datasets/{dataset_id}/documents/{document_id}/segments/{segment_id}/child_chunks`
+
+Creates a new child chunk under a parent segment in hierarchical mode.
+
+#### Path Parameters
+- `dataset_id` (string, required): Dataset ID (UUID)
+- `document_id` (string, required): Document ID (UUID)
+- `segment_id` (string, required): Parent segment ID (UUID)
+
+#### Request Body (application/json)
+```json
+{
+  "content": {
+    "type": "string",
+    "required": true,
+    "description": "The content of the child chunk"
+  }
+}
+```
+
+#### Response
+
+**Success (200)**
+```json
+{
+  "data": {
+    "id": "string (uuid)",
+    "segment_id": "string (uuid)",
+    "content": "string",
+    "word_count": "integer",
+    "tokens": "integer",
+    "index_node_id": "string",
+    "index_node_hash": "string",
+    "status": "string",
+    "created_by": "string (uuid)",
+    "created_at": "integer (int64)",
+    "indexing_at": "integer (int64)",
+    "completed_at": "integer (int64)",
+    "error": "string (nullable)",
+    "stopped_at": "integer (int64, nullable)"
+  }
+}
+```
+
+#### 23. List Child Chunks
+
+**GET** `/datasets/{dataset_id}/documents/{document_id}/segments/{segment_id}/child_chunks`
+
+Retrieves a list of child chunks for a specific parent segment.
+
+#### Path Parameters
+- `dataset_id` (string, required): Dataset ID (UUID)
+- `document_id` (string, required): Document ID (UUID)
+- `segment_id` (string, required): Parent segment ID (UUID)
+
+#### Query Parameters
+- `keyword` (string, optional): Search keyword to filter child chunks
+- `page` (integer, optional): Page number, default 1
+- `limit` (integer, optional): Items per page, default 20, max 100
+
+#### Response
+
+**Success (200)**
+```json
+{
+  "data": [
+    {
+      "$ref": "ChildChunk schema (same as Create Child Chunk response)"
+    }
+  ],
+  "total": "integer",
+  "total_pages": "integer",
+  "page": "integer",
+  "limit": "integer"
+}
+```
+
+#### 24. Update Child Chunk
+
+**PATCH** `/datasets/{dataset_id}/documents/{document_id}/segments/{segment_id}/child_chunks/{child_chunk_id}`
+
+Updates the content of a specific child chunk.
+
+#### Path Parameters
+- `dataset_id` (string, required): Dataset ID (UUID)
+- `document_id` (string, required): Document ID (UUID)
+- `segment_id` (string, required): Parent segment ID (UUID)
+- `child_chunk_id` (string, required): Child chunk ID (UUID)
+
+#### Request Body (application/json)
+```json
+{
+  "content": {
+    "type": "string",
+    "required": true,
+    "description": "The updated content for the child chunk"
+  }
+}
+```
+
+#### Response
+
+**Success (200)**
+Same structure as Create Child Chunk.
+
+#### 25. Delete Child Chunk
+
+**DELETE** `/datasets/{dataset_id}/documents/{document_id}/segments/{segment_id}/child_chunks/{child_chunk_id}`
+
+Deletes a specific child chunk.
+
+#### Path Parameters
+- `dataset_id` (string, required): Dataset ID (UUID)
+- `document_id` (string, required): Document ID (UUID)
+- `segment_id` (string, required): Parent segment ID (UUID)
+- `child_chunk_id` (string, required): Child chunk ID (UUID)
+
+#### Response
+
+**Success (204)**
+No content - successfully deleted.
+
+### Tag Management
+
+#### 26. Create Knowledge Base Tag
+
+**POST** `/datasets/tags`
+
+Creates a new tag that can be used to categorize knowledge bases.
+
+#### Request Body (application/json)
+```json
+{
+  "name": {
+    "type": "string",
+    "required": true,
+    "maxLength": 50,
+    "description": "The name of the new tag"
+  }
+}
+```
+
+#### Response
+
+**Success (200)**
+```json
+{
+  "id": "string (uuid)",
+  "name": "string",
+  "type": "string (example: knowledge)",
+  "binding_count": "integer"
+}
+```
+
+#### 27. Get Knowledge Base Tags
+
+**GET** `/datasets/tags`
+
+Retrieves a list of all available knowledge base tags.
+
+#### Response
+
+**Success (200)**
+```json
+[
+  {
+    "id": "string (uuid)",
+    "name": "string",
+    "type": "string",
+    "binding_count": "integer"
+  }
+]
+```
+
+#### 28. Update Knowledge Base Tag
+
+**PATCH** `/datasets/tags`
+
+Updates the name of an existing tag.
+
+#### Request Body (application/json)
+```json
+{
+  "tag_id": {
+    "type": "string",
+    "format": "uuid",
+    "required": true,
+    "description": "The ID of the tag to modify"
+  },
+  "name": {
+    "type": "string",
+    "required": true,
+    "maxLength": 50,
+    "description": "The new name for the tag"
+  }
+}
+```
+
+#### Response
+
+**Success (200)**
+Same structure as Create Knowledge Base Tag.
+
+#### 29. Delete Knowledge Base Tag
+
+**DELETE** `/datasets/tags`
+
+Deletes a tag. The tag must not be bound to any knowledge bases.
+
+#### Request Body (application/json)
+```json
+{
+  "tag_id": {
+    "type": "string",
+    "format": "uuid",
+    "required": true,
+    "description": "The ID of the tag to delete"
+  }
+}
+```
+
+#### Response
+
+**Success (200)**
+```json
+{
+  "result": "success"
+}
+```
+
+#### 30. Bind Tags to Dataset
+
+**POST** `/datasets/tags/binding`
+
+Binds one or more tags to a specific knowledge base.
+
+#### Request Body (application/json)
+```json
+{
+  "target_id": {
+    "type": "string",
+    "format": "uuid",
+    "required": true,
+    "description": "The ID of the dataset to bind tags to"
+  },
+  "tag_ids": {
+    "type": "array",
+    "items": {"type": "string", "format": "uuid"},
+    "required": true,
+    "description": "A list of tag IDs to bind"
+  }
+}
+```
+
+#### Response
+
+**Success (200)**
+```json
+{
+  "result": "success"
+}
+```
+
+#### 31. Unbind Tag from Dataset
+
+**POST** `/datasets/tags/unbinding`
+
+Unbinds a specific tag from a knowledge base.
+
+#### Request Body (application/json)
+```json
+{
+  "target_id": {
+    "type": "string",
+    "format": "uuid",
+    "required": true,
+    "description": "The ID of the dataset"
+  },
+  "tag_id": {
+    "type": "string",
+    "format": "uuid",
+    "required": true,
+    "description": "The ID of the tag to unbind"
+  }
+}
+```
+
+#### Response
+
+**Success (200)**
+```json
+{
+  "result": "success"
+}
+```
+
+#### 32. Query Dataset Tags
+
+**POST** `/datasets/{dataset_id}/tags`
+
+Retrieves all tags that are currently bound to a specific dataset.
+
+#### Path Parameters
+- `dataset_id` (string, required): Dataset ID (UUID)
+
+#### Response
+
+**Success (200)**
+```json
+{
+  "data": [
+    {
+      "id": "string (uuid)",
+      "name": "string"
+    }
+  ],
+  "total": "integer"
+}
+```
+
+### Model Management
+
+#### 33. Get Available Embedding Models
+
+**GET** `/workspaces/current/models/model-types/text-embedding`
+
+Fetches a list of all available text embedding models that can be used for creating and querying knowledge bases.
+
+#### Response
+
+**Success (200)**
+```json
+{
+  "data": [
+    {
+      "provider": "string",
+      "label": {
+        "additionalProperties": "string"
+      },
+      "icon_small": {
+        "additionalProperties": "string (uri)"
+      },
+      "icon_large": {
+        "additionalProperties": "string (uri)"
+      },
+      "status": "string",
+      "models": [
+        {
+          "model": "string",
+          "label": {
+            "additionalProperties": "string"
+          },
+          "model_type": "string",
+          "features": "array (nullable)",
+          "fetch_from": "string",
+          "model_properties": {
+            "context_size": "integer"
+          },
+          "deprecated": "boolean",
+          "status": "string",
+          "load_balancing_enabled": "boolean"
+        }
+      ]
+    }
+  ]
+}
+```
+
+## 📋 Data Schemas
+
+### ProcessRule Schema
+
+```json
+{
+  "mode": {
+    "type": "string",
+    "enum": ["automatic", "custom", "hierarchical"],
+    "description": "The processing mode"
+  },
+  "rules": {
+    "type": "object",
+    "nullable": true,
+    "properties": {
+      "pre_processing_rules": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "enum": ["remove_extra_spaces", "remove_urls_emails"]
+            },
+            "enabled": {"type": "boolean"}
+          }
+        }
+      },
+      "segmentation": {
+        "type": "object",
+        "properties": {
+          "separator": {"type": "string"},
+          "max_tokens": {"type": "integer"}
+        }
+      },
+      "parent_mode": {
+        "type": "string",
+        "enum": ["full-doc", "paragraph"]
+      },
+      "subchunk_segmentation": {
+        "type": "object",
+        "properties": {
+          "separator": {"type": "string"},
+          "max_tokens": {"type": "integer"},
+          "chunk_overlap": {"type": "integer"}
+        }
+      }
+    }
+  }
+}
+```
+
+### RetrievalModel Schema
+
+```json
+{
+  "search_method": {
+    "type": "string",
+    "enum": ["hybrid_search", "semantic_search", "full_text_search", "keyword_search"]
+  },
+  "reranking_enable": {"type": "boolean"},
+  "reranking_mode": {
+    "type": "object",
+    "nullable": true,
+    "properties": {
+      "reranking_provider_name": {"type": "string"},
+      "reranking_model_name": {"type": "string"}
+    }
+  },
+  "top_k": {"type": "integer"},
+  "score_threshold_enabled": {"type": "boolean"},
+  "score_threshold": {"type": "number", "nullable": true},
+  "weights": {"type": "number", "nullable": true}
+}
+```
+
+## 🔍 Enum Values
+
+### Indexing Technique
+- `high_quality`: High-quality indexing with better accuracy
+- `economy`: Economy indexing with faster processing
+
+### Document Form
+- `text_model`: Standard text processing
+- `hierarchical_model`: Hierarchical chunk processing
+- `qa_model`: Question-answer format
+
+### Permission Types
+- `only_me`: Private access
+- `all_team_members`: Team-wide access
+- `partial_members`: Selective member access
+
+### Search Methods
+- `hybrid_search`: Combines semantic and keyword search
+- `semantic_search`: Vector-based semantic search
+- `full_text_search`: Traditional full-text search
+- `keyword_search`: Keyword-based search
+
+### Document Status Actions
+- `enable`: Enable documents
+- `disable`: Disable documents
+- `archive`: Archive documents
+- `un_archive`: Unarchive documents
+
+### Indexing Status Values
+- `waiting`: Waiting to be processed
+- `parsing`: Parsing document content
+- `cleaning`: Cleaning and preprocessing
+- `splitting`: Splitting into segments
+- `indexing`: Creating embeddings
+- `completed`: Processing completed
+- `error`: Processing failed
+- `paused`: Processing paused `dataset_id` (string, required): Dataset ID (UUID)
+- `document_id` (string, required): Document ID (UUID)
+
+#### Query Parameters
 - `keyword` (string, optional): Search keyword
 - `status` (string, optional): Filter segments by their indexing status (e.g., "completed")
 

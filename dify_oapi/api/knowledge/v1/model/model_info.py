@@ -1,21 +1,49 @@
 """Model information model for Knowledge Base API."""
 
-from typing import Any, Optional
+from typing import Optional
 
 from pydantic import BaseModel
 
-from .knowledge_types import ModelType, ProviderType
+from .model_parameters import ModelParameters
+
+
+class ModelLabel(BaseModel):
+    """Model label with localization support."""
+
+    en_US: Optional[str] = None  # noqa: N815
+    zh_Hans: Optional[str] = None  # noqa: N815
+
+
+class ModelIcon(BaseModel):
+    """Model icon with different sizes."""
+
+    en_US: Optional[str] = None  # noqa: N815
+    zh_Hans: Optional[str] = None  # noqa: N815
+
+
+class EmbeddingModelDetails(BaseModel):
+    """Individual embedding model details."""
+
+    model: Optional[str] = None
+    label: Optional[ModelLabel] = None
+    model_type: Optional[str] = None
+    features: Optional[list[str]] = None
+    fetch_from: Optional[str] = None
+    model_properties: Optional[ModelParameters] = None
+    deprecated: Optional[bool] = None
+    status: Optional[str] = None
+    load_balancing_enabled: Optional[bool] = None
 
 
 class ModelInfo(BaseModel):
-    """Model information model with builder pattern."""
+    """Model provider information with embedding models."""
 
-    model_name: Optional[str] = None
-    model_type: Optional[ModelType] = None
     provider: Optional[str] = None
-    provider_type: Optional[ProviderType] = None
-    credentials: Optional[dict[str, Any]] = None
-    load_balancing: Optional[dict[str, Any]] = None
+    label: Optional[ModelLabel] = None
+    icon_small: Optional[ModelIcon] = None
+    icon_large: Optional[ModelIcon] = None
+    status: Optional[str] = None
+    models: Optional[list[EmbeddingModelDetails]] = None
 
     @staticmethod
     def builder() -> "ModelInfoBuilder":
@@ -31,26 +59,26 @@ class ModelInfoBuilder:
     def build(self) -> ModelInfo:
         return self._model_info
 
-    def model_name(self, model_name: str) -> "ModelInfoBuilder":
-        self._model_info.model_name = model_name
-        return self
-
-    def model_type(self, model_type: ModelType) -> "ModelInfoBuilder":
-        self._model_info.model_type = model_type
-        return self
-
     def provider(self, provider: str) -> "ModelInfoBuilder":
         self._model_info.provider = provider
         return self
 
-    def provider_type(self, provider_type: ProviderType) -> "ModelInfoBuilder":
-        self._model_info.provider_type = provider_type
+    def label(self, label: ModelLabel) -> "ModelInfoBuilder":
+        self._model_info.label = label
         return self
 
-    def credentials(self, credentials: dict[str, Any]) -> "ModelInfoBuilder":
-        self._model_info.credentials = credentials
+    def icon_small(self, icon_small: ModelIcon) -> "ModelInfoBuilder":
+        self._model_info.icon_small = icon_small
         return self
 
-    def load_balancing(self, load_balancing: dict[str, Any]) -> "ModelInfoBuilder":
-        self._model_info.load_balancing = load_balancing
+    def icon_large(self, icon_large: ModelIcon) -> "ModelInfoBuilder":
+        self._model_info.icon_large = icon_large
+        return self
+
+    def status(self, status: str) -> "ModelInfoBuilder":
+        self._model_info.status = status
+        return self
+
+    def models(self, models: list[EmbeddingModelDetails]) -> "ModelInfoBuilder":
+        self._model_info.models = models
         return self

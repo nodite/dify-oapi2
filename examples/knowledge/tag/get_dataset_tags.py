@@ -8,7 +8,7 @@ This example demonstrates how to query tags bound to a dataset using the Dify AP
 import asyncio
 import os
 
-from dify_oapi.api.knowledge.v1.model.tag.query_bound_request import QueryBoundRequest
+from dify_oapi.api.knowledge.v1.model.get_dataset_tags_request import GetDatasetTagsRequest
 from dify_oapi.client import Client
 from dify_oapi.core.model.request_option import RequestOption
 
@@ -26,9 +26,9 @@ def query_bound_tags_sync() -> None:
 
         client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
-        request = QueryBoundRequest.builder().dataset_id(dataset_id).build()
+        request = GetDatasetTagsRequest.builder().dataset_id(dataset_id).build()
         request_option = RequestOption.builder().api_key(api_key).build()
-        response = client.knowledge.v1.tag.query_bound(request, request_option)
+        response = client.knowledge.v1.tag.get_dataset_tags(request, request_option)
 
         if not response.success:
             print(f"API Error: {response.code} - {response.msg}")
@@ -67,9 +67,9 @@ async def query_bound_tags_async() -> None:
 
         client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
-        request = QueryBoundRequest.builder().dataset_id(dataset_id).build()
+        request = GetDatasetTagsRequest.builder().dataset_id(dataset_id).build()
         request_option = RequestOption.builder().api_key(api_key).build()
-        response = await client.knowledge.v1.tag.aquery_bound(request, request_option)
+        response = await client.knowledge.v1.tag.aget_dataset_tags(request, request_option)
 
         if not response.success:
             print(f"API Error (async): {response.code} - {response.msg}")

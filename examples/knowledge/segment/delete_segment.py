@@ -19,7 +19,7 @@ def delete_example_segments():
     if not document_id:
         raise ValueError("DOCUMENT_ID environment variable is required")
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
     req_option = RequestOption.builder().api_key(api_key).build()
 
     # List segments to find example ones
@@ -56,7 +56,7 @@ async def adelete_example_segments():
     if not document_id:
         raise ValueError("DOCUMENT_ID environment variable is required")
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
     req_option = RequestOption.builder().api_key(api_key).build()
 
     # List segments to find example ones

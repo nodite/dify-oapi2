@@ -18,7 +18,7 @@ def list_segments_example():
     if not document_id:
         raise ValueError("DOCUMENT_ID environment variable is required")
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
     req = ListSegmentsRequest.builder().dataset_id(dataset_id).document_id(document_id).build()
     req_option = RequestOption.builder().api_key(api_key).build()
@@ -43,7 +43,7 @@ async def alist_segments_example():
     if not document_id:
         raise ValueError("DOCUMENT_ID environment variable is required")
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
     req = ListSegmentsRequest.builder().dataset_id(dataset_id).document_id(document_id).build()
     req_option = RequestOption.builder().api_key(api_key).build()

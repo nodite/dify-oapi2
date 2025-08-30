@@ -4,13 +4,18 @@ from __future__ import annotations
 
 from pydantic import BaseModel
 
-from .child_chunk_content import ChildChunkContent
+
+class ChunkContent(BaseModel):
+    """Individual chunk content for creation."""
+
+    content: str | None = None
+    keywords: list[str] | None = None
 
 
 class CreateChildChunkRequestBody(BaseModel):
     """Request body model for create child chunk API."""
 
-    chunks: list[ChildChunkContent] | None = None
+    chunks: list[ChunkContent] | None = None
 
     @staticmethod
     def builder() -> CreateChildChunkRequestBodyBuilder:
@@ -26,6 +31,14 @@ class CreateChildChunkRequestBodyBuilder:
     def build(self) -> CreateChildChunkRequestBody:
         return self._create_child_chunk_request_body
 
-    def chunks(self, chunks: list[ChildChunkContent]) -> CreateChildChunkRequestBodyBuilder:
+    def chunks(self, chunks: list[ChunkContent]) -> CreateChildChunkRequestBodyBuilder:
         self._create_child_chunk_request_body.chunks = chunks
+        return self
+
+    def add_chunk(self, content: str, keywords: list[str] | None = None) -> CreateChildChunkRequestBodyBuilder:
+        """Convenience method to add a single chunk."""
+        chunk = ChunkContent(content=content, keywords=keywords)
+        if self._create_child_chunk_request_body.chunks is None:
+            self._create_child_chunk_request_body.chunks = []
+        self._create_child_chunk_request_body.chunks.append(chunk)
         return self

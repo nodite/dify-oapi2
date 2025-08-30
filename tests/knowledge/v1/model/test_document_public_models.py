@@ -1,15 +1,14 @@
 """Tests for document public models."""
 
-from dify_oapi.api.knowledge.v1.model.document.data_source_info import DataSourceInfo
-from dify_oapi.api.knowledge.v1.model.document.document_info import DocumentInfo
-from dify_oapi.api.knowledge.v1.model.document.indexing_status_info import IndexingStatusInfo
-from dify_oapi.api.knowledge.v1.model.document.pre_processing_rule import PreProcessingRule
-from dify_oapi.api.knowledge.v1.model.document.process_rule import ProcessRule
-from dify_oapi.api.knowledge.v1.model.document.retrieval_model import RetrievalModel
-from dify_oapi.api.knowledge.v1.model.document.rules import Rules
-from dify_oapi.api.knowledge.v1.model.document.segmentation import Segmentation
-from dify_oapi.api.knowledge.v1.model.document.subchunk_segmentation import SubchunkSegmentation
-from dify_oapi.api.knowledge.v1.model.document.upload_file_info import UploadFileInfo
+from dify_oapi.api.knowledge.v1.model.batch_info import BatchInfo as IndexingStatusInfo
+from dify_oapi.api.knowledge.v1.model.document_info import DocumentInfo
+from dify_oapi.api.knowledge.v1.model.file_info import FileInfo as DataSourceInfo
+from dify_oapi.api.knowledge.v1.model.file_info import FileInfo as UploadFileInfo
+from dify_oapi.api.knowledge.v1.model.preprocessing_rule import PreprocessingRule
+from dify_oapi.api.knowledge.v1.model.process_rule import ProcessRule
+from dify_oapi.api.knowledge.v1.model.process_rules import ProcessRules
+from dify_oapi.api.knowledge.v1.model.retrieval_model import RetrievalModel
+from dify_oapi.api.knowledge.v1.model.segmentation_rule import SegmentationRule
 
 
 class TestDocumentInfo:
@@ -68,7 +67,7 @@ class TestProcessRule:
 
     def test_builder_pattern(self) -> None:
         """Test ProcessRule builder pattern functionality."""
-        rules = Rules.builder().build()
+        rules = ProcessRules.builder().build()
         process_rule = ProcessRule.builder().mode("custom").rules(rules).build()
 
         assert process_rule.mode == "custom"
@@ -76,8 +75,8 @@ class TestProcessRule:
 
     def test_field_validation(self) -> None:
         """Test ProcessRule field validation."""
-        segmentation = Segmentation.builder().separator("\n").max_tokens(1000).build()
-        rules = Rules.builder().segmentation(segmentation).build()
+        segmentation = SegmentationRule.builder().separator("\n").max_tokens(1000).build()
+        rules = ProcessRules.builder().segmentation(segmentation).build()
         process_rule = ProcessRule(mode="automatic", rules=rules)
 
         assert process_rule.mode == "automatic"
@@ -98,107 +97,107 @@ class TestProcessRule:
         assert direct.mode == builder.mode
 
 
-class TestPreProcessingRule:
-    """Test PreProcessingRule model."""
+class TestPreprocessingRule:
+    """Test PreprocessingRule model."""
 
     def test_builder_pattern(self) -> None:
-        """Test PreProcessingRule builder pattern functionality."""
-        pre_rule = PreProcessingRule.builder().id("remove_urls_emails").enabled(False).build()
+        """Test PreprocessingRule builder pattern functionality."""
+        pre_rule = PreprocessingRule.builder().id("remove_urls_emails").enabled(False).build()
 
         assert pre_rule.id == "remove_urls_emails"
         assert pre_rule.enabled is False
 
     def test_field_validation(self) -> None:
-        """Test PreProcessingRule field validation."""
-        pre_rule = PreProcessingRule(id="remove_extra_spaces", enabled=True)
+        """Test PreprocessingRule field validation."""
+        pre_rule = PreprocessingRule(id="remove_extra_spaces", enabled=True)
 
         assert pre_rule.id == "remove_extra_spaces"
         assert pre_rule.enabled is True
 
     def test_serialization(self) -> None:
-        """Test PreProcessingRule serialization."""
-        pre_rule = PreProcessingRule(id="remove_extra_spaces", enabled=True)
+        """Test PreprocessingRule serialization."""
+        pre_rule = PreprocessingRule(id="remove_extra_spaces", enabled=True)
         data = pre_rule.model_dump()
         assert data["id"] == "remove_extra_spaces"
         assert data["enabled"] is True
 
     def test_direct_instantiation(self) -> None:
-        """Test PreProcessingRule direct instantiation alongside builder."""
-        direct = PreProcessingRule(id="remove_extra_spaces", enabled=True)
-        builder = PreProcessingRule.builder().id("remove_extra_spaces").enabled(True).build()
+        """Test PreprocessingRule direct instantiation alongside builder."""
+        direct = PreprocessingRule(id="remove_extra_spaces", enabled=True)
+        builder = PreprocessingRule.builder().id("remove_extra_spaces").enabled(True).build()
 
         assert direct.id == builder.id
         assert direct.enabled == builder.enabled
 
 
-class TestSegmentation:
-    """Test Segmentation model."""
+class TestSegmentationRule:
+    """Test SegmentationRule model."""
 
     def test_builder_pattern(self) -> None:
-        """Test Segmentation builder pattern functionality."""
-        segmentation = Segmentation.builder().separator("***").max_tokens(512).chunk_overlap(50).build()
+        """Test SegmentationRule builder pattern functionality."""
+        segmentation = SegmentationRule.builder().separator("***").max_tokens(512).build()
 
         assert segmentation.separator == "***"
         assert segmentation.max_tokens == 512
-        assert segmentation.chunk_overlap == 50
 
     def test_field_validation(self) -> None:
-        """Test Segmentation field validation."""
-        segmentation = Segmentation(separator="\n", max_tokens=1000, chunk_overlap=100)
+        """Test SegmentationRule field validation."""
+        segmentation = SegmentationRule(separator="\n", max_tokens=1000)
 
         assert segmentation.separator == "\n"
         assert segmentation.max_tokens == 1000
-        assert segmentation.chunk_overlap == 100
 
     def test_serialization(self) -> None:
-        """Test Segmentation serialization."""
-        segmentation = Segmentation(separator="\n", max_tokens=1000)
+        """Test SegmentationRule serialization."""
+        segmentation = SegmentationRule(separator="\n", max_tokens=1000)
         data = segmentation.model_dump()
         assert data["separator"] == "\n"
         assert data["max_tokens"] == 1000
 
     def test_direct_instantiation(self) -> None:
-        """Test Segmentation direct instantiation alongside builder."""
-        direct = Segmentation(separator="\n", max_tokens=1000)
-        builder = Segmentation.builder().separator("\n").max_tokens(1000).build()
+        """Test SegmentationRule direct instantiation alongside builder."""
+        direct = SegmentationRule(separator="\n", max_tokens=1000)
+        builder = SegmentationRule.builder().separator("\n").max_tokens(1000).build()
 
         assert direct.separator == builder.separator
         assert direct.max_tokens == builder.max_tokens
 
 
-class TestSubchunkSegmentation:
-    """Test SubchunkSegmentation model."""
+class TestProcessRules:
+    """Test ProcessRules model."""
 
     def test_builder_pattern(self) -> None:
-        """Test SubchunkSegmentation builder pattern functionality."""
-        subchunk = SubchunkSegmentation.builder().separator("---").max_tokens(128).chunk_overlap(10).build()
+        """Test ProcessRules builder pattern functionality."""
+        segmentation = SegmentationRule.builder().separator("\n").max_tokens(1000).build()
+        rules = ProcessRules.builder().segmentation(segmentation).build()
 
-        assert subchunk.separator == "---"
-        assert subchunk.max_tokens == 128
-        assert subchunk.chunk_overlap == 10
+        assert rules.segmentation == segmentation
 
     def test_field_validation(self) -> None:
-        """Test SubchunkSegmentation field validation."""
-        subchunk = SubchunkSegmentation(separator="\n", max_tokens=256, chunk_overlap=25)
+        """Test ProcessRules field validation."""
+        pre_rule = PreprocessingRule(id="remove_extra_spaces", enabled=True)
+        segmentation = SegmentationRule(separator="\n", max_tokens=1000)
+        rules = ProcessRules(pre_processing_rules=[pre_rule], segmentation=segmentation)
 
-        assert subchunk.separator == "\n"
-        assert subchunk.max_tokens == 256
-        assert subchunk.chunk_overlap == 25
+        assert rules.pre_processing_rules == [pre_rule]
+        assert rules.segmentation == segmentation
 
     def test_serialization(self) -> None:
-        """Test SubchunkSegmentation serialization."""
-        subchunk = SubchunkSegmentation(separator="\n", max_tokens=256)
-        data = subchunk.model_dump()
-        assert data["separator"] == "\n"
-        assert data["max_tokens"] == 256
+        """Test ProcessRules serialization."""
+        segmentation = SegmentationRule(separator="\n", max_tokens=1000)
+        rules = ProcessRules(segmentation=segmentation)
+        data = rules.model_dump()
+        assert data["segmentation"]["separator"] == "\n"
+        assert data["segmentation"]["max_tokens"] == 1000
 
     def test_direct_instantiation(self) -> None:
-        """Test SubchunkSegmentation direct instantiation alongside builder."""
-        direct = SubchunkSegmentation(separator="\n", max_tokens=256)
-        builder = SubchunkSegmentation.builder().separator("\n").max_tokens(256).build()
+        """Test ProcessRules direct instantiation alongside builder."""
+        segmentation = SegmentationRule(separator="\n", max_tokens=1000)
+        direct = ProcessRules(segmentation=segmentation)
+        builder = ProcessRules.builder().segmentation(segmentation).build()
 
-        assert direct.separator == builder.separator
-        assert direct.max_tokens == builder.max_tokens
+        assert direct.segmentation.separator == builder.segmentation.separator
+        assert direct.segmentation.max_tokens == builder.segmentation.max_tokens
 
 
 class TestDataSourceInfo:
@@ -206,17 +205,15 @@ class TestDataSourceInfo:
 
     def test_builder_pattern(self) -> None:
         """Test DataSourceInfo builder pattern functionality."""
-        data_source = DataSourceInfo.builder().upload_file_id("file-456").upload_file({"size": 1024}).build()
+        data_source = DataSourceInfo.builder().upload_file_id("file-456").build()
 
         assert data_source.upload_file_id == "file-456"
-        assert data_source.upload_file == {"size": 1024}
 
     def test_field_validation(self) -> None:
         """Test DataSourceInfo field validation."""
-        data_source = DataSourceInfo(upload_file_id="file-123", upload_file={"name": "test.txt"})
+        data_source = DataSourceInfo(upload_file_id="file-123")
 
         assert data_source.upload_file_id == "file-123"
-        assert data_source.upload_file == {"name": "test.txt"}
 
     def test_serialization(self) -> None:
         """Test DataSourceInfo serialization."""

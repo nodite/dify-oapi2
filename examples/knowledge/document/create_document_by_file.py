@@ -9,10 +9,9 @@ import asyncio
 import os
 import tempfile
 
-from dify_oapi.api.knowledge.v1.model.document.create_by_file_request import CreateByFileRequest
-from dify_oapi.api.knowledge.v1.model.document.create_by_file_request_body import CreateByFileRequestBody
-from dify_oapi.api.knowledge.v1.model.document.create_by_file_request_body_data import CreateByFileRequestBodyData
-from dify_oapi.api.knowledge.v1.model.document.process_rule import ProcessRule
+from dify_oapi.api.knowledge.v1.model.create_document_by_file_request import CreateDocumentByFileRequest
+from dify_oapi.api.knowledge.v1.model.create_document_by_file_request_body import CreateDocumentByFileRequestBody
+from dify_oapi.api.knowledge.v1.model.process_rule import ProcessRule
 from dify_oapi.client import Client
 from dify_oapi.core.model.request_option import RequestOption
 
@@ -52,15 +51,15 @@ def create_document_by_file_sync() -> None:
             # Create process rule
             process_rule = ProcessRule.builder().mode("automatic").build()
 
-            # Create data object
-            data = (
-                CreateByFileRequestBodyData.builder().indexing_technique("economy").process_rule(process_rule).build()
+            request_body = (
+                CreateDocumentByFileRequestBody.builder()
+                .indexing_technique("economy")
+                .process_rule(process_rule)
+                .build()
             )
 
-            request_body = CreateByFileRequestBody.builder().data(data).build()
-
             request = (
-                CreateByFileRequest.builder()
+                CreateDocumentByFileRequest.builder()
                 .dataset_id(dataset_id)
                 .request_body(request_body)
                 .file(file_io, os.path.basename(file_path))
@@ -112,15 +111,15 @@ async def create_document_by_file_async() -> None:
             # Create process rule
             process_rule = ProcessRule.builder().mode("automatic").build()
 
-            # Create data object
-            data = (
-                CreateByFileRequestBodyData.builder().indexing_technique("economy").process_rule(process_rule).build()
+            request_body = (
+                CreateDocumentByFileRequestBody.builder()
+                .indexing_technique("economy")
+                .process_rule(process_rule)
+                .build()
             )
 
-            request_body = CreateByFileRequestBody.builder().data(data).build()
-
             request = (
-                CreateByFileRequest.builder()
+                CreateDocumentByFileRequest.builder()
                 .dataset_id(dataset_id)
                 .request_body(request_body)
                 .file(file_io, os.path.basename(file_path))

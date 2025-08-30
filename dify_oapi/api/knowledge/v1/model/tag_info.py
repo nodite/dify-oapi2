@@ -13,8 +13,9 @@ class TagInfo(BaseModel):
     id: Optional[str] = None
     name: Optional[str] = None
     type: Optional[TagType] = None
+    binding_count: Optional[int] = None
     created_by: Optional[str] = None
-    created_at: Optional[int] = None
+    created_at: Optional[float] = None
 
     @staticmethod
     def builder() -> "TagInfoBuilder":
@@ -46,6 +47,6 @@ class TagInfoBuilder:
         self._tag_info.created_by = created_by
         return self
 
-    def created_at(self, created_at: int) -> "TagInfoBuilder":
+    def created_at(self, created_at: float) -> "TagInfoBuilder":
         self._tag_info.created_at = created_at
         return self

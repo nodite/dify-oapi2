@@ -15,7 +15,7 @@ def update_dataset_example():
     if not dataset_id:
         raise ValueError("DATASET_ID environment variable is required")
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
     req_body = (
         UpdateDatasetRequestBody.builder()
@@ -41,7 +41,7 @@ async def aupdate_dataset_example():
     if not dataset_id:
         raise ValueError("DATASET_ID environment variable is required")
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
     req_body = (
         UpdateDatasetRequestBody.builder()

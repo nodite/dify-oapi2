@@ -1,8 +1,11 @@
 """Reranking model for Knowledge Base API."""
 
-from typing import Any, Optional
+from typing import Optional
 
 from pydantic import BaseModel
+
+from .model_credentials import ModelCredentials
+from .model_parameters import ModelParameters
 
 
 class RerankingModel(BaseModel):
@@ -10,8 +13,8 @@ class RerankingModel(BaseModel):
 
     model: Optional[str] = None
     provider: Optional[str] = None
-    credentials: Optional[dict[str, Any]] = None
-    model_parameters: Optional[dict[str, Any]] = None
+    credentials: Optional[ModelCredentials] = None
+    model_parameters: Optional[ModelParameters] = None
 
     @staticmethod
     def builder() -> "RerankingModelBuilder":
@@ -35,10 +38,10 @@ class RerankingModelBuilder:
         self._reranking_model.provider = provider
         return self
 
-    def credentials(self, credentials: dict[str, Any]) -> "RerankingModelBuilder":
+    def credentials(self, credentials: ModelCredentials) -> "RerankingModelBuilder":
         self._reranking_model.credentials = credentials
         return self
 
-    def model_parameters(self, model_parameters: dict[str, Any]) -> "RerankingModelBuilder":
+    def model_parameters(self, model_parameters: ModelParameters) -> "RerankingModelBuilder":
         self._reranking_model.model_parameters = model_parameters
         return self

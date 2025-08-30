@@ -130,7 +130,7 @@ class TestGetSiteModels:
             icon_type="emoji",
             icon="🤖",
             description="A test web application",
-            default_language="en",
+            default_language="en-US",
         )
 
         assert response.title == "Test WebApp"
@@ -138,4 +138,4 @@ class TestGetSiteModels:
         assert response.icon_type == "emoji"
         assert response.icon == "🤖"
         assert response.description == "A test web application"
-        assert response.default_language == "en"
+        assert response.default_language == "en-US"

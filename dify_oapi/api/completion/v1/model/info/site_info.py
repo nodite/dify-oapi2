@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pydantic import BaseModel
 
-from ..completion.completion_types import IconType
+from ..completion.completion_types import IconType, LanguageCode
 
 
 class SiteInfo(BaseModel):
@@ -17,7 +17,7 @@ class SiteInfo(BaseModel):
     copyright: str | None = None
     privacy_policy: str | None = None
     custom_disclaimer: str | None = None
-    default_language: str | None = None
+    default_language: LanguageCode | None = None
     show_workflow_steps: bool | None = None
     use_icon_as_answer_icon: bool | None = None
 
@@ -77,7 +77,7 @@ class SiteInfoBuilder:
         self._site_info.custom_disclaimer = custom_disclaimer
         return self
 
-    def default_language(self, default_language: str) -> SiteInfoBuilder:
+    def default_language(self, default_language: LanguageCode) -> SiteInfoBuilder:
         self._site_info.default_language = default_language
         return self
 

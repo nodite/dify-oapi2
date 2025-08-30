@@ -41,8 +41,8 @@ class TestSendMessageModels:
             SendMessageRequestBody.builder().inputs(inputs).response_mode("blocking").user("user-123").build()
         )
 
-        assert request_body.inputs == inputs
-        assert request_body.inputs.query == "What is AI?"
+        assert request_body.inputs == inputs.to_dict()
+        assert request_body.inputs["query"] == "What is AI?"
         assert request_body.response_mode == "blocking"
         assert request_body.user == "user-123"
 
@@ -50,8 +50,8 @@ class TestSendMessageModels:
         """Test SendMessageRequestBody validation."""
         request_body = SendMessageRequestBody.builder().build()
 
-        assert request_body.inputs is None
-        assert request_body.response_mode is None
+        assert request_body.inputs == {"query": ""}
+        assert request_body.response_mode == "streaming"
         assert request_body.user is None
 
     def test_response_inheritance(self) -> None:

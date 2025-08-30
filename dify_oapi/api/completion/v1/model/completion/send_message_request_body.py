@@ -1,51 +1,33 @@
 from __future__ import annotations
 
-from pydantic import BaseModel
+from typing import Any
+
+from pydantic import BaseModel, field_validator
 
 from .completion_inputs import CompletionInputs
-from .completion_types import FileType, ResponseMode, TransferMethod
-
-
-class FileInfo(BaseModel):
-    type: FileType | None = None
-    transfer_method: TransferMethod | None = None
-    url: str | None = None
-    upload_file_id: str | None = None
-
-    @staticmethod
-    def builder() -> FileInfoBuilder:
-        return FileInfoBuilder()
-
-
-class FileInfoBuilder:
-    def __init__(self):
-        self._file_info = FileInfo()
-
-    def build(self) -> FileInfo:
-        return self._file_info
-
-    def type(self, type_: FileType) -> FileInfoBuilder:
-        self._file_info.type = type_
-        return self
-
-    def transfer_method(self, transfer_method: TransferMethod) -> FileInfoBuilder:
-        self._file_info.transfer_method = transfer_method
-        return self
-
-    def url(self, url: str) -> FileInfoBuilder:
-        self._file_info.url = url
-        return self
-
-    def upload_file_id(self, upload_file_id: str) -> FileInfoBuilder:
-        self._file_info.upload_file_id = upload_file_id
-        return self
+from .completion_types import ResponseMode
+from .input_file_object import InputFileObject
 
 
 class SendMessageRequestBody(BaseModel):
-    inputs: CompletionInputs | None = None
-    response_mode: ResponseMode | None = None
+    """Request body for sending completion messages."""
+
+    inputs: dict[str, Any]  # Variable values defined by the App, must include 'query'
+    response_mode: ResponseMode | None = "streaming"
     user: str | None = None
-    files: list[FileInfo] | None = None
+    files: list[InputFileObject] | None = None
+
+    @field_validator("inputs")
+    @classmethod
+    def validate_inputs(cls, v):
+        """Validate that inputs contains the required 'query' field."""
+        if not isinstance(v, dict):
+            raise ValueError("inputs must be a dictionary")
+        if "query" not in v:
+            raise ValueError('inputs must contain a "query" field')
+        if not isinstance(v["query"], str):
+            raise ValueError("query field must be a string")
+        return v
 
     @staticmethod
     def builder() -> SendMessageRequestBodyBuilder:
@@ -54,13 +36,27 @@ class SendMessageRequestBody(BaseModel):
 
 class SendMessageRequestBodyBuilder:
     def __init__(self):
-        self._send_message_request_body = SendMessageRequestBody()
+        self._send_message_request_body = SendMessageRequestBody(inputs={"query": ""})
 
     def build(self) -> SendMessageRequestBody:
         return self._send_message_request_body
 
-    def inputs(self, inputs: CompletionInputs) -> SendMessageRequestBodyBuilder:
-        self._send_message_request_body.inputs = inputs
+    def inputs(self, inputs: CompletionInputs | dict[str, Any]) -> SendMessageRequestBodyBuilder:
+        """Set inputs from CompletionInputs object or dictionary."""
+        if isinstance(inputs, CompletionInputs):
+            self._send_message_request_body.inputs = inputs.to_dict()
+        else:
+            self._send_message_request_body.inputs = inputs
+        return self
+
+    def query(self, query: str) -> SendMessageRequestBodyBuilder:
+        """Set the query field directly."""
+        self._send_message_request_body.inputs["query"] = query
+        return self
+
+    def add_variable(self, key: str, value: str) -> SendMessageRequestBodyBuilder:
+        """Add a custom variable to inputs."""
+        self._send_message_request_body.inputs[key] = value
         return self
 
     def response_mode(self, response_mode: ResponseMode) -> SendMessageRequestBodyBuilder:
@@ -71,6 +67,6 @@ class SendMessageRequestBodyBuilder:
         self._send_message_request_body.user = user
         return self
 
-    def files(self, files: list[FileInfo]) -> SendMessageRequestBodyBuilder:
+    def files(self, files: list[InputFileObject]) -> SendMessageRequestBodyBuilder:
         self._send_message_request_body.files = files
         return self

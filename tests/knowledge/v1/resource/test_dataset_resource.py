@@ -245,7 +245,10 @@ class TestDatasetResource:
 
         request_body = CreateRequestBody.builder().name("test_dataset").build()
         request = CreateRequest.builder().request_body(request_body).build()
-        response = dataset_resource.create(request)
+        request_option = RequestOption.builder().api_key("test-key").build()
+        response = dataset_resource.create(request, request_option)
 
         assert response.id == "test_id"
-        mock_execute.assert_called_once_with(dataset_resource.config, request, unmarshal_as=CreateResponse, option=None)
+        mock_execute.assert_called_once_with(
+            dataset_resource.config, request, unmarshal_as=CreateResponse, option=request_option
+        )

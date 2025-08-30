@@ -69,12 +69,9 @@ class TestRetrievalModel:
 
     def test_field_validation(self) -> None:
         """Test RetrievalModel field validation."""
-        reranking_model_dict = {"reranking_provider_name": "provider", "reranking_model_name": "model"}
-
         model = RetrievalModel(
             search_method="hybrid_search",
             reranking_enable=True,
-            reranking_model=reranking_model_dict,
             top_k=10,
             score_threshold_enabled=True,
             score_threshold=0.8,
@@ -82,9 +79,6 @@ class TestRetrievalModel:
 
         assert model.search_method == "hybrid_search"
         assert model.reranking_enable is True
-        assert model.reranking_model is not None
-        assert model.reranking_model["reranking_provider_name"] == "provider"
-        assert model.reranking_model["reranking_model_name"] == "model"
         assert model.top_k == 10
         assert model.score_threshold == 0.8
 
@@ -108,31 +102,31 @@ class TestRerankingModel:
 
     def test_builder_pattern(self) -> None:
         """Test RerankingModel builder pattern functionality."""
-        model = RerankingModel.builder().reranking_provider_name("provider").reranking_model_name("model").build()
+        model = RerankingModel.builder().provider("provider").model("model").build()
 
-        assert model.reranking_provider_name == "provider"
-        assert model.reranking_model_name == "model"
+        assert model.provider == "provider"
+        assert model.model == "model"
 
     def test_field_validation(self) -> None:
         """Test RerankingModel field validation."""
-        model = RerankingModel(reranking_provider_name="test_provider", reranking_model_name="test_model")
-        assert model.reranking_provider_name == "test_provider"
-        assert model.reranking_model_name == "test_model"
+        model = RerankingModel(provider="test_provider", model="test_model")
+        assert model.provider == "test_provider"
+        assert model.model == "test_model"
 
     def test_serialization(self) -> None:
         """Test RerankingModel serialization."""
-        model = RerankingModel(reranking_provider_name="provider", reranking_model_name="model")
+        model = RerankingModel(provider="provider", model="model")
         data = model.model_dump()
-        assert data["reranking_provider_name"] == "provider"
-        assert data["reranking_model_name"] == "model"
+        assert data["provider"] == "provider"
+        assert data["model"] == "model"
 
     def test_direct_instantiation(self) -> None:
         """Test RerankingModel direct instantiation alongside builder."""
-        direct = RerankingModel(reranking_provider_name="provider", reranking_model_name="model")
-        builder = RerankingModel.builder().reranking_provider_name("provider").reranking_model_name("model").build()
+        direct = RerankingModel(provider="provider", model="model")
+        builder = RerankingModel.builder().provider("provider").model("model").build()
 
-        assert direct.reranking_provider_name == builder.reranking_provider_name
-        assert direct.reranking_model_name == builder.reranking_model_name
+        assert direct.provider == builder.provider
+        assert direct.model == builder.model
 
 
 class TestTagInfo:
@@ -140,33 +134,33 @@ class TestTagInfo:
 
     def test_builder_pattern(self) -> None:
         """Test TagInfo builder pattern functionality."""
-        tag = TagInfo.builder().id("tag_id").name("tag_name").type("knowledge_type").binding_count(5).build()
+        tag = TagInfo.builder().id("tag_id").name("tag_name").type("knowledge").binding_count(5).build()
 
         assert tag.id == "tag_id"
         assert tag.name == "tag_name"
-        assert tag.type == "knowledge_type"
+        assert tag.type == "knowledge"
         assert tag.binding_count == 5
 
     def test_field_validation(self) -> None:
         """Test TagInfo field validation."""
-        tag = TagInfo(id="tag_id", name="tag_name", type="knowledge_type", binding_count=5)
+        tag = TagInfo(id="tag_id", name="tag_name", type="knowledge", binding_count=5)
         assert tag.id == "tag_id"
         assert tag.name == "tag_name"
-        assert tag.type == "knowledge_type"
+        assert tag.type == "knowledge"
         assert tag.binding_count == 5
 
     def test_serialization(self) -> None:
         """Test TagInfo serialization."""
-        tag = TagInfo(id="id", name="name", type="knowledge_type")
+        tag = TagInfo(id="id", name="name", type="knowledge")
         data = tag.model_dump()
         assert data["id"] == "id"
         assert data["name"] == "name"
-        assert data["type"] == "knowledge_type"
+        assert data["type"] == "knowledge"
 
     def test_direct_instantiation(self) -> None:
         """Test TagInfo direct instantiation alongside builder."""
-        direct = TagInfo(id="id", name="name", type="knowledge_type")
-        builder = TagInfo.builder().id("id").name("name").type("knowledge_type").build()
+        direct = TagInfo(id="id", name="name", type="knowledge")
+        builder = TagInfo.builder().id("id").name("name").type("knowledge").build()
 
         assert direct.id == builder.id
         assert direct.name == builder.name

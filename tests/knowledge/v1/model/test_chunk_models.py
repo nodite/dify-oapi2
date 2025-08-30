@@ -66,11 +66,10 @@ class TestCreateChildChunkModels:
 
     def test_request_builder(self) -> None:
         """Test CreateChildChunkRequest builder pattern."""
-        request_body = (
-            CreateChildChunkRequestBody.builder()
-            .chunks([{"content": "Test chunk content", "keywords": ["test", "chunk"]}])
-            .build()
-        )
+        from dify_oapi.api.knowledge.v1.model.create_child_chunk_request_body import ChunkContent
+
+        chunk_content = ChunkContent(content="Test chunk content", keywords=["test", "chunk"])
+        request_body = CreateChildChunkRequestBody.builder().chunks([chunk_content]).build()
 
         request = (
             CreateChildChunkRequest.builder()
@@ -98,12 +97,13 @@ class TestCreateChildChunkModels:
 
     def test_request_body_builder(self) -> None:
         """Test CreateChildChunkRequestBody builder pattern."""
-        request_body = (
-            CreateChildChunkRequestBody.builder().chunks([{"content": "Test content", "keywords": ["test"]}]).build()
-        )
+        from dify_oapi.api.knowledge.v1.model.create_child_chunk_request_body import ChunkContent
+
+        chunk_content = ChunkContent(content="Test content", keywords=["test"])
+        request_body = CreateChildChunkRequestBody.builder().chunks([chunk_content]).build()
         assert request_body.chunks is not None
         assert len(request_body.chunks) == 1
-        assert request_body.chunks[0]["content"] == "Test content"
+        assert request_body.chunks[0].content == "Test content"
 
     def test_request_body_validation(self) -> None:
         """Test CreateChildChunkRequestBody validation."""

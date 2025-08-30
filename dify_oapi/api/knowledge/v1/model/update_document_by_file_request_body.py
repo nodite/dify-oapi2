@@ -6,6 +6,7 @@ from pydantic import BaseModel
 
 from .knowledge_types import IndexingTechnique
 from .process_rule import ProcessRule
+from .retrieval_model import RetrievalModel
 
 
 class UpdateDocumentByFileRequestBody(BaseModel):
@@ -13,7 +14,12 @@ class UpdateDocumentByFileRequestBody(BaseModel):
 
     name: str | None = None
     indexing_technique: IndexingTechnique | None = None
+    doc_form: str | None = None
+    doc_language: str | None = None
     process_rule: ProcessRule | None = None
+    retrieval_model: RetrievalModel | None = None
+    embedding_model: str | None = None
+    embedding_model_provider: str | None = None
 
     @staticmethod
     def builder() -> UpdateDocumentByFileRequestBodyBuilder:
@@ -39,4 +45,24 @@ class UpdateDocumentByFileRequestBodyBuilder:
 
     def process_rule(self, process_rule: ProcessRule) -> UpdateDocumentByFileRequestBodyBuilder:
         self._update_document_by_file_request_body.process_rule = process_rule
+        return self
+
+    def doc_form(self, doc_form: str) -> UpdateDocumentByFileRequestBodyBuilder:
+        self._update_document_by_file_request_body.doc_form = doc_form
+        return self
+
+    def doc_language(self, doc_language: str) -> UpdateDocumentByFileRequestBodyBuilder:
+        self._update_document_by_file_request_body.doc_language = doc_language
+        return self
+
+    def retrieval_model(self, retrieval_model: RetrievalModel) -> UpdateDocumentByFileRequestBodyBuilder:
+        self._update_document_by_file_request_body.retrieval_model = retrieval_model
+        return self
+
+    def embedding_model(self, embedding_model: str) -> UpdateDocumentByFileRequestBodyBuilder:
+        self._update_document_by_file_request_body.embedding_model = embedding_model
+        return self
+
+    def embedding_model_provider(self, embedding_model_provider: str) -> UpdateDocumentByFileRequestBodyBuilder:
+        self._update_document_by_file_request_body.embedding_model_provider = embedding_model_provider
         return self

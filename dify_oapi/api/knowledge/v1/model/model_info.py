@@ -4,6 +4,7 @@ from typing import Optional
 
 from pydantic import BaseModel
 
+from .knowledge_types import ModelFeature, ModelFetchFrom, ModelStatus
 from .model_parameters import ModelParameters
 
 
@@ -27,11 +28,11 @@ class EmbeddingModelDetails(BaseModel):
     model: Optional[str] = None
     label: Optional[ModelLabel] = None
     model_type: Optional[str] = None
-    features: Optional[list[str]] = None
-    fetch_from: Optional[str] = None
+    features: Optional[list[ModelFeature]] = None
+    fetch_from: Optional[ModelFetchFrom] = None
     model_properties: Optional[ModelParameters] = None
     deprecated: Optional[bool] = None
-    status: Optional[str] = None
+    status: Optional[ModelStatus] = None
     load_balancing_enabled: Optional[bool] = None
 
 
@@ -42,7 +43,7 @@ class ModelInfo(BaseModel):
     label: Optional[ModelLabel] = None
     icon_small: Optional[ModelIcon] = None
     icon_large: Optional[ModelIcon] = None
-    status: Optional[str] = None
+    status: Optional[ModelStatus] = None
     models: Optional[list[EmbeddingModelDetails]] = None
 
     @staticmethod
@@ -75,7 +76,7 @@ class ModelInfoBuilder:
         self._model_info.icon_large = icon_large
         return self
 
-    def status(self, status: str) -> "ModelInfoBuilder":
+    def status(self, status: ModelStatus) -> "ModelInfoBuilder":
         self._model_info.status = status
         return self
 

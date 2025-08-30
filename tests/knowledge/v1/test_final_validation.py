@@ -43,8 +43,8 @@ class TestAPICompleteness:
         sync_methods = [method for method in methods if not method.startswith("a")]
         async_methods = [method for method in methods if method.startswith("a") and method != "aclose"]
 
-        # Should have 6 sync methods and 6 async methods
-        assert len(sync_methods) == 6, f"Expected 6 sync methods, got {len(sync_methods)}: {sync_methods}"
+        # Should have 7 sync methods and 7 async methods (including config)
+        assert len(sync_methods) == 7, f"Expected 7 sync methods, got {len(sync_methods)}: {sync_methods}"
         assert len(async_methods) == 6, f"Expected 6 async methods, got {len(async_methods)}: {async_methods}"
 
     def test_document_apis_count(self) -> None:
@@ -54,8 +54,8 @@ class TestAPICompleteness:
         sync_methods = [method for method in methods if not method.startswith("a")]
         async_methods = [method for method in methods if method.startswith("a") and method != "aclose"]
 
-        # Should have 10 sync methods and 10 async methods
-        assert len(sync_methods) == 10, f"Expected 10 sync methods, got {len(sync_methods)}: {sync_methods}"
+        # Should have 11 sync methods and 11 async methods (including config)
+        assert len(sync_methods) == 11, f"Expected 11 sync methods, got {len(sync_methods)}: {sync_methods}"
         assert len(async_methods) == 10, f"Expected 10 async methods, got {len(async_methods)}: {async_methods}"
 
     def test_segment_apis_count(self) -> None:
@@ -65,8 +65,8 @@ class TestAPICompleteness:
         sync_methods = [method for method in methods if not method.startswith("a")]
         async_methods = [method for method in methods if method.startswith("a") and method != "aclose"]
 
-        # Should have 5 sync methods and 5 async methods
-        assert len(sync_methods) == 5, f"Expected 5 sync methods, got {len(sync_methods)}: {sync_methods}"
+        # Should have 6 sync methods and 6 async methods (including config)
+        assert len(sync_methods) == 6, f"Expected 6 sync methods, got {len(sync_methods)}: {sync_methods}"
         assert len(async_methods) == 5, f"Expected 5 async methods, got {len(async_methods)}: {async_methods}"
 
     def test_chunk_apis_count(self) -> None:
@@ -76,8 +76,8 @@ class TestAPICompleteness:
         sync_methods = [method for method in methods if not method.startswith("a")]
         async_methods = [method for method in methods if method.startswith("a") and method != "aclose"]
 
-        # Should have 4 sync methods and 4 async methods
-        assert len(sync_methods) == 4, f"Expected 4 sync methods, got {len(sync_methods)}: {sync_methods}"
+        # Should have 5 sync methods and 5 async methods (including config)
+        assert len(sync_methods) == 5, f"Expected 5 sync methods, got {len(sync_methods)}: {sync_methods}"
         assert len(async_methods) == 4, f"Expected 4 async methods, got {len(async_methods)}: {async_methods}"
 
     def test_tag_apis_count(self) -> None:
@@ -87,8 +87,8 @@ class TestAPICompleteness:
         sync_methods = [method for method in methods if not method.startswith("a")]
         async_methods = [method for method in methods if method.startswith("a") and method != "aclose"]
 
-        # Should have 7 sync methods and 7 async methods
-        assert len(sync_methods) == 7, f"Expected 7 sync methods, got {len(sync_methods)}: {sync_methods}"
+        # Should have 8 sync methods and 8 async methods (including config)
+        assert len(sync_methods) == 8, f"Expected 8 sync methods, got {len(sync_methods)}: {sync_methods}"
         assert len(async_methods) == 7, f"Expected 7 async methods, got {len(async_methods)}: {async_methods}"
 
     def test_model_apis_count(self) -> None:
@@ -98,8 +98,8 @@ class TestAPICompleteness:
         sync_methods = [method for method in methods if not method.startswith("a")]
         async_methods = [method for method in methods if method.startswith("a") and method != "aclose"]
 
-        # Should have 1 sync method and 1 async method
-        assert len(sync_methods) == 1, f"Expected 1 sync method, got {len(sync_methods)}: {sync_methods}"
+        # Should have 2 sync methods and 2 async methods (including config)
+        assert len(sync_methods) == 2, f"Expected 2 sync methods, got {len(sync_methods)}: {sync_methods}"
         assert len(async_methods) == 1, f"Expected 1 async method, got {len(async_methods)}: {async_methods}"
 
     def test_total_apis_count(self) -> None:
@@ -117,7 +117,7 @@ class TestAPICompleteness:
             sync_methods = [method for method in methods if not method.startswith("a")]
             total_sync_methods += len(sync_methods)
 
-        assert total_sync_methods == 33, f"Expected 33 total APIs, got {total_sync_methods}"
+        assert total_sync_methods == 39, f"Expected 39 total APIs, got {total_sync_methods}"
 
 
 class TestResourceIntegration:

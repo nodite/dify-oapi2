@@ -72,7 +72,7 @@ class TestV1Integration:
         assert hasattr(v1.segment, "delete")
 
         # Test chunk resource methods (4 APIs)
-        assert hasattr(v1.chunk, "list_chunks")
+        assert hasattr(v1.chunk, "list")
         assert hasattr(v1.chunk, "create")
         assert hasattr(v1.chunk, "update")
         assert hasattr(v1.chunk, "delete")
@@ -122,7 +122,7 @@ class TestV1Integration:
         assert hasattr(v1.segment, "adelete")
 
         # Test chunk async methods (4 APIs)
-        assert hasattr(v1.chunk, "alist_chunks")
+        assert hasattr(v1.chunk, "alist")
         assert hasattr(v1.chunk, "acreate")
         assert hasattr(v1.chunk, "aupdate")
         assert hasattr(v1.chunk, "adelete")
@@ -186,7 +186,7 @@ class TestV1Integration:
             "file_info",
         ]  # 10 APIs
         segment_methods = ["list", "create", "get", "update", "delete"]  # 5 APIs
-        chunk_methods = ["list_chunks", "create", "update", "delete"]  # 4 APIs
+        chunk_methods = ["list", "create", "update", "delete"]  # 4 APIs
         tag_methods = ["list", "create", "update", "delete", "bind", "unbind", "get_dataset_tags"]  # 7 APIs
         model_methods = ["embedding_models"]  # 1 API
 

@@ -5,7 +5,7 @@ from typing import Optional
 from pydantic import BaseModel
 
 from .data_source_info import DataSourceInfo
-from .knowledge_types import DataSourceType
+from .knowledge_types import DataSourceType, DocumentDisplayStatus, DocumentForm, IndexingStatus
 
 
 class DocumentInfo(BaseModel):
@@ -21,16 +21,16 @@ class DocumentInfo(BaseModel):
     created_by: Optional[str] = None
     created_at: Optional[float] = None
     tokens: Optional[int] = None
-    indexing_status: Optional[str] = None
+    indexing_status: Optional[IndexingStatus] = None
     error: Optional[str] = None
     enabled: Optional[bool] = None
     disabled_at: Optional[float] = None
     disabled_by: Optional[str] = None
     archived: Optional[bool] = None
-    display_status: Optional[str] = None
+    display_status: Optional[DocumentDisplayStatus] = None
     word_count: Optional[int] = None
     hit_count: Optional[int] = None
-    doc_form: Optional[str] = None
+    doc_form: Optional[DocumentForm] = None
     updated_at: Optional[float] = None
 
     @staticmethod
@@ -87,7 +87,7 @@ class DocumentInfoBuilder:
         self._document_info.tokens = tokens
         return self
 
-    def indexing_status(self, indexing_status: str) -> "DocumentInfoBuilder":
+    def indexing_status(self, indexing_status: IndexingStatus) -> "DocumentInfoBuilder":
         self._document_info.indexing_status = indexing_status
         return self
 
@@ -111,7 +111,7 @@ class DocumentInfoBuilder:
         self._document_info.archived = archived
         return self
 
-    def display_status(self, display_status: str) -> "DocumentInfoBuilder":
+    def display_status(self, display_status: DocumentDisplayStatus) -> "DocumentInfoBuilder":
         self._document_info.display_status = display_status
         return self
 
@@ -123,7 +123,7 @@ class DocumentInfoBuilder:
         self._document_info.hit_count = hit_count
         return self
 
-    def doc_form(self, doc_form: str) -> "DocumentInfoBuilder":
+    def doc_form(self, doc_form: DocumentForm) -> "DocumentInfoBuilder":
         self._document_info.doc_form = doc_form
         return self
 

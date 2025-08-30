@@ -48,3 +48,15 @@ class ListChildChunksRequestBuilder:
         self._list_child_chunks_request.segment_id = segment_id
         self._list_child_chunks_request.paths["segment_id"] = segment_id
         return self
+
+    def keyword(self, keyword: str) -> ListChildChunksRequestBuilder:
+        self._list_child_chunks_request.add_query("keyword", keyword)
+        return self
+
+    def page(self, page: int) -> ListChildChunksRequestBuilder:
+        self._list_child_chunks_request.add_query("page", str(page))
+        return self
+
+    def limit(self, limit: int) -> ListChildChunksRequestBuilder:
+        self._list_child_chunks_request.add_query("limit", str(limit))
+        return self

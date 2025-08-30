@@ -1,6 +1,6 @@
 """Tests for chunk resource."""
 
-from unittest.mock import Mock
+from unittest.mock import AsyncMock, Mock
 
 import pytest
 
@@ -25,7 +25,9 @@ class TestChunkResource:
     @pytest.fixture
     def config(self) -> Config:
         """Create test config."""
-        return Config(domain="https://api.dify.ai")
+        config = Config()
+        config.domain = "https://api.dify.ai"
+        return config
 
     @pytest.fixture
     def request_option(self) -> RequestOption:
@@ -102,7 +104,7 @@ class TestChunkResource:
     async def test_alist(self, chunk_resource: Chunk, request_option: RequestOption, monkeypatch) -> None:
         """Test alist async method."""
         mock_response = ListChildChunksResponse(data=[])
-        mock_aexecute = Mock(return_value=mock_response)
+        mock_aexecute = AsyncMock(return_value=mock_response)
         monkeypatch.setattr(ATransport, "aexecute", mock_aexecute)
 
         request = ListChildChunksRequest.builder().build()
@@ -117,7 +119,7 @@ class TestChunkResource:
     async def test_acreate(self, chunk_resource: Chunk, request_option: RequestOption, monkeypatch) -> None:
         """Test acreate async method."""
         mock_response = CreateChildChunkResponse(data=[])
-        mock_aexecute = Mock(return_value=mock_response)
+        mock_aexecute = AsyncMock(return_value=mock_response)
         monkeypatch.setattr(ATransport, "aexecute", mock_aexecute)
 
         request = CreateChildChunkRequest.builder().build()
@@ -132,7 +134,7 @@ class TestChunkResource:
     async def test_aupdate(self, chunk_resource: Chunk, request_option: RequestOption, monkeypatch) -> None:
         """Test aupdate async method."""
         mock_response = UpdateChildChunkResponse()
-        mock_aexecute = Mock(return_value=mock_response)
+        mock_aexecute = AsyncMock(return_value=mock_response)
         monkeypatch.setattr(ATransport, "aexecute", mock_aexecute)
 
         request = UpdateChildChunkRequest.builder().build()
@@ -147,7 +149,7 @@ class TestChunkResource:
     async def test_adelete(self, chunk_resource: Chunk, request_option: RequestOption, monkeypatch) -> None:
         """Test adelete async method."""
         mock_response = DeleteChildChunkResponse()
-        mock_aexecute = Mock(return_value=mock_response)
+        mock_aexecute = AsyncMock(return_value=mock_response)
         monkeypatch.setattr(ATransport, "aexecute", mock_aexecute)
 
         request = DeleteChildChunkRequest.builder().build()

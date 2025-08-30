@@ -4,12 +4,14 @@ from typing import Optional
 
 from pydantic import BaseModel
 
+from .knowledge_types import DataSourceType
+
 
 class SegmentDocumentInfo(BaseModel):
     """Segment document information model with builder pattern."""
 
     id: Optional[str] = None
-    data_source_type: Optional[str] = None
+    data_source_type: Optional[DataSourceType] = None
     name: Optional[str] = None
 
     @staticmethod
@@ -30,7 +32,7 @@ class SegmentDocumentInfoBuilder:
         self._segment_document_info.id = id
         return self
 
-    def data_source_type(self, data_source_type: str) -> "SegmentDocumentInfoBuilder":
+    def data_source_type(self, data_source_type: DataSourceType) -> "SegmentDocumentInfoBuilder":
         self._segment_document_info.data_source_type = data_source_type
         return self
 

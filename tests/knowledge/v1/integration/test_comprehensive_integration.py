@@ -157,7 +157,10 @@ class TestComprehensiveIntegrationValidation:
         assert document_result.document.id == "workflow-doc"
 
         # 3. Create segments in document
-        segment_request_body = CreateSegmentRequestBody.builder().segments([{"content": "Workflow segment"}]).build()
+        from dify_oapi.api.knowledge.v1.model.create_segment_request_body import SegmentContent
+
+        segment_content = SegmentContent(content="Workflow segment")
+        segment_request_body = CreateSegmentRequestBody.builder().segments([segment_content]).build()
         segment_request = (
             CreateSegmentRequest.builder()
             .dataset_id("workflow-dataset")
@@ -169,7 +172,10 @@ class TestComprehensiveIntegrationValidation:
         assert segment_result.data[0].id == "workflow-segment"
 
         # 4. Create child chunks in segment
-        chunk_request_body = CreateChildChunkRequestBody.builder().chunks([{"content": "Workflow chunk"}]).build()
+        from dify_oapi.api.knowledge.v1.model.create_child_chunk_request_body import ChunkContent
+
+        chunk_content = ChunkContent(content="Workflow chunk")
+        chunk_request_body = CreateChildChunkRequestBody.builder().chunks([chunk_content]).build()
         chunk_request = (
             CreateChildChunkRequest.builder()
             .dataset_id("workflow-dataset")
@@ -198,11 +204,11 @@ class TestComprehensiveIntegrationValidation:
         responses = [
             CreateDatasetResponse(id="dataset-1", name="Dataset 1"),
             CreateDatasetResponse(id="dataset-2", name="Dataset 2"),
-            CreateTagResponse(id="shared-tag", name="Shared Tag", type="knowledge_type", binding_count=0),
+            CreateTagResponse(id="shared-tag", name="Shared Tag", type="knowledge", binding_count=0),
             BindTagsToDatasetResponse(result="success"),
             BindTagsToDatasetResponse(result="success"),
-            GetDatasetTagsResponse(data=[TagInfo(id="shared-tag", name="Shared Tag", type="knowledge_type")]),
-            GetDatasetTagsResponse(data=[TagInfo(id="shared-tag", name="Shared Tag", type="knowledge_type")]),
+            GetDatasetTagsResponse(data=[TagInfo(id="shared-tag", name="Shared Tag", type="knowledge")]),
+            GetDatasetTagsResponse(data=[TagInfo(id="shared-tag", name="Shared Tag", type="knowledge")]),
         ]
 
         mock_execute = Mock()
@@ -230,21 +236,21 @@ class TestComprehensiveIntegrationValidation:
         assert dataset2_result.id == "dataset-2"
 
         # 2. Create shared tag
-        tag_request_body = CreateTagRequestBody.builder().name("Shared Tag").type("knowledge_type").build()
+        tag_request_body = CreateTagRequestBody.builder().name("Shared Tag").type("knowledge").build()
         tag_request = CreateTagRequest.builder().request_body(tag_request_body).build()
         tag_result = client.knowledge.v1.tag.create(tag_request, request_option)
         assert tag_result.id == "shared-tag"
 
         # 3. Bind tag to both datasets
         bind1_request_body = (
-            BindTagsToDatasetRequestBody.builder().dataset_id("dataset-1").tag_ids(["shared-tag"]).build()
+            BindTagsToDatasetRequestBody.builder().target_id("dataset-1").tag_ids(["shared-tag"]).build()
         )
         bind1_request = BindTagsToDatasetRequest.builder().request_body(bind1_request_body).build()
         bind1_result = client.knowledge.v1.tag.bind(bind1_request, request_option)
         assert bind1_result.result == "success"
 
         bind2_request_body = (
-            BindTagsToDatasetRequestBody.builder().dataset_id("dataset-2").tag_ids(["shared-tag"]).build()
+            BindTagsToDatasetRequestBody.builder().target_id("dataset-2").tag_ids(["shared-tag"]).build()
         )
         bind2_request = BindTagsToDatasetRequest.builder().request_body(bind2_request_body).build()
         bind2_result = client.knowledge.v1.tag.bind(bind2_request, request_option)
@@ -268,29 +274,31 @@ class TestComprehensiveIntegrationValidation:
         """Test model resource integration."""
         # Mock model response
         from dify_oapi.api.knowledge.v1.model.get_text_embedding_models_response import GetTextEmbeddingModelsResponse
+        from dify_oapi.api.knowledge.v1.model.model_info import EmbeddingModelDetails, ModelIcon, ModelInfo, ModelLabel
+        from dify_oapi.api.knowledge.v1.model.model_parameters import ModelParameters
 
         model_response = GetTextEmbeddingModelsResponse(
             data=[
-                {
-                    "provider": "openai",
-                    "label": {"en_US": "OpenAI"},
-                    "icon_small": {"en_US": "https://example.com/icon.png"},
-                    "icon_large": {"en_US": "https://example.com/icon_large.png"},
-                    "status": "active",
-                    "models": [
-                        {
-                            "model": "text-embedding-ada-002",
-                            "label": {"en_US": "Text Embedding Ada 002"},
-                            "model_type": "text-embedding",
-                            "features": [],
-                            "fetch_from": "predefined-model",
-                            "model_properties": {"context_size": 8191},
-                            "deprecated": False,
-                            "status": "active",
-                            "load_balancing_enabled": False,
-                        }
+                ModelInfo(
+                    provider="openai",
+                    label=ModelLabel(en_US="OpenAI"),
+                    icon_small=ModelIcon(en_US="https://example.com/icon.png"),
+                    icon_large=ModelIcon(en_US="https://example.com/icon_large.png"),
+                    status="active",
+                    models=[
+                        EmbeddingModelDetails(
+                            model="text-embedding-ada-002",
+                            label=ModelLabel(en_US="Text Embedding Ada 002"),
+                            model_type="text-embedding",
+                            features=[],
+                            fetch_from="predefined-model",
+                            model_properties=ModelParameters(context_size=8191),
+                            deprecated=False,
+                            status="active",
+                            load_balancing_enabled=False,
+                        )
                     ],
-                }
+                )
             ]
         )
 
@@ -304,9 +312,9 @@ class TestComprehensiveIntegrationValidation:
         model_result = client.knowledge.v1.model.embedding_models(model_request, request_option)
 
         assert len(model_result.data) == 1
-        assert model_result.data[0]["provider"] == "openai"
-        assert len(model_result.data[0]["models"]) == 1
-        assert model_result.data[0]["models"][0]["model"] == "text-embedding-ada-002"
+        assert model_result.data[0].provider == "openai"
+        assert len(model_result.data[0].models) == 1
+        assert model_result.data[0].models[0].model == "text-embedding-ada-002"
 
         mock_execute.assert_called_once()
 
@@ -322,7 +330,7 @@ class TestComprehensiveIntegrationValidation:
 
         responses = [
             CreateDatasetResponse(id="async-dataset", name="Async Dataset"),
-            CreateTagResponse(id="async-tag", name="Async Tag", type="knowledge_type", binding_count=0),
+            CreateTagResponse(id="async-tag", name="Async Tag", type="knowledge", binding_count=0),
             GetTextEmbeddingModelsResponse(data=[]),
         ]
 
@@ -344,7 +352,7 @@ class TestComprehensiveIntegrationValidation:
         assert dataset_result.id == "async-dataset"
 
         # Async tag creation
-        tag_request_body = CreateTagRequestBody.builder().name("Async Tag").type("knowledge_type").build()
+        tag_request_body = CreateTagRequestBody.builder().name("Async Tag").type("knowledge").build()
         tag_request = CreateTagRequest.builder().request_body(tag_request_body).build()
         tag_result = await client.knowledge.v1.tag.acreate(tag_request, request_option)
         assert tag_result.id == "async-tag"
@@ -380,7 +388,7 @@ class TestComprehensiveIntegrationValidation:
         from dify_oapi.api.knowledge.v1.model.create_tag_request import CreateTagRequest
         from dify_oapi.api.knowledge.v1.model.create_tag_request_body import CreateTagRequestBody
 
-        tag_request_body = CreateTagRequestBody.builder().name("Error Tag").type("knowledge_type").build()
+        tag_request_body = CreateTagRequestBody.builder().name("Error Tag").type("knowledge").build()
         tag_request = CreateTagRequest.builder().request_body(tag_request_body).build()
 
         with pytest.raises(Exception) as exc_info:

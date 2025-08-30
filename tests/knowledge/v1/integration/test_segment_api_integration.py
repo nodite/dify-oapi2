@@ -34,6 +34,7 @@ from dify_oapi.api.knowledge.v1.model.update_child_chunk_response import UpdateC
 from dify_oapi.api.knowledge.v1.model.update_segment_request import UpdateSegmentRequest as UpdateRequest
 from dify_oapi.api.knowledge.v1.model.update_segment_request_body import UpdateSegmentRequestBody as UpdateRequestBody
 from dify_oapi.api.knowledge.v1.model.update_segment_response import UpdateSegmentResponse as UpdateResponse
+from dify_oapi.api.knowledge.v1.resource.chunk import Chunk
 from dify_oapi.api.knowledge.v1.resource.segment import Segment
 from dify_oapi.core.model.config import Config
 from dify_oapi.core.model.request_option import RequestOption
@@ -58,6 +59,11 @@ class TestSegmentAPIIntegration:
     def segment_resource(self, config: Config) -> Segment:
         """Create segment resource instance."""
         return Segment(config)
+
+    @pytest.fixture
+    def chunk_resource(self, config: Config) -> Chunk:
+        """Create chunk resource instance."""
+        return Chunk(config)
 
     # ===== COMPLETE SEGMENT LIFECYCLE TESTS =====
 
@@ -165,7 +171,7 @@ class TestSegmentAPIIntegration:
             assert create_response.data[0].id == "segment-123"
 
             # 2. List segments
-            list_req = ListRequest.builder().dataset_id("dataset-123").document_id("doc-123").limit(20).build()
+            list_req = ListRequest.builder().dataset_id("dataset-123").document_id("doc-123").build()
 
             list_response = segment_resource.list(list_req, request_option)
             assert list_response.success
@@ -271,18 +277,20 @@ class TestSegmentAPIIntegration:
 
     # ===== CHILD CHUNK MANAGEMENT TESTS =====
 
-    def test_child_chunk_management_lifecycle(self, segment_resource: Segment, request_option: RequestOption) -> None:
+    def test_child_chunk_management_lifecycle(self, chunk_resource: Chunk, request_option: RequestOption) -> None:
         """Test complete child chunk management lifecycle."""
         with patch("dify_oapi.core.http.transport.Transport.execute") as mock_execute:
             # Mock responses
             create_response = CreateChildChunkResponse(
                 success=True,
-                data=ChildChunkInfo(
-                    id="chunk-123",
-                    segment_id="segment-123",
-                    content="[Example] Child chunk content",
-                    status="completed",
-                ),
+                data=[
+                    ChildChunkInfo(
+                        id="chunk-123",
+                        segment_id="segment-123",
+                        content="[Example] Child chunk content",
+                        status="completed",
+                    )
+                ],
             )
 
             list_response = ListChildChunksResponse(
@@ -321,7 +329,7 @@ class TestSegmentAPIIntegration:
             ]
 
             # 1. Create child chunk
-            create_body = CreateChildChunkRequestBody.builder().content("[Example] Child chunk content").build()
+            create_body = CreateChildChunkRequestBody.builder().add_chunk("[Example] Child chunk content").build()
 
             create_req = (
                 CreateChildChunkRequest.builder()
@@ -332,9 +340,9 @@ class TestSegmentAPIIntegration:
                 .build()
             )
 
-            create_result = segment_resource.create_child_chunk(create_req, request_option)
+            create_result = chunk_resource.create(create_req, request_option)
             assert create_result.success
-            assert create_result.data.id == "chunk-123"
+            assert create_result.data[0].id == "chunk-123"
 
             # 2. List child chunks
             list_req = (
@@ -346,7 +354,7 @@ class TestSegmentAPIIntegration:
                 .build()
             )
 
-            list_result = segment_resource.list_child_chunks(list_req, request_option)
+            list_result = chunk_resource.list(list_req, request_option)
             assert list_result.success
             assert len(list_result.data) == 1
             assert list_result.total == 1
@@ -364,7 +372,7 @@ class TestSegmentAPIIntegration:
                 .build()
             )
 
-            update_result = segment_resource.update_child_chunk(update_req, request_option)
+            update_result = chunk_resource.update(update_req, request_option)
             assert update_result.success
             assert update_result.data.content == "[Example] Updated child chunk content"
 
@@ -378,7 +386,7 @@ class TestSegmentAPIIntegration:
                 .build()
             )
 
-            delete_result = segment_resource.delete_child_chunk(delete_req, request_option)
+            delete_result = chunk_resource.delete(delete_req, request_option)
             assert delete_result.success
 
             assert mock_execute.call_count == 4
@@ -386,7 +394,7 @@ class TestSegmentAPIIntegration:
     # ===== CROSS-OPERATION INTEGRATION TESTS =====
 
     def test_segment_with_child_chunks_integration(
-        self, segment_resource: Segment, request_option: RequestOption
+        self, segment_resource: Segment, chunk_resource: Chunk, request_option: RequestOption
     ) -> None:
         """Test creating segment with child chunks and managing both."""
         with patch("dify_oapi.core.http.transport.Transport.execute") as mock_execute:
@@ -400,7 +408,7 @@ class TestSegmentAPIIntegration:
             # Mock child chunk creation
             chunk_response = CreateChildChunkResponse(
                 success=True,
-                data=ChildChunkInfo(id="chunk-123", segment_id="segment-123", content="[Example] Child chunk"),
+                data=[ChildChunkInfo(id="chunk-123", segment_id="segment-123", content="[Example] Child chunk")],
             )
 
             # Mock segment update
@@ -448,7 +456,7 @@ class TestSegmentAPIIntegration:
             assert segment_result.success
 
             # 2. Create child chunk
-            chunk_body = CreateChildChunkRequestBody.builder().content("[Example] Child chunk").build()
+            chunk_body = CreateChildChunkRequestBody.builder().add_chunk("[Example] Child chunk").build()
 
             chunk_req = (
                 CreateChildChunkRequest.builder()
@@ -459,8 +467,9 @@ class TestSegmentAPIIntegration:
                 .build()
             )
 
-            chunk_result = segment_resource.create_child_chunk(chunk_req, request_option)
+            chunk_result = chunk_resource.create(chunk_req, request_option)
             assert chunk_result.success
+            assert chunk_result.data[0].id == "chunk-123"
 
             # 3. Update both segment and child chunk
             update_segment_body = (
@@ -493,7 +502,7 @@ class TestSegmentAPIIntegration:
                 .build()
             )
 
-            updated_chunk = segment_resource.update_child_chunk(update_req, request_option)
+            updated_chunk = chunk_resource.update(update_req, request_option)
             assert updated_chunk.success
 
             # 4. Delete child chunk first, then segment
@@ -506,7 +515,7 @@ class TestSegmentAPIIntegration:
                 .build()
             )
 
-            chunk_delete_result = segment_resource.delete_child_chunk(delete_req, request_option)
+            chunk_delete_result = chunk_resource.delete(delete_req, request_option)
             assert chunk_delete_result.success
 
             delete_segment_req = (
@@ -524,7 +533,9 @@ class TestSegmentAPIIntegration:
 
     # ===== LIST OPERATIONS WITH FILTERING AND PAGINATION =====
 
-    def test_list_operations_with_filters(self, segment_resource: Segment, request_option: RequestOption) -> None:
+    def test_list_operations_with_filters(
+        self, segment_resource: Segment, chunk_resource: Chunk, request_option: RequestOption
+    ) -> None:
         """Test list operations with various filters and pagination."""
         with patch("dify_oapi.core.http.transport.Transport.execute") as mock_execute:
             # Mock filtered list response
@@ -606,7 +617,7 @@ class TestSegmentAPIIntegration:
                 .build()
             )
 
-            child_chunks_result = segment_resource.list_child_chunks(child_chunks_req, request_option)
+            child_chunks_result = chunk_resource.list(child_chunks_req, request_option)
             assert child_chunks_result.success
             assert len(child_chunks_result.data) == 2
             assert child_chunks_result.total == 2
@@ -692,7 +703,9 @@ class TestSegmentAPIIntegration:
 
     # ===== EDGE CASES =====
 
-    def test_empty_responses(self, segment_resource: Segment, request_option: RequestOption) -> None:
+    def test_empty_responses(
+        self, segment_resource: Segment, chunk_resource: Chunk, request_option: RequestOption
+    ) -> None:
         """Test handling of empty responses."""
         with patch("dify_oapi.core.http.transport.Transport.execute") as mock_execute:
             # Mock empty list response
@@ -724,7 +737,7 @@ class TestSegmentAPIIntegration:
                 .build()
             )
 
-            chunks_result = segment_resource.list_child_chunks(chunks_req, request_option)
+            chunks_result = chunk_resource.list(chunks_req, request_option)
             assert chunks_result.success
             assert len(chunks_result.data) == 0
             assert chunks_result.total == 0

@@ -4,12 +4,14 @@ from typing import Optional
 
 from pydantic import BaseModel
 
+from .knowledge_types import IndexingStatus
+
 
 class BatchInfo(BaseModel):
     """Batch information model with builder pattern."""
 
     id: Optional[str] = None
-    indexing_status: Optional[str] = None
+    indexing_status: Optional[IndexingStatus] = None
     processing_started_at: Optional[float] = None
     parsing_completed_at: Optional[float] = None
     cleaning_completed_at: Optional[float] = None
@@ -39,7 +41,7 @@ class BatchInfoBuilder:
         self._batch_info.id = id
         return self
 
-    def indexing_status(self, indexing_status: str) -> "BatchInfoBuilder":
+    def indexing_status(self, indexing_status: IndexingStatus) -> "BatchInfoBuilder":
         self._batch_info.indexing_status = indexing_status
         return self
 

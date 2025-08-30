@@ -10,6 +10,8 @@ class SegmentationRule(BaseModel):
 
     separator: Optional[str] = None
     max_tokens: Optional[int] = None
+    chunk_overlap: Optional[int] = None
+    rules: Optional[dict] = None
 
     @staticmethod
     def builder() -> "SegmentationRuleBuilder":
@@ -31,4 +33,12 @@ class SegmentationRuleBuilder:
 
     def max_tokens(self, max_tokens: int) -> "SegmentationRuleBuilder":
         self._segmentation_rule.max_tokens = max_tokens
+        return self
+
+    def chunk_overlap(self, chunk_overlap: int) -> "SegmentationRuleBuilder":
+        self._segmentation_rule.chunk_overlap = chunk_overlap
+        return self
+
+    def rules(self, rules: dict) -> "SegmentationRuleBuilder":
+        self._segmentation_rule.rules = rules
         return self

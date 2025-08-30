@@ -29,11 +29,11 @@ class TestCreateTagModels:
 
     def test_request_builder(self) -> None:
         """Test CreateTagRequest builder pattern."""
-        request_body = CreateTagRequestBody.builder().name("test-tag").type("knowledge_type").build()
+        request_body = CreateTagRequestBody.builder().name("test-tag").type("knowledge").build()
         request = CreateTagRequest.builder().request_body(request_body).build()
         assert request.request_body is not None
         assert request.request_body.name == "test-tag"
-        assert request.request_body.type == "knowledge_type"
+        assert request.request_body.type == "knowledge"
 
     def test_request_validation(self) -> None:
         """Test CreateTagRequest validation."""
@@ -49,9 +49,9 @@ class TestCreateTagModels:
 
     def test_request_body_validation(self) -> None:
         """Test CreateTagRequestBody validation."""
-        request_body = CreateTagRequestBody(name="test-tag", type="knowledge_type")
+        request_body = CreateTagRequestBody(name="test-tag", type="knowledge")
         assert request_body.name == "test-tag"
-        assert request_body.type == "knowledge_type"
+        assert request_body.type == "knowledge"
 
     def test_response_inheritance(self) -> None:
         """Test CreateTagResponse inherits from BaseResponse."""
@@ -64,10 +64,10 @@ class TestCreateTagModels:
 
     def test_response_data_access(self) -> None:
         """Test CreateTagResponse data access."""
-        response = CreateTagResponse(id="tag-123", name="test-tag", type="knowledge_type", binding_count=5)
+        response = CreateTagResponse(id="tag-123", name="test-tag", type="knowledge", binding_count=5)
         assert response.id == "tag-123"
         assert response.name == "test-tag"
-        assert response.type == "knowledge_type"
+        assert response.type == "knowledge"
         assert response.binding_count == 5
 
 
@@ -76,7 +76,7 @@ class TestListTagsModels:
 
     def test_request_builder(self) -> None:
         """Test ListTagsRequest builder pattern."""
-        request = ListTagsRequest.builder().type("knowledge_type").build()
+        request = ListTagsRequest.builder().type("knowledge").build()
         query_keys = [key for key, value in request.queries]
         assert "type" in query_keys
 
@@ -97,7 +97,7 @@ class TestListTagsModels:
 
     def test_response_data_access(self) -> None:
         """Test ListTagsResponse data access."""
-        tag1 = TagInfo(id="tag1", name="Tag 1", type="knowledge_type", binding_count=3)
+        tag1 = TagInfo(id="tag1", name="Tag 1", type="knowledge", binding_count=3)
         tag2 = TagInfo(id="tag2", name="Tag 2", type="custom", binding_count=1)
         response = ListTagsResponse(data=[tag1, tag2])
         assert response.data is not None
@@ -146,10 +146,10 @@ class TestUpdateTagModels:
 
     def test_response_data_access(self) -> None:
         """Test UpdateTagResponse data access."""
-        response = UpdateTagResponse(id="tag-123", name="updated-tag", type="knowledge_type", binding_count=3)
+        response = UpdateTagResponse(id="tag-123", name="updated-tag", type="knowledge", binding_count=3)
         assert response.id == "tag-123"
         assert response.name == "updated-tag"
-        assert response.type == "knowledge_type"
+        assert response.type == "knowledge"
         assert response.binding_count == 3
 
 
@@ -200,12 +200,12 @@ class TestBindTagsToDatasetModels:
     def test_request_builder(self) -> None:
         """Test BindTagsToDatasetRequest builder pattern."""
         request_body = (
-            BindTagsToDatasetRequestBody.builder().tag_ids(["tag-1", "tag-2"]).dataset_id("dataset-123").build()
+            BindTagsToDatasetRequestBody.builder().tag_ids(["tag-1", "tag-2"]).target_id("dataset-123").build()
         )
         request = BindTagsToDatasetRequest.builder().request_body(request_body).build()
         assert request.request_body is not None
         assert request.request_body.tag_ids == ["tag-1", "tag-2"]
-        assert request.request_body.dataset_id == "dataset-123"
+        assert request.request_body.target_id == "dataset-123"
 
     def test_request_validation(self) -> None:
         """Test BindTagsToDatasetRequest validation."""
@@ -216,16 +216,16 @@ class TestBindTagsToDatasetModels:
     def test_request_body_builder(self) -> None:
         """Test BindTagsToDatasetRequestBody builder pattern."""
         request_body = (
-            BindTagsToDatasetRequestBody.builder().tag_ids(["tag-1", "tag-2"]).dataset_id("dataset-123").build()
+            BindTagsToDatasetRequestBody.builder().tag_ids(["tag-1", "tag-2"]).target_id("dataset-123").build()
         )
         assert request_body.tag_ids == ["tag-1", "tag-2"]
-        assert request_body.dataset_id == "dataset-123"
+        assert request_body.target_id == "dataset-123"
 
     def test_request_body_validation(self) -> None:
         """Test BindTagsToDatasetRequestBody validation."""
-        request_body = BindTagsToDatasetRequestBody(tag_ids=["tag-1", "tag-2"], dataset_id="dataset-123")
+        request_body = BindTagsToDatasetRequestBody(tag_ids=["tag-1", "tag-2"], target_id="dataset-123")
         assert request_body.tag_ids == ["tag-1", "tag-2"]
-        assert request_body.dataset_id == "dataset-123"
+        assert request_body.target_id == "dataset-123"
 
     def test_response_inheritance(self) -> None:
         """Test BindTagsToDatasetResponse inherits from BaseResponse."""
@@ -247,11 +247,11 @@ class TestUnbindTagsFromDatasetModels:
 
     def test_request_builder(self) -> None:
         """Test UnbindTagsFromDatasetRequest builder pattern."""
-        request_body = UnbindTagsFromDatasetRequestBody.builder().tag_ids(["tag-123"]).dataset_id("dataset-123").build()
+        request_body = UnbindTagsFromDatasetRequestBody.builder().tag_id("tag-123").target_id("dataset-123").build()
         request = UnbindTagsFromDatasetRequest.builder().request_body(request_body).build()
         assert request.request_body is not None
-        assert request.request_body.tag_ids == ["tag-123"]
-        assert request.request_body.dataset_id == "dataset-123"
+        assert request.request_body.tag_id == "tag-123"
+        assert request.request_body.target_id == "dataset-123"
 
     def test_request_validation(self) -> None:
         """Test UnbindTagsFromDatasetRequest validation."""
@@ -261,15 +261,15 @@ class TestUnbindTagsFromDatasetModels:
 
     def test_request_body_builder(self) -> None:
         """Test UnbindTagsFromDatasetRequestBody builder pattern."""
-        request_body = UnbindTagsFromDatasetRequestBody.builder().tag_ids(["tag-123"]).dataset_id("dataset-123").build()
-        assert request_body.tag_ids == ["tag-123"]
-        assert request_body.dataset_id == "dataset-123"
+        request_body = UnbindTagsFromDatasetRequestBody.builder().tag_id("tag-123").target_id("dataset-123").build()
+        assert request_body.tag_id == "tag-123"
+        assert request_body.target_id == "dataset-123"
 
     def test_request_body_validation(self) -> None:
         """Test UnbindTagsFromDatasetRequestBody validation."""
-        request_body = UnbindTagsFromDatasetRequestBody(tag_ids=["tag-123"], dataset_id="dataset-123")
-        assert request_body.tag_ids == ["tag-123"]
-        assert request_body.dataset_id == "dataset-123"
+        request_body = UnbindTagsFromDatasetRequestBody(tag_id="tag-123", target_id="dataset-123")
+        assert request_body.tag_id == "tag-123"
+        assert request_body.target_id == "dataset-123"
 
     def test_response_inheritance(self) -> None:
         """Test UnbindTagsFromDatasetResponse inherits from BaseResponse."""
@@ -298,7 +298,7 @@ class TestGetDatasetTagsModels:
     def test_request_validation(self) -> None:
         """Test GetDatasetTagsRequest validation."""
         request = GetDatasetTagsRequest.builder().build()
-        assert request.http_method == HttpMethod.POST
+        assert request.http_method == HttpMethod.GET
         assert request.uri == "/v1/datasets/:dataset_id/tags"
 
     def test_response_inheritance(self) -> None:
@@ -312,7 +312,7 @@ class TestGetDatasetTagsModels:
 
     def test_response_data_access(self) -> None:
         """Test GetDatasetTagsResponse data access."""
-        tag1 = TagInfo(id="tag1", name="Tag 1", type="knowledge_type")
+        tag1 = TagInfo(id="tag1", name="Tag 1", type="knowledge")
         tag2 = TagInfo(id="tag2", name="Tag 2", type="custom")
         response = GetDatasetTagsResponse(data=[tag1, tag2])
         assert response.data is not None

@@ -59,3 +59,42 @@ PreprocessingRuleId = Literal["remove_extra_spaces", "remove_urls_emails"]
 
 # Parent mode types for hierarchical processing
 ParentMode = Literal["full-doc", "paragraph"]
+
+# Model status types
+ModelStatus = Literal["active", "inactive", "deprecated"]
+
+# Model fetch source types
+ModelFetchFrom = Literal["predefined-model", "customizable-model"]
+
+# Model feature types
+ModelFeature = Literal["embedding", "reranking"]
+
+# Tag binding target types
+TagBindingTarget = Literal["dataset", "document"]
+
+# External knowledge provider types
+ExternalKnowledgeProvider = Literal["external_api", "notion", "web_crawler"]
+
+# Document creation source types
+DocumentCreatedFrom = Literal["api", "web", "upload"]
+
+# Document display status types
+DocumentDisplayStatus = Literal["available", "indexing", "error", "paused", "archived"]
+
+# Batch processing status types
+BatchProcessingStatus = Literal["processing", "completed", "failed", "cancelled"]
+
+# File extension types (common ones)
+FileExtension = Literal["pdf", "doc", "docx", "txt", "md", "html", "csv", "xlsx", "ppt", "pptx"]
+
+# MIME type categories
+MimeTypeCategory = Literal["application", "text", "image", "audio", "video"]
+
+# Chunk processing status
+ChunkStatus = Literal["waiting", "processing", "completed", "error"]
+
+# Query content type
+QueryContentType = Literal["text", "structured"]
+
+# Retrieval record score type
+RetrievalScoreType = Literal["cosine", "dot_product", "euclidean"]

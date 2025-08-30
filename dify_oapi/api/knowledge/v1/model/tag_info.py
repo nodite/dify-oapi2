@@ -50,3 +50,7 @@ class TagInfoBuilder:
     def created_at(self, created_at: float) -> "TagInfoBuilder":
         self._tag_info.created_at = created_at
         return self
+
+    def binding_count(self, binding_count: int) -> "TagInfoBuilder":
+        self._tag_info.binding_count = binding_count
+        return self

@@ -50,18 +50,18 @@ class TestComprehensiveIntegration:
         )
         run_req = RunWorkflowRequest.builder().request_body(run_req_body).build()
 
-        run_result = self.workflow.run_workflow(run_req, self.request_option, False)
+        run_result = self.workflow.run(run_req, self.request_option, False)
         assert run_result.workflow_run_id == "test-run-id"
 
         # 2. Get workflow detail
         detail_req = GetWorkflowRunDetailRequest.builder().workflow_run_id("test-run-id").build()
-        detail_result = self.workflow.get_workflow_run_detail(detail_req, self.request_option)
+        detail_result = self.workflow.detail(detail_req, self.request_option)
         assert detail_result.status == "running"
 
         # 3. Stop workflow
         stop_req_body = StopWorkflowRequestBody.builder().user("test-user").build()
         stop_req = StopWorkflowRequest.builder().task_id("test-task-id").request_body(stop_req_body).build()
-        stop_result = self.workflow.stop_workflow(stop_req, self.request_option)
+        stop_result = self.workflow.stop(stop_req, self.request_option)
         assert stop_result.result == "success"
 
     @patch("dify_oapi.core.http.transport.Transport.execute")
@@ -80,7 +80,7 @@ class TestComprehensiveIntegration:
         upload_req_body = UploadFileRequestBody.builder().user("test-user").build()
         upload_req = UploadFileRequest.builder().file(file_stream, "test.txt").request_body(upload_req_body).build()
 
-        upload_result = self.workflow.upload_file(upload_req, self.request_option)
+        upload_result = self.workflow.upload(upload_req, self.request_option)
         assert upload_result.id == "test-file-id"
 
         # 2. Use file in workflow
@@ -90,7 +90,7 @@ class TestComprehensiveIntegration:
         )
         run_req = RunWorkflowRequest.builder().request_body(run_req_body).build()
 
-        run_result = self.workflow.run_workflow(run_req, self.request_option, False)
+        run_result = self.workflow.run(run_req, self.request_option, False)
         assert run_result.workflow_run_id is not None
 
     @patch("dify_oapi.core.http.transport.Transport.execute")
@@ -103,7 +103,7 @@ class TestComprehensiveIntegration:
 
         # Get workflow logs
         logs_req = GetWorkflowLogsRequest.builder().page(1).limit(10).build()
-        logs_result = self.workflow.get_workflow_logs(logs_req, self.request_option)
+        logs_result = self.workflow.logs(logs_req, self.request_option)
 
         assert logs_result.total == 5
         assert logs_result.page == 1
@@ -112,22 +112,22 @@ class TestComprehensiveIntegration:
     def test_migrated_functionality(self) -> None:
         """Verify all migrated methods are available in consolidated resource."""
         # Check all 8 API methods exist
-        assert hasattr(self.workflow, "run_workflow")
-        assert hasattr(self.workflow, "arun_workflow")
-        assert hasattr(self.workflow, "get_workflow_run_detail")
-        assert hasattr(self.workflow, "aget_workflow_run_detail")
-        assert hasattr(self.workflow, "stop_workflow")
-        assert hasattr(self.workflow, "astop_workflow")
-        assert hasattr(self.workflow, "upload_file")
-        assert hasattr(self.workflow, "aupload_file")
-        assert hasattr(self.workflow, "get_workflow_logs")
-        assert hasattr(self.workflow, "aget_workflow_logs")
-        assert hasattr(self.workflow, "get_info")
-        assert hasattr(self.workflow, "aget_info")
-        assert hasattr(self.workflow, "get_parameters")
-        assert hasattr(self.workflow, "aget_parameters")
-        assert hasattr(self.workflow, "get_site")
-        assert hasattr(self.workflow, "aget_site")
+        assert hasattr(self.workflow, "run")
+        assert hasattr(self.workflow, "arun")
+        assert hasattr(self.workflow, "detail")
+        assert hasattr(self.workflow, "adetail")
+        assert hasattr(self.workflow, "stop")
+        assert hasattr(self.workflow, "astop")
+        assert hasattr(self.workflow, "upload")
+        assert hasattr(self.workflow, "aupload")
+        assert hasattr(self.workflow, "logs")
+        assert hasattr(self.workflow, "alogs")
+        assert hasattr(self.workflow, "info")
+        assert hasattr(self.workflow, "ainfo")
+        assert hasattr(self.workflow, "parameters")
+        assert hasattr(self.workflow, "aparameters")
+        assert hasattr(self.workflow, "site")
+        assert hasattr(self.workflow, "asite")
 
     def test_import_path_migration(self) -> None:
         """Ensure all imports work with flat structure."""

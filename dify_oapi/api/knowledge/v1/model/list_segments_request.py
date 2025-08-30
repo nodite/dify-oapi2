@@ -50,3 +50,11 @@ class ListSegmentsRequestBuilder:
     def status(self, status: SegmentStatus) -> ListSegmentsRequestBuilder:
         self._list_segments_request.add_query("status", status)
         return self
+
+    def page(self, page: int) -> ListSegmentsRequestBuilder:
+        self._list_segments_request.add_query("page", str(page))
+        return self
+
+    def limit(self, limit: int) -> ListSegmentsRequestBuilder:
+        self._list_segments_request.add_query("limit", str(limit))
+        return self

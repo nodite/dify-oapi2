@@ -59,14 +59,12 @@ class TestCreateDocumentByFileModels:
             .name("test.pdf")
             .indexing_technique("high_quality")
             .doc_form("text_model")
-            .doc_language("English")
             .build()
         )
 
         assert request_body.name == "test.pdf"
         assert request_body.indexing_technique == "high_quality"
         assert request_body.doc_form == "text_model"
-        assert request_body.doc_language == "English"
 
     def test_response_inheritance(self) -> None:
         """Test CreateDocumentByFileResponse inherits from BaseResponse."""
@@ -108,17 +106,17 @@ class TestCreateDocumentByTextModels:
             CreateDocumentByTextRequestBody.builder()
             .name("Builder Test")
             .text("Builder text")
-            .indexing_technique("economy")
-            .doc_form("qa_model")
-            .doc_language("Chinese")
+            .indexing_technique("high_quality")
+            .doc_form("text_model")
+            .doc_language("English")
             .build()
         )
 
         assert request_body.name == "Builder Test"
         assert request_body.text == "Builder text"
-        assert request_body.indexing_technique == "economy"
-        assert request_body.doc_form == "qa_model"
-        assert request_body.doc_language == "Chinese"
+        assert request_body.indexing_technique == "high_quality"
+        assert request_body.doc_form == "text_model"
+        assert request_body.doc_language == "English"
 
     def test_response_inheritance(self) -> None:
         """Test CreateDocumentByTextResponse inherits from BaseResponse."""

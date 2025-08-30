@@ -10,6 +10,7 @@ from dify_oapi.api.knowledge.v1.model.get_dataset_request import GetDatasetReque
 from dify_oapi.api.knowledge.v1.model.get_dataset_response import GetDatasetResponse
 from dify_oapi.api.knowledge.v1.model.list_datasets_request import ListDatasetsRequest
 from dify_oapi.api.knowledge.v1.model.list_datasets_response import ListDatasetsResponse
+from dify_oapi.api.knowledge.v1.model.query_info import QueryInfo
 from dify_oapi.api.knowledge.v1.model.retrieval_model import RetrievalModel
 from dify_oapi.api.knowledge.v1.model.retrieve_from_dataset_request import RetrieveFromDatasetRequest
 from dify_oapi.api.knowledge.v1.model.retrieve_from_dataset_request_body import RetrieveFromDatasetRequestBody
@@ -31,6 +32,7 @@ class TestCreateModels:
             CreateDatasetRequestBody.builder()
             .name("test_dataset")
             .description("test description")
+            .type("knowledge_base")
             .indexing_technique("high_quality")
             .permission("only_me")
             .provider("vendor")
@@ -43,6 +45,7 @@ class TestCreateModels:
         assert request.request_body is not None
         assert request.request_body.name == "test_dataset"
         assert request.request_body.description == "test description"
+        assert request.request_body.type == "knowledge_base"
         assert request.request_body.indexing_technique == "high_quality"
         assert request.request_body.permission == "only_me"
         assert request.request_body.provider == "vendor"
@@ -289,6 +292,7 @@ class TestRetrieveModels:
 
     def test_response_data_access(self) -> None:
         """Test RetrieveFromDatasetResponse data access."""
-        response = RetrieveFromDatasetResponse(query="test query", records=[])
-        assert response.query == "test query"
+        query_info = QueryInfo.builder().content("test query").build()
+        response = RetrieveFromDatasetResponse(query=query_info, records=[])
+        assert response.query.content == "test query"
         assert response.records == []

@@ -1,187 +1,724 @@
-from dify_oapi.api.workflow.v1.model.workflow.get_workflow_run_detail_request import GetWorkflowRunDetailRequest
-from dify_oapi.api.workflow.v1.model.workflow.get_workflow_run_detail_response import GetWorkflowRunDetailResponse
-from dify_oapi.api.workflow.v1.model.workflow.run_specific_workflow_request import RunSpecificWorkflowRequest
-from dify_oapi.api.workflow.v1.model.workflow.run_specific_workflow_request_body import RunSpecificWorkflowRequestBody
-from dify_oapi.api.workflow.v1.model.workflow.run_specific_workflow_response import RunSpecificWorkflowResponse
-from dify_oapi.api.workflow.v1.model.workflow.run_workflow_request import RunWorkflowRequest
-from dify_oapi.api.workflow.v1.model.workflow.run_workflow_request_body import RunWorkflowRequestBody
-from dify_oapi.api.workflow.v1.model.workflow.run_workflow_response import RunWorkflowResponse
-from dify_oapi.api.workflow.v1.model.workflow.stop_workflow_request import StopWorkflowRequest
-from dify_oapi.api.workflow.v1.model.workflow.stop_workflow_request_body import StopWorkflowRequestBody
-from dify_oapi.api.workflow.v1.model.workflow.stop_workflow_response import StopWorkflowResponse
-from dify_oapi.api.workflow.v1.model.workflow.workflow_inputs import WorkflowInputs
+"""Tests for workflow API models."""
+
+from io import BytesIO
+
+from dify_oapi.api.workflow.v1.model.app_info import AppInfo
+from dify_oapi.api.workflow.v1.model.end_user_info import EndUserInfo
+from dify_oapi.api.workflow.v1.model.file_upload_config import FileUploadConfig
+from dify_oapi.api.workflow.v1.model.file_upload_info import FileUploadInfo
+from dify_oapi.api.workflow.v1.model.get_info_request import GetInfoRequest
+from dify_oapi.api.workflow.v1.model.get_info_response import GetInfoResponse
+from dify_oapi.api.workflow.v1.model.get_parameters_request import GetParametersRequest
+from dify_oapi.api.workflow.v1.model.get_parameters_response import GetParametersResponse
+from dify_oapi.api.workflow.v1.model.get_site_request import GetSiteRequest
+from dify_oapi.api.workflow.v1.model.get_site_response import GetSiteResponse
+from dify_oapi.api.workflow.v1.model.get_workflow_logs_request import GetWorkflowLogsRequest
+from dify_oapi.api.workflow.v1.model.get_workflow_logs_response import GetWorkflowLogsResponse
+from dify_oapi.api.workflow.v1.model.get_workflow_run_detail_request import GetWorkflowRunDetailRequest
+from dify_oapi.api.workflow.v1.model.get_workflow_run_detail_response import GetWorkflowRunDetailResponse
+from dify_oapi.api.workflow.v1.model.parameters_info import ParametersInfo
+from dify_oapi.api.workflow.v1.model.run_workflow_request import RunWorkflowRequest
+from dify_oapi.api.workflow.v1.model.run_workflow_request_body import RunWorkflowRequestBody
+from dify_oapi.api.workflow.v1.model.run_workflow_response import RunWorkflowResponse
+from dify_oapi.api.workflow.v1.model.site_info import SiteInfo
+from dify_oapi.api.workflow.v1.model.stop_workflow_request import StopWorkflowRequest
+from dify_oapi.api.workflow.v1.model.stop_workflow_request_body import StopWorkflowRequestBody
+from dify_oapi.api.workflow.v1.model.stop_workflow_response import StopWorkflowResponse
+from dify_oapi.api.workflow.v1.model.system_parameters import SystemParameters
+from dify_oapi.api.workflow.v1.model.upload_file_request import UploadFileRequest
+from dify_oapi.api.workflow.v1.model.upload_file_request_body import UploadFileRequestBody
+from dify_oapi.api.workflow.v1.model.upload_file_response import UploadFileResponse
+from dify_oapi.api.workflow.v1.model.user_input_form import UserInputForm
+from dify_oapi.api.workflow.v1.model.workflow_file_info import WorkflowFileInfo
+from dify_oapi.api.workflow.v1.model.workflow_inputs import WorkflowInputs
+from dify_oapi.api.workflow.v1.model.workflow_log_info import WorkflowLogInfo
+from dify_oapi.api.workflow.v1.model.workflow_run_data import WorkflowRunData
+from dify_oapi.api.workflow.v1.model.workflow_run_info import WorkflowRunInfo
+from dify_oapi.api.workflow.v1.model.workflow_run_log_info import WorkflowRunLogInfo
 from dify_oapi.core.enum import HttpMethod
 from dify_oapi.core.model.base_response import BaseResponse
 
 
 class TestRunWorkflowModels:
+    """Test Run Workflow API models."""
+
     def test_request_builder(self) -> None:
-        """Test RunWorkflowRequest builder pattern."""
+        """Test request builder pattern and URI/method setup."""
         request = RunWorkflowRequest.builder().build()
+
         assert request.http_method == HttpMethod.POST
         assert request.uri == "/v1/workflows/run"
+        assert request.request_body is None
 
     def test_request_validation(self) -> None:
-        """Test RunWorkflowRequest validation."""
-        inputs = WorkflowInputs.builder().add_input("query", "test").build()
-        request_body = (
-            RunWorkflowRequestBody.builder().inputs(inputs).response_mode("blocking").user("user-123").build()
-        )
+        """Test request structure validation."""
+        request_body = RunWorkflowRequestBody.builder().response_mode("streaming").user("test-user").build()
+
         request = RunWorkflowRequest.builder().request_body(request_body).build()
+
         assert request.request_body is not None
+        assert request.request_body.response_mode == "streaming"
+        assert request.request_body.user == "test-user"
         assert request.body is not None
 
     def test_request_body_builder(self) -> None:
-        """Test RunWorkflowRequestBody builder pattern."""
-        inputs = WorkflowInputs.builder().add_input("query", "test").build()
-        request_body = (
-            RunWorkflowRequestBody.builder().inputs(inputs).response_mode("streaming").user("user-456").build()
+        """Test request body builder methods."""
+        inputs = WorkflowInputs.builder().add_input("query", "test query").build()
+        file_info = (
+            WorkflowFileInfo.builder().type("document").transfer_method("local_file").upload_file_id("file-123").build()
         )
+
+        request_body = (
+            RunWorkflowRequestBody.builder()
+            .inputs(inputs)
+            .response_mode("blocking")
+            .user("user-456")
+            .files([file_info])
+            .trace_id("trace-789")
+            .build()
+        )
+
         assert request_body.inputs is not None
-        assert request_body.response_mode == "streaming"
+        assert request_body.response_mode == "blocking"
         assert request_body.user == "user-456"
+        assert request_body.files is not None
+        assert len(request_body.files) == 1
+        assert request_body.trace_id == "trace-789"
 
     def test_request_body_validation(self) -> None:
-        """Test RunWorkflowRequestBody validation."""
-        request_body = RunWorkflowRequestBody.builder().response_mode("blocking").user("user-123").build()
+        """Test request body field types and constraints."""
+        request_body = RunWorkflowRequestBody.builder().response_mode("streaming").build()
+        assert request_body.response_mode == "streaming"
+
+        request_body = RunWorkflowRequestBody.builder().response_mode("blocking").build()
         assert request_body.response_mode == "blocking"
-        assert request_body.user == "user-123"
 
     def test_response_inheritance(self) -> None:
-        """Test RunWorkflowResponse inherits from BaseResponse."""
+        """Test response inherits from BaseResponse."""
         response = RunWorkflowResponse()
+
+        # Test BaseResponse inheritance
         assert isinstance(response, BaseResponse)
         assert hasattr(response, "success")
         assert hasattr(response, "code")
         assert hasattr(response, "msg")
         assert hasattr(response, "raw")
 
+        # Test WorkflowRunInfo inheritance
+        assert isinstance(response, WorkflowRunInfo)
+        assert hasattr(response, "workflow_run_id")
+        assert hasattr(response, "task_id")
+        assert hasattr(response, "data")
+
     def test_response_data_access(self) -> None:
-        """Test RunWorkflowResponse data access."""
-        response = RunWorkflowResponse(workflow_run_id="run-123", task_id="task-456")
-        assert response.workflow_run_id == "run-123"
-        assert response.task_id == "task-456"
+        """Test response data access patterns."""
+        # Create workflow run data
+        run_data = (
+            WorkflowRunData.builder()
+            .id("run-123")
+            .workflow_id("workflow-456")
+            .status("succeeded")
+            .total_tokens(150)
+            .build()
+        )
 
+        # Create workflow run info
+        run_info = WorkflowRunInfo.builder().workflow_run_id("run-123").task_id("task-456").data(run_data).build()
 
-class TestRunSpecificWorkflowModels:
-    def test_request_builder(self) -> None:
-        """Test RunSpecificWorkflowRequest builder pattern."""
-        request = RunSpecificWorkflowRequest.builder().workflow_id("workflow-123").build()
+        # Test data access
+        assert run_info.workflow_run_id == "run-123"
+        assert run_info.task_id == "task-456"
+        assert run_info.data is not None
+        assert run_info.data.id == "run-123"
+        assert run_info.data.status == "succeeded"
+
+    def test_workflow_run_data_builder(self) -> None:
+        """Test WorkflowRunData builder pattern."""
+        run_data = (
+            WorkflowRunData.builder()
+            .id("run-123")
+            .workflow_id("workflow-456")
+            .status("running")
+            .outputs({"result": "test output"})
+            .elapsed_time(2.5)
+            .total_tokens(100)
+            .total_steps(5)
+            .created_at(1640995200)
+            .finished_at(1640995300)
+            .build()
+        )
+
+        assert run_data.id == "run-123"
+        assert run_data.workflow_id == "workflow-456"
+        assert run_data.status == "running"
+        assert run_data.outputs == {"result": "test output"}
+        assert run_data.elapsed_time == 2.5
+        assert run_data.total_tokens == 100
+        assert run_data.total_steps == 5
+        assert run_data.created_at == 1640995200
+        assert run_data.finished_at == 1640995300
+
+    def test_workflow_run_data_error_handling(self) -> None:
+        """Test WorkflowRunData error field handling."""
+        run_data = WorkflowRunData.builder().status("failed").error("Workflow execution failed").build()
+
+        assert run_data.status == "failed"
+        assert run_data.error == "Workflow execution failed"
+
+    def test_complete_workflow_request_cycle(self) -> None:
+        """Test complete request building cycle."""
+        # Build inputs
+        inputs = (
+            WorkflowInputs.builder()
+            .add_input("query", "Translate this text")
+            .add_input("target_language", "French")
+            .build()
+        )
+
+        # Build file info
+        file_info = (
+            WorkflowFileInfo.builder()
+            .type("image")
+            .transfer_method("remote_url")
+            .url("https://example.com/image.jpg")
+            .build()
+        )
+
+        # Build request body
+        request_body = (
+            RunWorkflowRequestBody.builder()
+            .inputs(inputs)
+            .response_mode("streaming")
+            .user("user-workflow-123")
+            .files([file_info])
+            .build()
+        )
+
+        # Build request
+        request = RunWorkflowRequest.builder().request_body(request_body).build()
+
+        # Validate complete structure
         assert request.http_method == HttpMethod.POST
-        assert request.uri == "/v1/workflows/:workflow_id/run"
-        assert request.workflow_id == "workflow-123"
-        assert request.paths["workflow_id"] == "workflow-123"
-
-    def test_request_validation(self) -> None:
-        """Test RunSpecificWorkflowRequest validation."""
-        inputs = WorkflowInputs.builder().add_input("query", "test").build()
-        request_body = (
-            RunSpecificWorkflowRequestBody.builder().inputs(inputs).response_mode("blocking").user("user-123").build()
-        )
-        request = RunSpecificWorkflowRequest.builder().workflow_id("workflow-456").request_body(request_body).build()
-        assert request.workflow_id == "workflow-456"
+        assert request.uri == "/v1/workflows/run"
         assert request.request_body is not None
-
-    def test_request_body_builder(self) -> None:
-        """Test RunSpecificWorkflowRequestBody builder pattern."""
-        inputs = WorkflowInputs.builder().add_input("content", "test content").build()
-        request_body = (
-            RunSpecificWorkflowRequestBody.builder().inputs(inputs).response_mode("streaming").user("user-456").build()
-        )
-        assert request_body.inputs is not None
-        assert request_body.response_mode == "streaming"
-        assert request_body.user == "user-456"
-
-    def test_request_body_validation(self) -> None:
-        """Test RunSpecificWorkflowRequestBody validation."""
-        request_body = RunSpecificWorkflowRequestBody.builder().response_mode("blocking").user("user-123").build()
-        assert request_body.response_mode == "blocking"
-        assert request_body.user == "user-123"
-
-    def test_response_inheritance(self) -> None:
-        """Test RunSpecificWorkflowResponse inherits from BaseResponse."""
-        response = RunSpecificWorkflowResponse()
-        assert isinstance(response, BaseResponse)
-        assert hasattr(response, "success")
-        assert hasattr(response, "code")
-        assert hasattr(response, "msg")
-        assert hasattr(response, "raw")
-
-    def test_response_data_access(self) -> None:
-        """Test RunSpecificWorkflowResponse data access."""
-        response = RunSpecificWorkflowResponse(workflow_run_id="run-123", task_id="task-456")
-        assert response.workflow_run_id == "run-123"
-        assert response.task_id == "task-456"
+        assert request.request_body.inputs is not None
+        assert request.request_body.response_mode == "streaming"
+        assert request.request_body.user == "user-workflow-123"
+        assert request.request_body.files is not None
+        assert len(request.request_body.files) == 1
+        assert request.body is not None
 
 
 class TestGetWorkflowRunDetailModels:
+    """Test Get Workflow Run Detail API models."""
+
     def test_request_builder(self) -> None:
-        """Test GetWorkflowRunDetailRequest builder pattern."""
-        request = GetWorkflowRunDetailRequest.builder().workflow_run_id("run-123").build()
+        """Test request builder pattern setup."""
+        request = GetWorkflowRunDetailRequest.builder().build()
+
         assert request.http_method == HttpMethod.GET
         assert request.uri == "/v1/workflows/run/:workflow_run_id"
+        assert request.workflow_run_id is None
+
+    def test_request_path_parameters(self) -> None:
+        """Test path parameter handling."""
+        request = GetWorkflowRunDetailRequest.builder().workflow_run_id("run-123").build()
+
         assert request.workflow_run_id == "run-123"
         assert request.paths["workflow_run_id"] == "run-123"
 
-    def test_request_validation(self) -> None:
-        """Test GetWorkflowRunDetailRequest validation."""
-        request = GetWorkflowRunDetailRequest.builder().workflow_run_id("run-456").build()
-        assert request.workflow_run_id == "run-456"
-        assert "workflow_run_id" in request.paths
-
     def test_response_inheritance(self) -> None:
-        """Test GetWorkflowRunDetailResponse inherits from BaseResponse."""
+        """Test response inherits from BaseResponse."""
         response = GetWorkflowRunDetailResponse()
+
+        # Test BaseResponse inheritance
         assert isinstance(response, BaseResponse)
         assert hasattr(response, "success")
         assert hasattr(response, "code")
         assert hasattr(response, "msg")
         assert hasattr(response, "raw")
 
-    def test_response_data_access(self) -> None:
-        """Test GetWorkflowRunDetailResponse data access."""
-        response = GetWorkflowRunDetailResponse(id="run-123", workflow_id="workflow-456", status="succeeded")
+    def test_response_field_types(self) -> None:
+        """Test response field types and validation."""
+        response = GetWorkflowRunDetailResponse()
+
+        # Test all fields are properly defined
+        assert response.id is None
+        assert response.workflow_id is None
+        assert response.status is None
+        assert response.inputs is None
+        assert response.outputs is None
+        assert response.error is None
+        assert response.total_steps is None
+        assert response.total_tokens is None
+        assert response.created_at is None
+        assert response.finished_at is None
+        assert response.elapsed_time is None
+
+    def test_response_data_population(self) -> None:
+        """Test response data population."""
+        response = GetWorkflowRunDetailResponse()
+        response.id = "run-123"
+        response.workflow_id = "workflow-456"
+        response.status = "succeeded"
+        response.inputs = {"query": "test"}
+        response.outputs = {"result": "success"}
+        response.total_tokens = 150
+        response.elapsed_time = 2.5
+
         assert response.id == "run-123"
         assert response.workflow_id == "workflow-456"
         assert response.status == "succeeded"
+        assert response.inputs == {"query": "test"}
+        assert response.outputs == {"result": "success"}
+        assert response.total_tokens == 150
+        assert response.elapsed_time == 2.5
 
 
 class TestStopWorkflowModels:
+    """Test Stop Workflow API models."""
+
     def test_request_builder(self) -> None:
-        """Test StopWorkflowRequest builder pattern."""
-        request = StopWorkflowRequest.builder().task_id("task-123").build()
+        """Test request builder pattern and path parameter handling."""
+        request = StopWorkflowRequest.builder().build()
+
         assert request.http_method == HttpMethod.POST
         assert request.uri == "/v1/workflows/tasks/:task_id/stop"
+        assert request.task_id is None
+        assert request.request_body is None
+
+    def test_request_path_parameters(self) -> None:
+        """Test path parameter handling."""
+        request = StopWorkflowRequest.builder().task_id("task-123").build()
+
         assert request.task_id == "task-123"
         assert request.paths["task_id"] == "task-123"
 
-    def test_request_validation(self) -> None:
-        """Test StopWorkflowRequest validation."""
-        request_body = StopWorkflowRequestBody.builder().user("user-123").build()
-        request = StopWorkflowRequest.builder().task_id("task-456").request_body(request_body).build()
-        assert request.task_id == "task-456"
+    def test_request_body_integration(self) -> None:
+        """Test request body integration."""
+        request_body = StopWorkflowRequestBody.builder().user("user-456").build()
+        request = StopWorkflowRequest.builder().task_id("task-123").request_body(request_body).build()
+
+        assert request.task_id == "task-123"
         assert request.request_body is not None
+        assert request.request_body.user == "user-456"
+        assert request.body is not None
+        assert request.body["user"] == "user-456"
 
     def test_request_body_builder(self) -> None:
-        """Test StopWorkflowRequestBody builder pattern."""
-        request_body = StopWorkflowRequestBody.builder().user("user-456").build()
-        assert request_body.user == "user-456"
+        """Test request body builder methods."""
+        request_body = StopWorkflowRequestBody.builder().user("test-user").build()
+
+        assert request_body.user == "test-user"
 
     def test_request_body_validation(self) -> None:
-        """Test StopWorkflowRequestBody validation."""
+        """Test request body field validation."""
+        # Test empty request body
+        request_body = StopWorkflowRequestBody.builder().build()
+        assert request_body.user is None
+
+        # Test with user
         request_body = StopWorkflowRequestBody.builder().user("user-789").build()
         assert request_body.user == "user-789"
 
     def test_response_inheritance(self) -> None:
-        """Test StopWorkflowResponse inherits from BaseResponse."""
+        """Test response inherits from BaseResponse."""
         response = StopWorkflowResponse()
+
+        # Test BaseResponse inheritance
         assert isinstance(response, BaseResponse)
         assert hasattr(response, "success")
         assert hasattr(response, "code")
         assert hasattr(response, "msg")
         assert hasattr(response, "raw")
 
-    def test_response_data_access(self) -> None:
-        """Test StopWorkflowResponse data access."""
-        response = StopWorkflowResponse(result="success")
+        # Test response fields
+        assert response.result is None
+
+    def test_response_success_result(self) -> None:
+        """Test fixed success result."""
+        response = StopWorkflowResponse()
+        response.result = "success"
+
         assert response.result == "success"
+
+    def test_complete_stop_workflow_cycle(self) -> None:
+        """Test complete stop workflow request building cycle."""
+        # Build request body
+        request_body = StopWorkflowRequestBody.builder().user("user-stop-123").build()
+
+        # Build request
+        request = StopWorkflowRequest.builder().task_id("task-stop-456").request_body(request_body).build()
+
+        # Validate complete structure
+        assert request.http_method == HttpMethod.POST
+        assert request.uri == "/v1/workflows/tasks/:task_id/stop"
+        assert request.task_id == "task-stop-456"
+        assert request.paths["task_id"] == "task-stop-456"
+        assert request.request_body is not None
+        assert request.request_body.user == "user-stop-123"
+        assert request.body is not None
+        assert request.body["user"] == "user-stop-123"
+
+
+class TestUploadFileModels:
+    """Test Upload File API models."""
+
+    def test_request_builder(self) -> None:
+        """Test request builder pattern and multipart handling."""
+        request = UploadFileRequest.builder().build()
+
+        assert request.http_method == HttpMethod.POST
+        assert request.uri == "/v1/files/upload"
+        assert request.file is None
+        assert request.request_body is None
+
+    def test_request_file_handling(self) -> None:
+        """Test file upload mechanics."""
+        file_content = BytesIO(b"test file content")
+        request = UploadFileRequest.builder().file(file_content, "test.txt").build()
+
+        assert request.file == file_content
+        assert request.files is not None
+        assert "file" in request.files
+        assert request.files["file"][0] == "test.txt"
+        assert request.files["file"][1] == file_content
+
+    def test_request_file_default_name(self) -> None:
+        """Test file upload with default name."""
+        file_content = BytesIO(b"test content")
+        request = UploadFileRequest.builder().file(file_content).build()
+
+        assert request.files is not None
+        assert request.files["file"][0] == "upload"
+
+    def test_request_body_builder(self) -> None:
+        """Test request body builder."""
+        request_body = UploadFileRequestBody.builder().user("test-user").build()
+
+        assert request_body.user == "test-user"
+
+    def test_request_body_integration(self) -> None:
+        """Test request body integration with multipart."""
+        file_content = BytesIO(b"test file")
+        request_body = UploadFileRequestBody.builder().user("upload-user").build()
+
+        request = UploadFileRequest.builder().file(file_content, "document.pdf").request_body(request_body).build()
+
+        assert request.file == file_content
+        assert request.request_body is not None
+        assert request.request_body.user == "upload-user"
+        assert request.body is not None
+        assert request.body["user"] == "upload-user"
+        assert request.files is not None
+        assert request.files["file"][0] == "document.pdf"
+
+    def test_response_inheritance(self) -> None:
+        """Test response inherits from BaseResponse."""
+        response = UploadFileResponse()
+
+        # Test BaseResponse inheritance
+        assert isinstance(response, BaseResponse)
+        assert hasattr(response, "success")
+        assert hasattr(response, "code")
+        assert hasattr(response, "msg")
+        assert hasattr(response, "raw")
+
+        # Test FileUploadInfo inheritance
+        assert isinstance(response, FileUploadInfo)
+        assert hasattr(response, "id")
+        assert hasattr(response, "name")
+        assert hasattr(response, "size")
+        assert hasattr(response, "extension")
+        assert hasattr(response, "mime_type")
+        assert hasattr(response, "created_by")
+        assert hasattr(response, "created_at")
+
+    def test_response_file_metadata(self) -> None:
+        """Test file metadata fields."""
+        response = UploadFileResponse()
+        response.id = "file-123"
+        response.name = "test.pdf"
+        response.size = 1024
+        response.extension = "pdf"
+        response.mime_type = "application/pdf"
+        response.created_by = "user-456"
+        response.created_at = 1640995200
+
+        assert response.id == "file-123"
+        assert response.name == "test.pdf"
+        assert response.size == 1024
+        assert response.extension == "pdf"
+        assert response.mime_type == "application/pdf"
+        assert response.created_by == "user-456"
+        assert response.created_at == 1640995200
+
+    def test_complete_upload_file_cycle(self) -> None:
+        """Test complete file upload request cycle."""
+        # Create file content
+        file_content = BytesIO(b"Sample document content for upload")
+
+        # Build request body
+        request_body = UploadFileRequestBody.builder().user("user-upload-789").build()
+
+        # Build complete request
+        request = UploadFileRequest.builder().file(file_content, "sample.docx").request_body(request_body).build()
+
+        # Validate complete structure
+        assert request.http_method == HttpMethod.POST
+        assert request.uri == "/v1/files/upload"
+        assert request.file == file_content
+        assert request.files is not None
+        assert request.files["file"][0] == "sample.docx"
+        assert request.files["file"][1] == file_content
+        assert request.request_body is not None
+        assert request.request_body.user == "user-upload-789"
+        assert request.body is not None
+        assert request.body["user"] == "user-upload-789"
+
+
+class TestGetWorkflowLogsModels:
+    """Test Get Workflow Logs API models."""
+
+    def test_request_builder(self) -> None:
+        """Test request builder pattern and query parameter handling."""
+        request = GetWorkflowLogsRequest.builder().build()
+
+        assert request.http_method == HttpMethod.GET
+        assert request.uri == "/v1/workflows/logs"
+
+    def test_request_query_parameters(self) -> None:
+        """Test all query parameter methods."""
+        request = (
+            GetWorkflowLogsRequest.builder()
+            .keyword("test")
+            .status("succeeded")
+            .page(2)
+            .limit(50)
+            .created_by_end_user_session_id("session-123")
+            .created_by_account("account-456")
+            .build()
+        )
+
+        # Verify query parameters are set correctly
+        query_dict = dict(request.queries)
+        assert "keyword" in query_dict
+        assert query_dict["keyword"] == "test"
+        assert "status" in query_dict
+        assert query_dict["status"] == "succeeded"
+        assert "page" in query_dict
+        assert query_dict["page"] == "2"
+        assert "limit" in query_dict
+        assert query_dict["limit"] == "50"
+        assert "created_by_end_user_session_id" in query_dict
+        assert query_dict["created_by_end_user_session_id"] == "session-123"
+        assert "created_by_account" in query_dict
+        assert query_dict["created_by_account"] == "account-456"
+
+    def test_response_inheritance(self) -> None:
+        """Test response inherits from BaseResponse."""
+        response = GetWorkflowLogsResponse()
+
+        # Test BaseResponse inheritance
+        assert isinstance(response, BaseResponse)
+        assert hasattr(response, "success")
+        assert hasattr(response, "code")
+        assert hasattr(response, "msg")
+        assert hasattr(response, "raw")
+
+    def test_response_pagination(self) -> None:
+        """Test pagination fields."""
+        response = GetWorkflowLogsResponse()
+        response.page = 1
+        response.limit = 20
+        response.total = 100
+        response.has_more = True
+        response.data = []
+
+        assert response.page == 1
+        assert response.limit == 20
+        assert response.total == 100
+        assert response.has_more is True
+        assert response.data == []
+
+    def test_response_with_log_data(self) -> None:
+        """Test response with log data."""
+        # Create end user info
+        end_user = (
+            EndUserInfo.builder().id("user-123").type("end_user").is_anonymous(False).session_id("session-456").build()
+        )
+
+        # Create workflow run log info
+        workflow_run = (
+            WorkflowRunLogInfo.builder()
+            .id("run-789")
+            .version("1.0")
+            .status("succeeded")
+            .elapsed_time(2.5)
+            .total_tokens(150)
+            .total_steps(3)
+            .created_at(1640995200)
+            .finished_at(1640995300)
+            .build()
+        )
+
+        # Create log info
+        log_info = (
+            WorkflowLogInfo.builder()
+            .id("log-123")
+            .workflow_run(workflow_run)
+            .created_from("service-api")
+            .created_by_role("end_user")
+            .created_by_end_user(end_user)
+            .created_at(1640995200)
+            .build()
+        )
+
+        # Create response with data
+        response = GetWorkflowLogsResponse()
+        response.data = [log_info]
+
+        assert response.data is not None
+        assert len(response.data) == 1
+        assert response.data[0].id == "log-123"
+        assert response.data[0].workflow_run is not None
+        assert response.data[0].workflow_run.status == "succeeded"
+        assert response.data[0].created_by_end_user is not None
+        assert response.data[0].created_by_end_user.id == "user-123"
+
+
+class TestGetInfoModels:
+    """Test Get Info API models."""
+
+    def test_request_builder(self) -> None:
+        """Test request builder pattern setup."""
+        request = GetInfoRequest.builder().build()
+
+        assert request.http_method == HttpMethod.GET
+        assert request.uri == "/v1/info"
+
+    def test_response_inheritance(self) -> None:
+        """Test response inherits from BaseResponse."""
+        response = GetInfoResponse()
+
+        # Test BaseResponse inheritance
+        assert isinstance(response, BaseResponse)
+        assert hasattr(response, "success")
+        assert hasattr(response, "code")
+        assert hasattr(response, "msg")
+        assert hasattr(response, "raw")
+
+        # Test AppInfo inheritance
+        assert isinstance(response, AppInfo)
+        assert hasattr(response, "name")
+        assert hasattr(response, "description")
+        assert hasattr(response, "tags")
+
+    def test_response_app_info_fields(self) -> None:
+        """Test app info fields."""
+        response = GetInfoResponse()
+        response.name = "Test Workflow App"
+        response.description = "A test workflow application"
+        response.tags = ["test", "workflow"]
+        response.mode = "workflow"
+
+        assert response.name == "Test Workflow App"
+        assert response.description == "A test workflow application"
+        assert response.tags == ["test", "workflow"]
+        assert response.mode == "workflow"
+
+
+class TestGetParametersModels:
+    """Test Get Parameters API models."""
+
+    def test_request_builder(self) -> None:
+        """Test request builder pattern setup."""
+        request = GetParametersRequest.builder().build()
+
+        assert request.http_method == HttpMethod.GET
+        assert request.uri == "/v1/parameters"
+
+    def test_response_inheritance(self) -> None:
+        """Test response inherits from BaseResponse."""
+        response = GetParametersResponse()
+
+        # Test BaseResponse inheritance
+        assert isinstance(response, BaseResponse)
+        assert hasattr(response, "success")
+        assert hasattr(response, "code")
+        assert hasattr(response, "msg")
+        assert hasattr(response, "raw")
+
+        # Test ParametersInfo inheritance
+        assert isinstance(response, ParametersInfo)
+        assert hasattr(response, "user_input_form")
+        assert hasattr(response, "file_upload")
+        assert hasattr(response, "system_parameters")
+
+    def test_response_parameters_data(self) -> None:
+        """Test parameters response data."""
+        # Create user input form
+        user_form = UserInputForm.builder().label("Query").variable("query").required(True).default("").build()
+
+        # Create file upload config
+        file_config = (
+            FileUploadConfig.builder().image({"enabled": True, "number_limits": 3}).document({"enabled": False}).build()
+        )
+
+        # Create system parameters
+        sys_params = SystemParameters.builder().file_size_limit(10).image_file_size_limit(5).build()
+
+        response = GetParametersResponse()
+        response.user_input_form = [user_form]
+        response.file_upload = file_config
+        response.system_parameters = sys_params
+
+        assert response.user_input_form is not None
+        assert len(response.user_input_form) == 1
+        assert response.user_input_form[0].label == "Query"
+        assert response.file_upload is not None
+        assert response.system_parameters is not None
+        assert response.system_parameters.file_size_limit == 10
+
+
+class TestGetSiteModels:
+    """Test Get Site API models."""
+
+    def test_request_builder(self) -> None:
+        """Test request builder pattern setup."""
+        request = GetSiteRequest.builder().build()
+
+        assert request.http_method == HttpMethod.GET
+        assert request.uri == "/v1/site"
+
+    def test_response_inheritance(self) -> None:
+        """Test response inherits from BaseResponse."""
+        response = GetSiteResponse()
+
+        # Test BaseResponse inheritance
+        assert isinstance(response, BaseResponse)
+        assert hasattr(response, "success")
+        assert hasattr(response, "code")
+        assert hasattr(response, "msg")
+        assert hasattr(response, "raw")
+
+        # Test SiteInfo inheritance
+        assert isinstance(response, SiteInfo)
+        assert hasattr(response, "title")
+        assert hasattr(response, "icon_type")
+        assert hasattr(response, "description")
+
+    def test_response_site_info_fields(self) -> None:
+        """Test site info fields."""
+        response = GetSiteResponse()
+        response.title = "My Workflow App"
+        response.icon_type = "emoji"
+        response.icon = "🚀"
+        response.description = "A powerful workflow application"
+        response.show_workflow_steps = True
+
+        assert response.title == "My Workflow App"
+        assert response.icon_type == "emoji"
+        assert response.icon == "🚀"
+        assert response.description == "A powerful workflow application"
+        assert response.show_workflow_steps is True

@@ -1,421 +1,152 @@
-"""Tests for workflow resource."""
+"""Tests for consolidated Workflow resource class."""
 
-from __future__ import annotations
-
-from collections.abc import AsyncGenerator
-from unittest.mock import AsyncMock, Mock, patch
+from unittest.mock import Mock
 
 import pytest
 
-from dify_oapi.api.workflow.v1.model.workflow.get_workflow_run_detail_request import (
-    GetWorkflowRunDetailRequest,
-)
-from dify_oapi.api.workflow.v1.model.workflow.get_workflow_run_detail_response import (
-    GetWorkflowRunDetailResponse,
-)
-from dify_oapi.api.workflow.v1.model.workflow.run_specific_workflow_request import (
-    RunSpecificWorkflowRequest,
-)
-from dify_oapi.api.workflow.v1.model.workflow.run_specific_workflow_response import (
-    RunSpecificWorkflowResponse,
-)
-from dify_oapi.api.workflow.v1.model.workflow.run_workflow_request import (
-    RunWorkflowRequest,
-)
-from dify_oapi.api.workflow.v1.model.workflow.run_workflow_response import (
-    RunWorkflowResponse,
-)
-from dify_oapi.api.workflow.v1.model.workflow.stop_workflow_request import (
-    StopWorkflowRequest,
-)
-from dify_oapi.api.workflow.v1.model.workflow.stop_workflow_response import (
-    StopWorkflowResponse,
-)
+from dify_oapi.api.workflow.v1.model.get_info_request import GetInfoRequest
+from dify_oapi.api.workflow.v1.model.get_info_response import GetInfoResponse
+from dify_oapi.api.workflow.v1.model.get_parameters_request import GetParametersRequest
+from dify_oapi.api.workflow.v1.model.get_parameters_response import GetParametersResponse
+from dify_oapi.api.workflow.v1.model.get_site_request import GetSiteRequest
+from dify_oapi.api.workflow.v1.model.get_site_response import GetSiteResponse
+from dify_oapi.api.workflow.v1.model.get_workflow_logs_request import GetWorkflowLogsRequest
+from dify_oapi.api.workflow.v1.model.get_workflow_logs_response import GetWorkflowLogsResponse
+from dify_oapi.api.workflow.v1.model.get_workflow_run_detail_request import GetWorkflowRunDetailRequest
+from dify_oapi.api.workflow.v1.model.get_workflow_run_detail_response import GetWorkflowRunDetailResponse
+from dify_oapi.api.workflow.v1.model.run_workflow_request import RunWorkflowRequest
+from dify_oapi.api.workflow.v1.model.run_workflow_response import RunWorkflowResponse
+from dify_oapi.api.workflow.v1.model.stop_workflow_request import StopWorkflowRequest
+from dify_oapi.api.workflow.v1.model.stop_workflow_response import StopWorkflowResponse
+from dify_oapi.api.workflow.v1.model.upload_file_request import UploadFileRequest
+from dify_oapi.api.workflow.v1.model.upload_file_response import UploadFileResponse
 from dify_oapi.api.workflow.v1.resource.workflow import Workflow
 from dify_oapi.core.model.config import Config
 from dify_oapi.core.model.request_option import RequestOption
 
 
-class TestWorkflow:
-    """Test cases for Workflow resource."""
+class TestWorkflowResource:
+    """Test consolidated Workflow resource class."""
 
     @pytest.fixture
-    def config(self) -> Config:
-        """Create test config."""
-        config = Config()
-        config.domain = "https://api.test.com"
-        return config
+    def workflow_resource(self) -> Workflow:
+        """Create workflow resource instance."""
+        config = Mock(spec=Config)
+        return Workflow(config)
 
     @pytest.fixture
     def request_option(self) -> RequestOption:
-        """Create test request option."""
+        """Create request option."""
         return RequestOption.builder().api_key("test-api-key").build()
 
-    @pytest.fixture
-    def workflow_resource(self, config: Config) -> Workflow:
-        """Create workflow resource instance."""
-        return Workflow(config)
-
-    def test_workflow_initialization(self, config: Config) -> None:
-        """Test workflow resource initialization."""
-        workflow = Workflow(config)
-        assert workflow.config == config
-
-    @patch("dify_oapi.core.http.transport.Transport.execute")
-    def test_run_workflow_sync_blocking(
-        self,
-        mock_execute: Mock,
-        workflow_resource: Workflow,
-        request_option: RequestOption,
-    ) -> None:
-        """Test run workflow sync blocking mode."""
-        # Arrange
-        request = RunWorkflowRequest.builder().build()
-        expected_response = RunWorkflowResponse()
-        mock_execute.return_value = expected_response
-
-        # Act
-        result = workflow_resource.run_workflow(request, request_option, stream=False)
-
-        # Assert
-        assert result == expected_response
-        mock_execute.assert_called_once_with(
-            workflow_resource.config,
-            request,
-            unmarshal_as=RunWorkflowResponse,
-            option=request_option,
-        )
-
-    @patch("dify_oapi.core.http.transport.Transport.execute")
-    def test_run_workflow_sync_streaming(
-        self,
-        mock_execute: Mock,
-        workflow_resource: Workflow,
-        request_option: RequestOption,
-    ) -> None:
-        """Test run workflow sync streaming mode."""
-        # Arrange
-        request = RunWorkflowRequest.builder().build()
-        expected_stream = (b"chunk" + str(i).encode() for i in range(3))
-        mock_execute.return_value = expected_stream
-
-        # Act
-        result = workflow_resource.run_workflow(request, request_option, stream=True)
-
-        # Assert
-        assert result is expected_stream
-        mock_execute.assert_called_once_with(workflow_resource.config, request, stream=True, option=request_option)
-
-    @patch("dify_oapi.core.http.transport.ATransport.aexecute")
-    async def test_arun_workflow_async_blocking(
-        self,
-        mock_aexecute: AsyncMock,
-        workflow_resource: Workflow,
-        request_option: RequestOption,
-    ) -> None:
-        """Test run workflow async blocking mode."""
-        # Arrange
-        request = RunWorkflowRequest.builder().build()
-        expected_response = RunWorkflowResponse()
-        mock_aexecute.return_value = expected_response
-
-        # Act
-        result = await workflow_resource.arun_workflow(request, request_option, stream=False)
-
-        # Assert
-        assert result == expected_response
-        mock_aexecute.assert_called_once_with(
-            workflow_resource.config,
-            request,
-            unmarshal_as=RunWorkflowResponse,
-            option=request_option,
-        )
-
-    @patch("dify_oapi.core.http.transport.ATransport.aexecute")
-    async def test_arun_workflow_async_streaming(
-        self,
-        mock_aexecute: AsyncMock,
-        workflow_resource: Workflow,
-        request_option: RequestOption,
-    ) -> None:
-        """Test run workflow async streaming mode."""
-        # Arrange
+    def test_run_sync(self, workflow_resource: Workflow, request_option: RequestOption) -> None:
+        """Test sync workflow execution."""
         request = RunWorkflowRequest.builder().build()
 
-        async def async_generator() -> AsyncGenerator[bytes, None]:
-            for i in range(3):
-                yield b"chunk" + str(i).encode()
+        with pytest.MonkeyPatch().context() as m:
+            mock_transport = Mock()
+            mock_transport.execute.return_value = RunWorkflowResponse()
+            m.setattr("dify_oapi.api.workflow.v1.resource.workflow.Transport", mock_transport)
 
-        expected_stream = async_generator()
-        mock_aexecute.return_value = expected_stream
+            result = workflow_resource.run(request, request_option, False)
 
-        # Act
-        result = await workflow_resource.arun_workflow(request, request_option, stream=True)
+            assert isinstance(result, RunWorkflowResponse)
+            mock_transport.execute.assert_called_once()
 
-        # Assert
-        assert result is expected_stream
-        mock_aexecute.assert_called_once_with(workflow_resource.config, request, stream=True, option=request_option)
+    def test_detail(self, workflow_resource: Workflow, request_option: RequestOption) -> None:
+        """Test get workflow run detail."""
+        request = GetWorkflowRunDetailRequest.builder().workflow_run_id("run-123").build()
 
-    @patch("dify_oapi.core.http.transport.Transport.execute")
-    def test_run_specific_workflow_sync_blocking(
-        self,
-        mock_execute: Mock,
-        workflow_resource: Workflow,
-        request_option: RequestOption,
-    ) -> None:
-        """Test run specific workflow sync blocking mode."""
-        # Arrange
-        request = RunSpecificWorkflowRequest.builder().workflow_id("test-id").build()
-        expected_response = RunSpecificWorkflowResponse()
-        mock_execute.return_value = expected_response
+        with pytest.MonkeyPatch().context() as m:
+            mock_transport = Mock()
+            mock_transport.execute.return_value = GetWorkflowRunDetailResponse()
+            m.setattr("dify_oapi.api.workflow.v1.resource.workflow.Transport", mock_transport)
 
-        # Act
-        result = workflow_resource.run_specific_workflow(request, request_option, stream=False)
+            result = workflow_resource.detail(request, request_option)
 
-        # Assert
-        assert result == expected_response
-        mock_execute.assert_called_once_with(
-            workflow_resource.config,
-            request,
-            unmarshal_as=RunSpecificWorkflowResponse,
-            option=request_option,
-        )
+            assert isinstance(result, GetWorkflowRunDetailResponse)
+            mock_transport.execute.assert_called_once()
 
-    @patch("dify_oapi.core.http.transport.Transport.execute")
-    def test_run_specific_workflow_sync_streaming(
-        self,
-        mock_execute: Mock,
-        workflow_resource: Workflow,
-        request_option: RequestOption,
-    ) -> None:
-        """Test run specific workflow sync streaming mode."""
-        # Arrange
-        request = RunSpecificWorkflowRequest.builder().workflow_id("test-id").build()
-        expected_stream = (b"chunk" + str(i).encode() for i in range(2))
-        mock_execute.return_value = expected_stream
+    def test_stop(self, workflow_resource: Workflow, request_option: RequestOption) -> None:
+        """Test stop workflow."""
+        request = StopWorkflowRequest.builder().task_id("task-123").build()
 
-        # Act
-        result = workflow_resource.run_specific_workflow(request, request_option, stream=True)
+        with pytest.MonkeyPatch().context() as m:
+            mock_transport = Mock()
+            mock_transport.execute.return_value = StopWorkflowResponse()
+            m.setattr("dify_oapi.api.workflow.v1.resource.workflow.Transport", mock_transport)
 
-        # Assert
-        assert result is expected_stream
-        mock_execute.assert_called_once_with(workflow_resource.config, request, stream=True, option=request_option)
+            result = workflow_resource.stop(request, request_option)
 
-    @patch("dify_oapi.core.http.transport.ATransport.aexecute")
-    async def test_arun_specific_workflow_async_blocking(
-        self,
-        mock_aexecute: AsyncMock,
-        workflow_resource: Workflow,
-        request_option: RequestOption,
-    ) -> None:
-        """Test run specific workflow async blocking mode."""
-        # Arrange
-        request = RunSpecificWorkflowRequest.builder().workflow_id("test-id").build()
-        expected_response = RunSpecificWorkflowResponse()
-        mock_aexecute.return_value = expected_response
+            assert isinstance(result, StopWorkflowResponse)
+            mock_transport.execute.assert_called_once()
 
-        # Act
-        result = await workflow_resource.arun_specific_workflow(request, request_option, stream=False)
+    def test_upload(self, workflow_resource: Workflow, request_option: RequestOption) -> None:
+        """Test file upload."""
+        request = UploadFileRequest.builder().build()
 
-        # Assert
-        assert result == expected_response
-        mock_aexecute.assert_called_once_with(
-            workflow_resource.config,
-            request,
-            unmarshal_as=RunSpecificWorkflowResponse,
-            option=request_option,
-        )
+        with pytest.MonkeyPatch().context() as m:
+            mock_transport = Mock()
+            mock_transport.execute.return_value = UploadFileResponse()
+            m.setattr("dify_oapi.api.workflow.v1.resource.workflow.Transport", mock_transport)
 
-    @patch("dify_oapi.core.http.transport.ATransport.aexecute")
-    async def test_arun_specific_workflow_async_streaming(
-        self,
-        mock_aexecute: AsyncMock,
-        workflow_resource: Workflow,
-        request_option: RequestOption,
-    ) -> None:
-        """Test run specific workflow async streaming mode."""
-        # Arrange
-        request = RunSpecificWorkflowRequest.builder().workflow_id("test-id").build()
+            result = workflow_resource.upload(request, request_option)
 
-        async def async_generator() -> AsyncGenerator[bytes, None]:
-            for i in range(2):
-                yield b"chunk" + str(i).encode()
+            assert isinstance(result, UploadFileResponse)
+            mock_transport.execute.assert_called_once()
 
-        expected_stream = async_generator()
-        mock_aexecute.return_value = expected_stream
+    def test_logs(self, workflow_resource: Workflow, request_option: RequestOption) -> None:
+        """Test get workflow logs."""
+        request = GetWorkflowLogsRequest.builder().build()
 
-        # Act
-        result = await workflow_resource.arun_specific_workflow(request, request_option, stream=True)
+        with pytest.MonkeyPatch().context() as m:
+            mock_transport = Mock()
+            mock_transport.execute.return_value = GetWorkflowLogsResponse()
+            m.setattr("dify_oapi.api.workflow.v1.resource.workflow.Transport", mock_transport)
 
-        # Assert
-        assert result is expected_stream
-        mock_aexecute.assert_called_once_with(workflow_resource.config, request, stream=True, option=request_option)
+            result = workflow_resource.logs(request, request_option)
 
-    @patch("dify_oapi.core.http.transport.Transport.execute")
-    def test_get_workflow_run_detail_sync(
-        self,
-        mock_execute: Mock,
-        workflow_resource: Workflow,
-        request_option: RequestOption,
-    ) -> None:
-        """Test get workflow run detail sync."""
-        # Arrange
-        request = GetWorkflowRunDetailRequest.builder().workflow_run_id("test-run-id").build()
-        expected_response = GetWorkflowRunDetailResponse()
-        mock_execute.return_value = expected_response
+            assert isinstance(result, GetWorkflowLogsResponse)
+            mock_transport.execute.assert_called_once()
 
-        # Act
-        result = workflow_resource.get_workflow_run_detail(request, request_option)
+    def test_info(self, workflow_resource: Workflow, request_option: RequestOption) -> None:
+        """Test get application info."""
+        request = GetInfoRequest.builder().build()
 
-        # Assert
-        assert result == expected_response
-        mock_execute.assert_called_once_with(
-            workflow_resource.config,
-            request,
-            unmarshal_as=GetWorkflowRunDetailResponse,
-            option=request_option,
-        )
+        with pytest.MonkeyPatch().context() as m:
+            mock_transport = Mock()
+            mock_transport.execute.return_value = GetInfoResponse()
+            m.setattr("dify_oapi.api.workflow.v1.resource.workflow.Transport", mock_transport)
 
-    @patch("dify_oapi.core.http.transport.ATransport.aexecute")
-    async def test_aget_workflow_run_detail_async(
-        self,
-        mock_aexecute: AsyncMock,
-        workflow_resource: Workflow,
-        request_option: RequestOption,
-    ) -> None:
-        """Test get workflow run detail async."""
-        # Arrange
-        request = GetWorkflowRunDetailRequest.builder().workflow_run_id("test-run-id").build()
-        expected_response = GetWorkflowRunDetailResponse()
-        mock_aexecute.return_value = expected_response
+            result = workflow_resource.info(request, request_option)
 
-        # Act
-        result = await workflow_resource.aget_workflow_run_detail(request, request_option)
+            assert isinstance(result, GetInfoResponse)
+            mock_transport.execute.assert_called_once()
 
-        # Assert
-        assert result == expected_response
-        mock_aexecute.assert_called_once_with(
-            workflow_resource.config,
-            request,
-            unmarshal_as=GetWorkflowRunDetailResponse,
-            option=request_option,
-        )
+    def test_parameters(self, workflow_resource: Workflow, request_option: RequestOption) -> None:
+        """Test get application parameters."""
+        request = GetParametersRequest.builder().build()
 
-    @patch("dify_oapi.core.http.transport.Transport.execute")
-    def test_stop_workflow_sync(
-        self,
-        mock_execute: Mock,
-        workflow_resource: Workflow,
-        request_option: RequestOption,
-    ) -> None:
-        """Test stop workflow sync."""
-        # Arrange
-        request = StopWorkflowRequest.builder().task_id("test-task-id").build()
-        expected_response = StopWorkflowResponse()
-        mock_execute.return_value = expected_response
+        with pytest.MonkeyPatch().context() as m:
+            mock_transport = Mock()
+            mock_transport.execute.return_value = GetParametersResponse()
+            m.setattr("dify_oapi.api.workflow.v1.resource.workflow.Transport", mock_transport)
 
-        # Act
-        result = workflow_resource.stop_workflow(request, request_option)
+            result = workflow_resource.parameters(request, request_option)
 
-        # Assert
-        assert result == expected_response
-        mock_execute.assert_called_once_with(
-            workflow_resource.config,
-            request,
-            unmarshal_as=StopWorkflowResponse,
-            option=request_option,
-        )
+            assert isinstance(result, GetParametersResponse)
+            mock_transport.execute.assert_called_once()
 
-    @patch("dify_oapi.core.http.transport.ATransport.aexecute")
-    async def test_astop_workflow_async(
-        self,
-        mock_aexecute: AsyncMock,
-        workflow_resource: Workflow,
-        request_option: RequestOption,
-    ) -> None:
-        """Test stop workflow async."""
-        # Arrange
-        request = StopWorkflowRequest.builder().task_id("test-task-id").build()
-        expected_response = StopWorkflowResponse()
-        mock_aexecute.return_value = expected_response
+    def test_site(self, workflow_resource: Workflow, request_option: RequestOption) -> None:
+        """Test get site settings."""
+        request = GetSiteRequest.builder().build()
 
-        # Act
-        result = await workflow_resource.astop_workflow(request, request_option)
+        with pytest.MonkeyPatch().context() as m:
+            mock_transport = Mock()
+            mock_transport.execute.return_value = GetSiteResponse()
+            m.setattr("dify_oapi.api.workflow.v1.resource.workflow.Transport", mock_transport)
 
-        # Assert
-        assert result == expected_response
-        mock_aexecute.assert_called_once_with(
-            workflow_resource.config,
-            request,
-            unmarshal_as=StopWorkflowResponse,
-            option=request_option,
-        )
+            result = workflow_resource.site(request, request_option)
 
-    @patch("dify_oapi.core.http.transport.Transport.execute")
-    def test_run_workflow_error_handling(
-        self,
-        mock_execute: Mock,
-        workflow_resource: Workflow,
-        request_option: RequestOption,
-    ) -> None:
-        """Test run workflow error handling."""
-        # Arrange
-        request = RunWorkflowRequest.builder().build()
-        mock_execute.side_effect = Exception("API Error")
-
-        # Act & Assert
-        with pytest.raises(Exception, match="API Error"):
-            workflow_resource.run_workflow(request, request_option, stream=False)
-
-    @patch("dify_oapi.core.http.transport.ATransport.aexecute")
-    async def test_arun_workflow_error_handling(
-        self,
-        mock_aexecute: AsyncMock,
-        workflow_resource: Workflow,
-        request_option: RequestOption,
-    ) -> None:
-        """Test async run workflow error handling."""
-        # Arrange
-        request = RunWorkflowRequest.builder().build()
-        mock_aexecute.side_effect = Exception("Async API Error")
-
-        # Act & Assert
-        with pytest.raises(Exception, match="Async API Error"):
-            await workflow_resource.arun_workflow(request, request_option, stream=False)
-
-    def test_streaming_return_types(self, workflow_resource: Workflow) -> None:
-        """Test streaming return type annotations."""
-        # This test verifies that the method signatures are correct
-        # by checking the return type annotations
-        from typing import get_type_hints
-
-        # Check sync streaming method
-        hints = get_type_hints(workflow_resource.run_workflow)
-        assert "return" in hints
-
-        # Check async streaming method
-        hints = get_type_hints(workflow_resource.arun_workflow)
-        assert "return" in hints
-
-    def test_method_signatures(self, workflow_resource: Workflow) -> None:
-        """Test that all methods have correct signatures."""
-        import inspect
-
-        # Test sync methods
-        assert hasattr(workflow_resource, "run_workflow")
-        assert hasattr(workflow_resource, "run_specific_workflow")
-        assert hasattr(workflow_resource, "get_workflow_run_detail")
-        assert hasattr(workflow_resource, "stop_workflow")
-
-        # Test async methods
-        assert hasattr(workflow_resource, "arun_workflow")
-        assert hasattr(workflow_resource, "arun_specific_workflow")
-        assert hasattr(workflow_resource, "aget_workflow_run_detail")
-        assert hasattr(workflow_resource, "astop_workflow")
-
-        # Verify method signatures
-        sig = inspect.signature(workflow_resource.run_workflow)
-        params = list(sig.parameters.keys())
-        assert "request" in params
-        assert "request_option" in params
-        assert "stream" in params
+            assert isinstance(result, GetSiteResponse)
+            mock_transport.execute.assert_called_once()

@@ -10,7 +10,7 @@ A Python SDK for interacting with the Dify Service-API. This library provides a 
 
 ## ✨ Features
 
-- **Multiple API Services**: Chat, Completion, Knowledge Base (39 APIs), Workflow, and Core Dify APIs
+- **Multiple API Services**: Chat, Completion, Knowledge Base (33 APIs), Workflow, and Core Dify APIs
 - **Builder Pattern**: Fluent, chainable interface for constructing requests
 - **Sync & Async Support**: Both synchronous and asynchronous operations
 - **Streaming Responses**: Real-time streaming for chat and completion
@@ -109,12 +109,13 @@ asyncio.run(async_chat())
 - **File Upload**: Support for document and media files
 - **Application Info**: Configuration and metadata retrieval
 
-### Knowledge Base API (39 APIs)
-- **Dataset Management**: CRUD operations for datasets
-- **Document Management**: Upload, process, and manage documents
-- **Segment Management**: Fine-grained content segmentation
-- **Metadata & Tags**: Custom metadata and knowledge type tags
-- **Retrieval**: Advanced search and retrieval functionality
+### Knowledge Base API (33 APIs)
+- **Dataset Management**: 6 APIs for dataset CRUD operations and content retrieval
+- **Document Management**: 10 APIs for document upload, processing, and management
+- **Segment Management**: 5 APIs for fine-grained content segmentation
+- **Child Chunks Management**: 4 APIs for sub-segment management
+- **Tag Management**: 7 APIs for metadata and knowledge type tags
+- **Model Management**: 1 API for embedding model information
 
 ### Workflow API
 - Automated workflow execution
@@ -137,7 +138,10 @@ Explore comprehensive examples in the [examples directory](./examples):
 - [**Basic Completion**](./examples/completion/basic_completion.py) - Text generation
 
 ### Knowledge Base Examples
-- [**List Datasets**](./examples/knowledge_base/list_datasets.py) - Dataset management
+- [**Dataset Management**](./examples/knowledge/dataset/) - Complete dataset operations
+- [**Document Processing**](./examples/knowledge/document/) - File upload and text processing
+- [**Content Organization**](./examples/knowledge/segment/) - Segment and chunk management
+- [**Tag Management**](./examples/knowledge/tag/) - Metadata and tagging system
 
 For detailed examples and usage patterns, see the [examples README](./examples/README.md).
 
@@ -227,7 +231,7 @@ dify-oapi/
 │   │   ├── chat/        # Chat API
 │   │   ├── completion/  # Completion API
 │   │   ├── dify/        # Core Dify API
-│   │   ├── knowledge_base/ # Knowledge Base API (39 APIs)
+│   │   ├── knowledge/ # Knowledge Base API (33 APIs)
 │   │   └── workflow/    # Workflow API
 │   ├── core/            # Core functionality
 │   │   ├── http/        # HTTP transport layer
@@ -244,7 +248,7 @@ dify-oapi/
 
 - [**Project Overview**](./docs/overview.md) - Architecture and technical details
 - [**Completion APIs**](./docs/completion/apis.md) - Complete completion API documentation
-- [**Knowledge Base APIs**](./docs/datasets/apis.md) - Complete dataset API documentation
+- [**Knowledge Base APIs**](./docs/knowledge/apis.md) - Complete knowledge base API documentation
 - [**Examples**](./examples/README.md) - Usage examples and patterns
 
 ## 🤝 Contributing

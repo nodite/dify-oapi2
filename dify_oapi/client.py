@@ -3,7 +3,7 @@ from __future__ import annotations
 from .api.chat.service import ChatService
 from .api.completion.service import CompletionService
 from .api.dify.service import DifyService
-from .api.knowledge_base.service import KnowledgeBaseService
+from .api.knowledge.service import Knowledge
 from .api.workflow.service import WorkflowService
 from .core.enum import LogLevel
 from .core.http.transport import Transport
@@ -19,7 +19,7 @@ class Client:
         self._completion: CompletionService | None = None
         self._dify: DifyService | None = None
         self._workflow: WorkflowService | None = None
-        self._knowledge_base: KnowledgeBaseService | None = None
+        self._knowledge: Knowledge | None = None
 
     @property
     def chat(self) -> ChatService:
@@ -46,10 +46,10 @@ class Client:
         return self._workflow
 
     @property
-    def knowledge_base(self) -> KnowledgeBaseService:
-        if self._knowledge_base is None:
+    def knowledge(self) -> Knowledge:
+        if self._knowledge is None:
             raise RuntimeError("Knowledge base service has not been initialized")
-        return self._knowledge_base
+        return self._knowledge
 
     def request(self, request: BaseRequest):
         if self._config is None:
@@ -90,7 +90,7 @@ class ClientBuilder:
         client._completion = CompletionService(self._config)
         client._dify = DifyService(self._config)
         client._workflow = WorkflowService(self._config)
-        client._knowledge_base = KnowledgeBaseService(self._config)
+        client._knowledge = Knowledge(self._config)
         return client
 
     def _init_logger(self):

@@ -102,7 +102,7 @@ make test
 make test-cov
 
 # Run specific test file
-poetry run pytest tests/knowledge_base/v1/model/test_dataset_models.py -v
+poetry run pytest tests/knowledge/v1/model/test_dataset_models.py -v
 
 # Run tests matching a pattern
 poetry run pytest tests/ -k "test_create" -v
@@ -112,7 +112,7 @@ poetry run pytest tests/ -k "test_create" -v
 
 ```
 tests/
-├── knowledge_base/
+├── knowledge/
 │   └── v1/
 │       ├── model/          # Model tests
 │       ├── resource/       # Resource tests

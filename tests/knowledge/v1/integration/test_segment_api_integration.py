@@ -275,7 +275,7 @@ class TestSegmentAPIIntegration:
         """Test complete child chunk management lifecycle."""
         with patch("dify_oapi.core.http.transport.Transport.execute") as mock_execute:
             # Mock responses
-            create_chunk_response = CreateChildChunkResponse(
+            create_response = CreateChildChunkResponse(
                 success=True,
                 data=ChildChunkInfo(
                     id="chunk-123",
@@ -285,7 +285,7 @@ class TestSegmentAPIIntegration:
                 ),
             )
 
-            list_chunks_response = ListChildChunksResponse(
+            list_response = ListChildChunksResponse(
                 success=True,
                 data=[
                     ChildChunkInfo(
@@ -301,7 +301,7 @@ class TestSegmentAPIIntegration:
                 limit=20,
             )
 
-            update_chunk_response = UpdateChildChunkResponse(
+            update_response = UpdateChildChunkResponse(
                 success=True,
                 data=ChildChunkInfo(
                     id="chunk-123",
@@ -311,33 +311,33 @@ class TestSegmentAPIIntegration:
                 ),
             )
 
-            delete_chunk_response = DeleteChildChunkResponse(success=True)
+            delete_response = DeleteChildChunkResponse(success=True)
 
             mock_execute.side_effect = [
-                create_chunk_response,
-                list_chunks_response,
-                update_chunk_response,
-                delete_chunk_response,
+                create_response,
+                list_response,
+                update_response,
+                delete_response,
             ]
 
             # 1. Create child chunk
-            create_chunk_body = CreateChildChunkRequestBody.builder().content("[Example] Child chunk content").build()
+            create_body = CreateChildChunkRequestBody.builder().content("[Example] Child chunk content").build()
 
-            create_chunk_req = (
+            create_req = (
                 CreateChildChunkRequest.builder()
                 .dataset_id("dataset-123")
                 .document_id("doc-123")
                 .segment_id("segment-123")
-                .request_body(create_chunk_body)
+                .request_body(create_body)
                 .build()
             )
 
-            create_chunk_result = segment_resource.create_child_chunk(create_chunk_req, request_option)
-            assert create_chunk_result.success
-            assert create_chunk_result.data.id == "chunk-123"
+            create_result = segment_resource.create_child_chunk(create_req, request_option)
+            assert create_result.success
+            assert create_result.data.id == "chunk-123"
 
             # 2. List child chunks
-            list_chunks_req = (
+            list_req = (
                 ListChildChunksRequest.builder()
                 .dataset_id("dataset-123")
                 .document_id("doc-123")
@@ -346,32 +346,30 @@ class TestSegmentAPIIntegration:
                 .build()
             )
 
-            list_chunks_result = segment_resource.list_child_chunks(list_chunks_req, request_option)
-            assert list_chunks_result.success
-            assert len(list_chunks_result.data) == 1
-            assert list_chunks_result.total == 1
+            list_result = segment_resource.list_child_chunks(list_req, request_option)
+            assert list_result.success
+            assert len(list_result.data) == 1
+            assert list_result.total == 1
 
             # 3. Update child chunk
-            update_chunk_body = (
-                UpdateChildChunkRequestBody.builder().content("[Example] Updated child chunk content").build()
-            )
+            update_body = UpdateChildChunkRequestBody.builder().content("[Example] Updated child chunk content").build()
 
-            update_chunk_req = (
+            update_req = (
                 UpdateChildChunkRequest.builder()
                 .dataset_id("dataset-123")
                 .document_id("doc-123")
                 .segment_id("segment-123")
                 .child_chunk_id("chunk-123")
-                .request_body(update_chunk_body)
+                .request_body(update_body)
                 .build()
             )
 
-            update_chunk_result = segment_resource.update_child_chunk(update_chunk_req, request_option)
-            assert update_chunk_result.success
-            assert update_chunk_result.data.content == "[Example] Updated child chunk content"
+            update_result = segment_resource.update_child_chunk(update_req, request_option)
+            assert update_result.success
+            assert update_result.data.content == "[Example] Updated child chunk content"
 
             # 4. Delete child chunk
-            delete_chunk_req = (
+            delete_req = (
                 DeleteChildChunkRequest.builder()
                 .dataset_id("dataset-123")
                 .document_id("doc-123")
@@ -380,8 +378,8 @@ class TestSegmentAPIIntegration:
                 .build()
             )
 
-            delete_chunk_result = segment_resource.delete_child_chunk(delete_chunk_req, request_option)
-            assert delete_chunk_result.success
+            delete_result = segment_resource.delete_child_chunk(delete_req, request_option)
+            assert delete_result.success
 
             assert mock_execute.call_count == 4
 
@@ -419,7 +417,7 @@ class TestSegmentAPIIntegration:
             )
 
             # Mock deletions
-            delete_chunk_response = DeleteChildChunkResponse(success=True)
+            delete_response = DeleteChildChunkResponse(success=True)
             delete_segment_response = DeleteResponse(success=True)
 
             mock_execute.side_effect = [
@@ -427,7 +425,7 @@ class TestSegmentAPIIntegration:
                 chunk_response,
                 updated_segment_response,
                 updated_chunk_response,
-                delete_chunk_response,
+                delete_response,
                 delete_segment_response,
             ]
 
@@ -483,23 +481,23 @@ class TestSegmentAPIIntegration:
             updated_segment = segment_resource.update(update_segment_req, request_option)
             assert updated_segment.success
 
-            update_chunk_body = UpdateChildChunkRequestBody.builder().content("[Example] Updated child chunk").build()
+            update_body = UpdateChildChunkRequestBody.builder().content("[Example] Updated child chunk").build()
 
-            update_chunk_req = (
+            update_req = (
                 UpdateChildChunkRequest.builder()
                 .dataset_id("dataset-123")
                 .document_id("doc-123")
                 .segment_id("segment-123")
                 .child_chunk_id("chunk-123")
-                .request_body(update_chunk_body)
+                .request_body(update_body)
                 .build()
             )
 
-            updated_chunk = segment_resource.update_child_chunk(update_chunk_req, request_option)
+            updated_chunk = segment_resource.update_child_chunk(update_req, request_option)
             assert updated_chunk.success
 
             # 4. Delete child chunk first, then segment
-            delete_chunk_req = (
+            delete_req = (
                 DeleteChildChunkRequest.builder()
                 .dataset_id("dataset-123")
                 .document_id("doc-123")
@@ -508,7 +506,7 @@ class TestSegmentAPIIntegration:
                 .build()
             )
 
-            chunk_delete_result = segment_resource.delete_child_chunk(delete_chunk_req, request_option)
+            chunk_delete_result = segment_resource.delete_child_chunk(delete_req, request_option)
             assert chunk_delete_result.success
 
             delete_segment_req = (

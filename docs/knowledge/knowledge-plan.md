@@ -8,7 +8,7 @@ The Knowledge Base API module implements **33 APIs** across **6 specialized reso
 - **Dataset Resource**: 6 APIs for dataset management (create, list, get, update, delete, retrieve)
 - **Document Resource**: 10 APIs for document processing (create_by_file, create_by_text, list, get, update_by_file, update_by_text, delete, update_status, get_batch_status, file_info)
 - **Segment Resource**: 5 APIs for content segmentation (list, create, get, update, delete)
-- **Child Chunks Resource**: 4 APIs for sub-segment management (list_chunks, create_chunk, update_chunk, delete_chunk)
+- **Child Chunks Resource**: 4 APIs for sub-segment management (list, create, update, delete)
 - **Tag Resource**: 7 APIs for metadata and tagging (list, create, update, delete, bind, unbind, get_dataset_tags)
 - **Model Resource**: 1 API for embedding models (embedding_models)
 
@@ -42,7 +42,7 @@ Before starting, ensure you understand:
 - `dataset.py` - Dataset management operations (create, list, get, update, delete, retrieve)
 - `document.py` - Document processing operations (create_by_file, create_by_text, list, get, update_by_file, update_by_text, delete, update_status, get_batch_status, file_info)
 - `segment.py` - Segment operations (list, create, get, update, delete)
-- `chunk.py` - Child chunk operations (list_chunks, create_chunk, update_chunk, delete_chunk)
+- `chunk.py` - Child chunk operations (list, create, update, delete)
 - `tag.py` - Tag and metadata operations (list, create, update, delete, bind, unbind, get_dataset_tags)
 - `model.py` - Model information operations (embedding_models)
 
@@ -105,7 +105,7 @@ Requirements:
    - [ ] Dataset resource (6 APIs: create, list, get, update, delete, retrieve)
    - [ ] Document resource (10 APIs: create_by_file, create_by_text, list, get, update_by_file, update_by_text, delete, update_status, get_batch_status, file_info)
    - [ ] Segment resource (5 APIs: list, create, get, update, delete)
-   - [ ] Child Chunks resource (4 APIs: list_chunks, create_chunk, update_chunk, delete_chunk)
+   - [ ] Child Chunks resource (4 APIs: list, create, update, delete)
    - [ ] Tag resource (7 APIs: list, create, update, delete, bind, unbind, get_dataset_tags)
    - [ ] Model resource (1 API: embedding_models)
    - [ ] Version integration (V1 class with 6 resources)
@@ -722,7 +722,7 @@ Requirements:
    - Each method has sync and async versions
 
 4. Create `dify_oapi/api/knowledge/v1/resource/chunk.py`:
-   - Chunk class with 4 methods: list_chunks, create_chunk, update_chunk, delete_chunk
+   - Chunk class with 4 methods: list, create, update, delete
    - Each method has sync and async versions
 
 5. Create `dify_oapi/api/knowledge/v1/resource/tag.py`:
@@ -745,7 +745,7 @@ Requirements:
    ```python
    def create(self, request: CreateDatasetRequest, request_option: RequestOption) -> CreateDatasetResponse:
        return Transport.execute(self.config, request, unmarshal_as=CreateDatasetResponse, option=request_option)
-   
+
    async def acreate(self, request: CreateDatasetRequest, request_option: RequestOption) -> CreateDatasetResponse:
        return await ATransport.aexecute(self.config, request, unmarshal_as=CreateDatasetResponse, option=request_option)
    ```
@@ -802,7 +802,7 @@ Requirements:
    from .resource.chunk import Chunk
    from .resource.tag import Tag
    from .resource.model import Model
-   
+
    class V1:
        def __init__(self, config: Config):
            self.dataset = Dataset(config)
@@ -1132,7 +1132,7 @@ This plan ensures a robust, type-safe, and maintainable implementation of the co
 - Dataset Resource: 6 APIs (create, list, get, update, delete, retrieve)
 - Document Resource: 10 APIs (create_by_file, create_by_text, list, get, update_by_file, update_by_text, delete, update_status, get_batch_status, file_info)
 - Segment Resource: 5 APIs (list, create, get, update, delete)
-- Child Chunks Resource: 4 APIs (list_chunks, create_chunk, update_chunk, delete_chunk)
+- Child Chunks Resource: 4 APIs (list, create, update, delete)
 - Tag Resource: 7 APIs (list, create, update, delete, bind, unbind, get_dataset_tags)
 - Model Resource: 1 API (embedding_models)
 - **Total: 33 APIs**

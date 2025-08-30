@@ -27,7 +27,7 @@ This document outlines the design for implementing comprehensive knowledge base 
 - `segment` - Segment management APIs (5 APIs)
   - Segment operations: `list`, `create`, `get`, `update`, `delete`
 - `chunk` - Child chunks management APIs (4 APIs)
-  - Child chunk operations: `list_chunks`, `create_chunk`, `update_chunk`, `delete_chunk`
+  - Child chunk operations: `list`, `create`, `update`, `delete`
 - `tag` - Tag and metadata management APIs (7 APIs)
   - Tag operations: `list`, `create`, `update`, `delete`
   - Tag binding: `bind`, `unbind`
@@ -61,7 +61,7 @@ This document outlines the design for implementing comprehensive knowledge base 
 - Dataset operations: `create`, `list`, `get`, `update`, `delete`, `retrieve`
 - Document operations: `create_by_file`, `create_by_text`, `list`, `get`, `update_by_file`, `update_by_text`, `delete`, `update_status`, `get_batch_status`, `file_info`
 - Segment operations: `list`, `create`, `get`, `update`, `delete`
-- Chunk operations: `list_chunks`, `create_chunk`, `update_chunk`, `delete_chunk`
+- Chunk operations: `list`, `create`, `update`, `delete`
 - Tag operations: `list`, `create`, `update`, `delete`, `bind`, `unbind`, `get_dataset_tags`
 - Model operations: `embedding_models`
 
@@ -502,10 +502,10 @@ model/
 ### Child Chunks Management APIs (4 APIs)
 
 #### Chunk Resource Implementation
-1. **GET /datasets/{dataset_id}/documents/{document_id}/segments/{segment_id}/child_chunks** → `chunk.list_chunks()` - List child chunks
-2. **POST /datasets/{dataset_id}/documents/{document_id}/segments/{segment_id}/child_chunks** → `chunk.create_chunk()` - Create child chunk
-3. **PATCH /datasets/{dataset_id}/documents/{document_id}/segments/{segment_id}/child_chunks/{child_chunk_id}** → `chunk.update_chunk()` - Update child chunk
-4. **DELETE /datasets/{dataset_id}/documents/{document_id}/segments/{segment_id}/child_chunks/{child_chunk_id}** → `chunk.delete_chunk()` - Delete child chunk
+1. **GET /datasets/{dataset_id}/documents/{document_id}/segments/{segment_id}/child_chunks** → `chunk.list()` - List child chunks
+2. **POST /datasets/{dataset_id}/documents/{document_id}/segments/{segment_id}/child_chunks** → `chunk.create()` - Create child chunk
+3. **PATCH /datasets/{dataset_id}/documents/{document_id}/segments/{segment_id}/child_chunks/{child_chunk_id}** → `chunk.update()` - Update child chunk
+4. **DELETE /datasets/{dataset_id}/documents/{document_id}/segments/{segment_id}/child_chunks/{child_chunk_id}** → `chunk.delete()` - Delete child chunk
 
 ### Tag Management APIs (7 APIs)
 
@@ -543,10 +543,10 @@ class Chunk:
     def __init__(self, config: Config):
         self.config = config
 
-    def list_chunks(self, request: ListChildChunksRequest, request_option: RequestOption) -> ListChildChunksResponse:
+    def list(self, request: ListChildChunksRequest, request_option: RequestOption) -> ListChildChunksResponse:
         return Transport.execute(self.config, request, unmarshal_as=ListChildChunksResponse, option=request_option)
 
-    async def alist_chunks(self, request: ListChildChunksRequest, request_option: RequestOption) -> ListChildChunksResponse:
+    async def alist(self, request: ListChildChunksRequest, request_option: RequestOption) -> ListChildChunksResponse:
         return await ATransport.aexecute(self.config, request, unmarshal_as=ListChildChunksResponse, option=request_option)
 ```
 

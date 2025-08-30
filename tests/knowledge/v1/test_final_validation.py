@@ -457,11 +457,11 @@ class TestImplementationSummary:
         }
 
         expected_counts = {
-            "dataset": 7,  # create, delete, get, list, retrieve, tags, update
+            "dataset": 6,  # create, delete, get, list, retrieve, update
             "document": 10,  # create_by_file, create_by_text, delete, file_info, get, get_batch_status, list, update_by_file, update_by_text, update_status
             "segment": 5,  # create, delete, get, list, update
             "chunk": 4,  # create, delete, list, update
-            "tag": 6,  # bind, create, delete, list, unbind, update
+            "tag": 7,  # bind, create, delete, get_dataset_tags, list, unbind, update
             "model": 1,  # embedding_models
         }
 
@@ -477,7 +477,7 @@ class TestImplementationSummary:
             )
             total_apis += actual_count
 
-        assert total_apis == 33, f"Total APIs should be 33, got {total_apis}"  # 7+10+5+4+6+1=33
+        assert total_apis == 33, f"Total APIs should be 33, got {total_apis}"  # 6+10+5+4+7+1=33
 
         # Verify client integration
         client = Client.builder().domain("https://api.dify.ai").build()

@@ -8,6 +8,8 @@ from ..model.create_tag_request import CreateTagRequest
 from ..model.create_tag_response import CreateTagResponse
 from ..model.delete_tag_request import DeleteTagRequest
 from ..model.delete_tag_response import DeleteTagResponse
+from ..model.get_dataset_tags_request import GetDatasetTagsRequest
+from ..model.get_dataset_tags_response import GetDatasetTagsResponse
 from ..model.list_tags_request import ListTagsRequest
 from ..model.list_tags_response import ListTagsResponse
 from ..model.unbind_tags_from_dataset_request import UnbindTagsFromDatasetRequest
@@ -66,4 +68,14 @@ class Tag:
     ) -> UnbindTagsFromDatasetResponse:
         return await ATransport.aexecute(
             self.config, request, unmarshal_as=UnbindTagsFromDatasetResponse, option=request_option
+        )
+
+    def get_dataset_tags(self, request: GetDatasetTagsRequest, request_option: RequestOption) -> GetDatasetTagsResponse:
+        return Transport.execute(self.config, request, unmarshal_as=GetDatasetTagsResponse, option=request_option)
+
+    async def aget_dataset_tags(
+        self, request: GetDatasetTagsRequest, request_option: RequestOption
+    ) -> GetDatasetTagsResponse:
+        return await ATransport.aexecute(
+            self.config, request, unmarshal_as=GetDatasetTagsResponse, option=request_option
         )

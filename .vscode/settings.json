@@ -6,5 +6,5 @@
       "source.fixAll.ruff": "explicit",
       "source.organizeImports.ruff": "explicit"
     }
-  },
+  }
 }

@@ -8,8 +8,6 @@ from ..model.delete_dataset_request import DeleteDatasetRequest
 from ..model.delete_dataset_response import DeleteDatasetResponse
 from ..model.get_dataset_request import GetDatasetRequest
 from ..model.get_dataset_response import GetDatasetResponse
-from ..model.get_dataset_tags_request import GetDatasetTagsRequest
-from ..model.get_dataset_tags_response import GetDatasetTagsResponse
 from ..model.list_datasets_request import ListDatasetsRequest
 from ..model.list_datasets_response import ListDatasetsResponse
 from ..model.retrieve_from_dataset_request import RetrieveFromDatasetRequest
@@ -68,12 +66,4 @@ class Dataset:
     ) -> RetrieveFromDatasetResponse:
         return await ATransport.aexecute(
             self.config, request, unmarshal_as=RetrieveFromDatasetResponse, option=request_option
-        )
-
-    def tags(self, request: GetDatasetTagsRequest, request_option: RequestOption) -> GetDatasetTagsResponse:
-        return Transport.execute(self.config, request, unmarshal_as=GetDatasetTagsResponse, option=request_option)
-
-    async def atags(self, request: GetDatasetTagsRequest, request_option: RequestOption) -> GetDatasetTagsResponse:
-        return await ATransport.aexecute(
-            self.config, request, unmarshal_as=GetDatasetTagsResponse, option=request_option
         )

@@ -5,7 +5,7 @@ from __future__ import annotations
 from dify_oapi.core.enum import HttpMethod
 from dify_oapi.core.model.base_request import BaseRequest
 
-from .knowledge_types import DocumentAction
+from .knowledge_types import DocumentStatusAction
 from .update_document_status_request_body import UpdateDocumentStatusRequestBody
 
 
@@ -15,7 +15,7 @@ class UpdateDocumentStatusRequest(BaseRequest):
     def __init__(self) -> None:
         super().__init__()
         self.dataset_id: str | None = None
-        self.action: DocumentAction | None = None
+        self.action: DocumentStatusAction | None = None
         self.request_body: UpdateDocumentStatusRequestBody | None = None
 
     @staticmethod
@@ -40,7 +40,7 @@ class UpdateDocumentStatusRequestBuilder:
         self._update_document_status_request.paths["dataset_id"] = dataset_id
         return self
 
-    def action(self, action: DocumentAction) -> UpdateDocumentStatusRequestBuilder:
+    def action(self, action: DocumentStatusAction) -> UpdateDocumentStatusRequestBuilder:
         self._update_document_status_request.action = action
         self._update_document_status_request.paths["action"] = action
         return self

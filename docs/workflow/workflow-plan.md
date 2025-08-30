@@ -1,835 +1,782 @@
 # Workflow API Implementation Plan
 
-This document provides step-by-step prompts for implementing the complete Workflow API functionality in the dify-oapi2 SDK. Each step includes implementation and testing phases to ensure code quality.
+Based on workflow-api and workflow-design documents, this plan breaks down the Workflow API implementation into specific steps, with each implementation step followed by a testing step to ensure code quality.
 
-## Prerequisites
+## Overview
 
-Before starting, ensure you understand:
-- The existing dify-oapi2 project structure
-- Current workflow implementation with separate resources (workflow, file, log, info)
-- Pydantic models and builder patterns
-- HTTP request/response handling
-- Type safety with Literal types
-- BaseRequest and BaseResponse inheritance patterns
-- Migration requirements from nested to flat model structure
+Workflow API contains **8 APIs** distributed across **3 resource categories**:
+- **Workflow Execution** (4 APIs): Run, detail, stop, logs
+- **File Management** (1 API): File upload
+- **Application Configuration** (3 APIs): Info, parameters, site
 
 ## Implementation Steps
 
-### Step 0: Analyze and Plan Legacy Code Migration
-
-**Analysis Prompt:**
-```
-Analyze the existing workflow implementation to plan the migration strategy.
-
-Requirements:
-1. Examine current structure:
-   - dify_oapi/api/workflow/v1/model/ (nested directories: workflow/, file/, log/, info/)
-   - dify_oapi/api/workflow/v1/resource/ (separate files: workflow.py, file.py, log.py, info.py)
-   - dify_oapi/api/workflow/v1/version.py (multiple resource attributes)
-
-2. Document existing functionality:
-   - List all existing model files and their locations
-   - Identify all existing resource methods
-   - Map current API endpoints to new consolidated structure
-   - Note any existing tests that need updating
-
-3. Create migration plan:
-   - Model file movement strategy (nested → flat)
-   - Resource method consolidation plan
-   - Import statement update requirements
-   - Test migration strategy
-
-4. Identify potential conflicts:
-   - Duplicate model names across directories
-   - Method signature differences
-   - Import path dependencies
-```
-
-**Migration Planning Prompt:**
-```
-Create detailed migration steps for the legacy code consolidation.
-
-Requirements:
-1. Create migration checklist:
-   - [ ] Backup existing implementation
-   - [ ] Document current API surface
-   - [ ] Plan model file movements
-   - [ ] Plan resource consolidation
-   - [ ] Update import statements
-   - [ ] Migrate tests
-   - [ ] Update version.py
-
-2. Risk assessment:
-   - Identify breaking changes
-   - Plan backward compatibility measures
-   - Document rollback procedures
-
-3. Validation strategy:
-   - Ensure all existing functionality preserved
-   - Verify no API signature changes
-   - Confirm test coverage maintained
-```
-
-### Step 1: Create Workflow Types and Base Models
+### Step 1: Implement Workflow Types Definition
 
 **Implementation Prompt:**
 ```
-Create the workflow types definition file and core data models for the workflow API.
+Implement all type definitions for Workflow API, ensuring strict type safety.
 
 Requirements:
-1. Create `dify_oapi/api/workflow/v1/model/workflow_types.py` with all Literal types:
+1. Create `dify_oapi/api/workflow/v1/model/workflow_types.py`
+2. Define all Literal types based on API specifications:
+   - ResponseMode = Literal["streaming", "blocking"]  # Response modes
+   - FileType = Literal["document", "image", "audio", "video", "custom"]  # File types
+   - TransferMethod = Literal["remote_url", "local_file"]  # File transfer methods
+   - WorkflowStatus = Literal["running", "succeeded", "failed", "stopped"]  # Workflow status
+   - NodeStatus = Literal["running", "succeeded", "failed", "stopped"]  # Node execution status
+   - EventType = Literal["workflow_started", "node_started", "text_chunk", "node_finished", "workflow_finished", "tts_message", "tts_message_end", "ping"]  # SSE event types
+   - IconType = Literal["emoji", "image"]  # Icon types for WebApp
+   - AppMode = Literal["workflow"]  # Application mode
+   - LogStatus = Literal["succeeded", "failed", "stopped", "running"]  # Log status filter (includes "running")
+   - CreatedByRole = Literal["end_user", "account"]  # Creator role types
+   - CreatedFrom = Literal["service-api", "web-app"]  # Creation source
+   - UserInputFormType = Literal["text-input", "paragraph", "select"]  # Form control types
+   - NodeType = Literal["start", "end", "llm", "code", "template", "knowledge_retrieval", "question_classifier", "if_else", "variable_assigner", "parameter_extractor"]  # Node types
 
-**CRITICAL: Class Naming Conflict Resolution**
-All classes must use domain-specific prefixes to avoid naming conflicts:
-- File-related: `WorkflowFile*` (e.g., `WorkflowFileInfo`)
-- Log-related: `WorkflowLog*` (e.g., `WorkflowLogInfo`) 
-- User-related: `WorkflowUser*` (e.g., `WorkflowEndUserInfo`)
-- App-related: `WorkflowApp*` (e.g., `WorkflowAppInfo`)
-
-2. Create `dify_oapi/api/workflow/v1/model/workflow_types.py` with all Literal types:
-   - ResponseMode: "streaming" | "blocking"
-   - FileType: "document" | "image" | "audio" | "video" | "custom"
-   - TransferMethod: "remote_url" | "local_file"
-   - WorkflowStatus: "running" | "succeeded" | "failed" | "stopped"
-   - EventType: "workflow_started" | "node_started" | "text_chunk" | "node_finished" | "workflow_finished" | "tts_message" | "tts_message_end" | "ping"
-   - IconType: "emoji" | "image"
-
-3. Create core data models with builder patterns (using context-specific names):
-   - `workflow_inputs.py`: Dynamic workflow input container
-   - `workflow_file_info.py`: File information model for workflow execution
-   - `file_upload_info.py`: File information model for upload responses
-   - `workflow_node_info.py`: Workflow node information  
-   - `workflow_execution_metadata.py`: Execution metadata with tokens, price, currency
-
-4. All models must:
-   - Inherit from pydantic.BaseModel
-   - Include builder patterns with proper type hints
-   - Use Literal types from workflow_types.py
-   - Follow prefixed naming conventions to avoid conflicts
-
-File structure:
-- dify_oapi/api/workflow/v1/model/workflow_types.py
-- dify_oapi/api/workflow/v1/model/workflow_inputs.py
-- dify_oapi/api/workflow/v1/model/workflow_file_info.py
-- dify_oapi/api/workflow/v1/model/file_upload_info.py
-- dify_oapi/api/workflow/v1/model/workflow_node_info.py
-- dify_oapi/api/workflow/v1/model/workflow_execution_metadata.py
+3. Import Literal from typing_extensions for Python 3.10+ compatibility
+4. Add clear docstrings explaining each type's purpose
+5. Ensure all types match the API specification exactly
+6. Include validation constants for UUID format validation
 ```
 
 **Testing Prompt:**
 ```
-Create comprehensive tests for the workflow types and base models.
+Create comprehensive tests for Workflow Types.
+
+Requirements:
+1. Create `tests/workflow/v1/model/test_workflow_types.py`
+2. Test all valid values for each Literal type
+3. Verify type constraints work correctly with mypy
+4. Test that invalid values are properly rejected by type checkers
+5. Ensure all type definitions can be correctly imported and used
+6. Use pytest framework for all tests
+7. Achieve 100% test coverage
+```
+
+### Step 2: Implement Common Model Classes
+
+**Implementation Prompt:**
+```
+Implement all common model classes for Workflow API that can be reused across multiple APIs.
+
+Requirements:
+1. Create common model files in `dify_oapi/api/workflow/v1/model/`:
+   - `workflow_inputs.py` - Dynamic workflow input parameters
+   - `input_file_object_workflow.py` - File input object for multimodal support
+   - `workflow_run_info.py` - Workflow execution information
+   - `workflow_run_data.py` - Workflow execution data details
+   - `node_info.py` - Node execution information
+   - `execution_metadata.py` - Execution metadata with tokens and pricing
+   - `workflow_file_info.py` - File information for uploads
+   - `workflow_log_info.py` - Workflow log entry information
+   - `workflow_run_log_info.py` - Workflow run log details
+   - `end_user_info.py` - End user information
+   - `app_info.py` - Application basic information
+   - `parameters_info.py` - Application parameters configuration
+   - `site_info.py` - WebApp site configuration
+   - `user_input_form.py` - User input form configuration
+   - `file_upload_config.py` - File upload settings
+   - `system_parameters.py` - System configuration parameters
+
+2. All models must:
+   - Inherit from `pydantic.BaseModel`
+   - Implement Builder pattern with @classmethod builder()
+   - Use strict Literal types from workflow_types
+   - Include proper field validation and constraints
+   - Support optional fields with None defaults where specified
+   - Use proper field aliases for API compatibility
+
+3. **CRITICAL**: Streaming event models required:
+   - `workflow_completion_response.py` - Blocking mode response structure
+   - `chunk_workflow_event.py` - Base streaming event structure
+   - Individual event data models for all 8 event types:
+     * `workflow_started_data.py` - workflow_started event data
+     * `node_started_data.py` - node_started event data
+     * `text_chunk_data.py` - text_chunk event data
+     * `node_finished_data.py` - node_finished event data
+     * `workflow_finished_data.py` - workflow_finished event data
+     * `tts_message_data.py` - tts_message event data
+     * `tts_message_end_data.py` - tts_message_end event data
+     * `ping_data.py` - ping event data (empty)
+
+4. Key model specifications:
+   - InputFileObjectWorkflow: type, transfer_method, url?, upload_file_id? (with validation rules)
+   - WorkflowRunInfo: id, workflow_id, status, outputs, error, elapsed_time, total_tokens, total_steps, created_at, finished_at
+   - NodeInfo: id, node_id, node_type, title, index, predecessor_node_id, inputs, outputs, status, error, elapsed_time, execution_metadata, created_at
+   - ExecutionMetadata: total_tokens, total_price, currency
+   - WorkflowFileInfo: id, name, size, extension, mime_type, created_by, created_at
+   - UserInputForm: Support text-input, paragraph, select types with options
+   - WorkflowCompletionResponse: workflow_run_id, task_id, data (for blocking mode)
+   - ChunkWorkflowEvent: event, task_id, workflow_run_id, data (for streaming mode)
+
+5. **MANDATORY**: InputFileObjectWorkflow validation rules:
+   - When transfer_method is "remote_url": url is required, upload_file_id must be None
+   - When transfer_method is "local_file": upload_file_id is required, url must be None
+   - Must include proper field validation using Pydantic validators
+
+6. Streaming event data structures (8 types):
+   - workflow_started: id, workflow_id, sequence_number, created_at
+   - node_started: id, node_id, node_type, title, index, predecessor_node_id, inputs, created_at
+   - text_chunk: text, from_variable_selector
+   - node_finished: complete node info with outputs, status, error, elapsed_time, execution_metadata
+   - workflow_finished: complete workflow info with outputs, status, error, elapsed_time, total_tokens, total_steps
+   - tts_message/tts_message_end: message_id, audio, created_at
+   - ping: empty data
+```
+
+**Testing Prompt:**
+```
+Create comprehensive tests for all common model classes.
 
 Requirements:
 1. Create `tests/workflow/v1/model/test_workflow_public_models.py`
-2. Test classes for each model (using context-specific names):
-   - TestWorkflowInputs: builder pattern, field validation
-   - TestWorkflowFileInfo: builder pattern, type validation, transfer method validation
-   - TestFileUploadInfo: builder pattern, file metadata validation
-   - TestWorkflowNodeInfo: builder pattern, field validation
-   - TestWorkflowExecutionMetadata: builder pattern, numeric field validation
+2. Create test classes for each common model:
+   - TestWorkflowInputs
+   - TestInputFileObjectWorkflow (including validation rules)
+   - TestWorkflowRunInfo
+   - TestWorkflowRunData
+   - TestNodeInfo
+   - TestExecutionMetadata
+   - TestWorkflowFileInfo
+   - TestWorkflowLogInfo
+   - TestWorkflowRunLogInfo
+   - TestEndUserInfo
+   - TestAppInfo
+   - TestParametersInfo
+   - TestSiteInfo
+   - TestUserInputForm
+   - TestFileUploadConfig
+   - TestSystemParameters
+   - TestWorkflowCompletionResponse
+   - TestChunkWorkflowEvent
+   - TestWorkflowEventData
 
-3. Test coverage must include:
+3. Test each model's:
    - Builder pattern functionality
-   - Type validation with Literal types
-   - Field assignment and retrieval
-   - Invalid value rejection
-   - Model serialization/deserialization
+   - Field validation and type constraints
+   - Required vs optional field handling
+   - Default value behavior
+   - Pydantic serialization/deserialization
+   - Integration with Literal types
 
-4. All test methods must have proper type annotations
+4. **CRITICAL**: Special validation tests:
+   - InputFileObjectWorkflow validation rules (remote_url vs local_file)
+   - Streaming event data structure validation for all 8 event types
+   - UUID format validation for ID fields
+   - Enum value validation for status fields
+   - Cross-field validation (transfer_method vs url/upload_file_id)
+
 5. Use pytest fixtures for common test data
+6. Achieve 100% test coverage
 ```
 
-### Step 2: Implement Run Workflow API Models
+### Step 3: Implement Workflow Execution API Models (4 APIs)
 
 **Implementation Prompt:**
 ```
-Implement the Run Workflow API request, request body, and response models.
+Implement all request and response models for Workflow Execution APIs.
 
 Requirements:
-1. Create `run_workflow_request.py`:
-   - Inherit from BaseRequest
-   - POST method to /v1/workflows/run
-   - Include request_body attribute
-   - Builder pattern with request_body() method
+1. Create Workflow Execution API request models:
+   - `run_workflow_request.py` + `run_workflow_request_body.py`
+     * POST /v1/workflows/run
+     * Support streaming and blocking modes
+     * Support file array variables with InputFileObjectWorkflow
+     * Fields: inputs (required Dict[str, Any]), response_mode (required), user (required)
+   - `get_workflow_run_detail_request.py`
+     * GET /v1/workflows/run/{workflow_run_id}
+     * Path parameter: workflow_run_id (UUID format)
+   - `stop_workflow_request.py` + `stop_workflow_request_body.py`
+     * POST /v1/workflows/tasks/{task_id}/stop
+     * Path parameter: task_id (UUID format)
+     * Fields: user (required)
+   - `get_workflow_logs_request.py`
+     * GET /v1/workflows/logs
+     * Query parameters: keyword, status, page, limit, created_by_end_user_session_id, created_by_account
 
-2. Create `run_workflow_request_body.py`:
-   - Inherit from pydantic.BaseModel
-   - Fields: inputs (WorkflowInputs), response_mode (ResponseMode), user (str), files (List[FileInfo])
-   - Builder pattern with all field methods
+2. Create corresponding response models (ALL inherit from BaseResponse):
+   - `run_workflow_response.py` - Contains workflow_run_id, task_id, data fields for blocking mode
+   - `get_workflow_run_detail_response.py` - Contains complete workflow run details
+   - `stop_workflow_response.py` - Contains result field ("success")
+   - `get_workflow_logs_response.py` - Contains page, limit, total, has_more, data fields
 
-3. Create `run_workflow_response.py`:
-   - Inherit from BaseResponse (MANDATORY)
-   - Fields: workflow_run_id, task_id, data (WorkflowRunInfo)
-   - No builder pattern for response classes
+3. **CRITICAL**: Streaming response handling:
+   - run_workflow_response must support both blocking and streaming modes
+   - Blocking mode: Returns WorkflowCompletionResponse with workflow_run_id, task_id, data
+   - Streaming mode: Returns ChunkWorkflowEvent stream with different event types
+   - Must handle 8 different streaming event types with specific data structures
 
-4. Create `workflow_run_info.py`:
-   - Public model inheriting from BaseModel
-   - Fields: id, workflow_id, status, outputs, error, elapsed_time, total_tokens, total_steps, created_at, finished_at
-   - Builder pattern required
+4. **CRITICAL**: All Request classes must:
+   - Inherit from BaseRequest (MANDATORY)
+   - Include proper HTTP method and URI configuration in builder
+   - Handle path parameters using self._request.paths["param_name"] = value
+   - Handle query parameters using self._request.add_query("key", value)
+   - Handle request bodies using self._request.body = request_body.model_dump()
 
-5. All models must use proper type hints and Literal types
+5. **CRITICAL**: All RequestBody classes must:
+   - Inherit from pydantic.BaseModel (NOT BaseResponse)
+   - Use Literal types for all predefined values
+   - Implement builder patterns with proper field methods
+   - Include comprehensive field validation
+
+6. **CRITICAL**: All Response classes must:
+   - Inherit from BaseResponse (ZERO TOLERANCE)
+   - Use multiple inheritance when including data: class XResponse(DataInfo, BaseResponse)
+   - Never inherit directly from pydantic.BaseModel
+   - Support both blocking and streaming modes for run_workflow_response
 ```
 
 **Testing Prompt:**
 ```
-Create tests for Run Workflow API models.
+Create comprehensive tests for Workflow Execution API models.
 
 Requirements:
-1. Add TestRunWorkflowModels class to `test_workflow_models.py`
-2. Test methods:
-   - test_request_builder: Verify builder pattern and URI/method setup
-   - test_request_validation: Validate request structure
-   - test_request_body_builder: Test all builder methods
-   - test_request_body_validation: Validate field types and constraints
-   - test_response_inheritance: Verify BaseResponse inheritance
-   - test_response_data_access: Test response data access patterns
+1. Create `tests/workflow/v1/model/test_workflow_execution_models.py`
+2. Implement 4 test classes:
+   - TestRunWorkflowModels
+   - TestGetWorkflowRunDetailModels
+   - TestStopWorkflowModels
+   - TestGetWorkflowLogsModels
 
-3. Add TestWorkflowRunInfo class to `test_workflow_public_models.py`
-4. Test builder pattern and field validation for WorkflowRunInfo
-5. Verify proper type safety with invalid inputs
+3. Test content includes:
+   - Request and RequestBody Builder patterns
+   - Response class BaseResponse inheritance (CRITICAL)
+   - Field validation and type constraints
+   - HTTP method and URI configuration
+   - Path parameter handling (workflow_run_id, task_id)
+   - Query parameter handling (keyword, status, page, limit, created_by_end_user_session_id, created_by_account)
+   - File array variable support with InputFileObjectWorkflow
+   - Streaming and blocking mode support
+   - UUID format validation for path parameters
+   - Multiple inheritance patterns (DataInfo + BaseResponse)
+
+4. **MANDATORY**: Verify all Response classes inherit from BaseResponse
+5. Test streaming response handling for run_workflow
+6. Verify all model integrations work properly
+7. Ensure test coverage reaches 100%
 ```
 
-### Step 3: Implement Get Workflow Run Detail API Models
+### Step 4: Implement File Upload API Models (1 API)
 
 **Implementation Prompt:**
 ```
-Implement the Get Workflow Run Detail API models.
+Implement request and response models for File Upload API.
 
 Requirements:
-1. Create `get_workflow_run_detail_request.py`:
-   - Inherit from BaseRequest
-   - GET method to /v1/workflows/run/:workflow_run_id
-   - Path parameter: workflow_run_id
-   - Builder with workflow_run_id() method using paths["workflow_run_id"]
+1. Create file upload API models:
+   - `upload_file_request.py` + `upload_file_request_body.py`
+     * POST /v1/files/upload
+     * Use multipart/form-data
+     * Fields: file (binary), user
+     * Support any file formats for workflow use
 
-2. Create `get_workflow_run_detail_response.py`:
-   - Inherit from BaseResponse (MANDATORY)
-   - Fields: id, workflow_id, status, inputs (str), outputs (dict), error, total_steps, total_tokens, created_at, finished_at, elapsed_time
-   - Use WorkflowStatus Literal type
+2. Create response models:
+   - `upload_file_response.py` - Inherits from WorkflowFileInfo and BaseResponse
+   - Contains file information: id, name, size, extension, mime_type, created_by, created_at
 
-3. Follow established patterns for GET requests with path parameters
-4. Ensure proper type hints and validation
+3. **CRITICAL**: Special handling requirements:
+   - Request class must support file upload (files field)
+   - Properly handle multipart/form-data content type
+   - File size and type validation
+   - Use BytesIO to handle file data
+   - RequestBody must handle form data fields (user)
+   - Request must set files = {"file": (filename, file_data)} pattern
+
+4. **MANDATORY**: File upload pattern:
+   ```python
+   class UploadFileRequest(BaseRequest):
+       def file(self, file: BytesIO, filename: str) -> UploadFileRequestBuilder:
+           self._request.files = {"file": (filename, file)}
+           return self
+   ```
+
+5. Ensure integration with WorkflowFileInfo common model
 ```
 
 **Testing Prompt:**
 ```
-Create tests for Get Workflow Run Detail API models.
+Create comprehensive tests for File Upload API models.
 
 Requirements:
-1. Add TestGetWorkflowRunDetailModels class to `test_workflow_models.py`
-2. Test methods:
-   - test_request_builder: Verify builder pattern setup
-   - test_request_path_parameters: Test path parameter handling
-   - test_response_inheritance: Verify BaseResponse inheritance
-   - test_response_field_types: Validate response field types
+1. Create `tests/workflow/v1/model/test_file_upload_models.py`
+2. Implement TestUploadFileModels test class
+3. Test content includes:
+   - Request and RequestBody Builder patterns
+   - Response class BaseResponse inheritance (CRITICAL)
+   - File upload functionality with BytesIO
+   - Multipart form-data handling
+   - Field validation and type constraints
+   - HTTP method and URI configuration
+   - Files field handling ({"file": (filename, file_data)} pattern)
 
-3. Test path parameter assignment and URI construction
-4. Verify proper handling of nullable fields in response
+4. **MANDATORY**: File upload specific tests:
+   - Test BytesIO file handling
+   - Test multipart/form-data content type
+   - Test files field configuration
+   - Test filename handling
+   - Test form data integration
+
+5. Use mock file data for testing
+6. Verify file upload integration works correctly
+7. Achieve 100% test coverage
 ```
 
-### Step 4: Implement Stop Workflow API Models
+### Step 5: Implement Application Configuration API Models (3 APIs)
 
 **Implementation Prompt:**
 ```
-Implement the Stop Workflow API models.
+Implement request and response models for Application Configuration APIs.
 
 Requirements:
-1. Create `stop_workflow_request.py`:
-   - Inherit from BaseRequest
-   - POST method to /v1/workflows/tasks/:task_id/stop
-   - Path parameter: task_id
-   - Include request_body attribute
+1. Create application configuration API models:
+   - `get_info_request.py`
+     * GET /v1/info
+     * No parameters required
+   - `get_parameters_request.py`
+     * GET /v1/parameters
+     * No parameters required
+   - `get_site_request.py`
+     * GET /v1/site
+     * No parameters required
 
-2. Create `stop_workflow_request_body.py`:
-   - Inherit from pydantic.BaseModel
-   - Field: user (str, required)
-   - Builder pattern with user() method
+2. Create corresponding response models:
+   - `get_info_response.py` - Inherits from AppInfo and BaseResponse
+   - `get_parameters_response.py` - Inherits from ParametersInfo and BaseResponse
+   - `get_site_response.py` - Inherits from SiteInfo and BaseResponse
 
-3. Create `stop_workflow_response.py`:
-   - Inherit from BaseResponse (MANDATORY)
-   - Field: result (str) - fixed return "success"
-
-4. Follow established patterns for POST requests with path parameters and request body
+3. Ensure all models:
+   - Request classes inherit from BaseRequest
+   - Response classes inherit from BaseResponse
+   - Implement complete Builder pattern
+   - Use strict Literal types
+   - Handle simple GET requests without parameters
 ```
 
 **Testing Prompt:**
 ```
-Create tests for Stop Workflow API models.
+Create comprehensive tests for Application Configuration API models.
 
 Requirements:
-1. Add TestStopWorkflowModels class to `test_workflow_models.py`
-2. Test methods:
-   - test_request_builder: Verify builder pattern and path parameter handling
-   - test_request_body_builder: Test request body builder
-   - test_response_inheritance: Verify BaseResponse inheritance
-   - test_response_success_result: Test fixed "success" result
-
-3. Validate path parameter and request body integration
-4. Test proper error handling patterns
-```
-
-### Step 5: Implement Upload File API Models
-
-**Implementation Prompt:**
-```
-Implement the Upload File API models with multipart/form-data support.
-
-Requirements:
-1. Create `upload_file_request.py`:
-   - Inherit from BaseRequest
-   - POST method to /v1/files/upload
-   - Special handling for multipart/form-data
-   - Fields: file (BytesIO), request_body
-   - Builder methods: file() and request_body()
-   - Set files and body attributes for multipart handling
-
-2. Create `upload_file_request_body.py`:
-   - Inherit from pydantic.BaseModel
-   - Field: user (str, required)
-   - Builder pattern with user() method
-
-3. Create `upload_file_response.py`:
-   - Inherit from BaseResponse (MANDATORY)
-   - Fields: id, name, size, extension, mime_type, created_by, created_at
-   - Use proper UUID and timestamp types
-
-4. Follow multipart/form-data pattern from design document
-```
-
-**Testing Prompt:**
-```
-Create tests for Upload File API models.
-
-Requirements:
-1. Add TestUploadFileModels class to `test_workflow_models.py`
-2. Test methods:
-   - test_request_builder: Verify multipart handling
-   - test_request_file_handling: Test file upload mechanics
-   - test_request_body_builder: Test request body builder
-   - test_response_inheritance: Verify BaseResponse inheritance
-   - test_response_file_metadata: Test file metadata fields
-
-3. Mock BytesIO objects for file testing
-4. Validate multipart/form-data structure
-5. Test file name handling and metadata extraction
-```
-
-### Step 6: Implement Workflow Logs API Models
-
-**Implementation Prompt:**
-```
-Implement the Get Workflow Logs API models.
-
-Requirements:
-1. Create `get_workflow_logs_request.py`:
-   - Inherit from BaseRequest
-   - GET method to /v1/workflows/logs
-   - Query parameters: keyword, status, page, limit
-   - Builder methods for all query parameters using add_query()
-
-2. Create `get_workflow_logs_response.py`:
-   - Inherit from BaseResponse (MANDATORY)
-   - Fields: page, limit, total, has_more, data (List[LogInfo])
-
-3. Create `log_info.py`:
-   - Public model inheriting from BaseModel
-   - Fields: id, workflow_run, created_from, created_by_role, created_by_account, created_by_end_user, created_at
-   - Builder pattern required
-
-4. Create `end_user_info.py`:
-   - Public model for end user summary
-   - Fields: id, type, is_anonymous, session_id
-   - Builder pattern required
-
-5. Use proper Literal types for status and role fields
-```
-
-**Testing Prompt:**
-```
-Create tests for Workflow Logs API models.
-
-Requirements:
-1. Add TestGetWorkflowLogsModels class to `test_workflow_models.py`
-2. Test methods:
-   - test_request_builder: Verify query parameter handling
-   - test_request_query_parameters: Test all query parameter methods
-   - test_response_inheritance: Verify BaseResponse inheritance
-   - test_response_pagination: Test pagination fields
-
-3. Add TestLogInfo and TestEndUserInfo classes to `test_workflow_public_models.py`
-4. Test builder patterns and field validation
-5. Verify proper query parameter encoding
-```
-
-### Step 7: Implement Application Info API Models
-
-**Implementation Prompt:**
-```
-Implement the Application Information API models (info, parameters, site).
-
-Requirements:
-1. Create `get_info_request.py`, `get_parameters_request.py`, `get_site_request.py`:
-   - All inherit from BaseRequest
-   - GET methods to /v1/info, /v1/parameters, /v1/site respectively
-   - Simple builders with no parameters
-
-2. Create response models inheriting from BaseResponse:
-   - `get_info_response.py`: name, description, tags
-   - `get_parameters_response.py`: user_input_form, file_upload, system_parameters
-   - `get_site_response.py`: title, icon_type, icon, icon_background, etc.
-
-3. Create supporting public models with builders:
-   - `app_info.py`: Basic app information
-   - `parameters_info.py`: Parameter configuration
-   - `site_info.py`: WebApp settings
-   - `user_input_form.py`: Form configuration
-   - `file_upload_config.py`: Upload settings
-   - `system_parameters.py`: System limits
-
-4. Use IconType Literal for icon_type field
-```
-
-**Testing Prompt:**
-```
-Create tests for Application Info API models.
-
-Requirements:
-1. Add test classes to `test_workflow_models.py`:
+1. Create `tests/workflow/v1/model/test_app_config_models.py`
+2. Implement 3 test classes:
    - TestGetInfoModels
    - TestGetParametersModels
    - TestGetSiteModels
 
-2. Test methods for each:
-   - test_request_builder: Verify simple GET request setup
-   - test_response_inheritance: Verify BaseResponse inheritance
-   - test_response_fields: Validate response field types
+3. Test content includes:
+   - Request Builder patterns
+   - Response class BaseResponse inheritance
+   - Field validation and type constraints
+   - HTTP method and URI configuration
+   - Simple GET request handling
 
-3. Add test classes to `test_workflow_public_models.py`:
-   - TestAppInfo, TestParametersInfo, TestSiteInfo
-   - TestUserInputForm, TestFileUploadConfig, TestSystemParameters
-
-4. Test builder patterns and field validation for all public models
-5. Verify Literal type usage for icon_type and other constrained fields
+4. Verify all model integrations work properly
+5. Ensure test coverage reaches 100%
 ```
 
-### Step 8: Migrate and Consolidate Workflow Resource Classes
-
-**Migration Prompt:**
-```
-Migrate existing resource classes into a single consolidated Workflow resource.
-
-Requirements:
-1. Analyze existing resource classes:
-   - dify_oapi/api/workflow/v1/resource/workflow.py (existing methods)
-   - dify_oapi/api/workflow/v1/resource/file.py (file methods to migrate)
-   - dify_oapi/api/workflow/v1/resource/log.py (log methods to migrate)
-   - dify_oapi/api/workflow/v1/resource/info.py (info methods to migrate)
-
-2. Consolidate into single Workflow class:
-   - Preserve all existing method signatures
-   - Merge methods from File, Log, Info classes
-   - Maintain backward compatibility
-   - Update import statements for new model locations
-
-3. New consolidated methods:
-   - run_workflow(request, request_option, stream=False)
-   - get_workflow_run_detail(request, request_option)
-   - stop_workflow(request, request_option)
-   - upload_file(request, request_option) # from File class
-   - get_workflow_logs(request, request_option) # from Log class
-   - get_info(request, request_option) # from Info class
-   - get_parameters(request, request_option) # from Info class
-   - get_site(request, request_option) # from Info class
-
-4. Remove obsolete resource files after migration
-```
+### Step 6: Implement Workflow Resource Class
 
 **Implementation Prompt:**
 ```
-Implement the consolidated Workflow resource class with all migrated functionality.
+Implement Workflow resource class containing all workflow-related API methods.
 
 Requirements:
-1. Update `dify_oapi/api/workflow/v1/resource/workflow.py`:
-   - Extend existing Workflow class with methods from other resources
-   - Maintain all existing method signatures for backward compatibility
-   - Add new methods from File, Log, Info resources
-   - Update imports to use flat model structure
+1. Create `dify_oapi/api/workflow/v1/resource/workflow.py`
+2. Implement Workflow class with the following methods:
+   - `run()` - Execute workflow (support streaming and blocking modes)
+   - `detail()` - Get workflow run detail
+   - `stop()` - Stop workflow task generation
+   - `upload()` - Upload file for workflow
+   - `logs()` - Get workflow logs
+   - `info()` - Get application basic information
+   - `parameters()` - Get application parameters
+   - `site()` - Get application WebApp settings
 
-2. Each method must have:
-   - Sync and async versions (arun_workflow, etc.)
-   - Proper type hints for parameters and return types
-   - Stream support for run_workflow (Iterator[str] | AsyncIterator[str])
-   - Transport.execute() for non-streaming
-   - Transport.stream() for streaming
+3. Method characteristics:
+   - Support synchronous and asynchronous operations (arun, adetail, astop, aupload, alogs, ainfo, aparameters, asite)
+   - Use @overload decorator to support streaming/blocking mode type hints for run() method
+   - Proper error handling
+   - Complete type annotations
 
-3. Migration validation:
-   - Ensure no method signatures changed
-   - Verify all existing functionality preserved
-   - Test import path updates work correctly
+4. Streaming response handling:
+   - Streaming mode returns Generator[bytes, None, None]
+   - Blocking mode returns specific Response object
+   - Properly handle SSE event streams
+
+5. Ensure proper integration with existing Transport layer
 ```
 
 **Testing Prompt:**
 ```
-Create comprehensive tests for the Workflow resource class.
+Create comprehensive tests for Workflow resource class.
 
 Requirements:
 1. Create `tests/workflow/v1/resource/test_workflow_resource.py`
-2. Test class TestWorkflowResource with methods:
-   - test_run_workflow_sync: Test sync execution
-   - test_run_workflow_async: Test async execution
-   - test_run_workflow_streaming: Test streaming mode
-   - test_get_workflow_run_detail: Test detail retrieval
-   - test_stop_workflow: Test workflow stopping
-   - test_upload_file: Test file upload
-   - test_get_workflow_logs: Test log retrieval
-   - test_get_info: Test app info
-   - test_get_parameters: Test parameters
-   - test_get_site: Test site settings
+2. Implement TestWorkflowResource class
+3. Test all methods:
+   - test_run_blocking - Test blocking mode workflow execution
+   - test_run_streaming - Test streaming mode workflow execution
+   - test_detail - Test get workflow run detail
+   - test_stop - Test stop workflow task
+   - test_upload - Test file upload
+   - test_logs - Test get workflow logs
+   - test_info - Test get application info
+   - test_parameters - Test get application parameters
+   - test_site - Test get application site settings
+   - test_async_methods - Test all async methods
 
-3. Use mock objects for Transport.execute() and Transport.stream()
-4. Test both sync and async versions of all methods
-5. Verify proper request/response handling and error propagation
+4. Use Mock objects to simulate Transport layer
+5. Verify method signatures and return types
+6. Test error handling scenarios
+7. Ensure streaming and blocking modes work correctly
 ```
 
-### Step 9: Migrate Version Integration and Clean Up
-
-**Migration Prompt:**
-```
-Migrate the version integration from multi-resource to single-resource structure.
-
-Requirements:
-1. Update `dify_oapi/api/workflow/v1/version.py`:
-   - Current structure has: workflow, file, log, info attributes
-   - Target structure: only workflow attribute
-   - Remove imports for File, Log, Info classes
-   - Update V1 class to only expose consolidated Workflow resource
-
-2. Clean up obsolete files:
-   - Remove `dify_oapi/api/workflow/v1/resource/file.py`
-   - Remove `dify_oapi/api/workflow/v1/resource/log.py`
-   - Remove `dify_oapi/api/workflow/v1/resource/info.py`
-   - Remove empty model subdirectories (workflow/, file/, log/, info/)
-
-3. Update resource __init__.py:
-   - Remove exports for File, Log, Info classes
-   - Keep only Workflow class export
-
-4. Backward compatibility considerations:
-   - Document breaking changes in access patterns
-   - Provide migration guide for users
-```
+### Step 7: Implement Version Integration
 
 **Implementation Prompt:**
 ```
-Implement the consolidated version integration and perform cleanup.
+Implement V1 version class to integrate the Workflow resource.
 
 Requirements:
-1. Update `dify_oapi/api/workflow/v1/version.py`:
-   ```python
-   # Before:
-   class V1:
-       def __init__(self, config: Config):
-           self.workflow: Workflow = Workflow(config)
-           self.file: File = File(config)
-           self.log: Log = Log(config)
-           self.info: Info = Info(config)
-   
-   # After:
-   class V1:
-       def __init__(self, config: Config):
-           self.workflow = Workflow(config)  # All APIs consolidated
-   ```
+1. Create `dify_oapi/api/workflow/v1/version.py`
+2. Implement V1 class with workflow resource:
+   - Initialize Workflow resource with config
+   - Expose workflow resource as public property
+   - Maintain consistency with other API modules
 
-2. Verify service integration still works:
-   - Check `dify_oapi/api/workflow/service.py`
-   - Ensure V1 is properly exposed
-   - Test client access: client.workflow.v1.workflow.method()
+3. Update `dify_oapi/api/workflow/v1/__init__.py`:
+   - Export V1 class
+   - Maintain clean module interface
 
-3. Clean up and validate:
-   - Remove obsolete resource files
-   - Update import statements throughout codebase
-   - Verify no broken imports remain
+4. Integration requirements:
+   - Follow existing patterns from chat, completion, knowledge modules
+   - Ensure proper config passing
+   - Maintain type safety
 ```
 
 **Testing Prompt:**
 ```
-Create integration tests for migrated version and service integration.
+Create comprehensive tests for Version integration.
 
 Requirements:
-1. Create `tests/workflow/v1/integration/test_version_integration.py`
-2. Test methods:
-   - test_v1_workflow_resource_access: Verify consolidated resource accessibility
-   - test_workflow_service_integration: Test service integration after migration
-   - test_client_workflow_access: Test end-to-end client access
-   - test_legacy_api_compatibility: Verify existing API signatures still work
-   - test_migration_completeness: Ensure all methods from old resources available
+1. Create `tests/workflow/v1/test_version_integration.py`
+2. Test V1 class:
+   - test_v1_initialization - Test V1 class initialization
+   - test_workflow_resource_access - Test workflow resource access
+   - test_config_passing - Test config passing to resource
+   - test_method_availability - Test all workflow methods are available
 
-3. Migration validation tests:
-   - test_no_broken_imports: Verify all imports work with new structure
-   - test_obsolete_resources_removed: Confirm old resource files are gone
-   - test_model_flat_structure: Verify models accessible from flat structure
-
-4. Create `tests/workflow/v1/integration/test_workflow_api_integration.py`
-5. Integration tests for all 8 APIs with mock responses
-6. Test complete request/response cycles
-7. Verify proper error handling and response parsing
-8. Test both migrated and new functionality
+3. Verify integration with main client
+4. Test that all 8 workflow methods are accessible through client.workflow.v1.workflow
+5. Ensure proper error handling and type safety
 ```
 
-### Step 10: Create Workflow Examples
+### Step 8: Create Comprehensive Examples
 
 **Implementation Prompt:**
 ```
-Create comprehensive examples for all workflow APIs.
+Create comprehensive examples for all 8 Workflow APIs.
 
 Requirements:
-1. Create examples in `examples/workflow/` directory:
-   - run_workflow.py: Basic and streaming execution examples
-   - get_workflow_run_detail.py: Detail retrieval examples
-   - stop_workflow.py: Workflow stopping examples
-   - upload_file.py: File upload examples
-   - get_workflow_logs.py: Log retrieval with filtering
-   - get_info.py: App information examples
-   - get_parameters.py: Parameters retrieval examples
-   - get_site.py: Site settings examples
+1. Create example files in `examples/workflow/`:
+   - `run_workflow.py` - Execute workflow (sync + async + streaming)
+   - `get_workflow_run_detail.py` - Get workflow run detail (sync + async)
+   - `stop_workflow.py` - Stop workflow task (sync + async)
+   - `upload_file.py` - Upload file (sync + async)
+   - `get_workflow_logs.py` - Get workflow logs (sync + async)
+   - `get_info.py` - Get application info (sync + async)
+   - `get_parameters.py` - Get application parameters (sync + async)
+   - `get_site.py` - Get application site settings (sync + async)
 
-2. Each example must include:
-   - Sync and async versions of each function
-   - Environment variable validation (API_KEY required)
+2. Example requirements:
+   - Each file contains both sync and async examples
+   - Use "[Example]" prefix for all created resources
+   - Environment variable validation at function start
    - Proper error handling with try-catch blocks
-   - "[Example]" prefix for all created resources
-   - Minimal code following the minimalism principles
+   - Minimal code approach - only essential functionality
+   - Real-world but simple test data
 
-3. Follow established patterns:
-   - Validate environment variables at function start
-   - Use realistic but simple test data
-   - Include basic success/error logging
-   - Demonstrate both blocking and streaming modes where applicable
+3. Special considerations:
+   - run_workflow.py must include streaming example with event handling
+   - upload_file.py must demonstrate file upload with BytesIO and multipart/form-data
+   - get_workflow_logs.py must show filtering and pagination
+   - All examples must validate required environment variables (raise ValueError if missing)
+   - Include examples with InputFileObjectWorkflow for file array variables
+   - Demonstrate both remote_url and local_file transfer methods
 
-4. Update `examples/workflow/README.md` with usage instructions
+4. Safety features:
+   - Check for "[Example]" prefix in resource names
+   - Environment variable validation
+   - Basic error handling
+   - Resource cleanup functions where applicable
 ```
 
 **Testing Prompt:**
 ```
-Create validation tests for all workflow examples.
+Create comprehensive tests for all Workflow examples.
 
 Requirements:
 1. Create `tests/workflow/v1/integration/test_examples_validation.py`
-2. Test methods for each example:
-   - test_run_workflow_example: Validate example structure
-   - test_get_workflow_run_detail_example: Check detail example
-   - test_stop_workflow_example: Validate stop example
-   - test_upload_file_example: Check upload example
-   - test_get_workflow_logs_example: Validate logs example
-   - test_get_info_example: Check info example
-   - test_get_parameters_example: Validate parameters example
-   - test_get_site_example: Check site example
+2. Test all example functions:
+   - Validate example code syntax and imports
+   - Test environment variable validation
+   - Verify "[Example]" prefix usage
+   - Test error handling scenarios
+   - Validate async/sync function pairs
 
-3. Validation checks:
-   - Environment variable validation presence
-   - "[Example]" prefix usage in test data
-   - Proper error handling structure
-   - Sync/async function pairs
-   - Code minimalism compliance
+3. Mock external dependencies:
+   - Mock API calls to prevent actual requests
+   - Mock file operations
+   - Mock environment variables
 
-4. Mock environment variables and API responses for testing
-5. Verify examples can be imported and executed without errors
+4. Verify examples demonstrate:
+   - Proper client initialization
+   - Correct request building
+   - Response handling and error checking
+   - Streaming functionality with event handling (for run_workflow)
+   - File upload functionality with multipart/form-data (for upload_file)
+   - InputFileObjectWorkflow usage with validation rules
+   - Environment variable validation with ValueError
+   - Both sync and async patterns
+
+5. Ensure all examples are production-ready and educational
 ```
 
-### Step 11: Comprehensive Testing and Migration Validation
+### Step 9: Update Service Integration
 
 **Implementation Prompt:**
 ```
-Perform comprehensive testing including migration validation.
+Update workflow service integration to expose V1 API.
 
 Requirements:
-1. Run all existing tests and ensure they pass after migration
-2. Check test coverage for all migrated and new code (aim for >90%)
-3. Verify type checking with mypy passes with new import structure
-4. Run linting with ruff and ensure compliance
-5. Test integration with existing codebase after consolidation
+1. Update `dify_oapi/api/workflow/service.py`:
+   - Import V1 class from version module
+   - Initialize V1 with config in WorkflowService class
+   - Expose v1 property for API access
 
-Migration validation:
-1. All existing API functionality preserved
-2. No breaking changes in method signatures
-3. Import paths updated correctly throughout codebase
-4. Obsolete files properly removed
-5. Model accessibility from flat structure
+2. Ensure consistency with existing service patterns:
+   - Follow same structure as chat, completion, knowledge services
+   - Maintain proper config passing
+   - Ensure type safety
 
-Quality checks:
-1. All Response classes inherit from BaseResponse
-2. All public models have builder patterns
-3. Literal types used for all constrained fields
-4. Proper error handling in all examples
-5. Environment variable validation in examples
-6. "[Example]" prefix usage in test data
-7. Migration completeness verified
-
-Create any missing tests or fix any issues found.
+3. Integration verification:
+   - Verify client.workflow.v1.workflow access pattern works
+   - Ensure all 8 workflow methods are accessible
+   - Test with different config options
 ```
 
 **Testing Prompt:**
 ```
-Create final comprehensive integration tests including migration validation.
+Create comprehensive tests for Service integration.
 
 Requirements:
-1. Create `tests/workflow/v1/integration/test_comprehensive_integration.py`
-2. End-to-end workflow tests:
-   - test_complete_workflow_cycle: Run → Detail → Stop
-   - test_file_upload_and_workflow: Upload → Use in workflow
-   - test_workflow_monitoring: Logs and status tracking
-   - test_application_configuration: Info → Parameters → Site
-   - test_migrated_functionality: Verify all migrated methods work
+1. Create `tests/workflow/v1/integration/test_service_integration.py`
+2. Test WorkflowService class:
+   - test_service_initialization - Test service initialization
+   - test_v1_access - Test v1 property access
+   - test_workflow_resource_access - Test workflow resource access
+   - test_all_methods_available - Test all 8 methods are available
 
-3. Migration validation tests:
-   - test_legacy_api_parity: Compare old vs new API behavior
-   - test_consolidated_resource_access: Verify single resource provides all functionality
-   - test_import_path_migration: Ensure all imports work with flat structure
-   - test_no_regression: Verify existing functionality unchanged
+3. Integration testing:
+   - Test full client integration path
+   - Verify client.workflow.v1.workflow.{method} works
+   - Test with different client configurations
+   - Ensure proper error propagation
+
+4. Mock external dependencies appropriately
+5. Achieve comprehensive integration test coverage
+```
+
+### Step 10: Final Integration and Documentation
+
+**Implementation Prompt:**
+```
+Complete final integration and create comprehensive documentation.
+
+Requirements:
+1. Update main client integration:
+   - Ensure workflow service is properly integrated in main Client class
+   - Verify all access patterns work correctly
+   - Test complete integration chain
+
+2. Create comprehensive README:
+   - Update `examples/workflow/README.md` with all 8 examples
+   - Include usage patterns and best practices
+   - Add troubleshooting section
+   - Document environment variable requirements
+
+3. Documentation updates:
+   - Ensure all docstrings are complete and accurate
+   - Update type hints throughout the codebase
+   - Add inline comments for complex logic
+
+4. Final validation:
+   - Run all tests and ensure 100% pass rate
+   - Verify examples work with real API (if possible)
+   - Check code quality with linting tools
+   - Ensure consistent code style throughout
+```
+
+**Testing Prompt:**
+```
+Create final comprehensive integration tests.
+
+Requirements:
+1. Create `tests/workflow/v1/integration/test_final_validation.py`
+2. Comprehensive integration tests:
+   - test_complete_client_integration - Test full client integration
+   - test_all_apis_accessible - Test all 8 APIs are accessible
+   - test_streaming_integration - Test streaming functionality
+   - test_file_upload_integration - Test file upload functionality
+   - test_error_handling_integration - Test error handling across all APIs
+   - test_async_integration - Test async functionality across all APIs
+
+3. End-to-end workflow tests:
+   - Test complete workflow execution cycle
+   - Test file upload and workflow execution with files
+   - Test workflow monitoring and logging
+   - Test application configuration retrieval
 
 4. Performance and reliability tests:
-   - test_streaming_performance: Streaming response handling
-   - test_concurrent_requests: Multiple simultaneous requests
-   - test_error_recovery: Error handling and recovery
-   - test_timeout_handling: Request timeout scenarios
+   - Test concurrent API calls
+   - Test large file uploads
+   - Test long-running workflows
+   - Test error recovery scenarios
 
-5. Mock all external API calls
-6. Test complete request/response cycles
-7. Verify proper resource cleanup
-8. Test both sync and async execution paths
-9. Validate migration completeness and correctness
+5. Final validation checklist:
+   - All 8 APIs implemented and tested
+   - All examples working and validated
+   - Complete documentation coverage
+   - 100% test coverage achieved
+   - Code quality standards met
 ```
 
-### Step 12: Resolve Class Naming Conflicts
+## Quality Assurance Checklist
 
-**Implementation Prompt:**
-```
-Resolve all class naming conflicts by adding domain-specific prefixes.
+### Code Quality Standards
+- [ ] All models use strict Literal types from workflow_types.py
+- [ ] All Response classes inherit from BaseResponse
+- [ ] All Request classes inherit from BaseRequest
+- [ ] Builder patterns implemented for all models
+- [ ] Proper error handling throughout
+- [ ] Complete type annotations
+- [ ] Consistent naming conventions
+- [ ] UUID format validation for path parameters
+- [ ] InputFileObjectWorkflow validation rules implemented
 
-Requirements:
-1. Rename conflicting classes with context-specific names:
-   - `FileInfo` → `FileUploadInfo` (for file upload responses)
-   - `LogInfo` → `WorkflowLogInfo` (for workflow log entries)
-   - Keep `EndUserInfo` (no conflicts detected)
-   - Keep `WorkflowRunLogInfo` (already context-specific)
-   - Any other conflicting classes discovered during implementation
+### API Coverage
+- [ ] POST /workflows/run - Execute workflow (streaming + blocking)
+- [ ] GET /workflows/run/{workflow_run_id} - Get workflow run detail
+- [ ] POST /workflows/tasks/{task_id}/stop - Stop workflow task
+- [ ] POST /files/upload - Upload file (multipart/form-data)
+- [ ] GET /workflows/logs - Get workflow logs (with pagination)
+- [ ] GET /info - Get application info
+- [ ] GET /parameters - Get application parameters
+- [ ] GET /site - Get application site settings
 
-2. Update all import statements and references:
-   - Update model files that import renamed classes
-   - Update test files to use new class names
-   - Update request/response models that reference renamed classes
+### Streaming Support Requirements
+- [ ] Streaming event handling (8 event types)
+- [ ] Event-specific data structures
+- [ ] Generator[bytes, None, None] return type for streaming
+- [ ] @overload decorators for streaming/blocking modes
+- [ ] SSE (Server-Sent Events) format support
 
-3. Ensure consistency:
-   - All workflow-domain classes use `Workflow*` prefix
-   - No naming conflicts remain in the module
-   - All tests pass with new class names
+### Testing Requirements
+- [ ] Unit tests for all models (100% coverage)
+- [ ] Resource method tests (sync and async)
+- [ ] Integration tests for all APIs
+- [ ] Example validation tests
+- [ ] Error handling tests
+- [ ] Streaming functionality tests
+- [ ] File upload tests with BytesIO
+- [ ] Validation rule tests (InputFileObjectWorkflow)
+- [ ] UUID format validation tests
 
-4. File operations:
-   - Rename model files if needed for consistency
-   - Update __init__.py exports
-   - Verify no broken imports
-```
+### Documentation Standards
+- [ ] Complete API documentation
+- [ ] Working examples for all 8 APIs
+- [ ] README with usage patterns
+- [ ] Inline code documentation
+- [ ] Type hints throughout
+- [ ] Streaming examples with event handling
+- [ ] File upload examples with multipart/form-data
 
-**Testing Prompt:**
-```
-Update all tests to use the new prefixed class names.
+### Safety and Best Practices
+- [ ] "[Example]" prefix for all example resources
+- [ ] Environment variable validation (API_KEY required)
+- [ ] Proper error handling in examples
+- [ ] Resource cleanup functions
+- [ ] Minimal code approach in examples
+- [ ] ValueError for missing environment variables (no print statements)
 
-Requirements:
-1. Update test imports to use new class names
-2. Update test class names to match new model names
-3. Update all test method references to new classes
-4. Ensure all tests pass with renamed classes
-5. Verify no import errors or naming conflicts
+## Complete Model File List
 
-Validation:
-- All existing tests must pass
-- No naming conflicts in test files
-- Consistent use of prefixed names throughout
-```
+### Required Model Files (44 total):
 
-### Step 13: Documentation and Final Validation
+**Types and Common Models (27 files):**
+- `workflow_types.py` - All Literal type definitions
+- `workflow_inputs.py` - Dynamic workflow input parameters
+- `input_file_object_workflow.py` - File input with validation rules
+- `workflow_run_info.py` - Workflow execution information
+- `workflow_run_data.py` - Workflow execution data details
+- `node_info.py` - Node execution information
+- `execution_metadata.py` - Execution metadata with tokens/pricing
+- `workflow_file_info.py` - File information for uploads
+- `workflow_log_info.py` - Workflow log entry information
+- `workflow_run_log_info.py` - Workflow run log details
+- `end_user_info.py` - End user information
+- `app_info.py` - Application basic information
+- `parameters_info.py` - Application parameters configuration
+- `site_info.py` - WebApp site configuration
+- `user_input_form.py` - User input form configuration
+- `file_upload_config.py` - File upload settings
+- `system_parameters.py` - System configuration parameters
+- `workflow_completion_response.py` - Blocking mode response structure
+- `chunk_workflow_event.py` - Streaming event base structure
+- `workflow_started_data.py` - workflow_started event data
+- `node_started_data.py` - node_started event data
+- `text_chunk_data.py` - text_chunk event data
+- `node_finished_data.py` - node_finished event data
+- `workflow_finished_data.py` - workflow_finished event data
+- `tts_message_data.py` - tts_message event data
+- `tts_message_end_data.py` - tts_message_end event data
+- `ping_data.py` - ping event data (empty)
 
-**Implementation Prompt:**
-```
-Complete documentation and perform final validation.
+**API Request/Response Models (17 files):**
+- `run_workflow_request.py` + `run_workflow_request_body.py` + `run_workflow_response.py`
+- `get_workflow_run_detail_request.py` + `get_workflow_run_detail_response.py`
+- `stop_workflow_request.py` + `stop_workflow_request_body.py` + `stop_workflow_response.py`
+- `get_workflow_logs_request.py` + `get_workflow_logs_response.py`
+- `upload_file_request.py` + `upload_file_request_body.py` + `upload_file_response.py`
+- `get_info_request.py` + `get_info_response.py`
+- `get_parameters_request.py` + `get_parameters_response.py`
+- `get_site_request.py` + `get_site_response.py`
 
-Requirements:
-1. Update project documentation:
-   - Add workflow API section to main README.md
-   - Update examples/README.md with workflow examples
-   - Ensure all docstrings are complete and accurate
+## Implementation Timeline
 
-2. Create workflow-specific documentation:
-   - API usage patterns and best practices
-   - Common use cases and examples
-   - Error handling guidelines
-   - Performance optimization tips
+**Estimated Timeline: 8-10 development cycles**
 
-3. Validate against design requirements:
-   - All 8 APIs implemented correctly
-   - Proper inheritance patterns followed
-   - Type safety maintained throughout
-   - Builder patterns implemented consistently
+1. **Steps 1-2**: Types and Common Models (2 cycles)
+2. **Steps 3-5**: API Models Implementation (3 cycles)
+3. **Step 6**: Resource Implementation (1 cycle)
+4. **Step 7**: Version Integration (1 cycle)
+5. **Steps 8-9**: Examples and Service Integration (2 cycles)
+6. **Step 10**: Final Integration and Documentation (1 cycle)
 
-4. Prepare for release:
-   - Version compatibility checks
-   - Backward compatibility verification
-   - Performance benchmarking
-   - Security review of examples
-```
-
-**Testing Prompt:**
-```
-Perform final validation and acceptance testing.
-
-Requirements:
-1. Execute complete test suite and ensure 100% pass rate
-2. Validate test coverage meets requirements (>90%)
-3. Run integration tests against mock API responses
-4. Verify examples work correctly with proper environment setup
-5. Confirm no class naming conflicts remain
-
-Acceptance criteria:
-1. All 8 workflow APIs fully functional
-2. Streaming support working correctly
-3. File upload handling proper
-4. Error handling robust and consistent
-5. Examples educational and safe
-6. Documentation complete and accurate
-7. Type safety maintained throughout
-8. Performance meets expectations
-9. No class naming conflicts in entire module
-
-Create final test report documenting:
-- Test coverage statistics
-- Performance benchmarks
-- Known limitations or issues
-- Recommendations for future improvements
-- Class naming conflict resolution summary
-```
+Each cycle includes both implementation and testing phases to ensure code quality and reliability.
 
 ## Success Criteria
 
-The implementation is considered complete when:
+- ✅ All 8 Workflow APIs fully implemented
+- ✅ Complete type safety with strict Literal types
+- ✅ Comprehensive test coverage (100%)
+- ✅ Working examples for all APIs
+- ✅ Streaming support for workflow execution
+- ✅ File upload functionality
+- ✅ Proper error handling throughout
+- ✅ Clean, maintainable code architecture
+- ✅ Complete documentation coverage
+- ✅ Production-ready implementation
 
-1. **Functionality**: All 8 workflow APIs are fully implemented and functional
-2. **Migration**: All existing functionality successfully migrated to consolidated structure
-3. **Type Safety**: Complete type safety with Literal types and proper inheritance
-4. **Testing**: Comprehensive test coverage (>90%) with all tests passing
-5. **Examples**: Working examples for all APIs with proper safety measures
-6. **Documentation**: Complete and accurate documentation including migration guide
-7. **Integration**: Seamless integration with existing dify-oapi2 codebase
-8. **Quality**: Code passes all linting, type checking, and quality gates
-9. **Performance**: Streaming and file upload performance meets expectations
-10. **Backward Compatibility**: No breaking changes in existing API signatures
-11. **Clean Migration**: All obsolete files removed, imports updated, flat structure implemented
-
-## Notes
-
-- Each step builds upon the previous ones - complete them in order
-- Test each step thoroughly before proceeding to the next
-- Follow the established patterns from existing API implementations
-- Maintain consistency with the overall project architecture
-- Prioritize type safety and error handling throughout
-- Keep examples minimal but functional and safe
+This implementation plan provides a systematic approach to building a complete, production-ready Workflow API module for the dify-oapi project, ensuring high code quality, comprehensive testing, and excellent developer experience.

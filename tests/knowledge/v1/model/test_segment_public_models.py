@@ -2,9 +2,9 @@
 
 from __future__ import annotations
 
-from dify_oapi.api.knowledge.v1.model.segment.child_chunk_info import ChildChunkInfo
-from dify_oapi.api.knowledge.v1.model.segment.segment_data import SegmentData
-from dify_oapi.api.knowledge.v1.model.segment.segment_info import SegmentInfo
+from dify_oapi.api.knowledge.v1.model.child_chunk_info import ChildChunkInfo
+from dify_oapi.api.knowledge.v1.model.segment_content import SegmentContent as SegmentData
+from dify_oapi.api.knowledge.v1.model.segment_info import SegmentInfo
 
 
 class TestSegmentInfo:
@@ -100,76 +100,64 @@ class TestChildChunkInfo:
         chunk = (
             ChildChunkInfo.builder()
             .id("chunk-id")
-            .segment_id("segment-id")
             .content("Chunk content")
-            .word_count(25)
-            .tokens(20)
-            .status("completed")
+            .keywords(["test", "chunk"])
+            .created_at(1234567890)
             .build()
         )
         assert chunk.id == "chunk-id"
-        assert chunk.segment_id == "segment-id"
         assert chunk.content == "Chunk content"
-        assert chunk.word_count == 25
-        assert chunk.tokens == 20
-        assert chunk.status == "completed"
+        assert chunk.keywords == ["test", "chunk"]
+        assert chunk.created_at == 1234567890
 
     def test_field_validation(self) -> None:
         """Test ChildChunkInfo field validation."""
         chunk = ChildChunkInfo(
             id="chunk-id",
-            segment_id="segment-id",
             content="Chunk content",
-            word_count=25,
-            tokens=20,
-            status="completed",
+            keywords=["test", "chunk"],
+            created_at=1234567890,
         )
         assert chunk.id == "chunk-id"
-        assert chunk.segment_id == "segment-id"
         assert chunk.content == "Chunk content"
-        assert chunk.word_count == 25
-        assert chunk.tokens == 20
-        assert chunk.status == "completed"
+        assert chunk.keywords == ["test", "chunk"]
+        assert chunk.created_at == 1234567890
 
     def test_serialization(self) -> None:
         """Test ChildChunkInfo serialization."""
-        chunk = ChildChunkInfo.builder().id("chunk-id").content("Chunk content").status("completed").build()
+        chunk = ChildChunkInfo.builder().id("chunk-id").content("Chunk content").build()
         data = chunk.model_dump(exclude_none=True)
         assert data["id"] == "chunk-id"
         assert data["content"] == "Chunk content"
-        assert data["status"] == "completed"
 
     def test_direct_instantiation(self) -> None:
         """Test ChildChunkInfo direct instantiation alongside builder."""
         # Direct instantiation
-        direct = ChildChunkInfo(content="Chunk content", status="completed")
+        direct = ChildChunkInfo(content="Chunk content")
 
         # Builder instantiation
-        builder = ChildChunkInfo.builder().content("Chunk content").status("completed").build()
+        builder = ChildChunkInfo.builder().content("Chunk content").build()
 
         # Both should work and be equivalent
         assert direct.content == builder.content
-        assert direct.status == builder.status
 
     def test_optional_fields(self) -> None:
         """Test ChildChunkInfo optional field handling."""
         chunk = ChildChunkInfo(content="Chunk")
         assert chunk.content == "Chunk"
         assert chunk.id is None
-        assert chunk.segment_id is None
-        assert chunk.word_count is None
+        assert chunk.keywords is None
+        assert chunk.created_at is None
 
     def test_numeric_fields(self) -> None:
         """Test ChildChunkInfo numeric field handling."""
         # Test with zero values
-        chunk = ChildChunkInfo(word_count=0, tokens=0)
-        assert chunk.word_count == 0
-        assert chunk.tokens == 0
+        chunk = ChildChunkInfo(created_at=0)
+        assert chunk.created_at == 0
 
         # Test with positive values
-        chunk = ChildChunkInfo(word_count=100, tokens=50)
-        assert chunk.word_count == 100
-        assert chunk.tokens == 50
+        chunk = ChildChunkInfo(created_at=1234567890)
+        assert chunk.created_at == 1234567890
 
 
 class TestSegmentData:
@@ -182,15 +170,11 @@ class TestSegmentData:
             .content("Updated content")
             .answer("Updated answer")
             .keywords(["updated", "keywords"])
-            .enabled(False)
-            .regenerate_child_chunks(True)
             .build()
         )
         assert data.content == "Updated content"
         assert data.answer == "Updated answer"
         assert data.keywords == ["updated", "keywords"]
-        assert data.enabled is False
-        assert data.regenerate_child_chunks is True
 
     def test_field_validation(self) -> None:
         """Test SegmentData field validation."""
@@ -198,53 +182,39 @@ class TestSegmentData:
             content="Updated content",
             answer="Updated answer",
             keywords=["updated", "keywords"],
-            enabled=False,
-            regenerate_child_chunks=True,
         )
         assert data.content == "Updated content"
         assert data.answer == "Updated answer"
         assert data.keywords == ["updated", "keywords"]
-        assert data.enabled is False
-        assert data.regenerate_child_chunks is True
 
     def test_serialization(self) -> None:
         """Test SegmentData serialization."""
-        data = SegmentData.builder().content("Updated content").enabled(False).build()
+        data = SegmentData.builder().content("Updated content").build()
         serialized = data.model_dump(exclude_none=True)
         assert serialized["content"] == "Updated content"
-        assert serialized["enabled"] is False
 
     def test_direct_instantiation(self) -> None:
         """Test SegmentData direct instantiation alongside builder."""
         # Direct instantiation
-        direct = SegmentData(content="Updated content", enabled=False)
+        direct = SegmentData(content="Updated content")
 
         # Builder instantiation
-        builder = SegmentData.builder().content("Updated content").enabled(False).build()
+        builder = SegmentData.builder().content("Updated content").build()
 
         # Both should work and be equivalent
         assert direct.content == builder.content
-        assert direct.enabled == builder.enabled
 
     def test_optional_fields(self) -> None:
         """Test SegmentData optional field handling."""
         data = SegmentData(content="Data")
         assert data.content == "Data"
-        assert data.enabled is None
-        assert data.regenerate_child_chunks is None
         assert data.keywords is None
 
     def test_boolean_fields(self) -> None:
         """Test SegmentData boolean field handling."""
-        # Test False values
-        data = SegmentData(enabled=False, regenerate_child_chunks=False)
-        assert data.enabled is False
-        assert data.regenerate_child_chunks is False
-
-        # Test True values
-        data = SegmentData(enabled=True, regenerate_child_chunks=True)
-        assert data.enabled is True
-        assert data.regenerate_child_chunks is True
+        # Test with content only since no boolean fields exist
+        data = SegmentData(content="Test content")
+        assert data.content == "Test content"
 
     def test_keywords_array_handling(self) -> None:
         """Test SegmentData keywords array handling."""

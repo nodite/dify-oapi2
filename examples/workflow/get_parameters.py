@@ -20,7 +20,7 @@ def get_parameters_sync() -> None:
         req = GetParametersRequest.builder().build()
         req_option = RequestOption.builder().api_key(api_key).build()
 
-        response = client.workflow.v1.workflow.get_parameters(req, req_option)
+        response = client.workflow.v1.workflow.parameters(req, req_option)
 
         if response.success:
             print(f"Parameters retrieved: {len(response.user_input_form or [])} input forms")
@@ -43,7 +43,7 @@ async def get_parameters_async() -> None:
         req = GetParametersRequest.builder().build()
         req_option = RequestOption.builder().api_key(api_key).build()
 
-        response = await client.workflow.v1.workflow.aget_parameters(req, req_option)
+        response = await client.workflow.v1.workflow.aparameters(req, req_option)
 
         if response.success:
             print(f"Parameters retrieved: {len(response.user_input_form or [])} input forms")

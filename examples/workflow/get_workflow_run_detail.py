@@ -24,7 +24,7 @@ def get_workflow_run_detail_sync() -> None:
         req = GetWorkflowRunDetailRequest.builder().workflow_run_id(workflow_run_id).build()
         req_option = RequestOption.builder().api_key(api_key).build()
 
-        response = client.workflow.v1.workflow.get_workflow_run_detail(req, req_option)
+        response = client.workflow.v1.workflow.detail(req, req_option)
 
         if response.success:
             print(f"Workflow detail: {response.status} - {response.elapsed_time}s")
@@ -53,7 +53,7 @@ async def get_workflow_run_detail_async() -> None:
         req = GetWorkflowRunDetailRequest.builder().workflow_run_id(workflow_run_id).build()
         req_option = RequestOption.builder().api_key(api_key).build()
 
-        response = await client.workflow.v1.workflow.aget_workflow_run_detail(req, req_option)
+        response = await client.workflow.v1.workflow.adetail(req, req_option)
 
         if response.success:
             print(f"Workflow detail: {response.status} - {response.elapsed_time}s")

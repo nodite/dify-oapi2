@@ -20,7 +20,7 @@ def get_workflow_logs_sync() -> None:
         req = GetWorkflowLogsRequest.builder().page(1).limit(10).build()
         req_option = RequestOption.builder().api_key(api_key).build()
 
-        response = client.workflow.v1.workflow.get_workflow_logs(req, req_option)
+        response = client.workflow.v1.workflow.logs(req, req_option)
 
         if response.success:
             print(f"Logs retrieved: {response.total} total, {len(response.data or [])} on page")
@@ -43,7 +43,7 @@ async def get_workflow_logs_async() -> None:
         req = GetWorkflowLogsRequest.builder().page(1).limit(10).build()
         req_option = RequestOption.builder().api_key(api_key).build()
 
-        response = await client.workflow.v1.workflow.aget_workflow_logs(req, req_option)
+        response = await client.workflow.v1.workflow.alogs(req, req_option)
 
         if response.success:
             print(f"Logs retrieved: {response.total} total, {len(response.data or [])} on page")
@@ -66,7 +66,7 @@ def get_workflow_logs_filtered() -> None:
         req = GetWorkflowLogsRequest.builder().keyword("[Example]").status("succeeded").page(1).limit(5).build()
         req_option = RequestOption.builder().api_key(api_key).build()
 
-        response = client.workflow.v1.workflow.get_workflow_logs(req, req_option)
+        response = client.workflow.v1.workflow.logs(req, req_option)
 
         if response.success:
             print(f"Filtered logs: {response.total} total, {len(response.data or [])} on page")

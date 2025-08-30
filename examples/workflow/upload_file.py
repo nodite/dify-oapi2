@@ -30,7 +30,7 @@ def upload_file_sync() -> None:
         )
         req_option = RequestOption.builder().api_key(api_key).build()
 
-        response = client.workflow.v1.workflow.upload_file(req, req_option)
+        response = client.workflow.v1.workflow.upload(req, req_option)
 
         if response.success:
             print(f"File uploaded: {response.id}")
@@ -64,7 +64,7 @@ async def upload_file_async() -> None:
         )
         req_option = RequestOption.builder().api_key(api_key).build()
 
-        response = await client.workflow.v1.workflow.aupload_file(req, req_option)
+        response = await client.workflow.v1.workflow.aupload(req, req_option)
 
         if response.success:
             print(f"File uploaded: {response.id}")

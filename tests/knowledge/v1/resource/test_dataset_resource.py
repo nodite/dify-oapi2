@@ -2,22 +2,27 @@ from unittest.mock import AsyncMock, Mock
 
 import pytest
 
-# Import new dataset models
-from dify_oapi.api.knowledge.v1.model.dataset.create_request import CreateRequest
-from dify_oapi.api.knowledge.v1.model.dataset.create_request_body import CreateRequestBody
-from dify_oapi.api.knowledge.v1.model.dataset.create_response import CreateResponse
-from dify_oapi.api.knowledge.v1.model.dataset.delete_request import DeleteRequest
-from dify_oapi.api.knowledge.v1.model.dataset.delete_response import DeleteResponse
-from dify_oapi.api.knowledge.v1.model.dataset.get_request import GetRequest
-from dify_oapi.api.knowledge.v1.model.dataset.get_response import GetResponse
-from dify_oapi.api.knowledge.v1.model.dataset.list_request import ListRequest
-from dify_oapi.api.knowledge.v1.model.dataset.list_response import ListResponse
-from dify_oapi.api.knowledge.v1.model.dataset.retrieve_request import RetrieveRequest
-from dify_oapi.api.knowledge.v1.model.dataset.retrieve_request_body import RetrieveRequestBody
-from dify_oapi.api.knowledge.v1.model.dataset.retrieve_response import RetrieveResponse
-from dify_oapi.api.knowledge.v1.model.dataset.update_request import UpdateRequest
-from dify_oapi.api.knowledge.v1.model.dataset.update_request_body import UpdateRequestBody
-from dify_oapi.api.knowledge.v1.model.dataset.update_response import UpdateResponse
+# Import dataset models with flat structure
+from dify_oapi.api.knowledge.v1.model.create_dataset_request import CreateDatasetRequest as CreateRequest
+from dify_oapi.api.knowledge.v1.model.create_dataset_request_body import CreateDatasetRequestBody as CreateRequestBody
+from dify_oapi.api.knowledge.v1.model.create_dataset_response import CreateDatasetResponse as CreateResponse
+from dify_oapi.api.knowledge.v1.model.delete_dataset_request import DeleteDatasetRequest as DeleteRequest
+from dify_oapi.api.knowledge.v1.model.delete_dataset_response import DeleteDatasetResponse as DeleteResponse
+from dify_oapi.api.knowledge.v1.model.get_dataset_request import GetDatasetRequest as GetRequest
+from dify_oapi.api.knowledge.v1.model.get_dataset_response import GetDatasetResponse as GetResponse
+from dify_oapi.api.knowledge.v1.model.list_datasets_request import ListDatasetsRequest as ListRequest
+from dify_oapi.api.knowledge.v1.model.list_datasets_response import ListDatasetsResponse as ListResponse
+from dify_oapi.api.knowledge.v1.model.query_info import QueryInfo
+from dify_oapi.api.knowledge.v1.model.retrieve_from_dataset_request import RetrieveFromDatasetRequest as RetrieveRequest
+from dify_oapi.api.knowledge.v1.model.retrieve_from_dataset_request_body import (
+    RetrieveFromDatasetRequestBody as RetrieveRequestBody,
+)
+from dify_oapi.api.knowledge.v1.model.retrieve_from_dataset_response import (
+    RetrieveFromDatasetResponse as RetrieveResponse,
+)
+from dify_oapi.api.knowledge.v1.model.update_dataset_request import UpdateDatasetRequest as UpdateRequest
+from dify_oapi.api.knowledge.v1.model.update_dataset_request_body import UpdateDatasetRequestBody as UpdateRequestBody
+from dify_oapi.api.knowledge.v1.model.update_dataset_response import UpdateDatasetResponse as UpdateResponse
 from dify_oapi.api.knowledge.v1.resource.dataset import Dataset
 from dify_oapi.core.model.config import Config
 from dify_oapi.core.model.request_option import RequestOption
@@ -75,7 +80,7 @@ class TestDatasetResource:
         mock_execute = Mock(return_value=mock_response)
         monkeypatch.setattr("dify_oapi.core.http.transport.Transport.execute", mock_execute)
 
-        request = ListRequest.builder().page(1).limit("20").build()
+        request = ListRequest.builder().page(1).limit(20).build()
         response = dataset_resource.list(request, request_option)
 
         assert response.total == 0
@@ -91,7 +96,7 @@ class TestDatasetResource:
         mock_aexecute = AsyncMock(return_value=mock_response)
         monkeypatch.setattr("dify_oapi.core.http.transport.ATransport.aexecute", mock_aexecute)
 
-        request = ListRequest.builder().page(1).limit("20").build()
+        request = ListRequest.builder().page(1).limit(20).build()
         response = await dataset_resource.alist(request, request_option)
 
         assert response.total == 0
@@ -195,8 +200,6 @@ class TestDatasetResource:
 
     def test_retrieve_dataset(self, dataset_resource, request_option, monkeypatch):
         # Mock Transport.execute
-        from dify_oapi.api.knowledge.v1.model.dataset.retrieve_response import QueryInfo
-
         query = QueryInfo(content="test query")
         mock_response = RetrieveResponse(query=query, records=[])
         mock_execute = Mock(return_value=mock_response)
@@ -215,8 +218,6 @@ class TestDatasetResource:
     @pytest.mark.asyncio
     async def test_aretrieve_dataset(self, dataset_resource, request_option, monkeypatch):
         # Mock ATransport.aexecute
-        from dify_oapi.api.knowledge.v1.model.dataset.retrieve_response import QueryInfo
-
         query = QueryInfo(content="test query")
         mock_response = RetrieveResponse(query=query, records=[])
         mock_aexecute = AsyncMock(return_value=mock_response)
@@ -244,7 +245,10 @@ class TestDatasetResource:
 
         request_body = CreateRequestBody.builder().name("test_dataset").build()
         request = CreateRequest.builder().request_body(request_body).build()
-        response = dataset_resource.create(request)
+        request_option = RequestOption.builder().api_key("test-key").build()
+        response = dataset_resource.create(request, request_option)
 
         assert response.id == "test_id"
-        mock_execute.assert_called_once_with(dataset_resource.config, request, unmarshal_as=CreateResponse, option=None)
+        mock_execute.assert_called_once_with(
+            dataset_resource.config, request, unmarshal_as=CreateResponse, option=request_option
+        )

@@ -22,22 +22,22 @@ class TestFinalValidation:
         """Verify all 8 workflow APIs are fully functional."""
         # Check all 16 methods exist (8 sync + 8 async)
         expected_methods = [
-            "run_workflow",
-            "arun_workflow",
-            "get_workflow_run_detail",
-            "aget_workflow_run_detail",
-            "stop_workflow",
-            "astop_workflow",
-            "upload_file",
-            "aupload_file",
-            "get_workflow_logs",
-            "aget_workflow_logs",
-            "get_info",
-            "aget_info",
-            "get_parameters",
-            "aget_parameters",
-            "get_site",
-            "aget_site",
+            "run",
+            "arun",
+            "detail",
+            "adetail",
+            "stop",
+            "astop",
+            "upload",
+            "aupload",
+            "logs",
+            "alogs",
+            "info",
+            "ainfo",
+            "parameters",
+            "aparameters",
+            "site",
+            "asite",
         ]
 
         for method in expected_methods:
@@ -49,13 +49,13 @@ class TestFinalValidation:
         # Check run_workflow has proper overloads for streaming
         import inspect
 
-        sig = inspect.signature(self.workflow.run_workflow)
+        sig = inspect.signature(self.workflow.run)
         params = list(sig.parameters.keys())
 
         assert "stream" in params, "Missing stream parameter in run_workflow"
 
         # Check async version too
-        async_sig = inspect.signature(self.workflow.arun_workflow)
+        async_sig = inspect.signature(self.workflow.arun)
         async_params = list(async_sig.parameters.keys())
 
         assert "stream" in async_params, "Missing stream parameter in arun_workflow"
@@ -65,7 +65,7 @@ class TestFinalValidation:
         # Check upload_file method exists and has proper signature
         import inspect
 
-        sig = inspect.signature(self.workflow.upload_file)
+        sig = inspect.signature(self.workflow.upload)
         params = list(sig.parameters.keys())
 
         expected_params = ["request", "request_option"]
@@ -78,14 +78,14 @@ class TestFinalValidation:
         import inspect
 
         for method_name in [
-            "run_workflow",
-            "get_workflow_run_detail",
-            "stop_workflow",
-            "upload_file",
-            "get_workflow_logs",
-            "get_info",
-            "get_parameters",
-            "get_site",
+            "run",
+            "detail",
+            "stop",
+            "upload",
+            "logs",
+            "info",
+            "parameters",
+            "site",
         ]:
             method = getattr(self.workflow, method_name)
             sig = inspect.signature(method)

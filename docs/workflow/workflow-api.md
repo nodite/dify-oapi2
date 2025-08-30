@@ -23,18 +23,328 @@ Authorization: Bearer {API_KEY}
 The Workflow API provides 8 main endpoints organized into 3 categories:
 
 ### Workflow Execution (4 APIs)
-- Execute Workflow - Run a published workflow
-- Get Workflow Run Detail - Retrieve execution results
-- Stop Workflow Task Generation - Stop streaming execution
-- Get Workflow Logs - Retrieve execution history
+- **POST** `/workflows/run` - Execute Workflow
+- **GET** `/workflows/run/{workflow_run_id}` - Get Workflow Run Detail
+- **POST** `/workflows/tasks/{task_id}/stop` - Stop Workflow Task Generation
+- **GET** `/workflows/logs` - Get Workflow Logs
 
 ### Files (1 API)
-- File Upload - Upload files for workflow use
+- **POST** `/files/upload` - File Upload for Workflow
 
 ### Application (3 APIs)
-- Get Application Basic Information - App metadata
-- Get Application Parameters Information - Input configuration
-- Get Application WebApp Settings - UI settings
+- **GET** `/info` - Get Application Basic Information
+- **GET** `/parameters` - Get Application Parameters Information
+- **GET** `/site` - Get Application WebApp Settings
+
+## Data Types
+
+### Core Request/Response Types
+
+#### WorkflowExecutionRequest
+```typescript
+interface WorkflowExecutionRequest {
+  inputs: Record<string, string | number | boolean | object | InputFileObjectWorkflow[]>;
+  response_mode: "streaming" | "blocking";
+  user: string;
+}
+```
+
+#### InputFileObjectWorkflow
+```typescript
+interface InputFileObjectWorkflow {
+  type: "document" | "image" | "audio" | "video" | "custom";
+  transfer_method: "remote_url" | "local_file";
+  url?: string; // Required when transfer_method is "remote_url"
+  upload_file_id?: string; // Required when transfer_method is "local_file"
+}
+```
+
+#### WorkflowCompletionResponse (Blocking Mode)
+```typescript
+interface WorkflowCompletionResponse {
+  workflow_run_id: string; // UUID format
+  task_id: string; // UUID format
+  data: WorkflowFinishedData;
+}
+```
+
+#### WorkflowFinishedData
+```typescript
+interface WorkflowFinishedData {
+  id: string; // UUID format
+  workflow_id: string; // UUID format
+  status: "running" | "succeeded" | "failed" | "stopped";
+  outputs?: Record<string, any> | null;
+  error?: string | null;
+  elapsed_time?: number | null; // Float
+  total_tokens?: number | null;
+  total_steps: number; // Default: 0
+  created_at: number; // Int64 timestamp
+  finished_at: number; // Int64 timestamp
+}
+```
+
+### Streaming Event Types
+
+#### Base Streaming Event
+```typescript
+interface StreamEventBase {
+  task_id: string; // UUID format
+  workflow_run_id: string; // UUID format
+}
+```
+
+#### Workflow Started Event
+```typescript
+interface StreamEventWfWorkflowStarted extends StreamEventBase {
+  event: "workflow_started";
+  data: {
+    id: string; // UUID format
+    workflow_id: string; // UUID format
+    sequence_number: number;
+    created_at: number; // Int64 timestamp
+  };
+}
+```
+
+#### Node Started Event
+```typescript
+interface StreamEventWfNodeStarted extends StreamEventBase {
+  event: "node_started";
+  data: {
+    id: string; // UUID format
+    node_id: string; // UUID format
+    node_type: string;
+    title: string;
+    index: number;
+    predecessor_node_id?: string | null; // UUID format
+    inputs: Record<string, any>;
+    created_at: number; // Int64 timestamp
+  };
+}
+```
+
+#### Text Chunk Event
+```typescript
+interface StreamEventWfTextChunk extends StreamEventBase {
+  event: "text_chunk";
+  data: {
+    text: string;
+    from_variable_selector: string[]; // Text source path
+  };
+}
+```
+
+#### Node Finished Event
+```typescript
+interface StreamEventWfNodeFinished extends StreamEventBase {
+  event: "node_finished";
+  data: {
+    id: string; // UUID format
+    node_id: string; // UUID format
+    node_type: string;
+    title: string;
+    index: number;
+    predecessor_node_id?: string | null; // UUID format
+    inputs?: Record<string, any> | null;
+    process_data?: Record<string, any> | null;
+    outputs?: Record<string, any> | null;
+    status: "running" | "succeeded" | "failed" | "stopped";
+    error?: string | null;
+    elapsed_time?: number | null; // Float
+    execution_metadata?: NodeExecutionMetadata | null;
+    created_at: number; // Int64 timestamp
+  };
+}
+```
+
+#### Node Execution Metadata
+```typescript
+interface NodeExecutionMetadata {
+  total_tokens?: number | null;
+  total_price?: number | null; // Float
+  currency?: string | null; // e.g., "USD"
+}
+```
+
+#### TTS Message Events
+```typescript
+interface StreamEventWfTtsMessage extends StreamEventBase {
+  event: "tts_message";
+  audio: string; // Base64 encoded
+  message_id: string; // UUID format
+  created_at: number; // Int64 timestamp
+}
+
+interface StreamEventWfTtsMessageEnd extends StreamEventBase {
+  event: "tts_message_end";
+  audio: string; // Empty string
+  message_id: string; // UUID format
+  created_at: number; // Int64 timestamp
+}
+```
+
+#### Ping Event
+```typescript
+interface StreamEventWfPing {
+  event: "ping";
+}
+```
+
+### Workflow Run Detail Response
+```typescript
+interface WorkflowRunDetailResponse {
+  id: string; // UUID format
+  workflow_id: string; // UUID format
+  status: "running" | "succeeded" | "failed" | "stopped";
+  inputs: string; // JSON string of input content
+  outputs?: Record<string, any> | null; // JSON object of output content
+  error?: string | null;
+  total_steps: number;
+  total_tokens: number;
+  created_at: number; // Int64 timestamp
+  finished_at?: number | null; // Int64 timestamp
+  elapsed_time?: number | null; // Float
+}
+```
+
+### File Upload Response
+```typescript
+interface FileUploadResponse {
+  id: string; // UUID format
+  name: string;
+  size: number;
+  extension: string;
+  mime_type: string;
+  created_by: string; // UUID format
+  created_at: number; // Int64 timestamp
+}
+```
+
+### Workflow Logs Response
+```typescript
+interface WorkflowLogsResponse {
+  page: number;
+  limit: number;
+  total: number;
+  has_more: boolean;
+  data: WorkflowLogItem[];
+}
+
+interface WorkflowLogItem {
+  id: string; // UUID format
+  workflow_run: WorkflowRunSummary;
+  created_from: string;
+  created_by_role: string;
+  created_by_account?: string | null; // UUID format
+  created_by_end_user: EndUserSummary;
+  created_at: number; // Int64 timestamp
+}
+
+interface WorkflowRunSummary {
+  id: string; // UUID format
+  version: string;
+  status: "running" | "succeeded" | "failed" | "stopped";
+  error?: string | null;
+  elapsed_time: number; // Float
+  total_tokens: number;
+  total_steps: number;
+  created_at: number; // Int64 timestamp
+  finished_at?: number | null; // Int64 timestamp
+}
+
+interface EndUserSummary {
+  id: string; // UUID format
+  type: string;
+  is_anonymous: boolean;
+  session_id: string;
+}
+```
+
+### Application Information Types
+
+#### App Info Response
+```typescript
+interface AppInfoResponse {
+  name: string;
+  description: string;
+  tags: string[];
+}
+```
+
+#### Workflow App Parameters Response
+```typescript
+interface WorkflowAppParametersResponse {
+  user_input_form: UserInputFormItem[];
+  file_upload: {
+    image: {
+      enabled: boolean;
+      number_limits: number;
+      detail: string;
+      transfer_methods: ("remote_url" | "local_file")[];
+    };
+  };
+  system_parameters: {
+    file_size_limit: number;
+    image_file_size_limit: number;
+    audio_file_size_limit: number;
+    video_file_size_limit: number;
+  };
+}
+
+type UserInputFormItem = 
+  | { "text-input": TextInputControl }
+  | { paragraph: ParagraphControl }
+  | { select: SelectControl };
+
+interface TextInputControl {
+  label: string;
+  variable: string;
+  required: boolean;
+  default?: string;
+}
+
+interface ParagraphControl {
+  label: string;
+  variable: string;
+  required: boolean;
+  default?: string;
+}
+
+interface SelectControl {
+  label: string;
+  variable: string;
+  required: boolean;
+  default?: string;
+  options: string[];
+}
+```
+
+#### Workflow WebApp Settings Response
+```typescript
+interface WorkflowWebAppSettingsResponse {
+  title: string;
+  icon_type: "emoji" | "image";
+  icon: string;
+  icon_background: string;
+  icon_url?: string | null; // URL format
+  description: string;
+  copyright: string;
+  privacy_policy: string;
+  custom_disclaimer: string;
+  default_language: string;
+  show_workflow_steps: boolean;
+}
+```
+
+### Error Response
+```typescript
+interface ErrorResponse {
+  status?: number | null;
+  code?: string | null;
+  message: string;
+}
+```
 
 ## APIs
 
@@ -44,17 +354,80 @@ The Workflow API provides 8 main endpoints organized into 3 categories:
 
 Executes a workflow. Cannot be executed without a published workflow.
 
-#### Request Body
-- `inputs` (object, required): Key/value pairs for workflow variables. Value for a file array type variable should be a list of InputFileObjectWorkflow.
-  - For file list variables, each element should contain:
-    - `type` (string): File type - `document`, `image`, `audio`, `video`, `custom`
-    - `transfer_method` (string): Transfer method - `remote_url` or `local_file`
-    - `url` (string): Image URL (when transfer_method is `remote_url`)
-    - `upload_file_id` (string): Upload file ID (when transfer_method is `local_file`)
-- `response_mode` (string, required): Response mode
-  - `streaming`: Streaming mode (recommended). Based on SSE (Server-Sent Events)
-  - `blocking`: Blocking mode, waits for execution to complete before returning results. *Due to Cloudflare limitations, requests will be interrupted after 100 seconds without response.*
-- `user` (string, required): User identifier, used to define the identity of the end user. Must be unique within the application.
+#### Request Body (application/json)
+
+**Schema**: `WorkflowExecutionRequest`
+
+```json
+{
+  "inputs": {
+    "type": "object",
+    "required": true,
+    "description": "Key/value pairs for workflow variables. Value for a file array type variable should be a list of InputFileObjectWorkflow.",
+    "additionalProperties": {
+      "oneOf": [
+        {"type": "string"},
+        {"type": "number"},
+        {"type": "boolean"},
+        {"type": "object"},
+        {
+          "type": "array",
+          "items": {"$ref": "#/components/schemas/InputFileObjectWorkflow"}
+        }
+      ]
+    },
+    "example": {
+      "user_query": "Translate this for me.",
+      "target_language": "French"
+    }
+  },
+  "response_mode": {
+    "type": "string",
+    "required": true,
+    "enum": ["streaming", "blocking"],
+    "description": "Response mode. Cloudflare timeout is 100s for blocking."
+  },
+  "user": {
+    "type": "string",
+    "required": true,
+    "description": "User identifier, used to define the identity of the end user. Must be unique within the application."
+  }
+}
+```
+
+##### InputFileObjectWorkflow Schema
+
+**Schema**: `InputFileObjectWorkflow`
+
+```json
+{
+  "type": {
+    "type": "string",
+    "required": true,
+    "enum": ["document", "image", "audio", "video", "custom"],
+    "description": "Type of file"
+  },
+  "transfer_method": {
+    "type": "string",
+    "required": true,
+    "enum": ["remote_url", "local_file"],
+    "description": "Transfer method, remote_url for image URL / local_file for file upload"
+  },
+  "url": {
+    "type": "string",
+    "format": "url",
+    "description": "Image URL (when the transfer method is remote_url)"
+  },
+  "upload_file_id": {
+    "type": "string",
+    "description": "Uploaded file ID, which must be obtained by uploading through the File Upload API in advance (when the transfer method is local_file)"
+  }
+}
+```
+
+**Validation Rules (anyOf)**:
+- When `transfer_method` is `remote_url`: `url` is required, `upload_file_id` must not be present
+- When `transfer_method` is `local_file`: `upload_file_id` is required, `url` must not be present
 
 #### Example Requests
 
@@ -93,128 +466,225 @@ Executes a workflow. Cannot be executed without a published workflow.
 
 #### Response
 
-When `response_mode` is `blocking`, returns WorkflowResponse object.
-When `response_mode` is `streaming`, returns ChunkWorkflowResponse object stream sequence.
+**Success (200)**
+- **Content-Type**: Depends on `response_mode`
+  - `blocking`: `application/json` with `WorkflowCompletionResponse`
+  - `streaming`: `text/event-stream` with `ChunkWorkflowEvent` stream
 
-##### WorkflowResponse
+**Error Responses**
+- **400**: Bad Request for workflow operation
+  - **Error codes**: `invalid_param`, `app_unavailable`, `provider_not_initialize`, `provider_quota_exceeded`, `model_currently_not_support`, `workflow_request_error`
+- **500**: Internal server error
 
-Returns complete App result, `Content-Type` is `application/json`.
+##### WorkflowCompletionResponse (Blocking Mode)
 
-- `workflow_run_id` (string): Workflow execution ID
-- `task_id` (string): Task ID, used for request tracking and stop response interface
-- `data` (object): Detailed content
-  - `id` (string): Workflow execution ID
-  - `workflow_id` (string): Associated Workflow ID
-  - `status` (string): Execution status, `running` / `succeeded` / `failed` / `stopped`
-  - `outputs` (json, optional): Output content
-  - `error` (string, optional): Error reason
-  - `elapsed_time` (float, optional): Time consumed (s)
-  - `total_tokens` (int, optional): Total tokens used
-  - `total_steps` (int): Total steps (redundant), default 0
-  - `created_at` (timestamp): Start time
-  - `finished_at` (timestamp): End time
+**Schema**: `WorkflowCompletionResponse`
 
-##### ChunkWorkflowResponse
+Returns complete workflow result, `Content-Type` is `application/json`.
 
-Returns App output streaming blocks, `Content-Type` is `text/event-stream`.
-Each streaming block starts with data: and blocks are separated by `\n\n` (two newlines):
+```json
+{
+  "workflow_run_id": "string (uuid)",
+  "task_id": "string (uuid)",
+  "data": {
+    "id": "string (uuid)",
+    "workflow_id": "string (uuid)",
+    "status": "string",
+    "outputs": "object (nullable)",
+    "error": "string (nullable)",
+    "elapsed_time": "number (float, nullable)",
+    "total_tokens": "integer (nullable)",
+    "total_steps": "integer (default: 0)",
+    "created_at": "integer (int64)",
+    "finished_at": "integer (int64)"
+  }
+}
+```
+
+**Status Enum Values**: `running`, `succeeded`, `failed`, `stopped`
+
+##### ChunkWorkflowEvent (Streaming Mode)
+
+**Schema**: `ChunkWorkflowEvent` (discriminated union)
+
+Returns workflow output streaming blocks, `Content-Type` is `text/event-stream`.
+Each streaming block starts with `data:` and blocks are separated by `\n\n` (two newlines):
 
 ```
 data: {"event": "text_chunk", "workflow_run_id": "b85e5fc5-751b-454d-b14e-dc5f240b0a31", "task_id": "bd029338-b068-4d34-a331-fc85478922c2", "data": {"text": "为了", "from_variable_selector": ["1745912968134", "text"]}}\n\n
 ```
 
+**Event Types**: `workflow_started`, `node_started`, `text_chunk`, `node_finished`, `workflow_finished`, `tts_message`, `tts_message_end`, `ping`
+
+**Discriminator**: Uses `event` property to determine the specific event schema
+
 Streaming blocks have different structures based on different `event` types:
 
-- `event: workflow_started` - Workflow start execution
-  - `task_id` (string): Task ID, used for request tracking and stop response interface
-  - `workflow_run_id` (string): Workflow execution ID
-  - `event` (string): Fixed as `workflow_started`
-  - `data` (object): Detailed content
-    - `id` (string): Workflow execution ID
-    - `workflow_id` (string): Associated Workflow ID
-    - `created_at` (timestamp): Start time
+##### workflow_started Event
 
-- `event: node_started` - Node start execution
-  - `task_id` (string): Task ID, used for request tracking and stop response interface
-  - `workflow_run_id` (string): Workflow execution ID
-  - `event` (string): Fixed as `node_started`
-  - `data` (object): Detailed content
-    - `id` (string): Workflow execution ID
-    - `node_id` (string): Node ID
-    - `node_type` (string): Node type
-    - `title` (string): Node name
-    - `index` (int): Execution sequence number, used to display Tracing Node order
-    - `predecessor_node_id` (string): Predecessor node ID, used for canvas display execution path
-    - `inputs` (object): All predecessor node variable content used in the node
-    - `created_at` (timestamp): Start time
+**Schema**: `StreamEventWfWorkflowStarted`
 
-- `event: text_chunk` - Text fragment
-  - `task_id` (string): Task ID, used for request tracking and stop response interface
-  - `workflow_run_id` (string): Workflow execution ID
-  - `event` (string): Fixed as `text_chunk`
-  - `data` (object): Detailed content
-    - `text` (string): Text content
-    - `from_variable_selector` (array): Text source path, helps developers understand which node's which variable generated the text
+```json
+{
+  "event": "workflow_started",
+  "task_id": "string (uuid)",
+  "workflow_run_id": "string (uuid)",
+  "data": {
+    "id": "string (uuid)",
+    "workflow_id": "string (uuid)",
+    "sequence_number": "integer",
+    "created_at": "integer (int64)"
+  }
+}
+```
 
-- `event: node_finished` - Node execution end, success and failure are different states in the same event
-  - `task_id` (string): Task ID, used for request tracking and stop response interface
-  - `workflow_run_id` (string): Workflow execution ID
-  - `event` (string): Fixed as `node_finished`
-  - `data` (object): Detailed content
-    - `id` (string): Node execution ID
-    - `node_id` (string): Node ID
-    - `index` (int): Execution sequence number, used to display Tracing Node order
-    - `predecessor_node_id` (string, optional): Predecessor node ID, used for canvas display execution path
-    - `inputs` (object): All predecessor node variable content used in the node
-    - `process_data` (json, optional): Node process data
-    - `outputs` (json, optional): Output content
-    - `status` (string): Execution status `running` / `succeeded` / `failed` / `stopped`
-    - `error` (string, optional): Error reason
-    - `elapsed_time` (float, optional): Time consumed (s)
-    - `execution_metadata` (json): Metadata
-      - `total_tokens` (int, optional): Total tokens used
-      - `total_price` (decimal, optional): Total cost
-      - `currency` (string, optional): Currency, such as `USD` / `RMB`
-    - `created_at` (timestamp): Start time
+##### node_started Event
 
-- `event: workflow_finished` - Workflow execution end, success and failure are different states in the same event
-  - `task_id` (string): Task ID, used for request tracking and stop response interface
-  - `workflow_run_id` (string): Workflow execution ID
-  - `event` (string): Fixed as `workflow_finished`
-  - `data` (object): Detailed content
-    - `id` (string): Workflow execution ID
-    - `workflow_id` (string): Associated Workflow ID
-    - `status` (string): Execution status `running` / `succeeded` / `failed` / `stopped`
-    - `outputs` (json, optional): Output content
-    - `error` (string, optional): Error reason
-    - `elapsed_time` (float, optional): Time consumed (s)
-    - `total_tokens` (int, optional): Total tokens used
-    - `total_steps` (int): Total steps (redundant), default 0
-    - `created_at` (timestamp): Start time
-    - `finished_at` (timestamp): End time
+**Schema**: `StreamEventWfNodeStarted`
 
-- `event: tts_message` - TTS audio stream event, i.e., speech synthesis output. Content is Mp3 format audio blocks, base64 encoded strings, can be decoded directly for playback. (Only available when auto-play is enabled)
-  - `task_id` (string): Task ID, used for request tracking and stop response interface
-  - `message_id` (string): Message unique ID
-  - `audio` (string): Audio blocks after speech synthesis using Base64 encoding, can be decoded directly and sent to player for playback
-  - `created_at` (int): Creation timestamp, e.g., 1705395332
+```json
+{
+  "event": "node_started",
+  "task_id": "string (uuid)",
+  "workflow_run_id": "string (uuid)",
+  "data": {
+    "id": "string (uuid)",
+    "node_id": "string (uuid)",
+    "node_type": "string",
+    "title": "string",
+    "index": "integer",
+    "predecessor_node_id": "string (uuid, nullable)",
+    "inputs": "object (additionalProperties: true)",
+    "created_at": "integer (int64)"
+  }
+}
+```
 
-- `event: tts_message_end` - TTS audio stream end event, receiving this event means audio stream return has ended
-  - `task_id` (string): Task ID, used for request tracking and stop response interface
-  - `message_id` (string): Message unique ID
-  - `audio` (string): End event has no audio, so this is an empty string
-  - `created_at` (int): Creation timestamp, e.g., 1705395332
+##### text_chunk Event
 
-- `event: ping` - Ping event every 10s to keep connection alive
+**Schema**: `StreamEventWfTextChunk`
 
-#### Errors
-- 400, `invalid_param`: Invalid parameters
-- 400, `app_unavailable`: App configuration unavailable
-- 400, `provider_not_initialize`: No available model credential configuration
-- 400, `provider_quota_exceeded`: Model call quota exceeded
-- 400, `model_currently_not_support`: Current model unavailable
-- 400, `workflow_request_error`: Workflow execution failed
-- 500: Internal server error
+```json
+{
+  "event": "text_chunk",
+  "task_id": "string (uuid)",
+  "workflow_run_id": "string (uuid)",
+  "data": {
+    "text": "string",
+    "from_variable_selector": ["string"] // Text source path
+  }
+}
+```
+
+##### node_finished Event
+
+**Schema**: `StreamEventWfNodeFinished`
+
+```json
+{
+  "event": "node_finished",
+  "task_id": "string (uuid)",
+  "workflow_run_id": "string (uuid)",
+  "data": {
+    "id": "string (uuid)",
+    "node_id": "string (uuid)",
+    "node_type": "string",
+    "title": "string",
+    "index": "integer",
+    "predecessor_node_id": "string (uuid, nullable)",
+    "inputs": "object (nullable, additionalProperties: true)",
+    "process_data": "object (nullable, additionalProperties: true)",
+    "outputs": "object (nullable, additionalProperties: true)",
+    "status": "string",
+    "error": "string (nullable)",
+    "elapsed_time": "number (float, nullable)",
+    "execution_metadata": {
+      "total_tokens": "integer (nullable)",
+      "total_price": "number (float, nullable)",
+      "currency": "string (nullable, example: USD)"
+    },
+    "created_at": "integer (int64)"
+  }
+}
+```
+
+**Node Status Enum Values**: `running`, `succeeded`, `failed`, `stopped`
+
+##### workflow_finished Event
+
+**Schema**: `StreamEventWfWorkflowFinished`
+
+```json
+{
+  "event": "workflow_finished",
+  "task_id": "string (uuid)",
+  "workflow_run_id": "string (uuid)",
+  "data": {
+    "id": "string (uuid)",
+    "workflow_id": "string (uuid)",
+    "status": "string",
+    "outputs": "object (nullable, additionalProperties: true)",
+    "error": "string (nullable)",
+    "elapsed_time": "number (float, nullable)",
+    "total_tokens": "integer (nullable)",
+    "total_steps": "integer",
+    "created_at": "integer (int64)",
+    "finished_at": "integer (int64)"
+  }
+}
+```
+
+**Workflow Status Enum Values**: `running`, `succeeded`, `failed`, `stopped`
+
+##### tts_message Event
+
+**Schema**: `StreamEventWfTtsMessage`
+
+```json
+{
+  "event": "tts_message",
+  "task_id": "string (uuid)",
+  "workflow_run_id": "string (uuid)",
+  "message_id": "string (uuid)",
+  "audio": "string (format: byte, base64 encoded)",
+  "created_at": "integer (int64)"
+}
+```
+
+##### tts_message_end Event
+
+**Schema**: `StreamEventWfTtsMessageEnd`
+
+```json
+{
+  "event": "tts_message_end",
+  "task_id": "string (uuid)",
+  "workflow_run_id": "string (uuid)",
+  "message_id": "string (uuid)",
+  "audio": "string (empty)",
+  "created_at": "integer (int64)"
+}
+```
+
+##### ping Event
+
+**Schema**: `StreamEventWfPing`
+
+```json
+{
+  "event": "ping"
+}
+```
+
+#### Error Codes
+- **400 Bad Request**:
+  - `invalid_param`: Invalid parameters
+  - `app_unavailable`: App configuration unavailable
+  - `provider_not_initialize`: No available model credential configuration
+  - `provider_quota_exceeded`: Model call quota exceeded
+  - `model_currently_not_support`: Current model unavailable
+  - `workflow_request_error`: Workflow execution failed
+- **500**: Internal server error
 
 ### 2. Get Workflow Run Detail
 
@@ -225,21 +695,30 @@ Retrieve the current execution results of a workflow task based on the workflow 
 #### Path Parameters
 - `workflow_run_id` (string, required): Workflow Run ID, can be obtained from workflow execution response or streaming events (UUID format)
 
-#### Response
-- `id` (string): Workflow execution ID (UUID)
-- `workflow_id` (string): Associated Workflow ID (UUID)
-- `status` (string): Execution status `running` / `succeeded` / `failed` / `stopped`
-- `inputs` (string): JSON string of input content
-- `outputs` (object): JSON object of output content (nullable)
-- `error` (string): Error reason (nullable)
-- `total_steps` (int): Total task execution steps
-- `total_tokens` (int): Total task execution tokens
-- `created_at` (timestamp): Task start time (int64)
-- `finished_at` (timestamp): Task end time (int64, nullable)
-- `elapsed_time` (float): Time consumed in seconds (nullable)
+#### Response (200)
 
-#### Errors
-- 404: Workflow run not found
+**Schema**: `WorkflowRunDetailResponse`
+
+```json
+{
+  "id": "string (uuid)",
+  "workflow_id": "string (uuid)",
+  "status": "string",
+  "inputs": "string (JSON string of input content)",
+  "outputs": "object (nullable, additionalProperties: true, JSON object of output content)",
+  "error": "string (nullable)",
+  "total_steps": "integer",
+  "total_tokens": "integer",
+  "created_at": "integer (int64)",
+  "finished_at": "integer (int64, nullable)",
+  "elapsed_time": "number (float, nullable)"
+}
+```
+
+**Status Enum Values**: `running`, `succeeded`, `failed`, `stopped`
+
+#### Error Responses
+- **404**: Workflow run not found
 
 ### 3. Stop Workflow Task Generation
 
@@ -250,11 +729,19 @@ Stops a workflow task generation. Only supported in streaming mode.
 #### Path Parameters
 - `task_id` (string, required): Task ID from the streaming chunk (UUID format)
 
-#### Request Body
-- `user` (string, required): User identifier
+#### Request Body (application/json)
+```json
+{
+  "user": "string"
+}
+```
 
-#### Response
-- `result` (string): Fixed return "success"
+#### Response (200)
+```json
+{
+  "result": "success"
+}
+```
 
 ### 4. File Upload for Workflow
 
@@ -263,27 +750,46 @@ Stops a workflow task generation. Only supported in streaming mode.
 Upload a file for use in workflows. Supports any formats supported by your workflow. Uploaded files are for the current end-user only.
 
 #### Request Body (multipart/form-data)
-- `file` (binary, required): The file to be uploaded
-- `user` (string, required): User identifier
+```json
+{
+  "file": {
+    "type": "string",
+    "format": "binary",
+    "required": true,
+    "description": "The file to be uploaded"
+  },
+  "user": {
+    "type": "string",
+    "required": true,
+    "description": "User identifier"
+  }
+}
+```
 
 #### Response
 
-After successful upload, the server returns the file ID and related information.
+**Success (200/201)**
 
-- `id` (uuid): File ID
-- `name` (string): File name
-- `size` (int): File size (bytes)
-- `extension` (string): File extension
-- `mime_type` (string): File mime-type
-- `created_by` (uuid): Uploader ID
-- `created_at` (timestamp): Upload time (int64)
+**Schema**: `FileUploadResponse`
 
-#### Errors
-- 400: Bad Request for file operation
-- 413: File is too large
-- 415: Unsupported file type for upload
-- 500: Internal server error
-- 503: S3 storage error
+```json
+{
+  "id": "string (uuid)",
+  "name": "string",
+  "size": "integer",
+  "extension": "string",
+  "mime_type": "string",
+  "created_by": "string (uuid)",
+  "created_at": "integer (int64)"
+}
+```
+
+#### Error Responses
+- **400**: Bad Request for file operation
+- **413**: File is too large
+- **415**: Unsupported file type for upload
+- **500**: Internal server error
+- **503**: S3 storage error
 
 ### 5. Get Workflow Logs
 
@@ -293,36 +799,51 @@ Returns workflow logs, with the first page returning the latest `{limit}` messag
 
 #### Query Parameters
 - `keyword` (string, optional): Keyword to search
-- `status` (string, optional): Filter by status: `succeeded`, `failed`, `stopped`, `running`
-- `page` (int, optional): Current page number, default 1
-- `limit` (int, optional): Number of items per page, default 20
+- `status` (string, optional): Filter by status
+  - **Enum values**: `succeeded`, `failed`, `stopped`, `running`
+- `page` (integer, optional): Current page number (default: 1)
+- `limit` (integer, optional): Number of items per page (default: 20)
 
-#### Response
-- `page` (int): Current page number
-- `limit` (int): Records per page
-- `total` (int): Total records
-- `has_more` (bool): Whether there is more data
-- `data` (array[object]): Current page data
-  - `id` (string): Identifier (UUID)
-  - `workflow_run` (object): Workflow execution log
-    - `id` (string): Identifier (UUID)
-    - `version` (string): Version
-    - `status` (string): Execution status, `running` / `succeeded` / `failed` / `stopped`
-    - `error` (string, nullable): Error
-    - `elapsed_time` (float): Time consumed, in seconds
-    - `total_tokens` (int): Number of tokens consumed
-    - `total_steps` (int): Execution step length
-    - `created_at` (timestamp): Start time (int64)
-    - `finished_at` (timestamp): End time (int64, nullable)
-  - `created_from` (string): Source
-  - `created_by_role` (string): Role
-  - `created_by_account` (string, nullable): Account (UUID)
-  - `created_by_end_user` (object): End user summary
-    - `id` (string): Identifier (UUID)
-    - `type` (string): Type
-    - `is_anonymous` (bool): Whether anonymous
-    - `session_id` (string): Session identifier
-  - `created_at` (timestamp): Creation time (int64)
+#### Response (200)
+
+**Schema**: `WorkflowLogsResponse`
+
+```json
+{
+  "page": "integer",
+  "limit": "integer",
+  "total": "integer",
+  "has_more": "boolean",
+  "data": [
+    {
+      "id": "string (uuid)",
+      "workflow_run": {
+        "id": "string (uuid)",
+        "version": "string",
+        "status": "string",
+        "error": "string (nullable)",
+        "elapsed_time": "number (float)",
+        "total_tokens": "integer",
+        "total_steps": "integer",
+        "created_at": "integer (int64)",
+        "finished_at": "integer (int64, nullable)"
+      },
+      "created_from": "string",
+      "created_by_role": "string",
+      "created_by_account": "string (uuid, nullable)",
+      "created_by_end_user": {
+        "id": "string (uuid)",
+        "type": "string",
+        "is_anonymous": "boolean",
+        "session_id": "string"
+      },
+      "created_at": "integer (int64)"
+    }
+  ]
+}
+```
+
+**Workflow Run Status Enum Values**: `running`, `succeeded`, `failed`, `stopped`
 
 ### 6. Get Application Basic Information
 
@@ -330,10 +851,17 @@ Returns workflow logs, with the first page returning the latest `{limit}` messag
 
 Get basic information of the application.
 
-#### Response
-- `name` (string): Application name
-- `description` (string): Application description
-- `tags` (array[string]): Application tags
+#### Response (200)
+
+**Schema**: `AppInfoResponse`
+
+```json
+{
+  "name": "string",
+  "description": "string",
+  "tags": ["string"]
+}
+```
 
 ### 7. Get Application Parameters Information
 
@@ -341,35 +869,58 @@ Get basic information of the application.
 
 Get application parameters information including input configuration and file upload settings.
 
-#### Response
-- `user_input_form` (array[object]): User input form configuration
-  - `text-input` (object): Text input control
-    - `label` (string): Control display label name
-    - `variable` (string): Control ID
-    - `required` (bool): Whether required
-    - `default` (string): Default value
-  - `paragraph` (object): Paragraph text input control
-    - `label` (string): Control display label name
-    - `variable` (string): Control ID
-    - `required` (bool): Whether required
-    - `default` (string): Default value
-  - `select` (object): Dropdown control
-    - `label` (string): Control display label name
-    - `variable` (string): Control ID
-    - `required` (bool): Whether required
-    - `default` (string): Default value
-    - `options` (array[string]): Option values
-- `file_upload` (object): File upload configuration
-  - `image` (object): Image settings
-    - `enabled` (bool): Whether enabled
-    - `number_limits` (int): Image quantity limit
-    - `detail` (string): Detail level
-    - `transfer_methods` (array[string]): Transfer method list (`remote_url`, `local_file`)
-- `system_parameters` (object): System parameters
-  - `file_size_limit` (int): Document upload size limit (MB)
-  - `image_file_size_limit` (int): Image file upload size limit (MB)
-  - `audio_file_size_limit` (int): Audio file upload size limit (MB)
-  - `video_file_size_limit` (int): Video file upload size limit (MB)
+#### Response (200)
+
+**Schema**: `WorkflowAppParametersResponse`
+
+```json
+{
+  "user_input_form": [
+    {
+      "text-input": {
+        "label": "string",
+        "variable": "string",
+        "required": "boolean",
+        "default": "string (optional)"
+      }
+    },
+    {
+      "paragraph": {
+        "label": "string",
+        "variable": "string",
+        "required": "boolean",
+        "default": "string (optional)"
+      }
+    },
+    {
+      "select": {
+        "label": "string",
+        "variable": "string",
+        "required": "boolean",
+        "default": "string (optional)",
+        "options": ["string"]
+      }
+    }
+  ],
+  "file_upload": {
+    "image": {
+      "enabled": "boolean",
+      "number_limits": "integer",
+      "detail": "string",
+      "transfer_methods": ["string"]
+    }
+  },
+  "system_parameters": {
+    "file_size_limit": "integer",
+    "image_file_size_limit": "integer",
+    "audio_file_size_limit": "integer",
+    "video_file_size_limit": "integer"
+  }
+}
+```
+
+**User Input Form Types**: `text-input`, `paragraph`, `select` (oneOf union)
+**Transfer Methods Enum Values**: `remote_url`, `local_file`
 
 ### 8. Get Application WebApp Settings
 
@@ -377,15 +928,24 @@ Get application parameters information including input configuration and file up
 
 Get application's WebApp settings.
 
-#### Response
-- `title` (string): WebApp name
-- `icon_type` (string): Icon type, `emoji` or `image`
-- `icon` (string): Icon, if `emoji` type, then emoji symbol, if `image` type, then image URL
-- `icon_background` (string): Background color in hex format
-- `icon_url` (string): Icon URL (nullable)
-- `description` (string): Description
-- `copyright` (string): Copyright information
-- `privacy_policy` (string): Privacy policy link
-- `custom_disclaimer` (string): Custom disclaimer
-- `default_language` (string): Default language
-- `show_workflow_steps` (bool): Whether to show workflow steps
+#### Response (200)
+
+**Schema**: `WorkflowWebAppSettingsResponse`
+
+```json
+{
+  "title": "string",
+  "icon_type": "string",
+  "icon": "string",
+  "icon_background": "string",
+  "icon_url": "string (url, nullable)",
+  "description": "string",
+  "copyright": "string",
+  "privacy_policy": "string",
+  "custom_disclaimer": "string",
+  "default_language": "string",
+  "show_workflow_steps": "boolean"
+}
+```
+
+**Icon Type Enum Values**: `emoji`, `image`

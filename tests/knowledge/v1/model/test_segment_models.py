@@ -2,30 +2,29 @@
 
 from __future__ import annotations
 
-from dify_oapi.api.knowledge.v1.model.segment.create_child_chunk_request import CreateChildChunkRequest
-from dify_oapi.api.knowledge.v1.model.segment.create_child_chunk_request_body import CreateChildChunkRequestBody
-from dify_oapi.api.knowledge.v1.model.segment.create_child_chunk_response import CreateChildChunkResponse
-from dify_oapi.api.knowledge.v1.model.segment.create_request import CreateRequest
-from dify_oapi.api.knowledge.v1.model.segment.create_request_body import CreateRequestBody
-from dify_oapi.api.knowledge.v1.model.segment.create_response import CreateResponse
-from dify_oapi.api.knowledge.v1.model.segment.delete_child_chunk_request import DeleteChildChunkRequest
-from dify_oapi.api.knowledge.v1.model.segment.delete_child_chunk_response import DeleteChildChunkResponse
-from dify_oapi.api.knowledge.v1.model.segment.delete_request import DeleteRequest
-from dify_oapi.api.knowledge.v1.model.segment.delete_response import DeleteResponse
-from dify_oapi.api.knowledge.v1.model.segment.get_request import GetRequest
-from dify_oapi.api.knowledge.v1.model.segment.get_response import GetResponse
-from dify_oapi.api.knowledge.v1.model.segment.list_child_chunks_request import ListChildChunksRequest
-from dify_oapi.api.knowledge.v1.model.segment.list_child_chunks_response import ListChildChunksResponse
-from dify_oapi.api.knowledge.v1.model.segment.list_request import ListRequest
-from dify_oapi.api.knowledge.v1.model.segment.list_response import ListResponse
-from dify_oapi.api.knowledge.v1.model.segment.segment_data import SegmentData
-from dify_oapi.api.knowledge.v1.model.segment.segment_info import SegmentInfo
-from dify_oapi.api.knowledge.v1.model.segment.update_child_chunk_request import UpdateChildChunkRequest
-from dify_oapi.api.knowledge.v1.model.segment.update_child_chunk_request_body import UpdateChildChunkRequestBody
-from dify_oapi.api.knowledge.v1.model.segment.update_child_chunk_response import UpdateChildChunkResponse
-from dify_oapi.api.knowledge.v1.model.segment.update_request import UpdateRequest
-from dify_oapi.api.knowledge.v1.model.segment.update_request_body import UpdateRequestBody
-from dify_oapi.api.knowledge.v1.model.segment.update_response import UpdateResponse
+from dify_oapi.api.knowledge.v1.model.create_child_chunk_request import CreateChildChunkRequest
+from dify_oapi.api.knowledge.v1.model.create_child_chunk_request_body import CreateChildChunkRequestBody
+from dify_oapi.api.knowledge.v1.model.create_child_chunk_response import CreateChildChunkResponse
+from dify_oapi.api.knowledge.v1.model.create_segment_request import CreateSegmentRequest as CreateRequest
+from dify_oapi.api.knowledge.v1.model.create_segment_request_body import CreateSegmentRequestBody as CreateRequestBody
+from dify_oapi.api.knowledge.v1.model.create_segment_response import CreateSegmentResponse as CreateResponse
+from dify_oapi.api.knowledge.v1.model.delete_child_chunk_request import DeleteChildChunkRequest
+from dify_oapi.api.knowledge.v1.model.delete_child_chunk_response import DeleteChildChunkResponse
+from dify_oapi.api.knowledge.v1.model.delete_segment_request import DeleteSegmentRequest as DeleteRequest
+from dify_oapi.api.knowledge.v1.model.delete_segment_response import DeleteSegmentResponse as DeleteResponse
+from dify_oapi.api.knowledge.v1.model.get_segment_request import GetSegmentRequest as GetRequest
+from dify_oapi.api.knowledge.v1.model.get_segment_response import GetSegmentResponse as GetResponse
+from dify_oapi.api.knowledge.v1.model.list_child_chunks_request import ListChildChunksRequest
+from dify_oapi.api.knowledge.v1.model.list_child_chunks_response import ListChildChunksResponse
+from dify_oapi.api.knowledge.v1.model.list_segments_request import ListSegmentsRequest as ListRequest
+from dify_oapi.api.knowledge.v1.model.list_segments_response import ListSegmentsResponse as ListResponse
+from dify_oapi.api.knowledge.v1.model.segment_content import SegmentContent as SegmentData
+from dify_oapi.api.knowledge.v1.model.update_child_chunk_request import UpdateChildChunkRequest
+from dify_oapi.api.knowledge.v1.model.update_child_chunk_request_body import UpdateChildChunkRequestBody
+from dify_oapi.api.knowledge.v1.model.update_child_chunk_response import UpdateChildChunkResponse
+from dify_oapi.api.knowledge.v1.model.update_segment_request import UpdateSegmentRequest as UpdateRequest
+from dify_oapi.api.knowledge.v1.model.update_segment_request_body import UpdateSegmentRequestBody as UpdateRequestBody
+from dify_oapi.api.knowledge.v1.model.update_segment_response import UpdateSegmentResponse as UpdateResponse
 from dify_oapi.core.enum import HttpMethod
 from dify_oapi.core.model.base_response import BaseResponse
 
@@ -49,7 +48,7 @@ class TestCreateModels:
 
     def test_request_body_builder(self) -> None:
         """Test CreateRequestBody builder pattern."""
-        segment = SegmentInfo.builder().content("Test content").build()
+        segment = SegmentData.builder().content("Test content").build()
         request_body = CreateRequestBody.builder().segments([segment]).build()
         assert request_body.segments is not None
         assert len(request_body.segments) == 1
@@ -57,7 +56,7 @@ class TestCreateModels:
 
     def test_request_body_validation(self) -> None:
         """Test CreateRequestBody validation."""
-        segment = SegmentInfo(content="Test content")
+        segment = SegmentData(content="Test content")
         request_body = CreateRequestBody(segments=[segment])
         assert request_body.segments is not None
         assert len(request_body.segments) == 1
@@ -88,8 +87,6 @@ class TestListModels:
             .document_id("doc-456")
             .keyword("test")
             .status("completed")
-            .page(1)
-            .limit(20)
             .build()
         )
         assert request.dataset_id == "dataset-123"
@@ -268,13 +265,20 @@ class TestCreateChildChunkModels:
 
     def test_request_body_builder(self) -> None:
         """Test CreateChildChunkRequestBody builder pattern."""
-        request_body = CreateChildChunkRequestBody.builder().content("Child chunk content").build()
-        assert request_body.content == "Child chunk content"
+        request_body = CreateChildChunkRequestBody.builder().add_chunk("Child chunk content").build()
+        assert request_body.chunks is not None
+        assert len(request_body.chunks) == 1
+        assert request_body.chunks[0].content == "Child chunk content"
 
     def test_request_body_validation(self) -> None:
         """Test CreateChildChunkRequestBody validation."""
-        request_body = CreateChildChunkRequestBody(content="Child chunk content")
-        assert request_body.content == "Child chunk content"
+        from dify_oapi.api.knowledge.v1.model.create_child_chunk_request_body import ChunkContent
+
+        chunk = ChunkContent(content="Child chunk content")
+        request_body = CreateChildChunkRequestBody(chunks=[chunk])
+        assert request_body.chunks is not None
+        assert len(request_body.chunks) == 1
+        assert request_body.chunks[0].content == "Child chunk content"
 
     def test_response_inheritance(self) -> None:
         """Test CreateChildChunkResponse inherits from BaseResponse."""
@@ -301,9 +305,6 @@ class TestListChildChunksModels:
             .dataset_id("dataset-123")
             .document_id("doc-456")
             .segment_id("seg-789")
-            .keyword("test")
-            .page(1)
-            .limit(20)
             .build()
         )
         assert request.dataset_id == "dataset-123"
@@ -330,11 +331,8 @@ class TestListChildChunksModels:
 
     def test_response_data_access(self) -> None:
         """Test ListChildChunksResponse data access."""
-        response = ListChildChunksResponse(data=[], total=0, page=1, limit=20)
+        response = ListChildChunksResponse(data=[])
         assert response.data == []
-        assert response.total == 0
-        assert response.page == 1
-        assert response.limit == 20
 
 
 class TestDeleteChildChunkModels:

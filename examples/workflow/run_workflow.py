@@ -27,7 +27,7 @@ def run_workflow_sync() -> None:
         req = RunWorkflowRequest.builder().request_body(req_body).build()
         req_option = RequestOption.builder().api_key(api_key).build()
 
-        response = client.workflow.v1.workflow.run_workflow(req, req_option, False)
+        response = client.workflow.v1.workflow.run(req, req_option, False)
 
         if response.success:
             print(f"Workflow executed: {response.workflow_run_id}")
@@ -55,7 +55,7 @@ async def run_workflow_async() -> None:
         req = RunWorkflowRequest.builder().request_body(req_body).build()
         req_option = RequestOption.builder().api_key(api_key).build()
 
-        response = await client.workflow.v1.workflow.arun_workflow(req, req_option, False)
+        response = await client.workflow.v1.workflow.arun(req, req_option, False)
 
         if response.success:
             print(f"Workflow executed: {response.workflow_run_id}")
@@ -87,7 +87,7 @@ def run_workflow_streaming() -> None:
         req = RunWorkflowRequest.builder().request_body(req_body).build()
         req_option = RequestOption.builder().api_key(api_key).build()
 
-        response = client.workflow.v1.workflow.run_workflow(req, req_option, True)
+        response = client.workflow.v1.workflow.run(req, req_option, True)
 
         for chunk in response:
             print(chunk, end="", flush=True)

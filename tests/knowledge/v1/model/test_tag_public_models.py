@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from dify_oapi.api.knowledge.v1.model.tag.tag_info import TagInfo
+from dify_oapi.api.knowledge.v1.model.tag_info import TagInfo
 
 
 class TestTagInfo:

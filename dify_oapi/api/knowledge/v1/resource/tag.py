@@ -2,64 +2,80 @@ from dify_oapi.core.http.transport import ATransport, Transport
 from dify_oapi.core.model.config import Config
 from dify_oapi.core.model.request_option import RequestOption
 
-from ..model.tag.bind_request import BindRequest
-from ..model.tag.bind_response import BindResponse
-from ..model.tag.create_request import CreateRequest
-from ..model.tag.create_response import CreateResponse
-from ..model.tag.delete_request import DeleteRequest
-from ..model.tag.delete_response import DeleteResponse
-from ..model.tag.list_request import ListRequest
-from ..model.tag.list_response import ListResponse
-from ..model.tag.query_bound_request import QueryBoundRequest
-from ..model.tag.query_bound_response import QueryBoundResponse
-from ..model.tag.unbind_request import UnbindRequest
-from ..model.tag.unbind_response import UnbindResponse
-from ..model.tag.update_request import UpdateRequest
-from ..model.tag.update_response import UpdateResponse
+from ..model.bind_tags_to_dataset_request import BindTagsToDatasetRequest
+from ..model.bind_tags_to_dataset_response import BindTagsToDatasetResponse
+from ..model.create_tag_request import CreateTagRequest
+from ..model.create_tag_response import CreateTagResponse
+from ..model.delete_tag_request import DeleteTagRequest
+from ..model.delete_tag_response import DeleteTagResponse
+from ..model.get_dataset_tags_request import GetDatasetTagsRequest
+from ..model.get_dataset_tags_response import GetDatasetTagsResponse
+from ..model.list_tags_request import ListTagsRequest
+from ..model.list_tags_response import ListTagsResponse
+from ..model.unbind_tags_from_dataset_request import UnbindTagsFromDatasetRequest
+from ..model.unbind_tags_from_dataset_response import UnbindTagsFromDatasetResponse
+from ..model.update_tag_request import UpdateTagRequest
+from ..model.update_tag_response import UpdateTagResponse
 
 
 class Tag:
-    def __init__(self, config: Config) -> None:
-        self.config: Config = config
+    def __init__(self, config: Config):
+        self.config = config
 
-    def create(self, request: CreateRequest, option: RequestOption | None = None) -> CreateResponse:
-        return Transport.execute(self.config, request, unmarshal_as=CreateResponse, option=option)
+    def list(self, request: ListTagsRequest, request_option: RequestOption) -> ListTagsResponse:
+        return Transport.execute(self.config, request, unmarshal_as=ListTagsResponse, option=request_option)
 
-    async def acreate(self, request: CreateRequest, option: RequestOption | None = None) -> CreateResponse:
-        return await ATransport.aexecute(self.config, request, unmarshal_as=CreateResponse, option=option)
+    async def alist(self, request: ListTagsRequest, request_option: RequestOption) -> ListTagsResponse:
+        return await ATransport.aexecute(self.config, request, unmarshal_as=ListTagsResponse, option=request_option)
 
-    def list(self, request: ListRequest, option: RequestOption | None = None) -> ListResponse:
-        return Transport.execute(self.config, request, unmarshal_as=ListResponse, option=option)
+    def create(self, request: CreateTagRequest, request_option: RequestOption) -> CreateTagResponse:
+        return Transport.execute(self.config, request, unmarshal_as=CreateTagResponse, option=request_option)
 
-    async def alist(self, request: ListRequest, option: RequestOption | None = None) -> ListResponse:
-        return await ATransport.aexecute(self.config, request, unmarshal_as=ListResponse, option=option)
+    async def acreate(self, request: CreateTagRequest, request_option: RequestOption) -> CreateTagResponse:
+        return await ATransport.aexecute(self.config, request, unmarshal_as=CreateTagResponse, option=request_option)
 
-    def update(self, request: UpdateRequest, option: RequestOption | None = None) -> UpdateResponse:
-        return Transport.execute(self.config, request, unmarshal_as=UpdateResponse, option=option)
+    def update(self, request: UpdateTagRequest, request_option: RequestOption) -> UpdateTagResponse:
+        return Transport.execute(self.config, request, unmarshal_as=UpdateTagResponse, option=request_option)
 
-    async def aupdate(self, request: UpdateRequest, option: RequestOption | None = None) -> UpdateResponse:
-        return await ATransport.aexecute(self.config, request, unmarshal_as=UpdateResponse, option=option)
+    async def aupdate(self, request: UpdateTagRequest, request_option: RequestOption) -> UpdateTagResponse:
+        return await ATransport.aexecute(self.config, request, unmarshal_as=UpdateTagResponse, option=request_option)
 
-    def delete(self, request: DeleteRequest, option: RequestOption | None = None) -> DeleteResponse:
-        return Transport.execute(self.config, request, unmarshal_as=DeleteResponse, option=option)
+    def delete(self, request: DeleteTagRequest, request_option: RequestOption) -> DeleteTagResponse:
+        return Transport.execute(self.config, request, unmarshal_as=DeleteTagResponse, option=request_option)
 
-    async def adelete(self, request: DeleteRequest, option: RequestOption | None = None) -> DeleteResponse:
-        return await ATransport.aexecute(self.config, request, unmarshal_as=DeleteResponse, option=option)
+    async def adelete(self, request: DeleteTagRequest, request_option: RequestOption) -> DeleteTagResponse:
+        return await ATransport.aexecute(self.config, request, unmarshal_as=DeleteTagResponse, option=request_option)
 
-    def bind_tags(self, request: BindRequest, option: RequestOption | None = None) -> BindResponse:
-        return Transport.execute(self.config, request, unmarshal_as=BindResponse, option=option)
+    def bind(self, request: BindTagsToDatasetRequest, request_option: RequestOption) -> BindTagsToDatasetResponse:
+        return Transport.execute(self.config, request, unmarshal_as=BindTagsToDatasetResponse, option=request_option)
 
-    async def abind_tags(self, request: BindRequest, option: RequestOption | None = None) -> BindResponse:
-        return await ATransport.aexecute(self.config, request, unmarshal_as=BindResponse, option=option)
+    async def abind(
+        self, request: BindTagsToDatasetRequest, request_option: RequestOption
+    ) -> BindTagsToDatasetResponse:
+        return await ATransport.aexecute(
+            self.config, request, unmarshal_as=BindTagsToDatasetResponse, option=request_option
+        )
 
-    def unbind_tag(self, request: UnbindRequest, option: RequestOption | None = None) -> UnbindResponse:
-        return Transport.execute(self.config, request, unmarshal_as=UnbindResponse, option=option)
+    def unbind(
+        self, request: UnbindTagsFromDatasetRequest, request_option: RequestOption
+    ) -> UnbindTagsFromDatasetResponse:
+        return Transport.execute(
+            self.config, request, unmarshal_as=UnbindTagsFromDatasetResponse, option=request_option
+        )
 
-    async def aunbind_tag(self, request: UnbindRequest, option: RequestOption | None = None) -> UnbindResponse:
-        return await ATransport.aexecute(self.config, request, unmarshal_as=UnbindResponse, option=option)
+    async def aunbind(
+        self, request: UnbindTagsFromDatasetRequest, request_option: RequestOption
+    ) -> UnbindTagsFromDatasetResponse:
+        return await ATransport.aexecute(
+            self.config, request, unmarshal_as=UnbindTagsFromDatasetResponse, option=request_option
+        )
 
-    def query_bound(self, request: QueryBoundRequest, option: RequestOption | None = None) -> QueryBoundResponse:
-        return Transport.execute(self.config, request, unmarshal_as=QueryBoundResponse, option=option)
+    def get_dataset_tags(self, request: GetDatasetTagsRequest, request_option: RequestOption) -> GetDatasetTagsResponse:
+        return Transport.execute(self.config, request, unmarshal_as=GetDatasetTagsResponse, option=request_option)
 
-    async def aquery_bound(self, request: QueryBoundRequest, option: RequestOption | None = None) -> QueryBoundResponse:
-        return await ATransport.aexecute(self.config, request, unmarshal_as=QueryBoundResponse, option=option)
+    async def aget_dataset_tags(
+        self, request: GetDatasetTagsRequest, request_option: RequestOption
+    ) -> GetDatasetTagsResponse:
+        return await ATransport.aexecute(
+            self.config, request, unmarshal_as=GetDatasetTagsResponse, option=request_option
+        )

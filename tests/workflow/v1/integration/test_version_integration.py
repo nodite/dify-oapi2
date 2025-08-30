@@ -44,28 +44,28 @@ class TestVersionIntegration:
         workflow = Workflow(config)
 
         # Test workflow execution methods
-        assert hasattr(workflow, "run_workflow")
-        assert hasattr(workflow, "arun_workflow")
-        assert hasattr(workflow, "get_workflow_run_detail")
-        assert hasattr(workflow, "aget_workflow_run_detail")
-        assert hasattr(workflow, "stop_workflow")
-        assert hasattr(workflow, "astop_workflow")
+        assert hasattr(workflow, "run")
+        assert hasattr(workflow, "arun")
+        assert hasattr(workflow, "detail")
+        assert hasattr(workflow, "adetail")
+        assert hasattr(workflow, "stop")
+        assert hasattr(workflow, "astop")
 
         # Test file methods (migrated from File resource)
-        assert hasattr(workflow, "upload_file")
-        assert hasattr(workflow, "aupload_file")
+        assert hasattr(workflow, "upload")
+        assert hasattr(workflow, "aupload")
 
         # Test log methods (migrated from Log resource)
-        assert hasattr(workflow, "get_workflow_logs")
-        assert hasattr(workflow, "aget_workflow_logs")
+        assert hasattr(workflow, "logs")
+        assert hasattr(workflow, "alogs")
 
         # Test info methods (migrated from Info resource)
-        assert hasattr(workflow, "get_info")
-        assert hasattr(workflow, "aget_info")
-        assert hasattr(workflow, "get_parameters")
-        assert hasattr(workflow, "aget_parameters")
-        assert hasattr(workflow, "get_site")
-        assert hasattr(workflow, "aget_site")
+        assert hasattr(workflow, "info")
+        assert hasattr(workflow, "ainfo")
+        assert hasattr(workflow, "parameters")
+        assert hasattr(workflow, "aparameters")
+        assert hasattr(workflow, "site")
+        assert hasattr(workflow, "asite")
 
     def test_migration_completeness(self) -> None:
         """Test migration completeness - all expected methods present."""
@@ -74,22 +74,22 @@ class TestVersionIntegration:
 
         # Expected method count: 14 methods (7 sync + 7 async)
         expected_methods = [
-            "run_workflow",
-            "arun_workflow",
-            "get_workflow_run_detail",
-            "aget_workflow_run_detail",
-            "stop_workflow",
-            "astop_workflow",
-            "upload_file",
-            "aupload_file",
-            "get_workflow_logs",
-            "aget_workflow_logs",
-            "get_info",
-            "aget_info",
-            "get_parameters",
-            "aget_parameters",
-            "get_site",
-            "aget_site",
+            "run",
+            "arun",
+            "detail",
+            "adetail",
+            "stop",
+            "astop",
+            "upload",
+            "aupload",
+            "logs",
+            "alogs",
+            "info",
+            "ainfo",
+            "parameters",
+            "aparameters",
+            "site",
+            "asite",
         ]
 
         for method_name in expected_methods:

@@ -2,109 +2,54 @@ from dify_oapi.core.http.transport import ATransport, Transport
 from dify_oapi.core.model.config import Config
 from dify_oapi.core.model.request_option import RequestOption
 
-# Child chunk operations
-from ..model.segment.create_child_chunk_request import CreateChildChunkRequest
-from ..model.segment.create_child_chunk_response import CreateChildChunkResponse
-
-# Core segment operations
-from ..model.segment.create_request import CreateRequest
-from ..model.segment.create_response import CreateResponse
-from ..model.segment.delete_child_chunk_request import DeleteChildChunkRequest
-from ..model.segment.delete_child_chunk_response import DeleteChildChunkResponse
-from ..model.segment.delete_request import DeleteRequest
-from ..model.segment.delete_response import DeleteResponse
-from ..model.segment.get_request import GetRequest
-from ..model.segment.get_response import GetResponse
-from ..model.segment.list_child_chunks_request import ListChildChunksRequest
-from ..model.segment.list_child_chunks_response import ListChildChunksResponse
-from ..model.segment.list_request import ListRequest
-from ..model.segment.list_response import ListResponse
-from ..model.segment.update_child_chunk_request import UpdateChildChunkRequest
-from ..model.segment.update_child_chunk_response import UpdateChildChunkResponse
-from ..model.segment.update_request import UpdateRequest
-from ..model.segment.update_response import UpdateResponse
+from ..model.create_segment_request import CreateSegmentRequest
+from ..model.create_segment_response import CreateSegmentResponse
+from ..model.delete_segment_request import DeleteSegmentRequest
+from ..model.delete_segment_response import DeleteSegmentResponse
+from ..model.get_segment_request import GetSegmentRequest
+from ..model.get_segment_response import GetSegmentResponse
+from ..model.list_segments_request import ListSegmentsRequest
+from ..model.list_segments_response import ListSegmentsResponse
+from ..model.update_segment_request import UpdateSegmentRequest
+from ..model.update_segment_response import UpdateSegmentResponse
 
 
 class Segment:
-    def __init__(self, config: Config) -> None:
-        self.config: Config = config
+    def __init__(self, config: Config):
+        self.config = config
 
-    # Core segment operations
-    def create(self, request: CreateRequest, request_option: RequestOption) -> CreateResponse:
-        return Transport.execute(self.config, request, unmarshal_as=CreateResponse, option=request_option)
+    def list(self, request: ListSegmentsRequest, request_option: RequestOption) -> ListSegmentsResponse:
+        return Transport.execute(self.config, request, unmarshal_as=ListSegmentsResponse, option=request_option)
 
-    async def acreate(self, request: CreateRequest, request_option: RequestOption) -> CreateResponse:
-        return await ATransport.aexecute(self.config, request, unmarshal_as=CreateResponse, option=request_option)
+    async def alist(self, request: ListSegmentsRequest, request_option: RequestOption) -> ListSegmentsResponse:
+        return await ATransport.aexecute(self.config, request, unmarshal_as=ListSegmentsResponse, option=request_option)
 
-    def list(self, request: ListRequest, request_option: RequestOption) -> ListResponse:
-        return Transport.execute(self.config, request, unmarshal_as=ListResponse, option=request_option)
+    def create(self, request: CreateSegmentRequest, request_option: RequestOption) -> CreateSegmentResponse:
+        return Transport.execute(self.config, request, unmarshal_as=CreateSegmentResponse, option=request_option)
 
-    async def alist(self, request: ListRequest, request_option: RequestOption) -> ListResponse:
-        return await ATransport.aexecute(self.config, request, unmarshal_as=ListResponse, option=request_option)
-
-    def get(self, request: GetRequest, request_option: RequestOption) -> GetResponse:
-        return Transport.execute(self.config, request, unmarshal_as=GetResponse, option=request_option)
-
-    async def aget(self, request: GetRequest, request_option: RequestOption) -> GetResponse:
-        return await ATransport.aexecute(self.config, request, unmarshal_as=GetResponse, option=request_option)
-
-    def update(self, request: UpdateRequest, request_option: RequestOption) -> UpdateResponse:
-        return Transport.execute(self.config, request, unmarshal_as=UpdateResponse, option=request_option)
-
-    async def aupdate(self, request: UpdateRequest, request_option: RequestOption) -> UpdateResponse:
-        return await ATransport.aexecute(self.config, request, unmarshal_as=UpdateResponse, option=request_option)
-
-    def delete(self, request: DeleteRequest, request_option: RequestOption) -> DeleteResponse:
-        return Transport.execute(self.config, request, unmarshal_as=DeleteResponse, option=request_option)
-
-    async def adelete(self, request: DeleteRequest, request_option: RequestOption) -> DeleteResponse:
-        return await ATransport.aexecute(self.config, request, unmarshal_as=DeleteResponse, option=request_option)
-
-    # Child chunk operations
-    def create_child_chunk(
-        self, request: CreateChildChunkRequest, request_option: RequestOption
-    ) -> CreateChildChunkResponse:
-        return Transport.execute(self.config, request, unmarshal_as=CreateChildChunkResponse, option=request_option)
-
-    async def acreate_child_chunk(
-        self, request: CreateChildChunkRequest, request_option: RequestOption
-    ) -> CreateChildChunkResponse:
+    async def acreate(self, request: CreateSegmentRequest, request_option: RequestOption) -> CreateSegmentResponse:
         return await ATransport.aexecute(
-            self.config, request, unmarshal_as=CreateChildChunkResponse, option=request_option
+            self.config, request, unmarshal_as=CreateSegmentResponse, option=request_option
         )
 
-    def list_child_chunks(
-        self, request: ListChildChunksRequest, request_option: RequestOption
-    ) -> ListChildChunksResponse:
-        return Transport.execute(self.config, request, unmarshal_as=ListChildChunksResponse, option=request_option)
+    def get(self, request: GetSegmentRequest, request_option: RequestOption) -> GetSegmentResponse:
+        return Transport.execute(self.config, request, unmarshal_as=GetSegmentResponse, option=request_option)
 
-    async def alist_child_chunks(
-        self, request: ListChildChunksRequest, request_option: RequestOption
-    ) -> ListChildChunksResponse:
+    async def aget(self, request: GetSegmentRequest, request_option: RequestOption) -> GetSegmentResponse:
+        return await ATransport.aexecute(self.config, request, unmarshal_as=GetSegmentResponse, option=request_option)
+
+    def update(self, request: UpdateSegmentRequest, request_option: RequestOption) -> UpdateSegmentResponse:
+        return Transport.execute(self.config, request, unmarshal_as=UpdateSegmentResponse, option=request_option)
+
+    async def aupdate(self, request: UpdateSegmentRequest, request_option: RequestOption) -> UpdateSegmentResponse:
         return await ATransport.aexecute(
-            self.config, request, unmarshal_as=ListChildChunksResponse, option=request_option
+            self.config, request, unmarshal_as=UpdateSegmentResponse, option=request_option
         )
 
-    def update_child_chunk(
-        self, request: UpdateChildChunkRequest, request_option: RequestOption
-    ) -> UpdateChildChunkResponse:
-        return Transport.execute(self.config, request, unmarshal_as=UpdateChildChunkResponse, option=request_option)
+    def delete(self, request: DeleteSegmentRequest, request_option: RequestOption) -> DeleteSegmentResponse:
+        return Transport.execute(self.config, request, unmarshal_as=DeleteSegmentResponse, option=request_option)
 
-    async def aupdate_child_chunk(
-        self, request: UpdateChildChunkRequest, request_option: RequestOption
-    ) -> UpdateChildChunkResponse:
+    async def adelete(self, request: DeleteSegmentRequest, request_option: RequestOption) -> DeleteSegmentResponse:
         return await ATransport.aexecute(
-            self.config, request, unmarshal_as=UpdateChildChunkResponse, option=request_option
-        )
-
-    def delete_child_chunk(
-        self, request: DeleteChildChunkRequest, request_option: RequestOption
-    ) -> DeleteChildChunkResponse:
-        return Transport.execute(self.config, request, unmarshal_as=DeleteChildChunkResponse, option=request_option)
-
-    async def adelete_child_chunk(
-        self, request: DeleteChildChunkRequest, request_option: RequestOption
-    ) -> DeleteChildChunkResponse:
-        return await ATransport.aexecute(
-            self.config, request, unmarshal_as=DeleteChildChunkResponse, option=request_option
+            self.config, request, unmarshal_as=DeleteSegmentResponse, option=request_option
         )

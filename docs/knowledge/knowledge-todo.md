@@ -1,216 +1,261 @@
-# Knowledge Base API Implementation Progress
+# Knowledge Base API Implementation Todo
 
-This document tracks the implementation progress of the Knowledge Base API module based on the detailed plan in knowledge-plan.md.
+Implementation progress tracking document based on knowledge-plan.md.
 
-## Implementation Progress
+## Overview
 
-### Foundation and Setup
-- [x] **Step 0**: Analyze Current Knowledge Implementation
-- [x] **Step 1**: Create Knowledge Types and Base Models
+Knowledge Base API module contains **33 APIs** across **6 specialized resources**:
+- **Dataset Resource**: 6 APIs
+- **Document Resource**: 10 APIs  
+- **Segment Resource**: 5 APIs
+- **Child Chunks Resource**: 4 APIs
+- **Tag Resource**: 7 APIs
+- **Model Resource**: 1 API
 
-### Dataset API Implementation (7 APIs per knowledge-api.md)
-- [x] **Step 2A**: Implement Create Dataset API Models
-- [x] **Step 2B**: Implement List Datasets API Models
-- [x] **Step 2C**: Implement Get Dataset API Models
-- [x] **Step 2D**: Implement Update Dataset API Models
-- [x] **Step 2E**: Implement Delete Dataset API Models
-- [x] **Step 2F**: Implement Retrieve from Dataset API Models
-- [x] **Step 2G**: Implement Get Dataset Tags API Models
-- [x] **Step 2H**: Implement Complete Dataset API Models Integration
-- [x] **Step 2**: Implement Dataset API Models (7 APIs)
-- [x] **Step 3**: Implement Dataset Resource Class
+## API Breakdown by Resource
 
-### Document API Implementation (10 APIs per knowledge-api.md)
-- [x] **Step 4A**: Implement Create Document by File API Models
-- [x] **Step 4B**: Implement Create Document by Text API Models
-- [x] **Step 4C**: Implement List Documents API Models
-- [x] **Step 4D**: Implement Get Document API Models
-- [x] **Step 4E**: Implement Update Document APIs Models
-- [x] **Step 4F**: Implement Delete Document and File Info API Models
-- [x] **Step 4G**: Implement Document Status and Batch APIs Models
-- [x] **Step 4H**: Complete Document API Models Integration
-- [x] **Step 4**: Implement Document API Models (10 APIs)
-- [x] **Step 5**: Implement Document Resource Class
+### Dataset Resource (6 APIs)
+1. Create Dataset - POST /v1/datasets
+2. List Datasets - GET /v1/datasets
+3. Get Dataset - GET /v1/datasets/{dataset_id}
+4. Update Dataset - PATCH /v1/datasets/{dataset_id}
+5. Delete Dataset - DELETE /v1/datasets/{dataset_id}
+6. Retrieve from Dataset - POST /v1/datasets/{dataset_id}/retrieve
 
-### Segment API Implementation (8 APIs per knowledge-api.md)
-- [x] **Step 6A**: Implement List Segments API Models
-- [x] **Step 6B**: Implement Create Segment API Models
-- [x] **Step 6C**: Implement Get and Update Segment API Models
-- [x] **Step 6D**: Implement Delete Segment API Models
-- [x] **Step 6E**: Implement Child Chunks API Models
-- [x] **Step 6F**: Complete Segment API Models Integration
-- [x] **Step 6**: Implement Segment API Models (8 APIs)
-- [x] **Step 7**: Implement Segment Resource Class
+### Document Resource (10 APIs)
+7. Create Document by File - POST /v1/datasets/{dataset_id}/document/create-by-file
+8. Create Document by Text - POST /v1/datasets/{dataset_id}/document/create-by-text
+9. List Documents - GET /v1/datasets/{dataset_id}/documents
+10. Get Document - GET /v1/datasets/{dataset_id}/documents/{document_id}
+11. Update Document by File - POST /v1/datasets/{dataset_id}/documents/{document_id}/update-by-file
+12. Update Document by Text - POST /v1/datasets/{dataset_id}/documents/{document_id}/update-by-text
+13. Delete Document - DELETE /v1/datasets/{dataset_id}/documents/{document_id}
+14. Update Document Status - PATCH /v1/datasets/{dataset_id}/documents/status/{action}
+15. Get Batch Indexing Status - GET /v1/datasets/{dataset_id}/documents/{batch}/indexing-status
+16. Get Upload File Info - GET /v1/datasets/{dataset_id}/documents/{document_id}/upload-file
 
-### Tag API Implementation (7 APIs per knowledge-api.md)
-- [x] **Step 8A**: Implement List and Create Tag API Models
-- [x] **Step 8B**: Implement Update and Delete Tag API Models
-- [x] **Step 8C**: Implement Tag Binding API Models
-- [x] **Step 8D**: Complete Tag API Models Integration
-- [x] **Step 8**: Implement Tag API Models (7 APIs)
-- [x] **Step 9**: Implement Tag Resource Class
+### Segment Resource (5 APIs)
+17. List Segments - GET /v1/datasets/{dataset_id}/documents/{document_id}/segments
+18. Create Segment - POST /v1/datasets/{dataset_id}/documents/{document_id}/segments
+19. Get Segment - GET /v1/datasets/{dataset_id}/documents/{document_id}/segments/{segment_id}
+20. Update Segment - POST /v1/datasets/{dataset_id}/documents/{document_id}/segments/{segment_id}
+21. Delete Segment - DELETE /v1/datasets/{dataset_id}/documents/{document_id}/segments/{segment_id}
 
-### Model API Implementation (1 API)
-- [x] **Step 10**: Implement Model API Models (1 API)
-- [x] **Step 11**: Implement Model Resource Class
+### Child Chunks Resource (4 APIs)
+22. List Child Chunks - GET /v1/datasets/{dataset_id}/documents/{document_id}/segments/{segment_id}/child_chunks
+23. Create Child Chunk - POST /v1/datasets/{dataset_id}/documents/{document_id}/segments/{segment_id}/child_chunks
+24. Update Child Chunk - PATCH /v1/datasets/{dataset_id}/documents/{document_id}/segments/{segment_id}/child_chunks/{child_chunk_id}
+25. Delete Child Chunk - DELETE /v1/datasets/{dataset_id}/documents/{document_id}/segments/{segment_id}/child_chunks/{child_chunk_id}
 
-### Integration and Client Setup
-- [x] **Step 12**: Implement Version Integration
-- [x] **Step 13**: Implement Service Integration
-- [x] **Step 14**: Implement Client Integration
+### Tag Resource (7 APIs)
+26. List Tags - GET /v1/datasets/tags
+27. Create Tag - POST /v1/datasets/tags
+28. Update Tag - PATCH /v1/datasets/tags
+29. Delete Tag - DELETE /v1/datasets/tags
+30. Bind Tags to Dataset - POST /v1/datasets/tags/binding
+31. Unbind Tags from Dataset - POST /v1/datasets/tags/unbinding
+32. Get Dataset Tags - POST /v1/datasets/{dataset_id}/tags
 
-### Examples and Documentation
-- [ ] **Step 15**: Create Dataset Examples
-- [ ] **Step 16**: Create Document Examples
-- [ ] **Step 17**: Create Segment, Tag, and Model Examples
-- [ ] **Step 18**: Create Comprehensive Integration Tests
+### Model Resource (1 API)
+33. Get Text Embedding Models - GET /v1/workspaces/current/models/model-types/text-embedding
 
-### Testing Steps
-- [ ] **Step 1T**: Test Knowledge Types and Base Models
-- [ ] **Step 2AT**: Test Create Dataset API Models
-- [ ] **Step 2BT**: Test List Datasets API Models
-- [ ] **Step 2CT**: Test Get Dataset API Models
-- [ ] **Step 2DT**: Test Update Dataset API Models
-- [ ] **Step 2ET**: Test Delete Dataset API Models
-- [ ] **Step 2FT**: Test Retrieve from Dataset API Models
-- [ ] **Step 2GT**: Test Get Dataset Tags API Models
-- [ ] **Step 2HT**: Test Complete Dataset API Models Integration
-- [ ] **Step 2T**: Test Dataset API Models (6 APIs)
-- [ ] **Step 3T**: Test Dataset Resource Class
-- [ ] **Step 4AT**: Test Create Document by File API Models
-- [ ] **Step 4BT**: Test Create Document by Text API Models
-- [ ] **Step 4CT**: Test List Documents API Models
-- [ ] **Step 4DT**: Test Get Document API Models
-- [ ] **Step 4ET**: Test Update Document APIs Models
-- [ ] **Step 4FT**: Test Delete Document and File Info API Models
-- [ ] **Step 4GT**: Test Document Status and Batch APIs Models
-- [ ] **Step 4HT**: Test Complete Document API Models Integration
-- [ ] **Step 4T**: Test Document API Models (10 APIs)
-- [ ] **Step 5T**: Test Document Resource Class
-- [ ] **Step 6AT**: Test List Segments API Models
-- [ ] **Step 6BT**: Test Create Segment API Models
-- [ ] **Step 6CT**: Test Get and Update Segment API Models
-- [ ] **Step 6DT**: Test Delete Segment API Models
-- [ ] **Step 6ET**: Test Child Chunks API Models
-- [ ] **Step 6FT**: Test Complete Segment API Models Integration
-- [ ] **Step 6T**: Test Segment API Models (8 APIs)
-- [ ] **Step 7T**: Test Segment Resource Class
-- [ ] **Step 8AT**: Test List and Create Tag API Models
-- [ ] **Step 8BT**: Test Update and Delete Tag API Models
-- [ ] **Step 8CT**: Test Tag Binding API Models
-- [ ] **Step 8DT**: Test Complete Tag API Models Integration
-- [ ] **Step 8T**: Test Tag API Models (7 APIs)
-- [ ] **Step 9T**: Test Tag Resource Class
-- [x] **Step 10T**: Test Model API Models (1 API)
-- [x] **Step 11T**: Test Model Resource Class
-- [ ] **Step 12T**: Test Version Integration
-- [ ] **Step 13T**: Test Service Integration
-- [ ] **Step 14T**: Test Client Integration
-- [ ] **Step 15T**: Test Dataset Examples
-- [ ] **Step 16T**: Test Document Examples
-- [ ] **Step 17T**: Test Segment, Tag, and Model Examples
+Total: 6+10+5+4+7+1 = 33 APIs
 
-### Quality Assurance and Finalization
-- [ ] **Step 19**: Resolve Class Naming Conflicts
-- [ ] **Step 20**: Update Documentation
-- [ ] **Step 21**: Final Quality Assurance and Validation
-- [ ] **Step 22**: Performance and Load Testing
-- [ ] **Step 23**: Security and Validation Testing
-- [ ] **Step 24**: Backward Compatibility and Migration Testing
+## Implementation Steps
 
-## Summary Statistics
+### Step 0: Analyze Current Knowledge Implementation
+- [ ] **Implementation**: Analyze existing knowledge implementation to plan implementation strategy
+- [ ] **Testing**: Create analysis documentation and migration plan for existing implementation
 
-- **Total Steps**: 24 main steps + 16 sub-steps + 37 test steps = 77 total tasks
-- **API Coverage**: 33 APIs across 5 resources per knowledge-api.md (6+12+8+7+1)
-- **Completed**: 6/77 total tasks (7.8%)
-- **In Progress**: 0/77 tasks (0%)
-- **Remaining**: 71/77 tasks (92.2%)
+### Step 1: Create Knowledge Types and Base Models
+- [ ] **Implementation**: Create foundational types and base models
+- [ ] **Testing**: Create comprehensive tests for Knowledge Base foundation models
 
-## Documentation and Test Consistency Issues (CRITICAL)
+### Step 2: Implement Dataset Resource APIs (6 APIs)
+- [ ] **Implementation**: Implement all Dataset Resource API models
+- [ ] **Testing**: Create comprehensive tests for all Dataset Resource API models
 
-- [ ] **Fix Examples Documentation Inconsistencies**
-- [ ] **Fix Test Structure Inconsistencies**
-- [ ] **Verify Complete API Coverage (33 APIs)**
-- [ ] **Update All Documentation for Consistency**
+### Step 3: Implement Document Resource APIs (10 APIs)
+- [ ] **Implementation**: Implement all Document Resource API models
+- [ ] **Testing**: Create comprehensive tests for all Document Resource API models
 
-## Resource Breakdown
+### Step 4: Implement Segment Resource APIs (5 APIs)
+- [ ] **Implementation**: Implement all Segment Resource API models
+- [ ] **Testing**: Create comprehensive tests for all Segment Resource API models
 
-### Dataset Resource (6 APIs per knowledge-api.md)
-- [ ] Create Dataset
-- [ ] List Datasets
-- [ ] Get Dataset
-- [ ] Update Dataset
-- [ ] Delete Dataset
-- [ ] Retrieve from Dataset
+### Step 5: Implement Child Chunks Resource APIs (4 APIs)
+- [ ] **Implementation**: Implement all Child Chunks Resource API models
+- [ ] **Testing**: Create comprehensive tests for all Child Chunks Resource API models
 
-### Document Resource (12 APIs per knowledge-api.md)
-- [ ] Create Document by File
-- [ ] Create Document by Text
-- [ ] List Documents
-- [ ] Get Document
-- [ ] Update Document by File
-- [ ] Update Document by Text
-- [ ] Delete Document
-- [ ] Update Document Status
-- [ ] Get Batch Indexing Status
-- [ ] Get Upload File Info
-- [ ] [Missing API 1]: To be identified from knowledge-api.md
-- [ ] [Missing API 2]: To be identified from knowledge-api.md
+### Step 6: Implement Tag Resource APIs (7 APIs)
+- [ ] **Implementation**: Implement all Tag Resource API models
+- [ ] **Testing**: Create comprehensive tests for all Tag Resource API models
 
-### Segment Resource (8 APIs per knowledge-api.md)
-- [ ] List Segments
-- [ ] Create Segment
-- [ ] Get Segment
-- [ ] Update Segment
-- [ ] Delete Segment
-- [ ] List Child Chunks
-- [ ] Create Child Chunk
-- [ ] Update Child Chunk
-- [ ] Delete Child Chunk
+### Step 7: Implement Model Resource APIs (1 API)
+- [ ] **Implementation**: Implement Model Resource API models
+- [ ] **Testing**: Create comprehensive tests for Model Resource API models
 
-**Note**: Segment APIs are missing from current examples/README.md but exist in actual files
+### Step 8: Implement Resource Classes
+- [ ] **Implementation**: Implement all 6 Knowledge Resource classes
+- [ ] **Testing**: Create comprehensive tests for all Knowledge Resource classes
 
-### Tag Resource (7 APIs per knowledge-api.md)
-- [ ] List Tags
-- [ ] Create Tag
-- [ ] Update Tag
-- [ ] Delete Tag
-- [ ] Bind Tags to Dataset
-- [ ] Unbind Tags from Dataset
-- [ ] Get Dataset Tags
+### Step 9: Update Version Integration
+- [ ] **Implementation**: Update Knowledge V1 class to expose all 6 resource classes
+- [ ] **Testing**: Create tests for Knowledge version integration
 
-### Model Resource (1 API per knowledge-api.md)
-- [x] Get Text Embedding Models
+### Step 10: Update Service Integration
+- [ ] **Implementation**: Update Knowledge service integration
+- [ ] **Testing**: Test Knowledge service class
+
+### Step 11: Update Client Integration
+- [ ] **Implementation**: Update client integration
+- [ ] **Testing**: Test client integration
+
+### Step 12: Create Examples for All 33 APIs
+- [ ] **Implementation**: Create comprehensive examples for all 33 Knowledge Base APIs
+- [ ] **Testing**: Create validation tests for all Knowledge examples
+
+### Step 13: Integration Testing
+- [ ] **Implementation**: Create comprehensive integration tests for all Knowledge Base APIs
+- [ ] **Testing**: Create comprehensive integration validation tests
+
+### Step 14: Final Validation and Documentation
+- [ ] **Implementation**: Perform final validation and create comprehensive documentation
+- [ ] **Testing**: Create final validation test suite
+
+## Critical Implementation Checklist
+
+**Pre-Implementation Verification:**
+- [ ] All 33 APIs correctly mapped (6+10+5+4+7+1=33)
+- [ ] All Literal types properly defined in knowledge_types.py
+- [ ] All Response classes inherit from BaseResponse (zero tolerance)
+- [ ] All public classes use domain-specific prefixes
+- [ ] File upload APIs use multipart/form-data handling
+- [ ] Handle complex nested path parameters (up to 5 levels)
+- [ ] Environment variable validation in all examples
+- [ ] "[Example]" prefix safety in all examples
+- [ ] All 6 resources properly integrated in V1 class
+- [ ] Comprehensive test coverage for all 33 APIs
+
+**API Count Verification:**
+- [ ] Dataset Resource: 6 APIs
+- [ ] Document Resource: 10 APIs
+- [ ] Segment Resource: 5 APIs
+- [ ] Child Chunks Resource: 4 APIs
+- [ ] Tag Resource: 7 APIs
+- [ ] Model Resource: 1 API
+- [ ] **Total: 33 APIs**
+
+**File Count Verification:**
+- [ ] Request files: 33
+- [ ] RequestBody files: ~20
+- [ ] Response files: 33
+- [ ] Public model files: ~16
+- [ ] **Total model files: ~102**
+
+**Resource Integration Verification:**
+- [ ] V1 class must expose: dataset, document, segment, chunk, tag, model
+- [ ] Each resource must implement all methods with sync/async versions
+- [ ] All methods must use proper Transport.execute patterns
+
+**Testing Verification:**
+- [ ] Model tests: 7 files (dataset, document, segment, chunk, tag, model, public models)
+- [ ] Resource tests: 6 files (one per resource)
+- [ ] Integration tests: 4 files (api integration, comprehensive, examples validation, version integration)
+- [ ] **Total test files: 17**
+
+**Examples Verification:**
+- [ ] Example files: 33
+- [ ] Directory structure: 6 resource directories + README
+- [ ] All examples must validate environment variables
+- [ ] All examples must use "[Example]" prefix for safety
+
+## Progress Statistics
+
+- **Total Steps**: 14 major steps (28 sub-tasks)
+- **Completed**: 0/28 (0%)
+- **In Progress**: 0/28 (0%)
+- **Pending**: 28/28 (100%)
+- **Completion Rate**: 0%
 
 ## Notes
 
-- Each step includes both implementation and testing phases
-- All APIs must follow type safety with Literal types
-- All response classes must inherit from BaseResponse
-- All examples must use "[Example]" prefix for safety
-- Complete test coverage (>95%) is required
-- Performance and security validation required before completion
-- Keep __init__.py files minimal and clean, avoid exporting all classes
+- Each implementation step is followed by a corresponding testing step
+- Strictly follow dify-oapi design patterns and best practices
+- Maintain backward compatibility
+- Use strict type definitions and validation
+- Example code follows minimization principles
+- All file uploads use multipart/form-data handling
+- Complex nested path parameters supported (up to 5 levels)
+- Environment variable validation required in all examples
 
-### Critical Issues:
-- **Examples documentation inconsistent** with API specifications (29 vs 33 APIs)
-- **Test structure inconsistent** with missing Model tests and unclear metadata separation
-- **File completeness** needs verification for all 33 APIs
+## Zero Tolerance Rules
 
-## Next Steps
+- [ ] All Response classes MUST inherit from BaseResponse
+- [ ] All classes must use domain-specific prefixes to avoid naming conflicts
+- [ ] All models must implement builder patterns for consistency
+- [ ] All examples must validate required environment variables
+- [ ] Comprehensive testing covers all 33 APIs
+- [ ] File upload APIs must use multipart/form-data
+- [ ] Complex nested paths must be handled correctly
+- [ ] "[Example]" prefix must be used in all examples
 
-1. **PRIORITY**: Fix examples documentation inconsistencies:
-   - Update examples/knowledge/README.md to reflect all 33 APIs
-   - Add missing Segment and Model management sections
-   - Verify all APIs have corresponding example files
-2. Start with **Step 0**: Analyze Current Knowledge Implementation
-3. Follow the sequential order as outlined in knowledge-plan.md
-4. Update this document as each step is completed
-5. Mark steps as "In Progress" when starting work
-6. Mark steps as completed with checkmarks when finished and tested
 
-### High Priority Fix Tasks:
-- [ ] **Fix Examples Documentation**
-- [ ] **Fix Test Structure**
-- [ ] **Verify Complete Coverage**
-- [ ] **Align All Documentation**
+
+## Quality Assurance Checklist
+
+### Implementation Quality Check
+- [ ] All 33 APIs implemented
+- [ ] All model classes properly inherit (Request → BaseRequest, Response → BaseResponse)
+- [ ] All public models implement Builder pattern
+- [ ] Strict type safety (use Literal types)
+- [ ] Support synchronous and asynchronous operations
+- [ ] Proper error handling
+- [ ] Complete type annotations
+- [ ] Domain-specific prefixes for all classes
+- [ ] Multipart/form-data handling for file uploads
+- [ ] Complex nested path parameters (up to 5 levels)
+
+### Testing Quality Check
+- [ ] All model tests 100% coverage
+- [ ] All resource tests 100% coverage
+- [ ] Integration tests cover all APIs
+- [ ] Error scenario tests complete
+- [ ] Async functionality tests complete
+- [ ] File upload tests complete
+- [ ] Nested path parameter tests complete
+
+### Documentation Quality Check
+- [ ] API documentation matches implementation
+- [ ] Example code can run
+- [ ] Migration guide complete
+- [ ] Code comments clear
+- [ ] README files updated
+- [ ] Environment variable documentation
+
+### Architecture Quality Check
+- [ ] 6 resource classes properly separated
+- [ ] Version integration correct
+- [ ] Service integration correct
+- [ ] Client integration correct
+- [ ] Backward compatibility maintained
+- [ ] Code structure clear
+- [ ] Flat model structure implemented
+- [ ] Grouped resource structure implemented
+
+## Summary
+
+This TODO document tracks the implementation of Knowledge Base API's 33 APIs across 28 steps, ensuring:
+
+1. **Complete Coverage**: All 33 APIs have implementation and testing tracking
+2. **Quality Assurance**: Each implementation step paired with testing step
+3. **Architecture Consistency**: Follow dify-oapi design patterns and best practices
+4. **Type Safety**: Use strict type definitions and validation
+5. **File Upload Support**: Proper multipart/form-data handling
+6. **Complex Path Parameters**: Support for up to 5-level nested paths
+7. **Safety-First Examples**: Environment validation and "[Example]" prefix usage
+8. **Complete Documentation**: Provide complete documentation and examples
+9. **Service Integration**: Full integration with service and client layers
+10. **Migration Support**: Comprehensive migration guide for existing implementations
+
+By following this checklist step by step, we can ensure high-quality delivery of Knowledge Base API module, providing users with complete, reliable, and easy-to-use knowledge management functionality interface.

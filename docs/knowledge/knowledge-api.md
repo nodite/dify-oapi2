@@ -20,51 +20,52 @@ Authorization: Bearer {API_KEY}
 
 ## API Overview
 
-The Knowledge Base API provides 39 endpoints organized into 5 main categories:
+The Knowledge Base API provides 21 endpoints with 33 total methods organized into 6 main categories:
 
-### Dataset Management (8 APIs)
-- Create Dataset - Create a new knowledge base
-- List Datasets - Retrieve all datasets
-- Get Dataset - Retrieve dataset details
-- Update Dataset - Modify dataset configuration
-- Delete Dataset - Remove a dataset
-- Dataset Tags - Manage dataset tags
-- Bind/Unbind Tags - Associate tags with datasets
-- Retrieve from Dataset - Search and retrieve content
+### Dataset Management (6 APIs)
+- **POST** `/datasets` - Create Dataset
+- **GET** `/datasets` - List Datasets
+- **GET** `/datasets/{dataset_id}` - Get Dataset
+- **PATCH** `/datasets/{dataset_id}` - Update Dataset
+- **DELETE** `/datasets/{dataset_id}` - Delete Dataset
+- **POST** `/datasets/{dataset_id}/retrieve` - Retrieve from Dataset
 
-### Document Management (12 APIs)
-- Create Document by File - Upload and process files
-- Create Document by Text - Add text content directly
-- List Documents - Retrieve all documents in a dataset
-- Get Document - Retrieve document details
-- Update Document by File - Replace document with new file
-- Update Document by Text - Update document content
-- Delete Document - Remove a document
-- Upload File for Document - File upload endpoint
-- Document Status Management - Enable/disable documents
-- Batch Indexing Status - Check processing status
+### Document Management (10 APIs)
+- **POST** `/datasets/{dataset_id}/document/create-by-file` - Create Document by File
+- **POST** `/datasets/{dataset_id}/document/create-by-text` - Create Document by Text
+- **GET** `/datasets/{dataset_id}/documents` - List Documents
+- **GET** `/datasets/{dataset_id}/documents/{document_id}` - Get Document
+- **POST** `/datasets/{dataset_id}/documents/{document_id}/update-by-file` - Update Document by File
+- **POST** `/datasets/{dataset_id}/documents/{document_id}/update-by-text` - Update Document by Text
+- **DELETE** `/datasets/{dataset_id}/documents/{document_id}` - Delete Document
+- **PATCH** `/datasets/{dataset_id}/documents/status/{action}` - Document Status Management
+- **GET** `/datasets/{dataset_id}/documents/{batch}/indexing-status` - Get Batch Indexing Status
+- **GET** `/datasets/{dataset_id}/documents/{document_id}/upload-file` - Get Upload File Info
 
-### Segment Management (8 APIs)
-- List Segments - Retrieve document segments
-- Create Segment - Add new content segments
-- Get Segment - Retrieve segment details
-- Update Segment - Modify segment content
-- Delete Segment - Remove a segment
-- List Child Chunks - Retrieve sub-segments
-- Create Child Chunk - Add sub-segments
-- Update/Delete Child Chunks - Manage sub-segments
+### Segment Management (5 APIs)
+- **GET** `/datasets/{dataset_id}/documents/{document_id}/segments` - List Segments
+- **POST** `/datasets/{dataset_id}/documents/{document_id}/segments` - Create Segment
+- **GET** `/datasets/{dataset_id}/documents/{document_id}/segments/{segment_id}` - Get Segment
+- **POST** `/datasets/{dataset_id}/documents/{document_id}/segments/{segment_id}` - Update Segment
+- **DELETE** `/datasets/{dataset_id}/documents/{document_id}/segments/{segment_id}` - Delete Segment
 
-### Metadata & Tags (10 APIs)
-- List All Tags - Retrieve available tags
-- Create Tag - Add new tags
-- Update Tag - Modify tag information
-- Delete Tag - Remove tags
-- Bind Tags to Dataset - Associate tags
-- Unbind Tags from Dataset - Remove tag associations
-- Dataset-specific Tags - Manage dataset tags
+### Child Chunks Management (4 APIs)
+- **GET** `/datasets/{dataset_id}/documents/{document_id}/segments/{segment_id}/child_chunks` - List Child Chunks
+- **POST** `/datasets/{dataset_id}/documents/{document_id}/segments/{segment_id}/child_chunks` - Create Child Chunk
+- **PATCH** `/datasets/{dataset_id}/documents/{document_id}/segments/{segment_id}/child_chunks/{child_chunk_id}` - Update Child Chunk
+- **DELETE** `/datasets/{dataset_id}/documents/{document_id}/segments/{segment_id}/child_chunks/{child_chunk_id}` - Delete Child Chunk
+
+### Tags Management (7 APIs)
+- **GET** `/datasets/tags` - List All Tags
+- **POST** `/datasets/tags` - Create Tag
+- **PATCH** `/datasets/tags` - Update Tag
+- **DELETE** `/datasets/tags` - Delete Tag
+- **POST** `/datasets/tags/binding` - Bind Tags to Dataset
+- **POST** `/datasets/tags/unbinding` - Unbind Tags from Dataset
+- **POST** `/datasets/{dataset_id}/tags` - Get Dataset Tags
 
 ### Models (1 API)
-- Get Text Embedding Models - Retrieve available embedding models
+- **GET** `/workspaces/current/models/model-types/text-embedding` - Get Text Embedding Models
 
 ## APIs
 
@@ -76,58 +77,139 @@ The Knowledge Base API provides 39 endpoints organized into 5 main categories:
 
 Creates a new knowledge base (dataset) for storing and managing documents.
 
-##### Request Body
-- `name` (string, required): Dataset name
-- `description` (string, optional): Dataset description
-- `indexing_technique` (string, required): Indexing method
-  - `high_quality`: High quality indexing (recommended)
-  - `economy`: Economy indexing for cost efficiency
-- `permission` (string, required): Access permission
-  - `only_me`: Private access
-  - `all_team_members`: Team access
-- `provider` (string, optional): Embedding model provider
-- `model` (string, optional): Embedding model name
-- `embedding_model_parameters` (object, optional): Model configuration
-- `retrieval_model` (object, optional): Retrieval configuration
-  - `search_method` (string): Search method (`semantic_search`, `full_text_search`, `hybrid_search`)
-  - `reranking_enable` (boolean): Enable reranking
-  - `reranking_model` (object): Reranking model configuration
-  - `top_k` (integer): Number of results to return
-  - `score_threshold_enabled` (boolean): Enable score threshold
-  - `score_threshold` (number): Minimum relevance score
+#### Request Body (application/json)
+```json
+{
+  "name": {
+    "type": "string",
+    "required": true,
+    "description": "Name of the knowledge base."
+  },
+  "description": {
+    "type": "string",
+    "description": "Description of the knowledge base (optional)."
+  },
+  "indexing_technique": {
+    "type": "string",
+    "description": "The indexing technique to use.",
+    "enum": ["high_quality", "economy"]
+  },
+  "permission": {
+    "type": "string",
+    "description": "Access permissions for the knowledge base.",
+    "enum": ["only_me", "all_team_members", "partial_members"]
+  },
+  "provider": {
+    "type": "string",
+    "description": "The provider of the knowledge base.",
+    "enum": ["vendor", "external"]
+  },
+  "external_knowledge_api_id": {
+    "type": "string",
+    "description": "ID of the external knowledge API (if provider is 'external')."
+  },
+  "external_knowledge_id": {
+    "type": "string",
+    "description": "ID of the external knowledge (if provider is 'external')."
+  },
+  "embedding_model": {
+    "type": "string",
+    "description": "Name of the embedding model."
+  },
+  "embedding_model_provider": {
+    "type": "string",
+    "description": "Provider of the embedding model."
+  },
+  "retrieval_model": {
+    "type": "object",
+    "description": "Retrieval model configuration",
+    "properties": {
+      "search_method": {
+        "type": "string",
+        "description": "The search method to use for retrieval",
+        "enum": ["hybrid_search", "semantic_search", "full_text_search", "keyword_search"]
+      },
+      "reranking_enable": {
+        "type": "boolean",
+        "description": "Whether to enable a reranking model to improve search results"
+      },
+      "reranking_mode": {
+        "type": "object",
+        "description": "Configuration for the reranking model",
+        "properties": {
+          "reranking_provider_name": {
+            "type": "string",
+            "description": "The provider of the rerank model"
+          },
+          "reranking_model_name": {
+            "type": "string",
+            "description": "The name of the rerank model"
+          }
+        }
+      },
+      "top_k": {
+        "type": "integer",
+        "description": "The number of top matching results to return"
+      },
+      "score_threshold_enabled": {
+        "type": "boolean",
+        "description": "Whether to apply a score threshold to filter results"
+      },
+      "score_threshold": {
+        "type": "number",
+        "description": "The minimum score for a result to be included"
+      },
+      "weights": {
+        "type": "number",
+        "description": "The weight of semantic search in a hybrid search mode"
+      }
+    }
+  }
+}
+```
 
-##### Example Request
+#### Example Request
 ```json
 {
   "name": "Product Documentation",
   "description": "Knowledge base for product documentation and FAQs",
   "indexing_technique": "high_quality",
   "permission": "all_team_members",
-  "provider": "openai",
-  "model": "text-embedding-ada-002",
-  "retrieval_model": {
-    "search_method": "hybrid_search",
-    "reranking_enable": true,
-    "top_k": 10,
-    "score_threshold_enabled": true,
-    "score_threshold": 0.7
-  }
+  "provider": "vendor",
+  "embedding_model": "text-embedding-ada-002",
+  "embedding_model_provider": "openai"
 }
 ```
 
-##### Response
-- `id` (string): Dataset ID (UUID)
-- `name` (string): Dataset name
-- `description` (string): Dataset description
-- `permission` (string): Access permission
-- `data_source_type` (string): Data source type
-- `indexing_technique` (string): Indexing technique used
-- `app_count` (integer): Number of associated applications
-- `document_count` (integer): Number of documents
-- `word_count` (integer): Total word count
-- `created_by` (string): Creator ID
-- `created_at` (timestamp): Creation time
-- `updated_at` (timestamp): Last update time
+#### Response
+
+**Success (200)**
+```json
+{
+  "id": "string (uuid)",
+  "name": "string",
+  "description": "string (nullable)",
+  "provider": "string",
+  "permission": "string",
+  "data_source_type": "string (nullable)",
+  "indexing_technique": "string (nullable)",
+  "app_count": "integer",
+  "document_count": "integer",
+  "word_count": "integer",
+  "created_by": "string (uuid)",
+  "created_at": "integer (int64)",
+  "updated_by": "string (uuid)",
+  "updated_at": "integer (int64)",
+  "embedding_model": "string (nullable)",
+  "embedding_model_provider": "string (nullable)",
+  "embedding_available": "boolean (nullable)"
+}
+```
+
+**Error Responses**
+- **400**: Bad Request - Invalid parameters
+- **401**: Unauthorized - Invalid API key
+- **403**: Forbidden - Insufficient permissions
 
 #### 2. List Datasets
 
@@ -135,16 +217,42 @@ Creates a new knowledge base (dataset) for storing and managing documents.
 
 Retrieves all datasets accessible to the current user.
 
-##### Query Parameters
+#### Query Parameters
 - `page` (integer, optional): Page number, default 1
 - `limit` (integer, optional): Items per page, default 20
 
-##### Response
-- `data` (array): List of datasets
-- `has_more` (boolean): Whether more data exists
-- `limit` (integer): Items per page
-- `total` (integer): Total count
-- `page` (integer): Current page
+#### Response
+
+**Success (200)**
+```json
+{
+  "data": [
+    {
+      "id": "string (uuid)",
+      "name": "string",
+      "description": "string (nullable)",
+      "provider": "string",
+      "permission": "string",
+      "data_source_type": "string (nullable)",
+      "indexing_technique": "string (nullable)",
+      "app_count": "integer",
+      "document_count": "integer",
+      "word_count": "integer",
+      "created_by": "string (uuid)",
+      "created_at": "integer (int64)",
+      "updated_by": "string (uuid)",
+      "updated_at": "integer (int64)",
+      "embedding_model": "string (nullable)",
+      "embedding_model_provider": "string (nullable)",
+      "embedding_available": "boolean (nullable)"
+    }
+  ],
+  "has_more": "boolean",
+  "limit": "integer",
+  "total": "integer",
+  "page": "integer"
+}
+```
 
 #### 3. Get Dataset
 
@@ -152,11 +260,13 @@ Retrieves all datasets accessible to the current user.
 
 Retrieves detailed information about a specific dataset.
 
-##### Path Parameters
+#### Path Parameters
 - `dataset_id` (string, required): Dataset ID (UUID)
 
-##### Response
-Same structure as Create Dataset response with additional statistics.
+#### Response
+
+**Success (200)**
+Same structure as Create Dataset response.
 
 #### 4. Update Dataset
 
@@ -164,11 +274,16 @@ Same structure as Create Dataset response with additional statistics.
 
 Updates dataset configuration and settings.
 
-##### Path Parameters
+#### Path Parameters
 - `dataset_id` (string, required): Dataset ID (UUID)
 
-##### Request Body
+#### Request Body (application/json)
 Same fields as Create Dataset (all optional for updates).
+
+#### Response
+
+**Success (200)**
+Same structure as Create Dataset response.
 
 #### 5. Delete Dataset
 
@@ -176,11 +291,17 @@ Same fields as Create Dataset (all optional for updates).
 
 Permanently removes a dataset and all its contents.
 
-##### Path Parameters
+#### Path Parameters
 - `dataset_id` (string, required): Dataset ID (UUID)
 
-##### Response
-- `result` (string): "success"
+#### Response
+
+**Success (200)**
+```json
+{
+  "result": "success"
+}
+```
 
 #### 6. Retrieve from Dataset
 
@@ -188,24 +309,56 @@ Permanently removes a dataset and all its contents.
 
 Searches and retrieves relevant content from the dataset.
 
-##### Path Parameters
+#### Path Parameters
 - `dataset_id` (string, required): Dataset ID (UUID)
 
-##### Request Body
-- `query` (string, required): Search query
-- `retrieval_model` (object, optional): Override retrieval settings
-- `top_k` (integer, optional): Number of results
-- `score_threshold` (number, optional): Minimum relevance score
+#### Request Body (application/json)
+```json
+{
+  "query": {
+    "type": "string",
+    "required": true,
+    "description": "Search query"
+  },
+  "retrieval_model": {
+    "type": "object",
+    "description": "Override retrieval settings"
+  },
+  "top_k": {
+    "type": "integer",
+    "description": "Number of results to return"
+  },
+  "score_threshold": {
+    "type": "number",
+    "description": "Minimum relevance score"
+  }
+}
+```
 
-##### Response
-- `query` (string): Original query
-- `records` (array): Retrieved segments
-  - `segment` (object): Segment information
-    - `id` (string): Segment ID
-    - `content` (string): Segment content
-    - `score` (number): Relevance score
-    - `document_id` (string): Source document ID
-    - `document_name` (string): Source document name
+#### Response
+
+**Success (200)**
+```json
+{
+  "query": {
+    "content": "string"
+  },
+  "records": [
+    {
+      "segment": {
+        "id": "string (uuid)",
+        "content": "string",
+        "document": {
+          "id": "string (uuid)",
+          "data_source_type": "string",
+          "name": "string"
+        }
+      },
+      "score": "number (float)"
+    }
+  ]
+}
+```
 
 ### Document Management
 
@@ -215,21 +368,57 @@ Searches and retrieves relevant content from the dataset.
 
 Uploads and processes a file to create a new document in the dataset.
 
-##### Path Parameters
+#### Path Parameters
 - `dataset_id` (string, required): Dataset ID (UUID)
 
-##### Request Body (multipart/form-data)
+#### Request Body (multipart/form-data)
 - `data` (string, required): JSON string containing document metadata
-  - `name` (string): Document name
-  - `indexing_technique` (string): Indexing method
-  - `process_rule` (object): Processing rules
-    - `mode` (string): Processing mode (`automatic`, `custom`)
-    - `rules` (object): Custom processing rules
+  ```json
+  {
+    "original_document_id": {
+      "type": "string",
+      "format": "uuid",
+      "description": "ID of an existing document to re-upload or modify"
+    },
+    "indexing_technique": {
+      "type": "string",
+      "enum": ["high_quality", "economy"]
+    },
+    "doc_form": {
+      "type": "string",
+      "enum": ["text_model", "hierarchical_model", "qa_model"]
+    },
+    "doc_language": {
+      "type": "string",
+      "example": "English"
+    },
+    "process_rule": {
+      "$ref": "ProcessRule schema"
+    },
+    "retrieval_model": {
+      "$ref": "RetrievalModel schema"
+    },
+    "embedding_model": {
+      "type": "string"
+    },
+    "embedding_model_provider": {
+      "type": "string"
+    }
+  }
+  ```
 - `file` (binary, required): File to upload
 
-##### Response
-- `document` (object): Created document information
-- `batch` (string): Processing batch ID
+#### Response
+
+**Success (200)**
+```json
+{
+  "document": {
+    "$ref": "Document schema (same as List Documents response)"
+  },
+  "batch": "string (batch identifier for tracking indexing progress)"
+}
+```
 
 #### 8. Create Document by Text
 
@@ -237,14 +426,62 @@ Uploads and processes a file to create a new document in the dataset.
 
 Creates a document directly from text content.
 
-##### Path Parameters
+#### Path Parameters
 - `dataset_id` (string, required): Dataset ID (UUID)
 
-##### Request Body
-- `name` (string, required): Document name
-- `text` (string, required): Document content
-- `indexing_technique` (string, required): Indexing method
-- `process_rule` (object, optional): Processing configuration
+#### Request Body (application/json)
+```json
+{
+  "name": {
+    "type": "string",
+    "required": true,
+    "description": "Document name"
+  },
+  "text": {
+    "type": "string",
+    "required": true,
+    "description": "Document content"
+  },
+  "indexing_technique": {
+    "type": "string",
+    "description": "Indexing technique for the document",
+    "enum": ["high_quality", "economy"]
+  },
+  "doc_form": {
+    "type": "string",
+    "description": "Format of the indexed content",
+    "enum": ["text_model", "hierarchical_model", "qa_model"]
+  },
+  "doc_language": {
+    "type": "string",
+    "description": "Language of the document, important for Q&A mode",
+    "example": "English"
+  },
+  "process_rule": {
+    "type": "object",
+    "description": "Processing configuration",
+    "$ref": "ProcessRule schema"
+  },
+  "retrieval_model": {
+    "type": "object",
+    "description": "Retrieval model configuration",
+    "$ref": "RetrievalModel schema"
+  },
+  "embedding_model": {
+    "type": "string",
+    "description": "Name of the embedding model to use"
+  },
+  "embedding_model_provider": {
+    "type": "string",
+    "description": "Provider of the embedding model"
+  }
+}
+```
+
+#### Response
+
+**Success (200)**
+Same structure as Create Document by File.
 
 #### 9. List Documents
 
@@ -252,20 +489,49 @@ Creates a document directly from text content.
 
 Retrieves all documents in a dataset with pagination.
 
-##### Path Parameters
+#### Path Parameters
 - `dataset_id` (string, required): Dataset ID (UUID)
 
-##### Query Parameters
+#### Query Parameters
 - `keyword` (string, optional): Search keyword
-- `page` (integer, optional): Page number
-- `limit` (integer, optional): Items per page
+- `page` (integer, optional): Page number, default 1
+- `limit` (integer, optional): Items per page, default 20
 
-##### Response
-- `data` (array): List of documents
-- `has_more` (boolean): More data available
-- `limit` (integer): Items per page
-- `total` (integer): Total documents
-- `page` (integer): Current page
+#### Response
+
+**Success (200)**
+```json
+{
+  "data": [
+    {
+      "id": "string (uuid)",
+      "position": "integer",
+      "data_source_type": "string",
+      "data_source_info": "object (nullable)",
+      "dataset_process_rule_id": "string (uuid, nullable)",
+      "name": "string",
+      "created_from": "string",
+      "created_by": "string (uuid)",
+      "created_at": "integer (int64)",
+      "tokens": "integer",
+      "indexing_status": "string",
+      "error": "string (nullable)",
+      "enabled": "boolean",
+      "disabled_at": "integer (int64, nullable)",
+      "disabled_by": "string (uuid, nullable)",
+      "archived": "boolean",
+      "display_status": "string",
+      "word_count": "integer",
+      "hit_count": "integer",
+      "doc_form": "string"
+    }
+  ],
+  "has_more": "boolean",
+  "limit": "integer",
+  "total": "integer",
+  "page": "integer"
+}
+```
 
 #### 10. Get Document
 
@@ -273,9 +539,14 @@ Retrieves all documents in a dataset with pagination.
 
 Retrieves detailed information about a specific document.
 
-##### Path Parameters
+#### Path Parameters
 - `dataset_id` (string, required): Dataset ID (UUID)
 - `document_id` (string, required): Document ID (UUID)
+
+#### Response
+
+**Success (200)**
+Same structure as individual document in List Documents response.
 
 #### 11. Update Document by File
 
@@ -283,12 +554,17 @@ Retrieves detailed information about a specific document.
 
 Replaces document content with a new file.
 
-##### Path Parameters
+#### Path Parameters
 - `dataset_id` (string, required): Dataset ID (UUID)
 - `document_id` (string, required): Document ID (UUID)
 
-##### Request Body (multipart/form-data)
+#### Request Body (multipart/form-data)
 Same as Create Document by File.
+
+#### Response
+
+**Success (200)**
+Same structure as Create Document by File.
 
 #### 12. Update Document by Text
 
@@ -296,12 +572,17 @@ Same as Create Document by File.
 
 Updates document content with new text.
 
-##### Path Parameters
+#### Path Parameters
 - `dataset_id` (string, required): Dataset ID (UUID)
 - `document_id` (string, required): Document ID (UUID)
 
-##### Request Body
+#### Request Body (application/json)
 Same as Create Document by Text.
+
+#### Response
+
+**Success (200)**
+Same structure as Create Document by Text.
 
 #### 13. Delete Document
 
@@ -309,9 +590,18 @@ Same as Create Document by Text.
 
 Permanently removes a document from the dataset.
 
-##### Path Parameters
+#### Path Parameters
 - `dataset_id` (string, required): Dataset ID (UUID)
 - `document_id` (string, required): Document ID (UUID)
+
+#### Response
+
+**Success (200)**
+```json
+{
+  "result": "success"
+}
+```
 
 #### 14. Document Status Management
 
@@ -319,12 +609,33 @@ Permanently removes a document from the dataset.
 
 Enables or disables documents in batch.
 
-##### Path Parameters
+#### Path Parameters
 - `dataset_id` (string, required): Dataset ID (UUID)
-- `action` (string, required): Action to perform (`enable`, `disable`)
+- `action` (string, required): Action to perform
+  - **Enum values**: `enable`, `disable`, `archive`, `un_archive`
 
-##### Request Body
-- `document_ids` (array[string], required): List of document IDs
+#### Request Body (application/json)
+```json
+{
+  "document_ids": {
+    "type": "array",
+    "items": {
+      "type": "string"
+    },
+    "required": true,
+    "description": "List of document IDs"
+  }
+}
+```
+
+#### Response
+
+**Success (200)**
+```json
+{
+  "result": "success"
+}
+```
 
 #### 15. Get Batch Indexing Status
 
@@ -332,271 +643,577 @@ Enables or disables documents in batch.
 
 Checks the processing status of a document batch.
 
-##### Path Parameters
+#### Path Parameters
 - `dataset_id` (string, required): Dataset ID (UUID)
 - `batch` (string, required): Batch ID from document creation
 
-##### Response
-- `id` (string): Batch ID
-- `indexing_status` (string): Processing status
-  - `waiting`: Waiting to process
-  - `parsing`: Parsing document
-  - `cleaning`: Cleaning content
-  - `splitting`: Splitting into segments
-  - `indexing`: Creating embeddings
-  - `completed`: Processing complete
-  - `error`: Processing failed
-- `processing_started_at` (timestamp): Processing start time
-- `parsing_completed_at` (timestamp): Parsing completion time
-- `cleaning_completed_at` (timestamp): Cleaning completion time
-- `splitting_completed_at` (timestamp): Splitting completion time
-- `completed_at` (timestamp): Overall completion time
-- `error` (string): Error message if failed
-- `stopped_at` (timestamp): Stop time if interrupted
-
-### Segment Management
-
-#### 16. List Segments
-
-**GET** `/datasets/{dataset_id}/documents/{document_id}/segments`
-
-Retrieves all segments (chunks) of a document.
-
-##### Path Parameters
-- `dataset_id` (string, required): Dataset ID (UUID)
-- `document_id` (string, required): Document ID (UUID)
-
-##### Query Parameters
-- `keyword` (string, optional): Search keyword
-- `status` (string, optional): Filter by status (`enabled`, `disabled`)
-
-##### Response
-- `data` (array): List of segments
-  - `id` (string): Segment ID
-  - `position` (integer): Position in document
-  - `document_id` (string): Parent document ID
-  - `content` (string): Segment content
-  - `word_count` (integer): Word count
-  - `tokens` (integer): Token count
-  - `keywords` (array[string]): Extracted keywords
-  - `index_node_id` (string): Vector index ID
-  - `index_node_hash` (string): Content hash
-  - `hit_count` (integer): Retrieval hit count
-  - `enabled` (boolean): Whether enabled
-  - `disabled_at` (timestamp): Disable time
-  - `disabled_by` (string): Disabled by user
-  - `status` (string): Processing status
-  - `created_by` (string): Creator ID
-  - `created_at` (timestamp): Creation time
-  - `indexing_at` (timestamp): Indexing time
-  - `completed_at` (timestamp): Completion time
-  - `error` (string): Error message
-  - `stopped_at` (timestamp): Stop time
-
-#### 17. Create Segment
-
-**POST** `/datasets/{dataset_id}/documents/{document_id}/segments`
-
-Adds a new segment to a document.
-
-##### Path Parameters
-- `dataset_id` (string, required): Dataset ID (UUID)
-- `document_id` (string, required): Document ID (UUID)
-
-##### Request Body
-- `segments` (array, required): List of segments to create
-  - `content` (string, required): Segment content
-  - `answer` (string, optional): Associated answer for Q&A
-  - `keywords` (array[string], optional): Keywords
-
-#### 18. Get Segment
-
-**GET** `/datasets/{dataset_id}/documents/{document_id}/segments/{segment_id}`
-
-Retrieves detailed information about a specific segment.
-
-##### Path Parameters
-- `dataset_id` (string, required): Dataset ID (UUID)
-- `document_id` (string, required): Document ID (UUID)
-- `segment_id` (string, required): Segment ID (UUID)
-
-#### 19. Update Segment
-
-**POST** `/datasets/{dataset_id}/documents/{document_id}/segments/{segment_id}`
-
-Updates the content and metadata of a segment.
-
-##### Path Parameters
-- `dataset_id` (string, required): Dataset ID (UUID)
-- `document_id` (string, required): Document ID (UUID)
-- `segment_id` (string, required): Segment ID (UUID)
-
-##### Request Body
-- `segment` (object, required): Updated segment data
-  - `content` (string): New content
-  - `answer` (string): Associated answer
-  - `keywords` (array[string]): Keywords
-
-#### 20. Delete Segment
-
-**DELETE** `/datasets/{dataset_id}/documents/{document_id}/segments/{segment_id}`
-
-Permanently removes a segment from the document.
-
-##### Path Parameters
-- `dataset_id` (string, required): Dataset ID (UUID)
-- `document_id` (string, required): Document ID (UUID)
-- `segment_id` (string, required): Segment ID (UUID)
-
-### Child Chunks Management
-
-#### 21. List Child Chunks
-
-**GET** `/datasets/{dataset_id}/documents/{document_id}/segments/{segment_id}/child_chunks`
-
-Retrieves all child chunks (sub-segments) of a segment.
-
-##### Path Parameters
-- `dataset_id` (string, required): Dataset ID (UUID)
-- `document_id` (string, required): Document ID (UUID)
-- `segment_id` (string, required): Segment ID (UUID)
-
-#### 22. Create Child Chunk
-
-**POST** `/datasets/{dataset_id}/documents/{document_id}/segments/{segment_id}/child_chunks`
-
-Creates new child chunks within a segment.
-
-##### Path Parameters
-- `dataset_id` (string, required): Dataset ID (UUID)
-- `document_id` (string, required): Document ID (UUID)
-- `segment_id` (string, required): Segment ID (UUID)
-
-##### Request Body
-- `chunks` (array, required): List of child chunks to create
-  - `content` (string, required): Chunk content
-  - `keywords` (array[string], optional): Keywords
-
-#### 23. Update Child Chunk
-
-**PATCH** `/datasets/{dataset_id}/documents/{document_id}/segments/{segment_id}/child_chunks/{child_chunk_id}`
-
-Updates a specific child chunk.
-
-##### Path Parameters
-- `dataset_id` (string, required): Dataset ID (UUID)
-- `document_id` (string, required): Document ID (UUID)
-- `segment_id` (string, required): Segment ID (UUID)
-- `child_chunk_id` (string, required): Child chunk ID (UUID)
-
-#### 24. Delete Child Chunk
-
-**DELETE** `/datasets/{dataset_id}/documents/{document_id}/segments/{segment_id}/child_chunks/{child_chunk_id}`
-
-Removes a child chunk from the segment.
-
-##### Path Parameters
-- `dataset_id` (string, required): Dataset ID (UUID)
-- `document_id` (string, required): Document ID (UUID)
-- `segment_id` (string, required): Segment ID (UUID)
-- `child_chunk_id` (string, required): Child chunk ID (UUID)
-
-### Tags and Metadata Management
-
-#### 25. List All Tags
-
-**GET** `/datasets/tags`
-
-Retrieves all available tags in the workspace.
-
-##### Query Parameters
-- `type` (string, optional): Filter by tag type (`knowledge_type`, `custom`)
-
-##### Response
-- `data` (array): List of tags
-  - `id` (string): Tag ID
-  - `name` (string): Tag name
-  - `type` (string): Tag type
-  - `binding_count` (integer): Number of datasets using this tag
-
-#### 26. Create Tag
-
-**POST** `/datasets/tags`
-
-Creates a new tag for organizing datasets.
-
-##### Request Body
-- `name` (string, required): Tag name
-- `type` (string, required): Tag type (`knowledge_type`, `custom`)
-
-#### 27. Update Tag
-
-**PATCH** `/datasets/tags`
-
-Updates an existing tag.
-
-##### Request Body
-- `tag_id` (string, required): Tag ID to update
-- `name` (string, required): New tag name
-
-#### 28. Delete Tag
-
-**DELETE** `/datasets/tags`
-
-Removes a tag from the system.
-
-##### Request Body
-- `tag_id` (string, required): Tag ID to delete
-
-#### 29. Bind Tags to Dataset
-
-**POST** `/datasets/tags/binding`
-
-Associates tags with a dataset.
-
-##### Request Body
-- `dataset_id` (string, required): Dataset ID
-- `tag_ids` (array[string], required): List of tag IDs to bind
-
-#### 30. Unbind Tags from Dataset
-
-**POST** `/datasets/tags/unbinding`
-
-Removes tag associations from a dataset.
-
-##### Request Body
-- `dataset_id` (string, required): Dataset ID
-- `tag_ids` (array[string], required): List of tag IDs to unbind
-
-#### 31. Get Dataset Tags
-
-**POST** `/datasets/{dataset_id}/tags`
-
-Retrieves all tags associated with a specific dataset.
-
-##### Path Parameters
-- `dataset_id` (string, required): Dataset ID (UUID)
-
-### File Upload
-
-#### 32. Get Upload File Info
+#### Response
+
+**Success (200)**
+```json
+{
+  "id": "string (uuid)",
+  "indexing_status": "string",
+  "processing_started_at": "number (float, nullable)",
+  "parsing_completed_at": "number (float, nullable)",
+  "cleaning_completed_at": "number (float, nullable)",
+  "splitting_completed_at": "number (float, nullable)",
+  "completed_at": "number (float, nullable)",
+  "paused_at": "number (float, nullable)",
+  "error": "string (nullable)",
+  "stopped_at": "number (float, nullable)",
+  "completed_segments": "integer",
+  "total_segments": "integer"
+}
+```
+
+**Indexing Status Enum Values**: `waiting`, `parsing`, `cleaning`, `splitting`, `indexing`, `completed`, `error`, `paused`
+
+#### 16. Get Upload File Info
 
 **GET** `/datasets/{dataset_id}/documents/{document_id}/upload-file`
 
 Retrieves information about an uploaded file.
 
-##### Path Parameters
+#### Path Parameters
 - `dataset_id` (string, required): Dataset ID (UUID)
 - `document_id` (string, required): Document ID (UUID)
 
-##### Response
-- `id` (string): File ID
-- `name` (string): Original filename
-- `size` (integer): File size in bytes
-- `extension` (string): File extension
-- `mime_type` (string): MIME type
-- `created_by` (string): Uploader ID
-- `created_at` (timestamp): Upload time
+#### Response
+
+**Success (200)**
+```json
+{
+  "id": "string (uuid)",
+  "name": "string",
+  "size": "integer",
+  "extension": "string",
+  "mime_type": "string",
+  "created_by": "string (uuid)",
+  "created_at": "integer (int64)"
+}
+```
+
+### Segment Management
+
+#### 17. List Segments
+
+**GET** `/datasets/{dataset_id}/documents/{document_id}/segments`
+
+Retrieves all segments (chunks) of a document.
+
+#### Path Parameters
+- `dataset_id` (string, required): Dataset ID (UUID)
+- `document_id` (string, required): Document ID (UUID)
+
+#### Query Parameters
+- `keyword` (string, optional): Search keyword
+- `status` (string, optional): Filter segments by their indexing status (e.g., "completed")
+
+#### Response
+
+**Success (200)**
+```json
+{
+  "data": [
+    {
+      "id": "string (uuid)",
+      "position": "integer",
+      "document_id": "string (uuid)",
+      "content": "string",
+      "word_count": "integer",
+      "tokens": "integer",
+      "keywords": ["string"],
+      "index_node_id": "string",
+      "index_node_hash": "string",
+      "hit_count": "integer",
+      "enabled": "boolean",
+      "disabled_at": "integer (int64, nullable)",
+      "disabled_by": "string (uuid, nullable)",
+      "status": "string",
+      "created_by": "string (uuid)",
+      "created_at": "integer (int64)",
+      "indexing_at": "integer (int64)",
+      "completed_at": "integer (int64)",
+      "error": "string (nullable)",
+      "stopped_at": "integer (int64, nullable)"
+    }
+  ]
+}
+```
+
+#### 18. Create Segment
+
+**POST** `/datasets/{dataset_id}/documents/{document_id}/segments`
+
+Adds a new segment to a document.
+
+#### Path Parameters
+- `dataset_id` (string, required): Dataset ID (UUID)
+- `document_id` (string, required): Document ID (UUID)
+
+#### Request Body (application/json)
+```json
+{
+  "segments": {
+    "type": "array",
+    "required": true,
+    "items": {
+      "type": "object",
+      "properties": {
+        "content": {
+          "type": "string",
+          "required": true,
+          "description": "Segment content"
+        },
+        "answer": {
+          "type": "string",
+          "description": "Associated answer for Q&A"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords"
+        }
+      }
+    }
+  }
+}
+```
+
+#### Response
+
+**Success (200)**
+```json
+{
+  "data": [
+    {
+      "id": "string (uuid)",
+      "position": "integer",
+      "document_id": "string (uuid)",
+      "content": "string",
+      "status": "string",
+      "created_at": "integer (int64)"
+    }
+  ]
+}
+```
+
+#### 19. Get Segment
+
+**GET** `/datasets/{dataset_id}/documents/{document_id}/segments/{segment_id}`
+
+Retrieves detailed information about a specific segment.
+
+#### Path Parameters
+- `dataset_id` (string, required): Dataset ID (UUID)
+- `document_id` (string, required): Document ID (UUID)
+- `segment_id` (string, required): Segment ID (UUID)
+
+#### Response
+
+**Success (200)**
+Same structure as individual segment in List Segments response.
+
+#### 20. Update Segment
+
+**POST** `/datasets/{dataset_id}/documents/{document_id}/segments/{segment_id}`
+
+Updates the content and metadata of a segment.
+
+#### Path Parameters
+- `dataset_id` (string, required): Dataset ID (UUID)
+- `document_id` (string, required): Document ID (UUID)
+- `segment_id` (string, required): Segment ID (UUID)
+
+#### Request Body (application/json)
+```json
+{
+  "segment": {
+    "type": "object",
+    "required": true,
+    "properties": {
+      "content": {
+        "type": "string",
+        "description": "New content"
+      },
+      "answer": {
+        "type": "string",
+        "description": "Associated answer"
+      },
+      "keywords": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        },
+        "description": "Keywords"
+      }
+    }
+  }
+}
+```
+
+#### Response
+
+**Success (200)**
+Same structure as Get Segment response.
+
+#### 21. Delete Segment
+
+**DELETE** `/datasets/{dataset_id}/documents/{document_id}/segments/{segment_id}`
+
+Permanently removes a segment from the document.
+
+#### Path Parameters
+- `dataset_id` (string, required): Dataset ID (UUID)
+- `document_id` (string, required): Document ID (UUID)
+- `segment_id` (string, required): Segment ID (UUID)
+
+#### Response
+
+**Success (200)**
+```json
+{
+  "result": "success"
+}
+```
+
+### Child Chunks Management
+
+#### 22. List Child Chunks
+
+**GET** `/datasets/{dataset_id}/documents/{document_id}/segments/{segment_id}/child_chunks`
+
+Retrieves all child chunks (sub-segments) of a segment.
+
+#### Path Parameters
+- `dataset_id` (string, required): Dataset ID (UUID)
+- `document_id` (string, required): Document ID (UUID)
+- `segment_id` (string, required): Segment ID (UUID)
+
+#### Response
+
+**Success (200)**
+```json
+{
+  "data": [
+    {
+      "id": "string (uuid)",
+      "content": "string",
+      "keywords": ["string"],
+      "created_at": "integer (int64)"
+    }
+  ]
+}
+```
+
+#### 23. Create Child Chunk
+
+**POST** `/datasets/{dataset_id}/documents/{document_id}/segments/{segment_id}/child_chunks`
+
+Creates new child chunks within a segment.
+
+#### Path Parameters
+- `dataset_id` (string, required): Dataset ID (UUID)
+- `document_id` (string, required): Document ID (UUID)
+- `segment_id` (string, required): Segment ID (UUID)
+
+#### Request Body (application/json)
+```json
+{
+  "chunks": {
+    "type": "array",
+    "required": true,
+    "items": {
+      "type": "object",
+      "properties": {
+        "content": {
+          "type": "string",
+          "required": true,
+          "description": "Chunk content"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Keywords"
+        }
+      }
+    }
+  }
+}
+```
+
+#### Response
+
+**Success (200)**
+Same structure as List Child Chunks response.
+
+#### 24. Update Child Chunk
+
+**PATCH** `/datasets/{dataset_id}/documents/{document_id}/segments/{segment_id}/child_chunks/{child_chunk_id}`
+
+Updates a specific child chunk.
+
+#### Path Parameters
+- `dataset_id` (string, required): Dataset ID (UUID)
+- `document_id` (string, required): Document ID (UUID)
+- `segment_id` (string, required): Segment ID (UUID)
+- `child_chunk_id` (string, required): Child chunk ID (UUID)
+
+#### Request Body (application/json)
+```json
+{
+  "content": {
+    "type": "string",
+    "description": "Updated chunk content"
+  },
+  "keywords": {
+    "type": "array",
+    "items": {
+      "type": "string"
+    },
+    "description": "Updated keywords"
+  }
+}
+```
+
+#### Response
+
+**Success (200)**
+Same structure as individual child chunk in List Child Chunks response.
+
+#### 25. Delete Child Chunk
+
+**DELETE** `/datasets/{dataset_id}/documents/{document_id}/segments/{segment_id}/child_chunks/{child_chunk_id}`
+
+Removes a child chunk from the segment.
+
+#### Path Parameters
+- `dataset_id` (string, required): Dataset ID (UUID)
+- `document_id` (string, required): Document ID (UUID)
+- `segment_id` (string, required): Segment ID (UUID)
+- `child_chunk_id` (string, required): Child chunk ID (UUID)
+
+#### Response
+
+**Success (200)**
+```json
+{
+  "result": "success"
+}
+```
+
+### Tags Management
+
+#### 26. List All Tags
+
+**GET** `/datasets/tags`
+
+Retrieves all available tags in the workspace.
+
+#### Query Parameters
+- `type` (string, optional): Filter by tag type
+  - **Enum values**: `knowledge_type`, `custom`
+
+#### Response
+
+**Success (200)**
+```json
+{
+  "data": [
+    {
+      "id": "string (uuid)",
+      "name": "string",
+      "type": "string",
+      "binding_count": "integer"
+    }
+  ]
+}
+```
+
+#### 27. Create Tag
+
+**POST** `/datasets/tags`
+
+Creates a new tag for organizing datasets.
+
+#### Request Body (application/json)
+```json
+{
+  "name": {
+    "type": "string",
+    "required": true,
+    "description": "Tag name"
+  },
+  "type": {
+    "type": "string",
+    "required": true,
+    "description": "Tag type",
+    "enum": ["knowledge_type", "custom"]
+  }
+}
+```
+
+#### Response
+
+**Success (200)**
+```json
+{
+  "id": "string (uuid)",
+  "name": "string",
+  "type": "string",
+  "binding_count": "integer"
+}
+```
+
+#### 28. Update Tag
+
+**PATCH** `/datasets/tags`
+
+Updates an existing tag.
+
+#### Request Body (application/json)
+```json
+{
+  "tag_id": {
+    "type": "string",
+    "required": true,
+    "description": "Tag ID to update"
+  },
+  "name": {
+    "type": "string",
+    "required": true,
+    "description": "New tag name"
+  }
+}
+```
+
+#### Response
+
+**Success (200)**
+Same structure as Create Tag response.
+
+#### 29. Delete Tag
+
+**DELETE** `/datasets/tags`
+
+Removes a tag from the system.
+
+#### Request Body (application/json)
+```json
+{
+  "tag_id": {
+    "type": "string",
+    "required": true,
+    "description": "Tag ID to delete"
+  }
+}
+```
+
+#### Response
+
+**Success (200)**
+```json
+{
+  "result": "success"
+}
+```
+
+#### 30. Bind Tags to Dataset
+
+**POST** `/datasets/tags/binding`
+
+Associates tags with a dataset.
+
+#### Request Body (application/json)
+```json
+{
+  "dataset_id": {
+    "type": "string",
+    "required": true,
+    "description": "Dataset ID"
+  },
+  "tag_ids": {
+    "type": "array",
+    "items": {
+      "type": "string"
+    },
+    "required": true,
+    "description": "List of tag IDs to bind"
+  }
+}
+```
+
+#### Response
+
+**Success (200)**
+```json
+{
+  "result": "success"
+}
+```
+
+#### 31. Unbind Tags from Dataset
+
+**POST** `/datasets/tags/unbinding`
+
+Removes tag associations from a dataset.
+
+#### Request Body (application/json)
+```json
+{
+  "dataset_id": {
+    "type": "string",
+    "required": true,
+    "description": "Dataset ID"
+  },
+  "tag_ids": {
+    "type": "array",
+    "items": {
+      "type": "string"
+    },
+    "required": true,
+    "description": "List of tag IDs to unbind"
+  }
+}
+```
+
+#### Response
+
+**Success (200)**
+```json
+{
+  "result": "success"
+}
+```
+
+#### 32. Get Dataset Tags
+
+**POST** `/datasets/{dataset_id}/tags`
+
+Retrieves all tags associated with a specific dataset.
+
+#### Path Parameters
+- `dataset_id` (string, required): Dataset ID (UUID)
+
+#### Response
+
+**Success (200)**
+```json
+{
+  "data": [
+    {
+      "id": "string (uuid)",
+      "name": "string",
+      "type": "string"
+    }
+  ]
+}
+```
 
 ### Models
 
@@ -606,24 +1223,58 @@ Retrieves information about an uploaded file.
 
 Retrieves available text embedding models for the workspace.
 
-##### Response
-- `data` (array): List of available models
-  - `model_name` (string): Model identifier
-  - `model_type` (string): Model type
-  - `provider` (object): Provider information
-    - `provider_name` (string): Provider name
-    - `provider_type` (string): Provider type
-  - `credentials` (object): Model credentials status
-  - `load_balancing` (object): Load balancing configuration
+#### Response
+
+**Success (200)**
+```json
+{
+  "data": [
+    {
+      "provider": "string",
+      "label": {
+        "additionalProperties": "string"
+      },
+      "icon_small": {
+        "additionalProperties": "string (uri)"
+      },
+      "icon_large": {
+        "additionalProperties": "string (uri)"
+      },
+      "status": "string",
+      "models": [
+        {
+          "model": "string",
+          "label": {
+            "additionalProperties": "string"
+          },
+          "model_type": "string",
+          "features": "array (nullable)",
+          "fetch_from": "string",
+          "model_properties": {
+            "context_size": "integer"
+          },
+          "deprecated": "boolean",
+          "status": "string",
+          "load_balancing_enabled": "boolean"
+        }
+      ]
+    }
+  ]
+}
+```
 
 ## Error Responses
 
 All APIs return standard HTTP status codes with detailed error information:
 
+- **200 OK**: Request successful
+- **204 No Content**: Request successful with no content returned
 - **400 Bad Request**: Invalid parameters or request format
+  - **Error codes**: `invalid_param`, `dataset_not_initialized`, `dataset_name_duplicate`, `unsupported_file_type`, `no_file_uploaded`, `too_many_files`
 - **401 Unauthorized**: Missing or invalid API key
 - **403 Forbidden**: Insufficient permissions
 - **404 Not Found**: Resource not found
+- **409 Conflict**: Resource conflict (e.g., duplicate name)
 - **413 Payload Too Large**: File size exceeds limits
 - **415 Unsupported Media Type**: Invalid file format
 - **422 Unprocessable Entity**: Validation errors
@@ -634,9 +1285,9 @@ All APIs return standard HTTP status codes with detailed error information:
 
 ```json
 {
-  "code": "invalid_param",
-  "message": "Invalid parameter: name is required",
-  "status": 400
+  "code": "string",
+  "message": "string",
+  "status": "integer"
 }
 ```
 
@@ -645,12 +1296,28 @@ All APIs return standard HTTP status codes with detailed error information:
 ### Basic Dataset Creation and Document Upload
 
 ```python
+import requests
+import json
+
 # Create dataset
 dataset_data = {
     "name": "Product Knowledge Base",
     "indexing_technique": "high_quality",
     "permission": "all_team_members"
 }
+
+headers = {
+    "Authorization": "Bearer YOUR_API_KEY",
+    "Content-Type": "application/json"
+}
+
+response = requests.post(
+    "https://api.dify.ai/v1/datasets",
+    json=dataset_data,
+    headers=headers
+)
+dataset = response.json()
+dataset_id = dataset["id"]
 
 # Upload document
 with open("manual.pdf", "rb") as f:
@@ -661,8 +1328,13 @@ with open("manual.pdf", "rb") as f:
             "indexing_technique": "high_quality"
         })
     }
-    response = requests.post(f"/datasets/{dataset_id}/document/create-by-file", 
-                           files=files, data=data)
+    headers_upload = {"Authorization": "Bearer YOUR_API_KEY"}
+    response = requests.post(
+        f"https://api.dify.ai/v1/datasets/{dataset_id}/document/create-by-file",
+        files=files,
+        data=data,
+        headers=headers_upload
+    )
 ```
 
 ### Content Retrieval
@@ -675,7 +1347,11 @@ search_data = {
     "score_threshold": 0.7
 }
 
-response = requests.post(f"/datasets/{dataset_id}/retrieve", json=search_data)
+response = requests.post(
+    f"https://api.dify.ai/v1/datasets/{dataset_id}/retrieve",
+    json=search_data,
+    headers=headers
+)
 results = response.json()["records"]
 ```
 
@@ -688,6 +1364,8 @@ results = response.json()["records"]
 5. **Segment Management**: Keep segments focused and coherent for better retrieval
 6. **File Formats**: Support varies by deployment - check supported formats
 7. **Rate Limits**: Implement proper retry logic for production applications
+8. **External Knowledge**: Use `provider: "external"` for external knowledge bases
+9. **Permissions**: Set appropriate permissions (`only_me`, `all_team_members`, `partial_members`)
 
 ## Supported File Formats
 
@@ -699,3 +1377,15 @@ Common supported formats include:
 - **Code**: Various programming language files
 
 *Note: Exact format support may vary by deployment configuration.*
+
+## API Summary
+
+Total APIs: **21 endpoints with 33 methods** across 6 categories:
+- **Dataset Management**: 6 APIs
+- **Document Management**: 10 APIs  
+- **Segment Management**: 5 APIs
+- **Child Chunks Management**: 4 APIs
+- **Tags Management**: 7 APIs
+- **Models**: 1 API
+
+All APIs follow RESTful conventions with proper HTTP methods, consistent request/response formats, and comprehensive error handling.

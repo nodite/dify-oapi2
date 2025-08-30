@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document outlines the design for implementing comprehensive knowledge base functionality in the dify-oapi knowledge module. The implementation will support all 33 knowledge-related APIs covering dataset management, document processing, segment management, metadata handling, and content retrieval.
+This document outlines the design for implementing comprehensive knowledge base functionality in the dify-oapi knowledge module. The implementation will support all 33 knowledge-related APIs covering dataset management, document processing, segment management, child chunks management, tag management, and model integration.
 
 ## Design Decisions
 
@@ -17,30 +17,31 @@ This document outlines the design for implementing comprehensive knowledge base 
 
 **Multi-Resource Implementation**:
 - `dataset` - Dataset management APIs (6 APIs)
-  - Dataset CRUD: `create_dataset`, `list_datasets`, `get_dataset`, `update_dataset`, `delete_dataset`
-  - Dataset operations: `retrieve_from_dataset`
+  - Dataset CRUD: `create`, `list`, `get`, `update`, `delete`
+  - Dataset operations: `retrieve`
 - `document` - Document management APIs (10 APIs)
-  - Document creation: `create_document_by_file`, `create_document_by_text`
-  - Document operations: `list_documents`, `get_document`, `update_document_by_file`, `update_document_by_text`, `delete_document`
-  - File operations: `get_upload_file_info`
-  - Status management: `update_document_status`, `get_batch_indexing_status`
-- `segment` - Segment management APIs (8 APIs)
-  - Segment operations: `list_segments`, `create_segment`, `get_segment`, `update_segment`, `delete_segment`
-  - Child chunk operations: `list_child_chunks`, `create_child_chunk`, `update_child_chunk`, `delete_child_chunk`
+  - Document creation: `create_by_file`, `create_by_text`
+  - Document operations: `list`, `get`, `update_by_file`, `update_by_text`, `delete`
+  - File operations: `file_info`
+  - Status management: `update_status`, `get_batch_status`
+- `segment` - Segment management APIs (5 APIs)
+  - Segment operations: `list`, `create`, `get`, `update`, `delete`
+- `chunk` - Child chunks management APIs (4 APIs)
+  - Child chunk operations: `list_chunks`, `create_chunk`, `update_chunk`, `delete_chunk`
 - `tag` - Tag and metadata management APIs (7 APIs)
-  - Tag operations: `list_tags`, `create_tag`, `update_tag`, `delete_tag`
-  - Tag binding: `bind_tags_to_dataset`, `unbind_tags_from_dataset`
+  - Tag operations: `list`, `create`, `update`, `delete`
+  - Tag binding: `bind`, `unbind`
   - Dataset tags: `get_dataset_tags`
 - `model` - Model management APIs (1 API)
-  - Model retrieval: `get_text_embedding_models`
+  - Model retrieval: `embedding_models`
 
 **Legacy Code Migration (MANDATORY)**:
 - **Current Structure Assessment**: Evaluate existing knowledge module implementation structure
 - **Migration Required**: Consolidate any existing functionality into the new multi-resource structure
 - **Backward Compatibility**: Maintain existing API signatures during migration
 - **Model Consolidation**: Move all models from subdirectories to flat structure
-- **Resource Organization**: Ensure proper separation of concerns across the 5 resource classes
-- **Version Update**: Update V1 class to expose all 5 knowledge resources
+- **Resource Organization**: Ensure proper separation of concerns across the 6 resource classes
+- **Version Update**: Update V1 class to expose all 6 knowledge resources
 
 ### 3. Response Model Strategy
 **Decision**: Create dedicated Response models for every API
@@ -57,10 +58,11 @@ This document outlines the design for implementing comprehensive knowledge base 
 
 ### 5. Method Naming Convention
 **Decision**: Use simple, concise method names for clarity
-- Dataset operations: `create`, `list`, `get`, `update`, `delete`, `retrieve`, `tags`
+- Dataset operations: `create`, `list`, `get`, `update`, `delete`, `retrieve`
 - Document operations: `create_by_file`, `create_by_text`, `list`, `get`, `update_by_file`, `update_by_text`, `delete`, `update_status`, `get_batch_status`, `file_info`
-- Segment operations: `list`, `create`, `get`, `update`, `delete`, `list_chunks`, `create_chunk`, `update_chunk`, `delete_chunk`
-- Tag operations: `list`, `create`, `update`, `delete`, `bind`, `unbind`
+- Segment operations: `list`, `create`, `get`, `update`, `delete`
+- Chunk operations: `list_chunks`, `create_chunk`, `update_chunk`, `delete_chunk`
+- Tag operations: `list`, `create`, `update`, `delete`, `bind`, `unbind`, `get_dataset_tags`
 - Model operations: `embedding_models`
 
 **Naming Rules**:
@@ -88,9 +90,10 @@ This document outlines the design for implementing comprehensive knowledge base 
 - **Zero Exceptions**: All conflicting classes must be renamed with appropriate prefixes
 
 **Required Naming Patterns for Knowledge Module**:
-- **Dataset classes**: `Dataset*` (e.g., `DatasetInfo`, `DatasetConfig`, `DatasetTag`)
+- **Dataset classes**: `Dataset*` (e.g., `DatasetInfo`, `DatasetConfig`)
 - **Document classes**: `Document*` (e.g., `DocumentInfo`, `DocumentStatus`, `DocumentProcessRule`)
-- **Segment classes**: `Segment*` (e.g., `SegmentInfo`, `SegmentContent`, `ChildChunk`)
+- **Segment classes**: `Segment*` (e.g., `SegmentInfo`, `SegmentContent`)
+- **Chunk classes**: `Chunk*` (e.g., `ChildChunkInfo`, `ChunkContent`)
 - **Tag classes**: `Tag*` (e.g., `TagInfo`, `TagBinding`)
 - **Model classes**: `Model*` (e.g., `ModelInfo`, `EmbeddingModel`)
 - **File classes**: `File*` (e.g., `FileInfo`, `FileUpload`)
@@ -263,10 +266,10 @@ from typing import Literal
 IndexingTechnique = Literal["high_quality", "economy"]
 
 # Permission types
-Permission = Literal["only_me", "all_team_members"]
+Permission = Literal["only_me", "all_team_members", "partial_members"]
 
 # Search method types
-SearchMethod = Literal["semantic_search", "full_text_search", "hybrid_search"]
+SearchMethod = Literal["hybrid_search", "semantic_search", "full_text_search", "keyword_search"]
 
 # Document status types
 DocumentStatus = Literal["indexing", "completed", "error", "paused"]
@@ -284,16 +287,29 @@ TransferMethod = Literal["remote_url", "local_file"]
 TagType = Literal["knowledge_type", "custom"]
 
 # Segment status types
-SegmentStatus = Literal["waiting", "indexing", "completed", "error", "paused"]
+SegmentStatus = Literal["waiting", "parsing", "cleaning", "splitting", "indexing", "completed", "error", "paused"]
+
+# Document status action types
+DocumentStatusAction = Literal["enable", "disable", "archive", "un_archive"]
+
+# Document form types
+DocumentForm = Literal["text_model", "hierarchical_model", "qa_model"]
 
 # Model types
 ModelType = Literal["text-embedding"]
 
 # Provider types
-ProviderType = Literal["system", "custom"]
+ProviderType = Literal["vendor", "external"]
 
 # Data source types
 DataSourceType = Literal["upload_file", "notion_import", "website_crawl"]
+
+# Indexing status types
+IndexingStatus = Literal["waiting", "parsing", "cleaning", "splitting", "indexing", "completed", "error", "paused"]
+
+# Reranking model configuration types
+RerankingProviderName = str  # Dynamic provider names
+RerankingModelName = str     # Dynamic model names
 ```
 
 ### 10. Public Class Builder Pattern Rules (MANDATORY)
@@ -326,7 +342,8 @@ model/
 resource/
 ├── dataset.py     # Dataset management operations
 ├── document.py    # Document processing operations
-├── segment.py     # Segment and chunk operations
+├── segment.py     # Segment operations
+├── chunk.py       # Child chunk operations
 ├── tag.py         # Tag and metadata operations
 └── model.py       # Model information operations
 ```
@@ -434,6 +451,9 @@ model/
 ├── reranking_model.py
 ├── batch_info.py
 ├── pagination_info.py
+├── query_info.py
+├── retrieval_record.py
+├── segment_document_info.py
 └── knowledge_types.py
 ```
 
@@ -449,55 +469,59 @@ model/
 ### Dataset Management APIs (6 APIs)
 
 #### Dataset Resource Implementation
-1. **POST /datasets** → `dataset.create_dataset()` - Create new dataset
-2. **GET /datasets** → `dataset.list_datasets()` - List all datasets
-3. **GET /datasets/{dataset_id}** → `dataset.get_dataset()` - Get dataset details
-4. **PATCH /datasets/{dataset_id}** → `dataset.update_dataset()` - Update dataset
-5. **DELETE /datasets/{dataset_id}** → `dataset.delete_dataset()` - Delete dataset
-6. **POST /datasets/{dataset_id}/retrieve** → `dataset.retrieve_from_dataset()` - Search content
-7. **POST /datasets/{dataset_id}/tags** → `dataset.get_dataset_tags()` - Get dataset tags
+1. **POST /datasets** → `dataset.create()` - Create new dataset
+2. **GET /datasets** → `dataset.list()` - List all datasets with filtering
+3. **GET /datasets/{dataset_id}** → `dataset.get()` - Get dataset details
+4. **PATCH /datasets/{dataset_id}** → `dataset.update()` - Update dataset
+5. **DELETE /datasets/{dataset_id}** → `dataset.delete()` - Delete dataset
+6. **POST /datasets/{dataset_id}/retrieve** → `dataset.retrieve()` - Search content
 
 ### Document Management APIs (10 APIs)
 
 #### Document Resource Implementation
-1. **POST /datasets/{dataset_id}/document/create-by-file** → `document.create_document_by_file()` - Upload file
-2. **POST /datasets/{dataset_id}/document/create-by-text** → `document.create_document_by_text()` - Create from text
-3. **GET /datasets/{dataset_id}/documents** → `document.list_documents()` - List documents
-4. **GET /datasets/{dataset_id}/documents/{document_id}** → `document.get_document()` - Get document
-5. **POST /datasets/{dataset_id}/documents/{document_id}/update-by-file** → `document.update_document_by_file()` - Update with file
-6. **POST /datasets/{dataset_id}/documents/{document_id}/update-by-text** → `document.update_document_by_text()` - Update with text
-7. **DELETE /datasets/{dataset_id}/documents/{document_id}** → `document.delete_document()` - Delete document
-8. **GET /datasets/{dataset_id}/documents/{document_id}/upload-file** → `document.get_upload_file_info()` - Get file info
-9. **PATCH /datasets/{dataset_id}/documents/status/{action}** → `document.update_document_status()` - Enable/disable documents
-10. **GET /datasets/{dataset_id}/documents/{batch}/indexing-status** → `document.get_batch_indexing_status()` - Check processing status
+1. **POST /datasets/{dataset_id}/document/create-by-file** → `document.create_by_file()` - Upload file
+2. **POST /datasets/{dataset_id}/document/create-by-text** → `document.create_by_text()` - Create from text
+3. **GET /datasets/{dataset_id}/documents** → `document.list()` - List documents
+4. **GET /datasets/{dataset_id}/documents/{document_id}** → `document.get()` - Get document
+5. **POST /datasets/{dataset_id}/documents/{document_id}/update-by-file** → `document.update_by_file()` - Update with file
+6. **POST /datasets/{dataset_id}/documents/{document_id}/update-by-text** → `document.update_by_text()` - Update with text
+7. **DELETE /datasets/{dataset_id}/documents/{document_id}** → `document.delete()` - Delete document
+8. **GET /datasets/{dataset_id}/documents/{document_id}/upload-file** → `document.file_info()` - Get file info
+9. **PATCH /datasets/{dataset_id}/documents/status/{action}** → `document.update_status()` - Batch status management
+10. **GET /datasets/{dataset_id}/documents/{batch}/indexing-status** → `document.get_batch_status()` - Check processing status
 
-### Segment Management APIs (8 APIs)
+### Segment Management APIs (5 APIs)
 
 #### Segment Resource Implementation
-1. **GET /datasets/{dataset_id}/documents/{document_id}/segments** → `segment.list_segments()` - List segments
-2. **POST /datasets/{dataset_id}/documents/{document_id}/segments** → `segment.create_segment()` - Create segment
-3. **GET /datasets/{dataset_id}/documents/{document_id}/segments/{segment_id}** → `segment.get_segment()` - Get segment
-4. **POST /datasets/{dataset_id}/documents/{document_id}/segments/{segment_id}** → `segment.update_segment()` - Update segment
-5. **DELETE /datasets/{dataset_id}/documents/{document_id}/segments/{segment_id}** → `segment.delete_segment()` - Delete segment
-6. **GET /datasets/{dataset_id}/documents/{document_id}/segments/{segment_id}/child_chunks** → `segment.list_child_chunks()` - List child chunks
-7. **POST /datasets/{dataset_id}/documents/{document_id}/segments/{segment_id}/child_chunks** → `segment.create_child_chunk()` - Create child chunk
-8. **PATCH /datasets/{dataset_id}/documents/{document_id}/segments/{segment_id}/child_chunks/{child_chunk_id}** → `segment.update_child_chunk()` - Update child chunk
-9. **DELETE /datasets/{dataset_id}/documents/{document_id}/segments/{segment_id}/child_chunks/{child_chunk_id}** → `segment.delete_child_chunk()` - Delete child chunk
+1. **GET /datasets/{dataset_id}/documents/{document_id}/segments** → `segment.list()` - List segments
+2. **POST /datasets/{dataset_id}/documents/{document_id}/segments** → `segment.create()` - Create segments
+3. **GET /datasets/{dataset_id}/documents/{document_id}/segments/{segment_id}** → `segment.get()` - Get segment
+4. **POST /datasets/{dataset_id}/documents/{document_id}/segments/{segment_id}** → `segment.update()` - Update segment
+5. **DELETE /datasets/{dataset_id}/documents/{document_id}/segments/{segment_id}** → `segment.delete()` - Delete segment
+
+### Child Chunks Management APIs (4 APIs)
+
+#### Chunk Resource Implementation
+1. **GET /datasets/{dataset_id}/documents/{document_id}/segments/{segment_id}/child_chunks** → `chunk.list_chunks()` - List child chunks
+2. **POST /datasets/{dataset_id}/documents/{document_id}/segments/{segment_id}/child_chunks** → `chunk.create_chunk()` - Create child chunk
+3. **PATCH /datasets/{dataset_id}/documents/{document_id}/segments/{segment_id}/child_chunks/{child_chunk_id}** → `chunk.update_chunk()` - Update child chunk
+4. **DELETE /datasets/{dataset_id}/documents/{document_id}/segments/{segment_id}/child_chunks/{child_chunk_id}** → `chunk.delete_chunk()` - Delete child chunk
 
 ### Tag Management APIs (7 APIs)
 
 #### Tag Resource Implementation
-1. **GET /datasets/tags** → `tag.list_tags()` - List all tags
-2. **POST /datasets/tags** → `tag.create_tag()` - Create tag
-3. **PATCH /datasets/tags** → `tag.update_tag()` - Update tag
-4. **DELETE /datasets/tags** → `tag.delete_tag()` - Delete tag
-5. **POST /datasets/tags/binding** → `tag.bind_tags_to_dataset()` - Bind tags
-6. **POST /datasets/tags/unbinding** → `tag.unbind_tags_from_dataset()` - Unbind tags
+1. **GET /datasets/tags** → `tag.list()` - List all tags
+2. **POST /datasets/tags** → `tag.create()` - Create tag
+3. **PATCH /datasets/tags** → `tag.update()` - Update tag
+4. **DELETE /datasets/tags** → `tag.delete()` - Delete tag
+5. **POST /datasets/tags/binding** → `tag.bind()` - Bind tags
+6. **POST /datasets/tags/unbinding** → `tag.unbind()` - Unbind tags
+7. **POST /datasets/{dataset_id}/tags** → `tag.get_dataset_tags()` - Get dataset tags
 
 ### Model Management APIs (1 API)
 
 #### Model Resource Implementation
-1. **GET /workspaces/current/models/model-types/text-embedding** → `model.get_text_embedding_models()` - Get embedding models
+1. **GET /workspaces/current/models/model-types/text-embedding** → `model.embedding_models()` - Get embedding models
 
 ## Technical Implementation Details
 
@@ -508,11 +532,22 @@ class Dataset:
     def __init__(self, config: Config):
         self.config = config
 
-    def create_dataset(self, request: CreateDatasetRequest, request_option: RequestOption) -> CreateDatasetResponse:
+    def create(self, request: CreateDatasetRequest, request_option: RequestOption) -> CreateDatasetResponse:
         return Transport.execute(self.config, request, unmarshal_as=CreateDatasetResponse, option=request_option)
 
-    async def acreate_dataset(self, request: CreateDatasetRequest, request_option: RequestOption) -> CreateDatasetResponse:
+    async def acreate(self, request: CreateDatasetRequest, request_option: RequestOption) -> CreateDatasetResponse:
         return await ATransport.aexecute(self.config, request, unmarshal_as=CreateDatasetResponse, option=request_option)
+
+# Example: chunk resource
+class Chunk:
+    def __init__(self, config: Config):
+        self.config = config
+
+    def list_chunks(self, request: ListChildChunksRequest, request_option: RequestOption) -> ListChildChunksResponse:
+        return Transport.execute(self.config, request, unmarshal_as=ListChildChunksResponse, option=request_option)
+
+    async def alist_chunks(self, request: ListChildChunksRequest, request_option: RequestOption) -> ListChildChunksResponse:
+        return await ATransport.aexecute(self.config, request, unmarshal_as=ListChildChunksResponse, option=request_option)
 ```
 
 ### Complete Code Style Examples
@@ -555,16 +590,18 @@ from pydantic import BaseModel
 from .dataset_info import DatasetInfo
 from .retrieval_model import RetrievalModel
 from .embedding_model_parameters import EmbeddingModelParameters
-from ..knowledge_types import IndexingTechnique, Permission
+from ..knowledge_types import IndexingTechnique, Permission, ProviderType
 
 class CreateDatasetRequestBody(BaseModel):
     name: str | None = None
     description: str | None = None
     indexing_technique: IndexingTechnique | None = None
     permission: Permission | None = None
-    provider: str | None = None
-    model: str | None = None
-    embedding_model_parameters: EmbeddingModelParameters | None = None
+    provider: ProviderType | None = None
+    external_knowledge_api_id: str | None = None
+    external_knowledge_id: str | None = None
+    embedding_model: str | None = None
+    embedding_model_provider: str | None = None
     retrieval_model: RetrievalModel | None = None
 
     @staticmethod
@@ -676,15 +713,16 @@ class V1:
         self.dataset = Dataset(config)
         self.document = Document(config)
         self.segment = Segment(config)
+        self.chunk = Chunk(config)
         self.tag = Tag(config)
         self.model = Model(config)
 ```
 
 **Migration Steps**:
 1. Assess current knowledge module structure and existing implementations
-2. Create new resource classes (Dataset, Document, Segment, Tag, Model)
+2. Create new resource classes (Dataset, Document, Segment, Chunk, Tag, Model)
 3. Migrate any existing methods to appropriate resource classes
-4. Update V1 class to expose all 5 knowledge resources
+4. Update V1 class to expose all 6 knowledge resources
 5. Ensure all existing method signatures are preserved during migration
 6. Update import statements and references throughout the codebase
 
@@ -714,6 +752,7 @@ class V1:
 - **Public Class Separation**: Create separate files for public/common model tests
 - **Flat Structure**: All model test files are placed directly in `tests/knowledge/v1/model/` directory
 - **Naming Convention**: Use resource-based naming patterns for test files
+- **Complete Coverage**: All 33 APIs must have corresponding test classes
 
 ### Test Class Organization Pattern
 **Within knowledge test files, organize by API operations:**
@@ -811,7 +850,56 @@ class TestCreateSegmentModels:
     # Response tests
     def test_response_inheritance(self): ...
 
-# ... other segment API test classes
+class TestGetSegmentModels:
+    # Request tests
+    def test_request_builder(self): ...
+    # Response tests
+    def test_response_inheritance(self): ...
+
+class TestUpdateSegmentModels:
+    # Request tests
+    def test_request_builder(self): ...
+    # RequestBody tests
+    def test_request_body_builder(self): ...
+    # Response tests
+    def test_response_inheritance(self): ...
+
+class TestDeleteSegmentModels:
+    # Request tests
+    def test_request_builder(self): ...
+    # Response tests
+    def test_response_inheritance(self): ...
+```
+
+```python
+# test_chunk_models.py
+class TestListChildChunksModels:
+    # Request tests
+    def test_request_builder(self): ...
+    # Response tests
+    def test_response_inheritance(self): ...
+
+class TestCreateChildChunkModels:
+    # Request tests
+    def test_request_builder(self): ...
+    # RequestBody tests
+    def test_request_body_builder(self): ...
+    # Response tests
+    def test_response_inheritance(self): ...
+
+class TestUpdateChildChunkModels:
+    # Request tests
+    def test_request_builder(self): ...
+    # RequestBody tests
+    def test_request_body_builder(self): ...
+    # Response tests
+    def test_response_inheritance(self): ...
+
+class TestDeleteChildChunkModels:
+    # Request tests
+    def test_request_builder(self): ...
+    # Response tests
+    def test_response_inheritance(self): ...
 ```
 
 ```python
@@ -830,7 +918,43 @@ class TestCreateTagModels:
     # Response tests
     def test_response_inheritance(self): ...
 
-# ... other tag API test classes
+class TestUpdateTagModels:
+    # Request tests
+    def test_request_builder(self): ...
+    # RequestBody tests
+    def test_request_body_builder(self): ...
+    # Response tests
+    def test_response_inheritance(self): ...
+
+class TestDeleteTagModels:
+    # Request tests
+    def test_request_builder(self): ...
+    # RequestBody tests
+    def test_request_body_builder(self): ...
+    # Response tests
+    def test_response_inheritance(self): ...
+
+class TestBindTagsToDatasetModels:
+    # Request tests
+    def test_request_builder(self): ...
+    # RequestBody tests
+    def test_request_body_builder(self): ...
+    # Response tests
+    def test_response_inheritance(self): ...
+
+class TestUnbindTagsFromDatasetModels:
+    # Request tests
+    def test_request_builder(self): ...
+    # RequestBody tests
+    def test_request_body_builder(self): ...
+    # Response tests
+    def test_response_inheritance(self): ...
+
+class TestGetDatasetTagsModels:
+    # Request tests
+    def test_request_builder(self): ...
+    # Response tests
+    def test_response_inheritance(self): ...
 ```
 
 ```python
@@ -857,6 +981,10 @@ class TestSegmentInfo:
     def test_builder_pattern(self): ...
     def test_field_validation(self): ...
 
+class TestChildChunkInfo:
+    def test_builder_pattern(self): ...
+    def test_field_validation(self): ...
+
 class TestTagInfo:
     def test_builder_pattern(self): ...
     def test_field_validation(self): ...
@@ -876,6 +1004,14 @@ class TestProcessRule:
 class TestRetrievalModel:
     def test_builder_pattern(self): ...
     def test_field_validation(self): ...
+
+class TestBatchInfo:
+    def test_builder_pattern(self): ...
+    def test_field_validation(self): ...
+
+class TestPaginationInfo:
+    def test_builder_pattern(self): ...
+    def test_field_validation(self): ...
 ```
 
 ```
@@ -885,18 +1021,20 @@ tests/
         ├── model/
         │   ├── test_dataset_models.py          # Dataset API tests (6 test classes)
         │   ├── test_document_models.py         # Document API tests (10 test classes)
-        │   ├── test_segment_models.py          # Segment API tests (8 test classes)
-        │   ├── test_tag_models.py              # Tag API tests (6 test classes)
+        │   ├── test_segment_models.py          # Segment API tests (5 test classes)
+        │   ├── test_chunk_models.py            # Child chunk API tests (4 test classes)
+        │   ├── test_tag_models.py              # Tag API tests (7 test classes)
         │   ├── test_model_models.py            # Model API tests (1 test class)
-        │   └── test_knowledge_public_models.py # All public models (DatasetInfo, DocumentInfo, SegmentInfo, TagInfo, ModelInfo, FileInfo, ProcessRule, RetrievalModel, etc.)
+        │   └── test_knowledge_public_models.py # All public models (DatasetInfo, DocumentInfo, SegmentInfo, ChildChunkInfo, TagInfo, ModelInfo, FileInfo, ProcessRule, RetrievalModel, BatchInfo, PaginationInfo, etc.)
         ├── resource/
         │   ├── test_dataset_resource.py        # Dataset resource tests
         │   ├── test_document_resource.py       # Document resource tests
         │   ├── test_segment_resource.py        # Segment resource tests
+        │   ├── test_chunk_resource.py          # Chunk resource tests
         │   ├── test_tag_resource.py            # Tag resource tests
         │   └── test_model_resource.py          # Model resource tests
         ├── integration/
-        │   ├── test_knowledge_api_integration.py # All 39 knowledge API integration tests
+        │   ├── test_knowledge_api_integration.py # All 33 knowledge API integration tests
         │   ├── test_comprehensive_integration.py
         │   ├── test_examples_validation.py
         │   └── test_version_integration.py
@@ -925,17 +1063,18 @@ tests/
 
 ### Examples Documentation Consistency (CRITICAL)
 **Issue Identified**: Current examples documentation has inconsistencies
-- **knowledge-api.md**: Documents 33 APIs (6+12+8+7+1)
-- **examples/README.md**: Claims 29 APIs (6+10+7+7+0)
-- **Actual files**: Approximately 29 example files
+- **knowledge-api.md**: Documents 33 APIs (6+10+5+4+7+1)
+- **examples/README.md**: Claims 29 APIs (needs update)
+- **Actual files**: Need to match 33 example files
 
 **Required Fixes**:
 1. **Update examples/knowledge/README.md**:
    - Correct total API count to 33 APIs
-   - Add missing Segment Management section (8 APIs)
-   - Add missing Model Management section (1 API)
-   - Correct Document Management to 12 APIs
-   - Remove or clarify Metadata Management (may be part of Document APIs)
+   - Add Segment Management section (5 APIs)
+   - Add Child Chunks Management section (4 APIs)
+   - Add Model Management section (1 API)
+   - Correct Document Management to 10 APIs
+   - Correct Tag Management to 7 APIs
 
 2. **Verify Example File Completeness**:
    - Ensure all 33 APIs have corresponding example files
@@ -949,35 +1088,39 @@ tests/
 - **Missing tests**: No model/ tests for Model Management API
 
 **Test Structure Issues**:
-1. **Model Tests Missing**:
-   - No `test_model_models.py` for Model Management API
-   - No `test_model_resource.py` for Model resource
-   - Missing model API integration tests
+1. **Missing Test Files**:
+   - No `test_chunk_models.py` for Child Chunks Management APIs
+   - No `test_chunk_resource.py` for Chunk resource
+   - Missing chunk API integration tests
+   - Need to verify `test_model_models.py` exists for Model Management API
 
-2. **Metadata vs Document Confusion**:
-   - Separate `test_metadata_models.py` and `test_metadata_resource.py`
-   - May overlap with Document API functionality
-   - Need clarification if metadata is separate or part of Document APIs
-
-3. **Test Coverage Gaps**:
+2. **Test Coverage Gaps**:
    - Integration tests may not cover all 33 APIs
-   - Resource tests may not match final resource structure
+   - Resource tests may not match final 6-resource structure (Dataset, Document, Segment, Chunk, Tag, Model)
+   - Need to ensure all test classes match the 33 API operations
+
+3. **Resource Structure Alignment**:
+   - Tests must align with 6-resource structure instead of previous structure
+   - Chunk operations separated from Segment operations
+   - All 33 APIs must have corresponding test coverage
 
 **Required Test Fixes**:
-1. **Add Missing Model Tests**:
-   - Create `test_model_models.py` for Model API
-   - Create `test_model_resource.py` for Model resource
-   - Add model integration tests
+1. **Add Missing Chunk Tests**:
+   - Create `test_chunk_models.py` for Child Chunks Management APIs
+   - Create `test_chunk_resource.py` for Chunk resource
+   - Add chunk integration tests
+   - Verify `test_model_models.py` exists for Model API
 
-2. **Clarify Metadata vs Document Tests**:
-   - Determine if metadata tests should be merged with document tests
-   - Ensure no duplicate test coverage
-   - Align test structure with final API specification
+2. **Update Resource Structure Tests**:
+   - Ensure tests align with 6-resource structure (Dataset, Document, Segment, Chunk, Tag, Model)
+   - Separate chunk operations from segment operations in tests
+   - Update resource tests to match final resource organization
 
 3. **Verify Test Completeness**:
    - Ensure all 33 APIs have corresponding tests
-   - Verify resource tests match final resource structure
+   - Verify resource tests match final 6-resource structure
    - Update integration tests for complete API coverage
+   - Ensure test class counts match API counts (6+10+5+4+7+1=33)
 
 ### Examples Directory Structure
 ```
@@ -1005,7 +1148,8 @@ examples/knowledge/
 │   ├── create_segment.py              # Create segment examples
 │   ├── get_segment.py                 # Get segment examples
 │   ├── update_segment.py              # Update segment examples
-│   ├── delete_segment.py              # Delete segment examples
+│   └── delete_segment.py              # Delete segment examples
+├── chunk/
 │   ├── list_child_chunks.py           # List child chunks examples
 │   ├── create_child_chunk.py          # Create child chunk examples
 │   ├── update_child_chunk.py          # Update child chunk examples
@@ -1102,7 +1246,7 @@ examples/knowledge/
 ### 7. Examples and Tests Documentation Improvements
 **Documentation Consistency Fixes**:
 - **API Count Correction**: Updated examples documentation to reflect all 33 APIs
-- **Missing Sections**: Added Segment Management (8 APIs) and Model Management (1 API) sections
+- **Missing Sections**: Added Segment Management (5 APIs), Child Chunks Management (4 APIs) and Model Management (1 API) sections
 - **File Verification**: Ensured all APIs have corresponding example files
 - **Naming Standardization**: Consistent file naming across all example categories
 - **README Accuracy**: Examples README now matches API documentation specifications
@@ -1118,16 +1262,17 @@ examples/knowledge/
 
 This design provides a comprehensive solution for knowledge base management in dify-oapi, covering all 33 knowledge-related APIs with a clean, maintainable architecture. The implementation prioritizes type safety, consistency, and developer experience while ensuring full compatibility with the latest Dify API specifications.
 
-The multi-resource organization, combined with shared common models and descriptive method naming, creates an intuitive and powerful interface for knowledge operations including dataset management, document processing, segment management, tag operations, and model integration.
+The multi-resource organization, combined with shared common models and descriptive method naming, creates an intuitive and powerful interface for knowledge operations including dataset management, document processing, segment management, child chunks management, tag operations, and model integration.
 
 The examples strategy ensures developers have clear, educational references for every API operation, supporting both learning and integration testing needs with comprehensive sync/async coverage. The code minimalism approach optimizes all examples for clarity while maintaining full functionality and safety features.
 
 ### Key Features
 - **Comprehensive Coverage**: Full implementation of all 33 knowledge base APIs with consistent architecture
-- **Multi-resource Organization**: Logical separation of concerns across dataset, document, segment, tag, and model resources
+- **Multi-resource Organization**: Logical separation of concerns across dataset, document, segment, chunk, tag, and model resources
 - **Advanced Type Safety**: Strict typing with Literal types for all predefined values
 - **Enhanced File Processing**: Complete file upload, processing, and management capabilities
-- **Intelligent Segmentation**: Advanced segment and child chunk management
+- **Intelligent Segmentation**: Advanced segment management with separate child chunk operations
+- **Hierarchical Content Structure**: Support for document → segment → child chunk hierarchy
 - **Flexible Tag System**: Comprehensive tag management and binding capabilities
 - **Model Integration**: Support for multiple embedding models and providers
 - **Performance Optimization**: Enhanced indexing, search, and retrieval capabilities
@@ -1137,11 +1282,12 @@ The examples strategy ensures developers have clear, educational references for 
 - **Consistent Patterns**: Uniform architecture and naming conventions across all resources
 
 ### Documentation Consistency Requirements
-- **Examples Documentation**: Must be updated to reflect all 33 APIs accurately
+- **Examples Documentation**: Must be updated to reflect all 33 APIs accurately (6+10+5+4+7+1)
 - **File Completeness**: All APIs must have corresponding example files
 - **Naming Standardization**: Consistent file naming across all example categories
 - **README Accuracy**: Examples README must match API documentation specifications
-- **Test Structure Consistency**: Test structure must align with final API specifications
+- **Test Structure Consistency**: Test structure must align with final 6-resource API specifications
 - **Test Coverage Completeness**: All 33 APIs must have corresponding test files
-- **Resource Test Alignment**: Resource tests must match final resource organization
+- **Resource Test Alignment**: Resource tests must match final 6-resource organization (Dataset, Document, Segment, Chunk, Tag, Model)
 - **Integration Test Coverage**: All APIs must be covered in integration tests
+- **Child Chunks Separation**: Child chunks management must be properly separated from segment management in both examples and tests

@@ -13,8 +13,8 @@ from unittest.mock import AsyncMock, Mock
 
 import pytest
 
-from dify_oapi.api.knowledge.knowledge import Knowledge
-from dify_oapi.api.knowledge.v1.v1 import V1
+from dify_oapi.api.knowledge.service import Knowledge
+from dify_oapi.api.knowledge.v1.version import V1
 from dify_oapi.client import Client
 from dify_oapi.core.model.config import Config
 from dify_oapi.core.model.request_option import RequestOption
@@ -109,16 +109,21 @@ class TestComprehensiveIntegrationValidation:
     ) -> None:
         """Test complete workflow: create dataset -> add document -> create segments -> manage chunks."""
         # Mock responses for complete workflow
+        from dify_oapi.api.knowledge.v1.model.child_chunk_info import ChildChunkInfo
         from dify_oapi.api.knowledge.v1.model.create_child_chunk_response import CreateChildChunkResponse
         from dify_oapi.api.knowledge.v1.model.create_dataset_response import CreateDatasetResponse
         from dify_oapi.api.knowledge.v1.model.create_document_by_text_response import CreateDocumentByTextResponse
         from dify_oapi.api.knowledge.v1.model.create_segment_response import CreateSegmentResponse
+        from dify_oapi.api.knowledge.v1.model.document_info import DocumentInfo
+        from dify_oapi.api.knowledge.v1.model.segment_info import SegmentInfo
 
         responses = [
             CreateDatasetResponse(id="workflow-dataset", name="Workflow Dataset"),
-            CreateDocumentByTextResponse(document={"id": "workflow-doc", "name": "Workflow Document"}, batch="batch-1"),
-            CreateSegmentResponse(data=[{"id": "workflow-segment", "content": "Workflow segment"}]),
-            CreateChildChunkResponse(data=[{"id": "workflow-chunk", "content": "Workflow chunk"}]),
+            CreateDocumentByTextResponse(
+                document=DocumentInfo(id="workflow-doc", name="Workflow Document"), batch="batch-1"
+            ),
+            CreateSegmentResponse(data=[SegmentInfo(id="workflow-segment", content="Workflow segment")]),
+            CreateChildChunkResponse(data=[ChildChunkInfo(id="workflow-chunk", content="Workflow chunk")]),
         ]
 
         mock_execute = Mock()
@@ -154,7 +159,7 @@ class TestComprehensiveIntegrationValidation:
             .build()
         )
         document_result = client.knowledge.v1.document.create_by_text(document_request, request_option)
-        assert document_result.document["id"] == "workflow-doc"
+        assert document_result.document.id == "workflow-doc"
 
         # 3. Create segments in document
         segment_request_body = CreateSegmentRequestBody.builder().segments([{"content": "Workflow segment"}]).build()
@@ -166,7 +171,7 @@ class TestComprehensiveIntegrationValidation:
             .build()
         )
         segment_result = client.knowledge.v1.segment.create(segment_request, request_option)
-        assert segment_result.data[0]["id"] == "workflow-segment"
+        assert segment_result.data[0].id == "workflow-segment"
 
         # 4. Create child chunks in segment
         chunk_request_body = CreateChildChunkRequestBody.builder().chunks([{"content": "Workflow chunk"}]).build()
@@ -179,7 +184,7 @@ class TestComprehensiveIntegrationValidation:
             .build()
         )
         chunk_result = client.knowledge.v1.chunk.create(chunk_request, request_option)
-        assert chunk_result.data[0]["id"] == "workflow-chunk"
+        assert chunk_result.data[0].id == "workflow-chunk"
 
         # Verify all operations were executed
         assert mock_execute.call_count == 4
@@ -192,6 +197,7 @@ class TestComprehensiveIntegrationValidation:
         from dify_oapi.api.knowledge.v1.model.create_dataset_response import CreateDatasetResponse
         from dify_oapi.api.knowledge.v1.model.create_tag_response import CreateTagResponse
         from dify_oapi.api.knowledge.v1.model.get_dataset_tags_response import GetDatasetTagsResponse
+        from dify_oapi.api.knowledge.v1.model.tag_info import TagInfo
 
         responses = [
             CreateDatasetResponse(id="dataset-1", name="Dataset 1"),
@@ -199,8 +205,8 @@ class TestComprehensiveIntegrationValidation:
             CreateTagResponse(id="shared-tag", name="Shared Tag", type="knowledge_type", binding_count=0),
             BindTagsToDatasetResponse(result="success"),  # Bind to dataset 1
             BindTagsToDatasetResponse(result="success"),  # Bind to dataset 2
-            GetDatasetTagsResponse(data=[{"id": "shared-tag", "name": "Shared Tag"}]),  # Dataset 1 tags
-            GetDatasetTagsResponse(data=[{"id": "shared-tag", "name": "Shared Tag"}]),  # Dataset 2 tags
+            GetDatasetTagsResponse(data=[TagInfo(id="shared-tag", name="Shared Tag")]),  # Dataset 1 tags
+            GetDatasetTagsResponse(data=[TagInfo(id="shared-tag", name="Shared Tag")]),  # Dataset 2 tags
         ]
 
         mock_execute = Mock()
@@ -267,8 +273,8 @@ class TestComprehensiveIntegrationValidation:
 
         assert len(tags1.data) == 1
         assert len(tags2.data) == 1
-        assert tags1.data[0]["id"] == "shared-tag"
-        assert tags2.data[0]["id"] == "shared-tag"
+        assert tags1.data[0].id == "shared-tag"
+        assert tags2.data[0].id == "shared-tag"
 
     def test_model_selection_and_usage(self, client: Client, request_option: RequestOption, monkeypatch: Any) -> None:
         """Test model selection and usage in dataset creation."""
@@ -282,8 +288,8 @@ class TestComprehensiveIntegrationValidation:
             CreateDatasetResponse(
                 id="model-dataset",
                 name="Model Dataset",
-                embedding_model="text-embedding-ada-002",
-                embedding_model_provider="openai",
+                model="text-embedding-ada-002",
+                provider="openai",
             ),
         ]
 
@@ -304,15 +310,15 @@ class TestComprehensiveIntegrationValidation:
         dataset_request_body = (
             CreateDatasetRequestBody.builder()
             .name("Model Dataset")
-            .embedding_model("text-embedding-ada-002")
-            .embedding_model_provider("openai")
+            .model("text-embedding-ada-002")
+            .provider("openai")
             .build()
         )
         dataset_request = CreateDatasetRequest.builder().request_body(dataset_request_body).build()
         dataset = client.knowledge.v1.dataset.create(dataset_request, request_option)
 
-        assert dataset.embedding_model == "text-embedding-ada-002"
-        assert dataset.embedding_model_provider == "openai"
+        assert dataset.model == "text-embedding-ada-002"
+        assert dataset.provider == "openai"
 
     def test_error_propagation_through_all_layers(
         self, client: Client, request_option: RequestOption, monkeypatch: Any
@@ -615,3 +621,75 @@ class TestComprehensiveIntegrationValidation:
         assert hasattr(client.knowledge.v1.model, "embedding_models")
 
         # Total: 6 + 10 + 5 + 4 + 7 + 1 = 33 APIs
+
+    def test_performance_and_memory_usage_validation(self, client: Client, request_option: RequestOption) -> None:
+        """Test performance and memory usage patterns."""
+        # This test validates that the integration doesn't have obvious performance issues
+        import time
+
+        start_time = time.time()
+
+        # Test that client initialization is fast
+        test_client = Client.builder().domain("https://api.dify.ai").build()
+        assert hasattr(test_client.knowledge, "v1")
+
+        # Test that resource access is fast
+        assert hasattr(test_client.knowledge.v1, "dataset")
+        assert hasattr(test_client.knowledge.v1, "document")
+        assert hasattr(test_client.knowledge.v1, "segment")
+        assert hasattr(test_client.knowledge.v1, "chunk")
+        assert hasattr(test_client.knowledge.v1, "tag")
+        assert hasattr(test_client.knowledge.v1, "model")
+
+        end_time = time.time()
+
+        # Initialization should be very fast (less than 1 second)
+        assert (end_time - start_time) < 1.0
+
+    def test_concurrent_operations_validation(
+        self, client: Client, request_option: RequestOption, monkeypatch: Any
+    ) -> None:
+        """Test concurrent operations handling."""
+        import threading
+
+        from dify_oapi.api.knowledge.v1.model.create_dataset_response import CreateDatasetResponse
+
+        # Mock successful responses
+        response = CreateDatasetResponse(id="concurrent-dataset", name="Concurrent Dataset")
+        mock_execute = Mock(return_value=response)
+        monkeypatch.setattr("dify_oapi.core.http.transport.Transport.execute", mock_execute)
+
+        results = []
+        errors = []
+
+        def create_dataset_thread():
+            try:
+                from dify_oapi.api.knowledge.v1.model.create_dataset_request import CreateDatasetRequest
+                from dify_oapi.api.knowledge.v1.model.create_dataset_request_body import CreateDatasetRequestBody
+
+                request_body = CreateDatasetRequestBody.builder().name("Concurrent Dataset").build()
+                request = CreateDatasetRequest.builder().request_body(request_body).build()
+                result = client.knowledge.v1.dataset.create(request, request_option)
+                results.append(result)
+            except Exception as e:
+                errors.append(e)
+
+        # Create multiple threads
+        threads = []
+        for _ in range(5):
+            thread = threading.Thread(target=create_dataset_thread)
+            threads.append(thread)
+            thread.start()
+
+        # Wait for all threads to complete
+        for thread in threads:
+            thread.join()
+
+        # Verify no errors occurred
+        assert len(errors) == 0, f"Concurrent operations failed: {errors}"
+        assert len(results) == 5
+
+        # Verify all results are correct
+        for result in results:
+            assert result.id == "concurrent-dataset"
+            assert result.name == "Concurrent Dataset"

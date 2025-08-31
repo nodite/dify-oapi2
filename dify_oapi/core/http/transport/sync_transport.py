@@ -45,6 +45,12 @@ def _handle_stream_error(response: httpx.Response) -> bytes:
     return f"data: [ERROR] {error_message}\n\n".encode()
 
 
+def _update_response_mode(body_data: dict | None, stream: bool) -> None:
+    """Update response_mode field in request body based on stream parameter"""
+    if body_data and "response_mode" in body_data:
+        body_data["response_mode"] = "streaming" if stream else "blocking"
+
+
 def _stream_generator(
     conf: Config,
     req: BaseRequest,
@@ -160,8 +166,10 @@ class Transport:
             files = req.files
             if req.body is not None:
                 data = json.loads(JSON.marshal(req.body))
+                _update_response_mode(data, stream)
         elif req.body is not None:
             json_ = json.loads(JSON.marshal(req.body))
+            _update_response_mode(json_, stream)
 
         if stream:
             return _stream_generator(

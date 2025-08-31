@@ -11,6 +11,7 @@ from dify_oapi.api.knowledge.v1.model.get_dataset_response import GetDatasetResp
 from dify_oapi.api.knowledge.v1.model.list_datasets_request import ListDatasetsRequest
 from dify_oapi.api.knowledge.v1.model.list_datasets_response import ListDatasetsResponse
 from dify_oapi.api.knowledge.v1.model.query_info import QueryInfo
+from dify_oapi.api.knowledge.v1.model.reranking_mode import RerankingMode
 from dify_oapi.api.knowledge.v1.model.retrieval_model import RetrievalModel
 from dify_oapi.api.knowledge.v1.model.retrieve_from_dataset_request import RetrieveFromDatasetRequest
 from dify_oapi.api.knowledge.v1.model.retrieve_from_dataset_request_body import RetrieveFromDatasetRequestBody
@@ -18,6 +19,7 @@ from dify_oapi.api.knowledge.v1.model.retrieve_from_dataset_response import Retr
 from dify_oapi.api.knowledge.v1.model.update_dataset_request import UpdateDatasetRequest
 from dify_oapi.api.knowledge.v1.model.update_dataset_request_body import UpdateDatasetRequestBody
 from dify_oapi.api.knowledge.v1.model.update_dataset_response import UpdateDatasetResponse
+from dify_oapi.api.knowledge.v1.model.weights import KeywordSetting, VectorSetting, Weights
 from dify_oapi.core.enum import HttpMethod
 from dify_oapi.core.model.base_response import BaseResponse
 
@@ -296,3 +298,121 @@ class TestRetrieveModels:
         response = RetrieveFromDatasetResponse(query=query_info, records=[])
         assert response.query.content == "test query"
         assert response.records == []
+
+
+class TestRetrievalModelAndWeights:
+    """Test RetrievalModel and Weights models."""
+
+    def test_weights_creation(self) -> None:
+        """Test creating Weights with all fields."""
+        keyword_setting = KeywordSetting(keyword_weight=0.3)
+        vector_setting = VectorSetting(
+            vector_weight=0.7, embedding_model_name="bge-m3", embedding_provider_name="langgenius/gpustack/gpustack"
+        )
+
+        weights = Weights(weight_type="customized", keyword_setting=keyword_setting, vector_setting=vector_setting)
+
+        assert weights.weight_type == "customized"
+        assert weights.keyword_setting.keyword_weight == 0.3
+        assert weights.vector_setting.vector_weight == 0.7
+        assert weights.vector_setting.embedding_model_name == "bge-m3"
+
+    def test_weights_from_api_response(self) -> None:
+        """Test parsing Weights from actual API response format."""
+        api_data = {
+            "weight_type": "customized",
+            "keyword_setting": {"keyword_weight": 0.3},
+            "vector_setting": {
+                "vector_weight": 0.7,
+                "embedding_model_name": "bge-m3",
+                "embedding_provider_name": "langgenius/gpustack/gpustack",
+            },
+        }
+
+        weights = Weights(**api_data)
+
+        assert weights.weight_type == "customized"
+        assert weights.keyword_setting.keyword_weight == 0.3
+        assert weights.vector_setting.vector_weight == 0.7
+
+    def test_retrieval_model_with_new_structure(self) -> None:
+        """Test RetrievalModel with new API response structure."""
+        reranking_model = RerankingMode(
+            reranking_provider_name="langgenius/gpustack/gpustack", reranking_model_name="bge-reranker-v2-m3"
+        )
+
+        weights = Weights(
+            weight_type="customized",
+            keyword_setting=KeywordSetting(keyword_weight=0.3),
+            vector_setting=VectorSetting(vector_weight=0.7),
+        )
+
+        model = RetrievalModel(
+            search_method="hybrid_search",
+            reranking_enable=True,
+            reranking_mode="reranking_model",
+            reranking_model=reranking_model,
+            weights=weights,
+            top_k=10,
+            score_threshold_enabled=False,
+            score_threshold=0.0,
+        )
+
+        assert model.search_method == "hybrid_search"
+        assert model.reranking_enable is True
+        assert model.reranking_mode == "reranking_model"
+        assert model.reranking_model.reranking_provider_name == "langgenius/gpustack/gpustack"
+        assert model.weights.weight_type == "customized"
+
+    def test_retrieval_model_from_api_response(self) -> None:
+        """Test parsing RetrievalModel from actual API response."""
+        api_data = {
+            "search_method": "hybrid_search",
+            "reranking_enable": True,
+            "reranking_mode": "reranking_model",
+            "reranking_model": {
+                "reranking_provider_name": "langgenius/gpustack/gpustack",
+                "reranking_model_name": "bge-reranker-v2-m3",
+            },
+            "weights": {
+                "weight_type": "customized",
+                "keyword_setting": {"keyword_weight": 0.3},
+                "vector_setting": {
+                    "vector_weight": 0.7,
+                    "embedding_model_name": "bge-m3",
+                    "embedding_provider_name": "langgenius/gpustack/gpustack",
+                },
+            },
+            "top_k": 10,
+            "score_threshold_enabled": False,
+            "score_threshold": 0.0,
+        }
+
+        model = RetrievalModel(**api_data)
+
+        assert model.search_method == "hybrid_search"
+        assert model.reranking_mode == "reranking_model"
+        assert model.reranking_model.reranking_provider_name == "langgenius/gpustack/gpustack"
+        assert model.weights.weight_type == "customized"
+        assert model.weights.keyword_setting.keyword_weight == 0.3
+
+    def test_retrieval_model_builder_with_new_fields(self) -> None:
+        """Test RetrievalModel builder pattern with new fields."""
+        reranking_model = RerankingMode.builder().reranking_provider_name("test").build()
+        weights = Weights(weight_type="customized")
+
+        model = (
+            RetrievalModel.builder()
+            .search_method("hybrid_search")
+            .reranking_enable(True)
+            .reranking_mode("reranking_model")
+            .reranking_model(reranking_model)
+            .weights(weights)
+            .top_k(10)
+            .build()
+        )
+
+        assert model.search_method == "hybrid_search"
+        assert model.reranking_enable is True
+        assert model.reranking_mode == "reranking_model"
+        assert model.top_k == 10

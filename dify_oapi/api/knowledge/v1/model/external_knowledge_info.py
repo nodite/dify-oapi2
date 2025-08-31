@@ -8,8 +8,10 @@ from pydantic import BaseModel
 class ExternalKnowledgeInfo(BaseModel):
     """External knowledge info model with builder pattern."""
 
-    external_knowledge_api_id: Optional[str] = None
     external_knowledge_id: Optional[str] = None
+    external_knowledge_api_id: Optional[str] = None
+    external_knowledge_api_name: Optional[str] = None
+    external_knowledge_api_endpoint: Optional[str] = None
 
     @staticmethod
     def builder() -> "ExternalKnowledgeInfoBuilder":
@@ -31,4 +33,12 @@ class ExternalKnowledgeInfoBuilder:
 
     def external_knowledge_id(self, external_knowledge_id: str) -> "ExternalKnowledgeInfoBuilder":
         self._external_knowledge_info.external_knowledge_id = external_knowledge_id
+        return self
+
+    def external_knowledge_api_name(self, external_knowledge_api_name: str) -> "ExternalKnowledgeInfoBuilder":
+        self._external_knowledge_info.external_knowledge_api_name = external_knowledge_api_name
+        return self
+
+    def external_knowledge_api_endpoint(self, external_knowledge_api_endpoint: str) -> "ExternalKnowledgeInfoBuilder":
+        self._external_knowledge_info.external_knowledge_api_endpoint = external_knowledge_api_endpoint
         return self

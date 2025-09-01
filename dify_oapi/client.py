@@ -7,6 +7,7 @@ from .api.knowledge.service import Knowledge
 from .api.workflow.service import WorkflowService
 from .core.enum import LogLevel
 from .core.http.transport import Transport
+from .core.http.transport.connection_pool import connection_pool
 from .core.log import logger
 from .core.model.base_request import BaseRequest
 from .core.model.config import Config
@@ -57,6 +58,14 @@ class Client:
         resp = Transport.execute(self._config, request)
         return resp
 
+    def close(self):
+        """Close all HTTP connections and clean up resources."""
+        connection_pool.close_all()
+
+    async def aclose(self):
+        """Async version of close for proper cleanup of async connections."""
+        await connection_pool.aclose_all()
+
     @staticmethod
     def builder() -> ClientBuilder:
         return ClientBuilder()
@@ -76,6 +85,21 @@ class ClientBuilder:
 
     def max_retry_count(self, count: int) -> ClientBuilder:
         self._config.max_retry_count = count
+        return self
+
+    def max_keepalive_connections(self, count: int) -> ClientBuilder:
+        """Set maximum keepalive connections per connection pool."""
+        self._config.max_keepalive_connections = count
+        return self
+
+    def max_connections(self, count: int) -> ClientBuilder:
+        """Set maximum total connections per connection pool."""
+        self._config.max_connections = count
+        return self
+
+    def keepalive_expiry(self, seconds: float) -> ClientBuilder:
+        """Set keepalive connection expiry time in seconds."""
+        self._config.keepalive_expiry = seconds
         return self
 
     def build(self) -> Client:

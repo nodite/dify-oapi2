@@ -2,10 +2,10 @@ from dify_oapi.core.http.transport import ATransport, Transport
 from dify_oapi.core.model.config import Config
 from dify_oapi.core.model.request_option import RequestOption
 
+from ..model.get_suggested_questions_request import GetSuggestedQuestionsRequest
+from ..model.get_suggested_questions_response import GetSuggestedQuestionsResponse
 from ..model.message_history_request import MessageHistoryRequest
 from ..model.message_history_response import MessageHistoryResponse
-from ..model.message_suggested_request import MessageSuggestedRequest
-from ..model.message_suggested_response import MessageSuggestedResponse
 
 
 class Message:
@@ -13,16 +13,18 @@ class Message:
         self.config: Config = config
 
     def suggested(
-        self, request: MessageSuggestedRequest, option: RequestOption | None = None
-    ) -> MessageSuggestedResponse:
+        self, request: GetSuggestedQuestionsRequest, option: RequestOption | None = None
+    ) -> GetSuggestedQuestionsResponse:
         # Send request
-        return Transport.execute(self.config, request, unmarshal_as=MessageSuggestedResponse, option=option)
+        return Transport.execute(self.config, request, unmarshal_as=GetSuggestedQuestionsResponse, option=option)
 
     async def asuggested(
-        self, request: MessageSuggestedRequest, option: RequestOption | None = None
-    ) -> MessageSuggestedResponse:
+        self, request: GetSuggestedQuestionsRequest, option: RequestOption | None = None
+    ) -> GetSuggestedQuestionsResponse:
         # Send request
-        return await ATransport.aexecute(self.config, request, unmarshal_as=MessageSuggestedResponse, option=option)
+        return await ATransport.aexecute(
+            self.config, request, unmarshal_as=GetSuggestedQuestionsResponse, option=option
+        )
 
     def history(self, request: MessageHistoryRequest, option: RequestOption | None = None) -> MessageHistoryResponse:
         # Send request

@@ -17,6 +17,7 @@ A Python SDK for interacting with the Dify Service-API. This library provides a 
 - **Type Safety**: Comprehensive type hints with Pydantic validation
 - **File Upload**: Support for images and documents
 - **Modern HTTP Client**: Built on httpx for reliable API communication
+- **Connection Pool Optimization**: Efficient TCP connection reuse to reduce resource overhead
 
 ## 📦 Installation
 
@@ -247,6 +248,7 @@ dify-oapi/
 ## 📖 Documentation
 
 - [**Project Overview**](./docs/overview.md) - Architecture and technical details
+- [**TCP Connection Optimization**](./docs/tcp-optimization.md) - Connection pool configuration and performance tuning
 - [**Completion APIs**](./docs/completion/apis.md) - Complete completion API documentation
 - [**Knowledge Base APIs**](./docs/knowledge/apis.md) - Complete knowledge base API documentation
 - [**Examples**](./examples/README.md) - Usage examples and patterns

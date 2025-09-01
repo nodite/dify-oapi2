@@ -33,6 +33,12 @@ def _format_log_details(
     return ", ".join(details)
 
 
+def _update_response_mode(body_data: dict | None, stream: bool) -> None:
+    """Update response_mode field in request body based on stream parameter"""
+    if body_data and "response_mode" in body_data:
+        body_data["response_mode"] = "streaming" if stream else "blocking"
+
+
 async def _handle_async_stream_error(response: httpx.Response) -> bytes:
     """Handle async streaming response errors"""
     try:
@@ -162,8 +168,10 @@ class ATransport:
             files = req.files
             if req.body is not None:
                 data = json.loads(JSON.marshal(req.body))
+                _update_response_mode(data, stream)
         elif req.body is not None:
             json_ = json.loads(JSON.marshal(req.body))
+            _update_response_mode(json_, stream)
 
         if stream:
             return _async_stream_generator(

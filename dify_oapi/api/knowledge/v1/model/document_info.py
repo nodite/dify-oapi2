@@ -4,7 +4,9 @@ from typing import Optional
 
 from pydantic import BaseModel
 
+from .data_source_detail import DataSourceDetailDict
 from .data_source_info import DataSourceInfo
+from .document_metadata import DocumentMetadata
 from .knowledge_types import DataSourceType, DocumentDisplayStatus, DocumentForm, IndexingStatus
 
 
@@ -15,23 +17,25 @@ class DocumentInfo(BaseModel):
     position: Optional[int] = None
     data_source_type: Optional[DataSourceType] = None
     data_source_info: Optional["DataSourceInfo"] = None
+    data_source_detail_dict: Optional[DataSourceDetailDict] = None
     dataset_process_rule_id: Optional[str] = None
     name: Optional[str] = None
     created_from: Optional[str] = None
     created_by: Optional[str] = None
-    created_at: Optional[float] = None
+    created_at: Optional[int] = None
     tokens: Optional[int] = None
     indexing_status: Optional[IndexingStatus] = None
     error: Optional[str] = None
     enabled: Optional[bool] = None
-    disabled_at: Optional[float] = None
+    disabled_at: Optional[int] = None
     disabled_by: Optional[str] = None
     archived: Optional[bool] = None
     display_status: Optional[DocumentDisplayStatus] = None
     word_count: Optional[int] = None
     hit_count: Optional[int] = None
     doc_form: Optional[DocumentForm] = None
-    updated_at: Optional[float] = None
+    doc_metadata: Optional[DocumentMetadata] = None
+    updated_at: Optional[int] = None
 
     @staticmethod
     def builder() -> "DocumentInfoBuilder":
@@ -63,6 +67,10 @@ class DocumentInfoBuilder:
         self._document_info.data_source_info = data_source_info
         return self
 
+    def data_source_detail_dict(self, data_source_detail_dict: DataSourceDetailDict) -> "DocumentInfoBuilder":
+        self._document_info.data_source_detail_dict = data_source_detail_dict
+        return self
+
     def dataset_process_rule_id(self, dataset_process_rule_id: str) -> "DocumentInfoBuilder":
         self._document_info.dataset_process_rule_id = dataset_process_rule_id
         return self
@@ -79,7 +87,7 @@ class DocumentInfoBuilder:
         self._document_info.created_by = created_by
         return self
 
-    def created_at(self, created_at: float) -> "DocumentInfoBuilder":
+    def created_at(self, created_at: int) -> "DocumentInfoBuilder":
         self._document_info.created_at = created_at
         return self
 
@@ -99,7 +107,7 @@ class DocumentInfoBuilder:
         self._document_info.enabled = enabled
         return self
 
-    def disabled_at(self, disabled_at: float) -> "DocumentInfoBuilder":
+    def disabled_at(self, disabled_at: int) -> "DocumentInfoBuilder":
         self._document_info.disabled_at = disabled_at
         return self
 
@@ -127,6 +135,10 @@ class DocumentInfoBuilder:
         self._document_info.doc_form = doc_form
         return self
 
-    def updated_at(self, updated_at: float) -> "DocumentInfoBuilder":
+    def doc_metadata(self, doc_metadata: DocumentMetadata) -> "DocumentInfoBuilder":
+        self._document_info.doc_metadata = doc_metadata
+        return self
+
+    def updated_at(self, updated_at: int) -> "DocumentInfoBuilder":
         self._document_info.updated_at = updated_at
         return self

@@ -8,7 +8,7 @@ from .chat_request_file import ChatRequestFile
 class ChatRequestBody(BaseModel):
     query: str | None = None
     inputs: dict | None = None
-    response_mode: str | None = None
+    response_mode: str | None = "streaming"
     user: str | None = None
     conversation_id: str | None = None
     files: list[ChatRequestFile] | None = None

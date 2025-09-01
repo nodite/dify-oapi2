@@ -9,7 +9,7 @@ from .workflow_types import ResponseMode
 
 class RunWorkflowRequestBody(BaseModel):
     inputs: WorkflowInputs | None = None
-    response_mode: ResponseMode | None = None
+    response_mode: ResponseMode | None = "streaming"
     user: str | None = None
     files: list[WorkflowFileInfo] | None = None
     trace_id: str | None = None

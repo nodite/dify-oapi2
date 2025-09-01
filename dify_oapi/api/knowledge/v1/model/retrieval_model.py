@@ -6,6 +6,7 @@ from pydantic import BaseModel
 
 from .knowledge_types import SearchMethod
 from .reranking_mode import RerankingMode
+from .weights import Weights
 
 
 class RetrievalModel(BaseModel):
@@ -13,11 +14,12 @@ class RetrievalModel(BaseModel):
 
     search_method: Optional[SearchMethod] = None
     reranking_enable: Optional[bool] = None
-    reranking_mode: Optional[RerankingMode] = None
+    reranking_mode: Optional[str] = None
+    reranking_model: Optional[RerankingMode] = None
     top_k: Optional[int] = None
     score_threshold_enabled: Optional[bool] = None
     score_threshold: Optional[float] = None
-    weights: Optional[float] = None
+    weights: Optional[Weights] = None
 
     @staticmethod
     def builder() -> "RetrievalModelBuilder":
@@ -41,8 +43,12 @@ class RetrievalModelBuilder:
         self._retrieval_model.reranking_enable = reranking_enable
         return self
 
-    def reranking_mode(self, reranking_mode: RerankingMode) -> "RetrievalModelBuilder":
+    def reranking_mode(self, reranking_mode: str) -> "RetrievalModelBuilder":
         self._retrieval_model.reranking_mode = reranking_mode
+        return self
+
+    def reranking_model(self, reranking_model: RerankingMode) -> "RetrievalModelBuilder":
+        self._retrieval_model.reranking_model = reranking_model
         return self
 
     def top_k(self, top_k: int) -> "RetrievalModelBuilder":
@@ -57,6 +63,6 @@ class RetrievalModelBuilder:
         self._retrieval_model.score_threshold = score_threshold
         return self
 
-    def weights(self, weights: float) -> "RetrievalModelBuilder":
+    def weights(self, weights: Weights) -> "RetrievalModelBuilder":
         self._retrieval_model.weights = weights
         return self

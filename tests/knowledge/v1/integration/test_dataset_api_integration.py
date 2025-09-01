@@ -256,14 +256,14 @@ class TestDatasetIntegration:
         self, dataset_resource: Dataset, request_option: RequestOption, monkeypatch: Any
     ) -> None:
         """Test dataset retrieval with advanced retrieval configuration"""
-        from dify_oapi.api.knowledge.v1.model.reranking_model import RerankingModel
+        from dify_oapi.api.knowledge.v1.model.reranking_mode import RerankingMode
 
         # Create advanced retrieval model
-        reranking_model = RerankingModel(reranking_provider_name="cohere", reranking_model_name="rerank-english-v2.0")
+        reranking_mode = RerankingMode(reranking_provider_name="cohere", reranking_model_name="rerank-english-v2.0")
         retrieval_model = RetrievalModel(
             search_method="hybrid_search",
             reranking_enable=True,
-            reranking_model=reranking_model,
+            reranking_model=reranking_mode,
             top_k=10,
             score_threshold_enabled=True,
             score_threshold=0.7,

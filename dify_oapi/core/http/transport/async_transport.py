@@ -16,6 +16,7 @@ from dify_oapi.core.model.request_option import RequestOption
 from dify_oapi.core.type import T
 
 from ._misc import _build_header, _build_url, _get_sleep_time, _merge_dicts, _unmarshaller
+from .connection_pool import connection_pool
 
 
 def _format_log_details(
@@ -64,6 +65,15 @@ async def _async_stream_generator(
     method_name = http_method.name
     body_data = _merge_dicts(json_, files, data)
 
+    # Use connection pool for async streaming requests
+    client = connection_pool.get_async_client(
+        conf.domain or "",
+        conf.timeout,
+        getattr(conf, "max_keepalive_connections", 20),
+        getattr(conf, "max_connections", 100),
+        getattr(conf, "keepalive_expiry", 30.0),
+    )
+
     for retry in range(conf.max_retry_count + 1):
         if retry > 0:
             sleep_time = _get_sleep_time(retry)
@@ -71,19 +81,16 @@ async def _async_stream_generator(
             await asyncio.sleep(sleep_time)
 
         try:
-            async with (
-                httpx.AsyncClient() as client,
-                client.stream(
-                    method_name,
-                    url,
-                    headers=headers,
-                    params=tuple(req.queries),
-                    json=json_,
-                    data=data,
-                    files=files,
-                    timeout=conf.timeout,
-                ) as response,
-            ):
+            async with client.stream(
+                method_name,
+                url,
+                headers=headers,
+                params=tuple(req.queries),
+                json=json_,
+                data=data,
+                files=files,
+                timeout=conf.timeout,
+            ) as response:
                 logger.debug(
                     f"{_format_log_details(method_name, url, headers, req.queries, body_data)}, stream response"
                 )
@@ -181,45 +188,51 @@ class ATransport:
         method_name = req.http_method.name
         body_data = _merge_dicts(json_, files, data)
 
-        async with httpx.AsyncClient() as client:
-            for retry in range(conf.max_retry_count + 1):
-                if retry > 0:
-                    sleep_time = _get_sleep_time(retry)
-                    logger.info(f"in-request: sleep {sleep_time}s")
-                    await asyncio.sleep(sleep_time)
+        # Use connection pool for async regular requests
+        client = connection_pool.get_async_client(
+            conf.domain or "",
+            conf.timeout,
+            getattr(conf, "max_keepalive_connections", 20),
+            getattr(conf, "max_connections", 100),
+            getattr(conf, "keepalive_expiry", 30.0),
+        )
 
-                try:
-                    response = await client.request(
-                        method_name,
-                        url,
-                        headers=headers,
-                        params=tuple(req.queries),
-                        json=json_,
-                        data=data,
-                        files=files,
-                        timeout=conf.timeout,
-                    )
-                    break
-                except httpx.RequestError as e:
-                    err_msg = f"{e.__class__.__name__}: {e!r}"
-                    log_details = _format_log_details(method_name, url, headers, req.queries, body_data)
+        for retry in range(conf.max_retry_count + 1):
+            if retry > 0:
+                sleep_time = _get_sleep_time(retry)
+                logger.info(f"in-request: sleep {sleep_time}s")
+                await asyncio.sleep(sleep_time)
 
-                    if retry < conf.max_retry_count:
-                        logger.info(
-                            f"in-request: retrying ({retry + 1}/{conf.max_retry_count}) {log_details}, exp: {err_msg}"
-                        )
-                        continue
+            try:
+                response = await client.request(
+                    method_name,
+                    url,
+                    headers=headers,
+                    params=tuple(req.queries),
+                    json=json_,
+                    data=data,
+                    files=files,
+                    timeout=conf.timeout,
+                )
+                break
+            except httpx.RequestError as e:
+                err_msg = f"{e.__class__.__name__}: {e!r}"
+                log_details = _format_log_details(method_name, url, headers, req.queries, body_data)
+
+                if retry < conf.max_retry_count:
                     logger.info(
-                        f"in-request: request failed, retried ({retry}/{conf.max_retry_count}) {log_details}, exp: {err_msg}"
+                        f"in-request: retrying ({retry + 1}/{conf.max_retry_count}) {log_details}, exp: {err_msg}"
                     )
-                    raise
+                    continue
+                logger.info(
+                    f"in-request: request failed, retried ({retry}/{conf.max_retry_count}) {log_details}, exp: {err_msg}"
+                )
+                raise
 
-            logger.debug(
-                f"{_format_log_details(method_name, url, headers, req.queries, body_data)} {response.status_code}"
-            )
+        logger.debug(f"{_format_log_details(method_name, url, headers, req.queries, body_data)} {response.status_code}")
 
-            raw_resp = RawResponse()
-            raw_resp.status_code = response.status_code
-            raw_resp.headers = dict(response.headers)
-            raw_resp.content = response.content
-            return _unmarshaller(raw_resp, unmarshal_as)
+        raw_resp = RawResponse()
+        raw_resp.status_code = response.status_code
+        raw_resp.headers = dict(response.headers)
+        raw_resp.content = response.content
+        return _unmarshaller(raw_resp, unmarshal_as)

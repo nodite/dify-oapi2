@@ -107,17 +107,17 @@ class ConnectionPoolManager:
         """Async version of close_all for proper async client cleanup."""
         with self._client_lock:
             # Close sync clients
-            for client in self._sync_clients.values():
+            for sync_client in self._sync_clients.values():
                 try:
-                    client.close()
+                    sync_client.close()
                 except Exception:
                     pass
             self._sync_clients.clear()
 
             # Close async clients properly
-            for client in self._async_clients.values():
+            for async_client in self._async_clients.values():
                 try:
-                    await client.aclose()
+                    await async_client.aclose()
                 except Exception:
                     pass
             self._async_clients.clear()

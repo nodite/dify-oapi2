@@ -36,6 +36,10 @@ from .conversation_info import ConversationInfo
 from .conversation_variable import ConversationVariable
 from .feedback_info import FeedbackInfo
 from .file_info import FileInfo
+
+# Feedback Management API Models
+from .get_feedbacks_request import GetFeedbacksRequest
+from .get_feedbacks_response import GetFeedbacksResponse
 from .get_suggested_questions_request import GetSuggestedQuestionsRequest
 from .get_suggested_questions_response import GetSuggestedQuestionsResponse
 from .message_file import MessageFile
@@ -48,6 +52,9 @@ from .site_settings import SiteSettings
 from .stop_chat_request import StopChatRequest
 from .stop_chat_request_body import StopChatRequestBody
 from .stop_chat_response import StopChatResponse
+from .submit_feedback_request import SubmitFeedbackRequest
+from .submit_feedback_request_body import SubmitFeedbackRequestBody
+from .submit_feedback_response import SubmitFeedbackResponse
 from .tool_icon import ToolIcon
 from .usage_info import UsageInfo
 
@@ -61,6 +68,12 @@ __all__ = [
     "StopChatResponse",
     "GetSuggestedQuestionsRequest",
     "GetSuggestedQuestionsResponse",
+    # Feedback Management API Models
+    "SubmitFeedbackRequest",
+    "SubmitFeedbackRequestBody",
+    "SubmitFeedbackResponse",
+    "GetFeedbacksRequest",
+    "GetFeedbacksResponse",
     # Chat File Model
     "ChatFile",
     # Public Models

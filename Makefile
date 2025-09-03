@@ -8,17 +8,17 @@ install: ## Install dependencies
 	poetry install --with dev,format
 
 format: ## Format code with ruff
-	poetry run ruff format .
+	poetry run ruff --config=pyproject.toml format .
 
 lint: ## Lint code with ruff
-	poetry run ruff check .
+	poetry run ruff --config=pyproject.toml check .
 
 fix: ## Fix linting issues with ruff
-	poetry run ruff check --fix .
+	poetry run ruff --config=pyproject.toml check --fix .
 
 check: ## Run all checks (lint + type check)
-	poetry run ruff check .
-	poetry run mypy .
+	poetry run ruff --config=pyproject.toml check .
+	poetry run mypy --config-file=pyproject.toml .
 
 test: ## Run tests
 	poetry run pytest tests/ -v

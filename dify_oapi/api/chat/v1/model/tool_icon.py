@@ -1,65 +1,52 @@
-"""Tool icon model for Chat API."""
-
 from __future__ import annotations
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 
 class ToolIconDetail(BaseModel):
-    """Tool icon detail model."""
+    """Tool icon detail configuration."""
 
-    background: str | None = Field(None, description="Background color")
-    content: str | None = Field(None, description="Icon content")
+    background: str
+    content: str
 
-    @classmethod
-    def builder(cls) -> ToolIconDetailBuilder:
-        """Create a ToolIconDetail builder."""
+    @staticmethod
+    def builder() -> ToolIconDetailBuilder:
         return ToolIconDetailBuilder()
 
 
 class ToolIconDetailBuilder:
-    """Builder for ToolIconDetail."""
+    def __init__(self):
+        self._tool_icon_detail = ToolIconDetail(background="", content="")
 
-    def __init__(self) -> None:
-        self._tool_icon_detail = ToolIconDetail()
+    def build(self) -> ToolIconDetail:
+        return self._tool_icon_detail
 
     def background(self, background: str) -> ToolIconDetailBuilder:
-        """Set background color."""
         self._tool_icon_detail.background = background
         return self
 
     def content(self, content: str) -> ToolIconDetailBuilder:
-        """Set icon content."""
         self._tool_icon_detail.content = content
         return self
 
-    def build(self) -> ToolIconDetail:
-        """Build the ToolIconDetail instance."""
-        return self._tool_icon_detail
-
 
 class ToolIcon(BaseModel):
-    """Tool icon model."""
+    """Tool icon configuration."""
 
-    icon: str | ToolIconDetail | None = Field(None, description="Tool icon")
+    tool_icons: dict[str, str | ToolIconDetail] | None = None
 
-    @classmethod
-    def builder(cls) -> ToolIconBuilder:
-        """Create a ToolIcon builder."""
+    @staticmethod
+    def builder() -> ToolIconBuilder:
         return ToolIconBuilder()
 
 
 class ToolIconBuilder:
-    """Builder for ToolIcon."""
-
-    def __init__(self) -> None:
+    def __init__(self):
         self._tool_icon = ToolIcon()
 
-    def icon(self, icon: str | ToolIconDetail) -> ToolIconBuilder:
-        """Set tool icon."""
-        self._tool_icon.icon = icon
-        return self
-
     def build(self) -> ToolIcon:
-        """Build the ToolIcon instance."""
         return self._tool_icon
+
+    def tool_icons(self, tool_icons: dict[str, str | ToolIconDetail]) -> ToolIconBuilder:
+        self._tool_icon.tool_icons = tool_icons
+        return self

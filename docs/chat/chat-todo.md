@@ -107,7 +107,7 @@ Total: 3+1+2+5+2+4+6 = 22 APIs
 - [x] Test Audio Resource Class
 
 ### Step 13: Implement Application Information API Models (4 APIs)
-- [ ] Implement Application Information API Models
+- [x] Implement Application Information API Models
 - [ ] Test Application Information API Models
 
 ### Step 14: Implement App Resource Class

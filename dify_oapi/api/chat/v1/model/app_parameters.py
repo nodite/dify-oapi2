@@ -1,194 +1,210 @@
-"""Application parameters model for Chat API."""
-
 from __future__ import annotations
 
 from typing import Any
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
-from .chat_types import FormInputType
+from .chat_types import AutoPlay, TransferMethod
 
 
 class UserInputFormItem(BaseModel):
-    """User input form item model."""
+    """User input form item configuration."""
 
-    label: str | None = Field(None, description="Form item label")
-    variable: str | None = Field(None, description="Variable name")
-    required: bool | None = Field(None, description="Whether required")
-    default: str | None = Field(None, description="Default value")
-    options: list[str] | None = Field(None, description="Options for select type")
-    type: FormInputType | None = Field(None, description="Form input type")
+    # Text input configuration
+    text_input: dict[str, Any] | None = None
+    # Paragraph input configuration
+    paragraph: dict[str, Any] | None = None
+    # Select input configuration
+    select: dict[str, Any] | None = None
 
-    @classmethod
-    def builder(cls) -> UserInputFormItemBuilder:
-        """Create a UserInputFormItem builder."""
+    @staticmethod
+    def builder() -> UserInputFormItemBuilder:
         return UserInputFormItemBuilder()
 
 
 class UserInputFormItemBuilder:
-    """Builder for UserInputFormItem."""
-
-    def __init__(self) -> None:
-        self._form_item = UserInputFormItem()
-
-    def label(self, label: str) -> UserInputFormItemBuilder:
-        """Set form item label."""
-        self._form_item.label = label
-        return self
-
-    def variable(self, variable: str) -> UserInputFormItemBuilder:
-        """Set variable name."""
-        self._form_item.variable = variable
-        return self
-
-    def required(self, required: bool) -> UserInputFormItemBuilder:
-        """Set whether required."""
-        self._form_item.required = required
-        return self
-
-    def default(self, default: str) -> UserInputFormItemBuilder:
-        """Set default value."""
-        self._form_item.default = default
-        return self
-
-    def options(self, options: list[str]) -> UserInputFormItemBuilder:
-        """Set options for select type."""
-        self._form_item.options = options
-        return self
-
-    def type(self, type: FormInputType) -> UserInputFormItemBuilder:
-        """Set form input type."""
-        self._form_item.type = type
-        return self
+    def __init__(self):
+        self._user_input_form_item = UserInputFormItem()
 
     def build(self) -> UserInputFormItem:
-        """Build the UserInputFormItem instance."""
-        return self._form_item
+        return self._user_input_form_item
+
+    def text_input(
+        self, label: str, variable: str, required: bool, default: str | None = None
+    ) -> UserInputFormItemBuilder:
+        config = {"label": label, "variable": variable, "required": required}
+        if default is not None:
+            config["default"] = default
+        self._user_input_form_item.text_input = config
+        return self
+
+    def paragraph(
+        self, label: str, variable: str, required: bool, default: str | None = None
+    ) -> UserInputFormItemBuilder:
+        config = {"label": label, "variable": variable, "required": required}
+        if default is not None:
+            config["default"] = default
+        self._user_input_form_item.paragraph = config
+        return self
+
+    def select(
+        self, label: str, variable: str, required: bool, options: list[str], default: str | None = None
+    ) -> UserInputFormItemBuilder:
+        config = {"label": label, "variable": variable, "required": required, "options": options}
+        if default is not None:
+            config["default"] = default
+        self._user_input_form_item.select = config
+        return self
 
 
 class FileUploadConfig(BaseModel):
-    """File upload configuration model."""
+    """File upload configuration."""
 
-    enabled: bool | None = Field(None, description="Whether file upload is enabled")
-    number_limits: int | None = Field(None, description="Number limits")
-    detail: str | None = Field(None, description="Detail configuration")
-    transfer_methods: list[str] | None = Field(None, description="Transfer methods")
+    enabled: bool
+    number_limits: int | None = None
+    detail: str | None = None
+    transfer_methods: list[TransferMethod] | None = None
 
-    @classmethod
-    def builder(cls) -> FileUploadConfigBuilder:
-        """Create a FileUploadConfig builder."""
+    @staticmethod
+    def builder() -> FileUploadConfigBuilder:
         return FileUploadConfigBuilder()
 
 
 class FileUploadConfigBuilder:
-    """Builder for FileUploadConfig."""
+    def __init__(self):
+        self._file_upload_config = FileUploadConfig(enabled=False)
 
-    def __init__(self) -> None:
-        self._config = FileUploadConfig()
+    def build(self) -> FileUploadConfig:
+        return self._file_upload_config
 
     def enabled(self, enabled: bool) -> FileUploadConfigBuilder:
-        """Set whether enabled."""
-        self._config.enabled = enabled
+        self._file_upload_config.enabled = enabled
         return self
 
     def number_limits(self, number_limits: int) -> FileUploadConfigBuilder:
-        """Set number limits."""
-        self._config.number_limits = number_limits
+        self._file_upload_config.number_limits = number_limits
         return self
 
     def detail(self, detail: str) -> FileUploadConfigBuilder:
-        """Set detail configuration."""
-        self._config.detail = detail
+        self._file_upload_config.detail = detail
         return self
 
-    def transfer_methods(self, transfer_methods: list[str]) -> FileUploadConfigBuilder:
-        """Set transfer methods."""
-        self._config.transfer_methods = transfer_methods
+    def transfer_methods(self, transfer_methods: list[TransferMethod]) -> FileUploadConfigBuilder:
+        self._file_upload_config.transfer_methods = transfer_methods
         return self
 
-    def build(self) -> FileUploadConfig:
-        """Build the FileUploadConfig instance."""
-        return self._config
+
+class SystemParameters(BaseModel):
+    """System parameters configuration."""
+
+    file_size_limit: int | None = None
+    image_file_size_limit: int | None = None
+    audio_file_size_limit: int | None = None
+    video_file_size_limit: int | None = None
+
+    @staticmethod
+    def builder() -> SystemParametersBuilder:
+        return SystemParametersBuilder()
+
+
+class SystemParametersBuilder:
+    def __init__(self):
+        self._system_parameters = SystemParameters()
+
+    def build(self) -> SystemParameters:
+        return self._system_parameters
+
+    def file_size_limit(self, file_size_limit: int) -> SystemParametersBuilder:
+        self._system_parameters.file_size_limit = file_size_limit
+        return self
+
+    def image_file_size_limit(self, image_file_size_limit: int) -> SystemParametersBuilder:
+        self._system_parameters.image_file_size_limit = image_file_size_limit
+        return self
+
+    def audio_file_size_limit(self, audio_file_size_limit: int) -> SystemParametersBuilder:
+        self._system_parameters.audio_file_size_limit = audio_file_size_limit
+        return self
+
+    def video_file_size_limit(self, video_file_size_limit: int) -> SystemParametersBuilder:
+        self._system_parameters.video_file_size_limit = video_file_size_limit
+        return self
 
 
 class AppParameters(BaseModel):
-    """Application parameters model."""
+    """Application parameters configuration."""
 
-    opening_statement: str | None = Field(None, description="Opening statement")
-    suggested_questions: list[str] | None = Field(None, description="Suggested questions")
-    suggested_questions_after_answer: dict[str, bool] | None = Field(
-        None, description="Suggested questions after answer"
-    )
-    speech_to_text: dict[str, bool] | None = Field(None, description="Speech to text configuration")
-    text_to_speech: dict[str, Any] | None = Field(None, description="Text to speech configuration")
-    retriever_resource: dict[str, bool] | None = Field(None, description="Retriever resource configuration")
-    annotation_reply: dict[str, bool] | None = Field(None, description="Annotation reply configuration")
-    user_input_form: list[UserInputFormItem] | None = Field(None, description="User input form")
-    file_upload: dict[str, FileUploadConfig] | None = Field(None, description="File upload configuration")
-    system_parameters: dict[str, int] | None = Field(None, description="System parameters")
+    opening_statement: str | None = None
+    suggested_questions: list[str] | None = None
+    suggested_questions_after_answer: dict[str, bool] | None = None
+    speech_to_text: dict[str, bool] | None = None
+    text_to_speech: dict[str, Any] | None = None
+    retriever_resource: dict[str, bool] | None = None
+    annotation_reply: dict[str, bool] | None = None
+    user_input_form: list[UserInputFormItem] | None = None
+    file_upload: dict[str, FileUploadConfig] | None = None
+    system_parameters: SystemParameters | None = None
 
-    @classmethod
-    def builder(cls) -> AppParametersBuilder:
-        """Create an AppParameters builder."""
+    @staticmethod
+    def builder() -> AppParametersBuilder:
         return AppParametersBuilder()
 
 
 class AppParametersBuilder:
-    """Builder for AppParameters."""
-
-    def __init__(self) -> None:
+    def __init__(self):
         self._app_parameters = AppParameters()
 
+    def build(self) -> AppParameters:
+        return self._app_parameters
+
     def opening_statement(self, opening_statement: str) -> AppParametersBuilder:
-        """Set opening statement."""
         self._app_parameters.opening_statement = opening_statement
         return self
 
     def suggested_questions(self, suggested_questions: list[str]) -> AppParametersBuilder:
-        """Set suggested questions."""
         self._app_parameters.suggested_questions = suggested_questions
         return self
 
-    def suggested_questions_after_answer(self, config: dict[str, bool]) -> AppParametersBuilder:
-        """Set suggested questions after answer configuration."""
-        self._app_parameters.suggested_questions_after_answer = config
+    def suggested_questions_after_answer(self, enabled: bool) -> AppParametersBuilder:
+        self._app_parameters.suggested_questions_after_answer = {"enabled": enabled}
         return self
 
-    def speech_to_text(self, config: dict[str, bool]) -> AppParametersBuilder:
-        """Set speech to text configuration."""
-        self._app_parameters.speech_to_text = config
+    def speech_to_text(self, enabled: bool) -> AppParametersBuilder:
+        self._app_parameters.speech_to_text = {"enabled": enabled}
         return self
 
-    def text_to_speech(self, config: dict[str, Any]) -> AppParametersBuilder:
-        """Set text to speech configuration."""
+    def text_to_speech(
+        self, enabled: bool, voice: str | None = None, language: str | None = None, auto_play: AutoPlay | None = None
+    ) -> AppParametersBuilder:
+        config: dict[str, Any] = {"enabled": enabled}
+        if voice is not None:
+            config["voice"] = voice
+        if language is not None:
+            config["language"] = language
+        if auto_play is not None:
+            config["autoPlay"] = auto_play
         self._app_parameters.text_to_speech = config
         return self
 
-    def retriever_resource(self, config: dict[str, bool]) -> AppParametersBuilder:
-        """Set retriever resource configuration."""
-        self._app_parameters.retriever_resource = config
+    def retriever_resource(self, enabled: bool) -> AppParametersBuilder:
+        self._app_parameters.retriever_resource = {"enabled": enabled}
         return self
 
-    def annotation_reply(self, config: dict[str, bool]) -> AppParametersBuilder:
-        """Set annotation reply configuration."""
-        self._app_parameters.annotation_reply = config
+    def annotation_reply(self, enabled: bool) -> AppParametersBuilder:
+        self._app_parameters.annotation_reply = {"enabled": enabled}
         return self
 
     def user_input_form(self, user_input_form: list[UserInputFormItem]) -> AppParametersBuilder:
-        """Set user input form."""
         self._app_parameters.user_input_form = user_input_form
         return self
 
-    def file_upload(self, file_upload: dict[str, FileUploadConfig]) -> AppParametersBuilder:
-        """Set file upload configuration."""
-        self._app_parameters.file_upload = file_upload
+    def file_upload(self, image: FileUploadConfig | None = None) -> AppParametersBuilder:
+        config: dict[str, FileUploadConfig] = {}
+        if image is not None:
+            config["image"] = image
+        self._app_parameters.file_upload = config
         return self
 
-    def system_parameters(self, system_parameters: dict[str, int]) -> AppParametersBuilder:
-        """Set system parameters."""
+    def system_parameters(self, system_parameters: SystemParameters) -> AppParametersBuilder:
         self._app_parameters.system_parameters = system_parameters
         return self
-
-    def build(self) -> AppParameters:
-        """Build the AppParameters instance."""
-        return self._app_parameters

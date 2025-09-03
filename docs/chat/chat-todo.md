@@ -111,8 +111,8 @@ Total: 3+1+2+5+2+4+6 = 22 APIs
 - [x] Test Application Information API Models
 
 ### Step 14: Implement App Resource Class
-- [ ] Implement App Resource Class
-- [ ] Test App Resource Class
+- [x] Implement App Resource Class
+- [x] Test App Resource Class
 
 ### Step 15: Implement Annotation Management API Models (6 APIs)
 - [ ] Implement Annotation Management API Models

@@ -17,7 +17,7 @@ class RenameConversationRequestBodyBuilder:
     def __init__(self):
         self._rename_conversation_request_body = RenameConversationRequestBody()
 
-    def builder(self) -> RenameConversationRequestBody:
+    def build(self) -> RenameConversationRequestBody:
         return self._rename_conversation_request_body
 
     def name(self, name: str) -> RenameConversationRequestBodyBuilder:

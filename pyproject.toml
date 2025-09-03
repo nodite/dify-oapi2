@@ -137,10 +137,10 @@ addopts = [
 [tool.poetry.group.format]
 optional = true
 [tool.poetry.group.format.dependencies]
-pre-commit = "^4.0.1"
-mypy = "^1.16.1"
-ruff = "^0.12.11"
-black = "^24.0.0"
+pre-commit = "^4"
+mypy = "^1"
+ruff = "^0"
+black = "^25"
 
 [tool.commitizen]
 name = "cz_conventional_commits"

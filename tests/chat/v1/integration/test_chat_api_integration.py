@@ -11,6 +11,7 @@ import pytest
 
 # Audio Processing API Models
 from dify_oapi.api.chat.v1.model.audio_to_text_request import AudioToTextRequest
+from dify_oapi.api.chat.v1.model.audio_to_text_request_body import AudioToTextRequestBody
 from dify_oapi.api.chat.v1.model.audio_to_text_response import AudioToTextResponse
 
 # Public Models
@@ -41,8 +42,8 @@ from dify_oapi.api.chat.v1.model.get_app_meta_request import GetAppMetaRequest
 from dify_oapi.api.chat.v1.model.get_app_meta_response import GetAppMetaResponse
 from dify_oapi.api.chat.v1.model.get_app_parameters_request import GetAppParametersRequest
 from dify_oapi.api.chat.v1.model.get_app_parameters_response import GetAppParametersResponse
-from dify_oapi.api.chat.v1.model.get_conversation_list_request import GetConversationListRequest
-from dify_oapi.api.chat.v1.model.get_conversation_list_response import GetConversationListResponse
+from dify_oapi.api.chat.v1.model.get_conversation_list_request import GetConversationsRequest
+from dify_oapi.api.chat.v1.model.get_conversation_list_response import GetConversationsResponse
 from dify_oapi.api.chat.v1.model.get_conversation_variables_request import GetConversationVariablesRequest
 from dify_oapi.api.chat.v1.model.get_conversation_variables_response import GetConversationVariablesResponse
 from dify_oapi.api.chat.v1.model.get_feedbacks_request import GetFeedbacksRequest
@@ -57,8 +58,8 @@ from dify_oapi.api.chat.v1.model.list_annotations_request import ListAnnotations
 from dify_oapi.api.chat.v1.model.list_annotations_response import ListAnnotationsResponse
 
 # Conversation Management API Models
-from dify_oapi.api.chat.v1.model.message_history_request import MessageHistoryRequest
-from dify_oapi.api.chat.v1.model.message_history_response import MessageHistoryResponse
+from dify_oapi.api.chat.v1.model.message_history_request import GetMessageHistoryRequest
+from dify_oapi.api.chat.v1.model.message_history_response import GetMessageHistoryResponse
 from dify_oapi.api.chat.v1.model.rename_conversation_request import RenameConversationRequest
 from dify_oapi.api.chat.v1.model.rename_conversation_request_body import RenameConversationRequestBody
 from dify_oapi.api.chat.v1.model.rename_conversation_response import RenameConversationResponse
@@ -71,16 +72,18 @@ from dify_oapi.api.chat.v1.model.submit_feedback_request import SubmitFeedbackRe
 from dify_oapi.api.chat.v1.model.submit_feedback_request_body import SubmitFeedbackRequestBody
 from dify_oapi.api.chat.v1.model.submit_feedback_response import SubmitFeedbackResponse
 from dify_oapi.api.chat.v1.model.text_to_audio_request import TextToAudioRequest
+from dify_oapi.api.chat.v1.model.text_to_audio_request_body import TextToAudioRequestBody
 from dify_oapi.api.chat.v1.model.update_annotation_request import UpdateAnnotationRequest
 from dify_oapi.api.chat.v1.model.update_annotation_request_body import UpdateAnnotationRequestBody
 from dify_oapi.api.chat.v1.model.update_annotation_response import UpdateAnnotationResponse
 
 # File Management API Models
 from dify_oapi.api.chat.v1.model.upload_file_request import UploadFileRequest
+from dify_oapi.api.chat.v1.model.upload_file_request_body import UploadFileRequestBody
 from dify_oapi.api.chat.v1.model.upload_file_response import UploadFileResponse
 from dify_oapi.client import Client
-from dify_oapi.core.http.async_transport import ATransport
-from dify_oapi.core.http.transport import Transport
+from dify_oapi.core.http.transport.async_transport import ATransport
+from dify_oapi.core.http.transport.sync_transport import Transport
 from dify_oapi.core.model.request_option import RequestOption
 
 
@@ -191,7 +194,8 @@ class TestChatAPIIntegration:
         with patch.object(Transport, "execute") as mock_execute:
             # 1. Upload file
             file_data = BytesIO(b"test image content")
-            upload_request = UploadFileRequest.builder().file(file_data, "test.jpg").user("test-user").build()
+            upload_body = UploadFileRequestBody.builder().user("test-user").build()
+            upload_request = UploadFileRequest.builder().file(file_data, "test.jpg").request_body(upload_body).build()
 
             mock_execute.return_value = UploadFileResponse(
                 id="file-123", name="test.jpg", size=1024, extension="jpg", mime_type="image/jpeg"
@@ -240,44 +244,51 @@ class TestChatAPIIntegration:
             # 2. Get feedback list
             get_feedbacks_request = GetFeedbacksRequest.builder().page(1).limit(20).build()
 
-            mock_execute.return_value = GetFeedbacksResponse(
-                data=[{"id": "feedback-123", "rating": "like", "content": "Great response!", "message_id": "msg-123"}]
+            from dify_oapi.api.chat.v1.model.feedback_info import FeedbackInfo
+
+            feedback_info = FeedbackInfo(
+                id="feedback-123", rating="like", content="Great response!", message_id="msg-123"
             )
+            mock_execute.return_value = GetFeedbacksResponse(data=[feedback_info])
 
             feedbacks_response = client.chat.v1.feedback.list(get_feedbacks_request, request_option)
             assert len(feedbacks_response.data) == 1
-            assert feedbacks_response.data[0]["rating"] == "like"
+            assert feedbacks_response.data[0].rating == "like"
 
     def test_conversation_management_flow(self, client, request_option):
         """Test complete conversation management flow."""
         with patch.object(Transport, "execute") as mock_execute:
             # 1. Get conversations list
             conversations_request = (
-                GetConversationListRequest.builder().user("test-user").limit(20).sort_by("-updated_at").build()
+                GetConversationsRequest.builder().user("test-user").limit(20).sort_by("-updated_at").build()
             )
 
-            mock_execute.return_value = GetConversationListResponse(
-                data=[{"id": "conv-123", "name": "Test Conversation", "status": "normal"}], has_more=False, limit=20
-            )
+            from dify_oapi.api.chat.v1.model.conversation_info import ConversationInfo
+
+            conversation_info = ConversationInfo(id="conv-123", name="Test Conversation", status="normal")
+            mock_execute.return_value = GetConversationsResponse(data=[conversation_info], has_more=False, limit=20)
 
             conversations_response = client.chat.v1.conversation.list(conversations_request, request_option)
             assert len(conversations_response.data) == 1
-            assert conversations_response.data[0]["id"] == "conv-123"
+            assert conversations_response.data[0].id == "conv-123"
 
             # 2. Get message history
             history_request = (
-                MessageHistoryRequest.builder().conversation_id("conv-123").user("test-user").limit(20).build()
+                GetMessageHistoryRequest.builder().conversation_id("conv-123").user("test-user").limit(20).build()
             )
 
-            mock_execute.return_value = MessageHistoryResponse(
-                data=[{"id": "msg-123", "query": "Hello", "answer": "Hi there!", "conversation_id": "conv-123"}],
+            from dify_oapi.api.chat.v1.model.message_info import MessageInfo
+
+            message_info = MessageInfo(id="msg-123", query="Hello", answer="Hi there!", conversation_id="conv-123")
+            mock_execute.return_value = GetMessageHistoryResponse(
+                data=[message_info],
                 has_more=False,
                 limit=20,
             )
 
             history_response = client.chat.v1.conversation.history(history_request, request_option)
             assert len(history_response.data) == 1
-            assert history_response.data[0]["id"] == "msg-123"
+            assert history_response.data[0].id == "msg-123"
 
             # 3. Rename conversation
             rename_body = (
@@ -287,10 +298,11 @@ class TestChatAPIIntegration:
                 RenameConversationRequest.builder().conversation_id("conv-123").request_body(rename_body).build()
             )
 
-            mock_execute.return_value = RenameConversationResponse(id="conv-123", name="Updated Conversation Name")
+            mock_execute.return_value = RenameConversationResponse(id="conv-123", result="success")
 
             rename_response = client.chat.v1.conversation.rename(rename_request, request_option)
-            assert rename_response.name == "Updated Conversation Name"
+            assert rename_response.id == "conv-123"
+            assert rename_response.result == "success"
 
             # 4. Get conversation variables
             variables_request = (
@@ -301,15 +313,20 @@ class TestChatAPIIntegration:
                 .build()
             )
 
+            from dify_oapi.api.chat.v1.model.conversation_variable import ConversationVariable
+
+            conversation_variable = ConversationVariable(
+                id="var-123", name="user_name", value="John", value_type="string"
+            )
             mock_execute.return_value = GetConversationVariablesResponse(
-                data=[{"id": "var-123", "name": "user_name", "value": "John", "value_type": "string"}],
+                data=[conversation_variable],
                 has_more=False,
                 limit=20,
             )
 
             variables_response = client.chat.v1.conversation.variables(variables_request, request_option)
             assert len(variables_response.data) == 1
-            assert variables_response.data[0]["name"] == "user_name"
+            assert variables_response.data[0].name == "user_name"
 
             # 5. Delete conversation
             delete_body = DeleteConversationRequestBody.builder().user("test-user").build()
@@ -327,7 +344,8 @@ class TestChatAPIIntegration:
         with patch.object(Transport, "execute") as mock_execute:
             # 1. Audio to text
             audio_data = BytesIO(b"mock audio content")
-            audio_request = AudioToTextRequest.builder().file(audio_data, "test.mp3").user("test-user").build()
+            audio_body = AudioToTextRequestBody.builder().user("test-user").build()
+            audio_request = AudioToTextRequest.builder().file(audio_data, "test.mp3").request_body(audio_body).build()
 
             mock_execute.return_value = AudioToTextResponse(text="Hello, this is a test audio message.")
 
@@ -335,13 +353,16 @@ class TestChatAPIIntegration:
             assert "Hello" in audio_response.text
 
             # 2. Text to audio
-            text_request = TextToAudioRequest.builder().text("Hello, this is a test message.").user("test-user").build()
+            text_body = (
+                TextToAudioRequestBody.builder().text("Hello, this is a test message.").user("test-user").build()
+            )
+            text_request = TextToAudioRequest.builder().request_body(text_body).build()
 
             mock_execute.return_value = b"mock audio binary data"
 
             text_response = client.chat.v1.audio.to_audio(text_request, request_option)
             assert isinstance(text_response, bytes)
-            assert b"mock audio" in text_response
+            assert len(text_response) > 0
 
     def test_application_information_flow(self, client, request_option):
         """Test complete application information flow."""
@@ -398,15 +419,16 @@ class TestChatAPIIntegration:
             # 1. List annotations
             list_request = ListAnnotationsRequest.builder().page(1).limit(20).build()
 
+            from dify_oapi.api.chat.v1.model.annotation_info import AnnotationInfo
+
+            annotation_info = AnnotationInfo(
+                id="ann-123",
+                question="What is AI?",
+                answer="AI is artificial intelligence.",
+                hit_count=5,
+            )
             mock_execute.return_value = ListAnnotationsResponse(
-                data=[
-                    {
-                        "id": "ann-123",
-                        "question": "What is AI?",
-                        "answer": "AI is artificial intelligence.",
-                        "hit_count": 5,
-                    }
-                ],
+                data=[annotation_info],
                 has_more=False,
                 total=1,
                 page=1,
@@ -415,7 +437,7 @@ class TestChatAPIIntegration:
 
             list_response = client.chat.v1.annotation.list(list_request, request_option)
             assert len(list_response.data) == 1
-            assert list_response.data[0]["question"] == "What is AI?"
+            assert list_response.data[0].question == "What is AI?"
 
             # 2. Create annotation
             create_body = (

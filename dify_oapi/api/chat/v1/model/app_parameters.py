@@ -207,7 +207,7 @@ class FileUploadConfigBuilder:
         return self
 
     def file_upload_config(self, file_upload_config: FileUploadSystemConfig) -> FileUploadConfigBuilder:
-        self._file_upload_config.fileUploadConfig = file_upload_config
+        self._file_upload_config.file_upload_config = file_upload_config
         return self
 
 

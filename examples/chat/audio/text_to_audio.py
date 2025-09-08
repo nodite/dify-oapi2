@@ -2,19 +2,21 @@ import asyncio
 import os
 
 from dify_oapi.api.chat.v1.model.text_to_audio_request import TextToAudioRequest
+from dify_oapi.api.chat.v1.model.text_to_audio_request_body import TextToAudioRequestBody
 from dify_oapi.client import Client
 from dify_oapi.core.model.request_option import RequestOption
 
 
 def text_to_audio():
     """Convert text to audio"""
-    api_key = os.getenv("CHAT_API_KEY")
+    api_key = os.getenv("API_KEY")
     if not api_key:
-        raise ValueError("CHAT_API_KEY environment variable is required")
+        raise ValueError("API_KEY environment variable is required")
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
-    req = TextToAudioRequest.builder().text("Hello, how are you today?").user("user-123").build()
+    req_body = TextToAudioRequestBody.builder().text("Hello, how are you today?").user("user-123").build()
+    req = TextToAudioRequest.builder().request_body(req_body).build()
     req_option = RequestOption.builder().api_key(api_key).build()
 
     try:
@@ -36,16 +38,17 @@ def text_to_audio():
 
 def text_to_audio_from_message():
     """Convert message text to audio"""
-    api_key = os.getenv("CHAT_API_KEY")
+    api_key = os.getenv("API_KEY")
     message_id = os.getenv("MESSAGE_ID")
     if not api_key:
-        raise ValueError("CHAT_API_KEY environment variable is required")
+        raise ValueError("API_KEY environment variable is required")
     if not message_id:
         raise ValueError("MESSAGE_ID environment variable is required")
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
-    req = TextToAudioRequest.builder().message_id(message_id).user("user-123").build()
+    req_body = TextToAudioRequestBody.builder().message_id(message_id).user("user-123").build()
+    req = TextToAudioRequest.builder().request_body(req_body).build()
     req_option = RequestOption.builder().api_key(api_key).build()
 
     try:
@@ -67,13 +70,14 @@ def text_to_audio_from_message():
 
 async def text_to_audio_async():
     """Convert text to audio asynchronously"""
-    api_key = os.getenv("CHAT_API_KEY")
+    api_key = os.getenv("API_KEY")
     if not api_key:
-        raise ValueError("CHAT_API_KEY environment variable is required")
+        raise ValueError("API_KEY environment variable is required")
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
-    req = TextToAudioRequest.builder().text("This is an async text-to-speech test.").user("user-123").build()
+    req_body = TextToAudioRequestBody.builder().text("This is an async text-to-speech test.").user("user-123").build()
+    req = TextToAudioRequest.builder().request_body(req_body).build()
     req_option = RequestOption.builder().api_key(api_key).build()
 
     try:

@@ -8,11 +8,11 @@ from dify_oapi.core.model.request_option import RequestOption
 
 def get_app_meta():
     """Get application meta information"""
-    api_key = os.getenv("CHAT_API_KEY")
+    api_key = os.getenv("API_KEY")
     if not api_key:
-        raise ValueError("CHAT_API_KEY environment variable is required")
+        raise ValueError("API_KEY environment variable is required")
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
     req = GetAppMetaRequest.builder().build()
     req_option = RequestOption.builder().api_key(api_key).build()
@@ -41,11 +41,11 @@ def get_app_meta():
 
 async def get_app_meta_async():
     """Get application meta information asynchronously"""
-    api_key = os.getenv("CHAT_API_KEY")
+    api_key = os.getenv("API_KEY")
     if not api_key:
-        raise ValueError("CHAT_API_KEY environment variable is required")
+        raise ValueError("API_KEY environment variable is required")
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
     req = GetAppMetaRequest.builder().build()
     req_option = RequestOption.builder().api_key(api_key).build()

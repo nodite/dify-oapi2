@@ -8,11 +8,11 @@ from dify_oapi.core.model.request_option import RequestOption
 
 def list_annotations():
     """List annotations"""
-    api_key = os.getenv("CHAT_API_KEY")
+    api_key = os.getenv("API_KEY")
     if not api_key:
-        raise ValueError("CHAT_API_KEY environment variable is required")
+        raise ValueError("API_KEY environment variable is required")
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
     req = ListAnnotationsRequest.builder().page(1).limit(20).build()
     req_option = RequestOption.builder().api_key(api_key).build()
@@ -39,11 +39,11 @@ def list_annotations():
 
 def list_annotations_paginated():
     """List annotations with pagination"""
-    api_key = os.getenv("CHAT_API_KEY")
+    api_key = os.getenv("API_KEY")
     if not api_key:
-        raise ValueError("CHAT_API_KEY environment variable is required")
+        raise ValueError("API_KEY environment variable is required")
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
     req = ListAnnotationsRequest.builder().page(2).limit(10).build()
     req_option = RequestOption.builder().api_key(api_key).build()
@@ -63,11 +63,11 @@ def list_annotations_paginated():
 
 async def list_annotations_async():
     """List annotations asynchronously"""
-    api_key = os.getenv("CHAT_API_KEY")
+    api_key = os.getenv("API_KEY")
     if not api_key:
-        raise ValueError("CHAT_API_KEY environment variable is required")
+        raise ValueError("API_KEY environment variable is required")
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
     req = ListAnnotationsRequest.builder().page(1).limit(20).build()
     req_option = RequestOption.builder().api_key(api_key).build()

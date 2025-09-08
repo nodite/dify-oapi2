@@ -8,14 +8,14 @@ from dify_oapi.core.model.request_option import RequestOption
 
 def get_annotation_reply_status():
     """Get annotation reply configuration status"""
-    api_key = os.getenv("CHAT_API_KEY")
+    api_key = os.getenv("API_KEY")
     job_id = os.getenv("JOB_ID")
     if not api_key:
-        raise ValueError("CHAT_API_KEY environment variable is required")
+        raise ValueError("API_KEY environment variable is required")
     if not job_id:
         raise ValueError("JOB_ID environment variable is required")
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
     req = GetAnnotationReplyStatusRequest.builder().action("enable").job_id(job_id).build()
     req_option = RequestOption.builder().api_key(api_key).build()
@@ -35,14 +35,14 @@ def get_annotation_reply_status():
 
 def get_disable_status():
     """Get disable annotation reply status"""
-    api_key = os.getenv("CHAT_API_KEY")
+    api_key = os.getenv("API_KEY")
     job_id = os.getenv("JOB_ID")
     if not api_key:
-        raise ValueError("CHAT_API_KEY environment variable is required")
+        raise ValueError("API_KEY environment variable is required")
     if not job_id:
         raise ValueError("JOB_ID environment variable is required")
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
     req = GetAnnotationReplyStatusRequest.builder().action("disable").job_id(job_id).build()
     req_option = RequestOption.builder().api_key(api_key).build()
@@ -59,14 +59,14 @@ def get_disable_status():
 
 def poll_status_until_complete():
     """Poll status until job is complete"""
-    api_key = os.getenv("CHAT_API_KEY")
+    api_key = os.getenv("API_KEY")
     job_id = os.getenv("JOB_ID")
     if not api_key:
-        raise ValueError("CHAT_API_KEY environment variable is required")
+        raise ValueError("API_KEY environment variable is required")
     if not job_id:
         raise ValueError("JOB_ID environment variable is required")
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
     req = GetAnnotationReplyStatusRequest.builder().action("enable").job_id(job_id).build()
     req_option = RequestOption.builder().api_key(api_key).build()
@@ -99,14 +99,14 @@ def poll_status_until_complete():
 
 async def get_annotation_reply_status_async():
     """Get annotation reply status asynchronously"""
-    api_key = os.getenv("CHAT_API_KEY")
+    api_key = os.getenv("API_KEY")
     job_id = os.getenv("JOB_ID")
     if not api_key:
-        raise ValueError("CHAT_API_KEY environment variable is required")
+        raise ValueError("API_KEY environment variable is required")
     if not job_id:
         raise ValueError("JOB_ID environment variable is required")
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
     req = GetAnnotationReplyStatusRequest.builder().action("enable").job_id(job_id).build()
     req_option = RequestOption.builder().api_key(api_key).build()

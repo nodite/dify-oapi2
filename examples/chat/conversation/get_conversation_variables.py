@@ -8,14 +8,14 @@ from dify_oapi.core.model.request_option import RequestOption
 
 def get_conversation_variables():
     """Get conversation variables"""
-    api_key = os.getenv("CHAT_API_KEY")
+    api_key = os.getenv("API_KEY")
     conversation_id = os.getenv("CONVERSATION_ID")
     if not api_key:
-        raise ValueError("CHAT_API_KEY environment variable is required")
+        raise ValueError("API_KEY environment variable is required")
     if not conversation_id:
         raise ValueError("CONVERSATION_ID environment variable is required")
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
     req = GetConversationVariablesRequest.builder().conversation_id(conversation_id).user("user-123").limit(20).build()
     req_option = RequestOption.builder().api_key(api_key).build()
@@ -41,15 +41,15 @@ def get_conversation_variables():
 
 def get_conversation_variables_filtered():
     """Get conversation variables with name filter"""
-    api_key = os.getenv("CHAT_API_KEY")
+    api_key = os.getenv("API_KEY")
     conversation_id = os.getenv("CONVERSATION_ID")
     variable_name = os.getenv("VARIABLE_NAME")
     if not api_key:
-        raise ValueError("CHAT_API_KEY environment variable is required")
+        raise ValueError("API_KEY environment variable is required")
     if not conversation_id:
         raise ValueError("CONVERSATION_ID environment variable is required")
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
     req_builder = GetConversationVariablesRequest.builder().conversation_id(conversation_id).user("user-123").limit(10)
     if variable_name:
@@ -72,15 +72,15 @@ def get_conversation_variables_filtered():
 
 def get_conversation_variables_paginated():
     """Get conversation variables with pagination"""
-    api_key = os.getenv("CHAT_API_KEY")
+    api_key = os.getenv("API_KEY")
     conversation_id = os.getenv("CONVERSATION_ID")
     last_id = os.getenv("LAST_ID")
     if not api_key:
-        raise ValueError("CHAT_API_KEY environment variable is required")
+        raise ValueError("API_KEY environment variable is required")
     if not conversation_id:
         raise ValueError("CONVERSATION_ID environment variable is required")
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
     req_builder = GetConversationVariablesRequest.builder().conversation_id(conversation_id).user("user-123").limit(5)
     if last_id:
@@ -99,14 +99,14 @@ def get_conversation_variables_paginated():
 
 async def get_conversation_variables_async():
     """Get conversation variables asynchronously"""
-    api_key = os.getenv("CHAT_API_KEY")
+    api_key = os.getenv("API_KEY")
     conversation_id = os.getenv("CONVERSATION_ID")
     if not api_key:
-        raise ValueError("CHAT_API_KEY environment variable is required")
+        raise ValueError("API_KEY environment variable is required")
     if not conversation_id:
         raise ValueError("CONVERSATION_ID environment variable is required")
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
     req = GetConversationVariablesRequest.builder().conversation_id(conversation_id).user("user-123").limit(20).build()
     req_option = RequestOption.builder().api_key(api_key).build()

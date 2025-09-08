@@ -9,14 +9,14 @@ from dify_oapi.core.model.request_option import RequestOption
 
 def audio_to_text():
     """Convert audio file to text"""
-    api_key = os.getenv("CHAT_API_KEY")
+    api_key = os.getenv("API_KEY")
     audio_path = os.getenv("AUDIO_PATH")
     if not api_key:
-        raise ValueError("CHAT_API_KEY environment variable is required")
+        raise ValueError("API_KEY environment variable is required")
     if not audio_path:
         raise ValueError("AUDIO_PATH environment variable is required")
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
     try:
         with open(audio_path, "rb") as f:
@@ -36,14 +36,14 @@ def audio_to_text():
 
 async def audio_to_text_async():
     """Convert audio file to text asynchronously"""
-    api_key = os.getenv("CHAT_API_KEY")
+    api_key = os.getenv("API_KEY")
     audio_path = os.getenv("AUDIO_PATH")
     if not api_key:
-        raise ValueError("CHAT_API_KEY environment variable is required")
+        raise ValueError("API_KEY environment variable is required")
     if not audio_path:
         raise ValueError("AUDIO_PATH environment variable is required")
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
     try:
         with open(audio_path, "rb") as f:

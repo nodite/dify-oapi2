@@ -8,11 +8,11 @@ from dify_oapi.core.model.request_option import RequestOption
 
 def get_app_parameters():
     """Get application parameters"""
-    api_key = os.getenv("CHAT_API_KEY")
+    api_key = os.getenv("API_KEY")
     if not api_key:
-        raise ValueError("CHAT_API_KEY environment variable is required")
+        raise ValueError("API_KEY environment variable is required")
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
     req = GetAppParametersRequest.builder().user("user-123").build()
     req_option = RequestOption.builder().api_key(api_key).build()
@@ -32,9 +32,14 @@ def get_app_parameters():
         if response.file_upload and response.file_upload.image:
             print(f"Image Upload Enabled: {response.file_upload.image.enabled}")
             print(f"Image Number Limits: {response.file_upload.image.number_limits}")
+            print(f"File Upload Enabled: {response.file_upload.enabled}")
+        else:
+            print("File Upload: N/A")
 
-        if response.user_input_form:
-            print(f"User Input Form Fields: {len(response.user_input_form)}")
+        print(f"User Input Form Fields: {len(response.user_input_form) if response.user_input_form else 0}")
+        print(
+            f"System File Size Limit: {response.system_parameters.file_size_limit if response.system_parameters else 'N/A'} MB"
+        )
 
         return response
     except Exception as e:
@@ -44,11 +49,11 @@ def get_app_parameters():
 
 async def get_app_parameters_async():
     """Get application parameters asynchronously"""
-    api_key = os.getenv("CHAT_API_KEY")
+    api_key = os.getenv("API_KEY")
     if not api_key:
-        raise ValueError("CHAT_API_KEY environment variable is required")
+        raise ValueError("API_KEY environment variable is required")
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
     req = GetAppParametersRequest.builder().user("user-123").build()
     req_option = RequestOption.builder().api_key(api_key).build()

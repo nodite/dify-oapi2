@@ -8,14 +8,14 @@ from dify_oapi.core.model.request_option import RequestOption
 
 def get_suggested_questions():
     """Get suggested questions for a message"""
-    api_key = os.getenv("CHAT_API_KEY")
+    api_key = os.getenv("API_KEY")
     message_id = os.getenv("MESSAGE_ID")
     if not api_key:
-        raise ValueError("CHAT_API_KEY environment variable is required")
+        raise ValueError("API_KEY environment variable is required")
     if not message_id:
         raise ValueError("MESSAGE_ID environment variable is required")
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
     req = GetSuggestedQuestionsRequest.builder().message_id(message_id).user("user-123").build()
     req_option = RequestOption.builder().api_key(api_key).build()
@@ -23,8 +23,11 @@ def get_suggested_questions():
     try:
         response = client.chat.v1.chat.suggested(req, req_option)
         print("Suggested questions:")
-        for i, question in enumerate(response.data, 1):
-            print(f"{i}. {question}")
+        if hasattr(response, "data") and response.data:
+            for i, question in enumerate(response.data, 1):
+                print(f"{i}. {question}")
+        else:
+            print(response.msg)
         return response
     except Exception as e:
         print(f"Error: {e}")
@@ -33,14 +36,14 @@ def get_suggested_questions():
 
 async def get_suggested_questions_async():
     """Get suggested questions for a message asynchronously"""
-    api_key = os.getenv("CHAT_API_KEY")
+    api_key = os.getenv("API_KEY")
     message_id = os.getenv("MESSAGE_ID")
     if not api_key:
-        raise ValueError("CHAT_API_KEY environment variable is required")
+        raise ValueError("API_KEY environment variable is required")
     if not message_id:
         raise ValueError("MESSAGE_ID environment variable is required")
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
     req = GetSuggestedQuestionsRequest.builder().message_id(message_id).user("user-123").build()
     req_option = RequestOption.builder().api_key(api_key).build()
@@ -48,8 +51,11 @@ async def get_suggested_questions_async():
     try:
         response = await client.chat.v1.chat.asuggested(req, req_option)
         print("Async suggested questions:")
-        for i, question in enumerate(response.data, 1):
-            print(f"{i}. {question}")
+        if hasattr(response, "data") and response.data:
+            for i, question in enumerate(response.data, 1):
+                print(f"{i}. {question}")
+        else:
+            print("No suggested questions available (async)")
         return response
     except Exception as e:
         print(f"Error: {e}")

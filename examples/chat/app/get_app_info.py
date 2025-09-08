@@ -8,11 +8,11 @@ from dify_oapi.core.model.request_option import RequestOption
 
 def get_app_info():
     """Get application basic information"""
-    api_key = os.getenv("CHAT_API_KEY")
+    api_key = os.getenv("API_KEY")
     if not api_key:
-        raise ValueError("CHAT_API_KEY environment variable is required")
+        raise ValueError("API_KEY environment variable is required")
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
     req = GetAppInfoRequest.builder().build()
     req_option = RequestOption.builder().api_key(api_key).build()
@@ -31,11 +31,11 @@ def get_app_info():
 
 async def get_app_info_async():
     """Get application basic information asynchronously"""
-    api_key = os.getenv("CHAT_API_KEY")
+    api_key = os.getenv("API_KEY")
     if not api_key:
-        raise ValueError("CHAT_API_KEY environment variable is required")
+        raise ValueError("API_KEY environment variable is required")
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
     req = GetAppInfoRequest.builder().build()
     req_option = RequestOption.builder().api_key(api_key).build()

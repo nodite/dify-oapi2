@@ -9,14 +9,14 @@ from dify_oapi.core.model.request_option import RequestOption
 
 def stop_chat_generation():
     """Stop a chat generation task"""
-    api_key = os.getenv("CHAT_API_KEY")
+    api_key = os.getenv("API_KEY")
     task_id = os.getenv("TASK_ID")
     if not api_key:
-        raise ValueError("CHAT_API_KEY environment variable is required")
+        raise ValueError("API_KEY environment variable is required")
     if not task_id:
         raise ValueError("TASK_ID environment variable is required")
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
     req_body = StopChatRequestBody.builder().user("user-123").build()
     req = StopChatRequest.builder().task_id(task_id).request_body(req_body).build()
@@ -33,14 +33,14 @@ def stop_chat_generation():
 
 async def stop_chat_generation_async():
     """Stop a chat generation task asynchronously"""
-    api_key = os.getenv("CHAT_API_KEY")
+    api_key = os.getenv("API_KEY")
     task_id = os.getenv("TASK_ID")
     if not api_key:
-        raise ValueError("CHAT_API_KEY environment variable is required")
+        raise ValueError("API_KEY environment variable is required")
     if not task_id:
         raise ValueError("TASK_ID environment variable is required")
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
     req_body = StopChatRequestBody.builder().user("user-123").build()
     req = StopChatRequest.builder().task_id(task_id).request_body(req_body).build()

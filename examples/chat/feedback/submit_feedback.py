@@ -9,14 +9,14 @@ from dify_oapi.core.model.request_option import RequestOption
 
 def submit_positive_feedback():
     """Submit positive feedback for a message"""
-    api_key = os.getenv("CHAT_API_KEY")
+    api_key = os.getenv("API_KEY")
     message_id = os.getenv("MESSAGE_ID")
     if not api_key:
-        raise ValueError("CHAT_API_KEY environment variable is required")
+        raise ValueError("API_KEY environment variable is required")
     if not message_id:
         raise ValueError("MESSAGE_ID environment variable is required")
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
     req_body = (
         SubmitFeedbackRequestBody.builder()
@@ -40,14 +40,14 @@ def submit_positive_feedback():
 
 def submit_negative_feedback():
     """Submit negative feedback for a message"""
-    api_key = os.getenv("CHAT_API_KEY")
+    api_key = os.getenv("API_KEY")
     message_id = os.getenv("MESSAGE_ID")
     if not api_key:
-        raise ValueError("CHAT_API_KEY environment variable is required")
+        raise ValueError("API_KEY environment variable is required")
     if not message_id:
         raise ValueError("MESSAGE_ID environment variable is required")
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
     req_body = (
         SubmitFeedbackRequestBody.builder()
@@ -71,14 +71,14 @@ def submit_negative_feedback():
 
 async def submit_feedback_async():
     """Submit feedback asynchronously"""
-    api_key = os.getenv("CHAT_API_KEY")
+    api_key = os.getenv("API_KEY")
     message_id = os.getenv("MESSAGE_ID")
     if not api_key:
-        raise ValueError("CHAT_API_KEY environment variable is required")
+        raise ValueError("API_KEY environment variable is required")
     if not message_id:
         raise ValueError("MESSAGE_ID environment variable is required")
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
     req_body = (
         SubmitFeedbackRequestBody.builder()

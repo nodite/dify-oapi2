@@ -1,3 +1,5 @@
+import os
+
 from dify_oapi.api.chat.v1.model.get_conversation_list_request import GetConversationListRequest
 from dify_oapi.api.chat.v1.model.message_history_request import MessageHistoryRequest
 from dify_oapi.client import Client
@@ -5,7 +7,7 @@ from dify_oapi.core.model.request_option import RequestOption
 
 
 def main():
-    client = Client.builder().domain("https://api.dify.ai").build()
+    client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
     req_option = RequestOption.builder().api_key("<your-api-key>").build()
 
     # Get conversation list

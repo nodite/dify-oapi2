@@ -1,3 +1,5 @@
+import os
+
 from dify_oapi.api.chat.v1.model.chat_request import ChatRequest
 from dify_oapi.api.chat.v1.model.chat_request_body import ChatRequestBody
 from dify_oapi.api.chat.v1.model.chat_request_file import ChatRequestFile
@@ -6,7 +8,7 @@ from dify_oapi.core.model.request_option import RequestOption
 
 
 def main():
-    client = Client.builder().domain("https://api.dify.ai").build()
+    client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
     req_file = (
         ChatRequestFile.builder()
         .type("image")

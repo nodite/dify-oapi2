@@ -10,7 +10,7 @@ A Python SDK for interacting with the Dify Service-API. This library provides a 
 
 ## ✨ Features
 
-- **Multiple API Services**: Chat, Completion, Knowledge Base (33 APIs), Workflow, and Core Dify APIs
+- **Multiple API Services**: Chat (22 APIs), Completion (15 APIs), Knowledge Base (33 APIs), Workflow, and Core Dify APIs
 - **Builder Pattern**: Fluent, chainable interface for constructing requests
 - **Sync & Async Support**: Both synchronous and asynchronous operations
 - **Streaming Responses**: Real-time streaming for chat and completion
@@ -96,11 +96,16 @@ asyncio.run(async_chat())
 
 ## 🔧 API Services
 
-### Chat API
-- Interactive conversations with AI assistants
-- File upload support (images, documents)
-- Conversation and message history management
-- Streaming and blocking response modes
+### Chat API (22 APIs)
+- **Chat Messages**: Interactive conversations with AI assistants (3 APIs)
+- **File Management**: Upload and manage images and documents (1 API)
+- **Feedback Management**: Collect and analyze user feedback (2 APIs)
+- **Conversation Management**: Complete conversation lifecycle management (5 APIs)
+- **Audio Processing**: Speech-to-text and text-to-speech capabilities (2 APIs)
+- **Application Information**: App configuration and metadata retrieval (4 APIs)
+- **Annotation Management**: Create and manage annotations with reply settings (6 APIs)
+- **Streaming Support**: Real-time streaming for chat and completion
+- **Type Safety**: Comprehensive type hints with strict Literal types
 
 ### Completion API (15 APIs)
 - **Message Processing**: Send messages and control responses
@@ -131,9 +136,13 @@ asyncio.run(async_chat())
 Explore comprehensive examples in the [examples directory](./examples):
 
 ### Chat Examples
-- [**Blocking Response**](./examples/chat/blocking_response.py) - Standard chat interactions
-- [**Streaming Response**](./examples/chat/streaming_response.py) - Real-time streaming chat
-- [**Conversation Management**](./examples/chat/conversation_management.py) - Managing chat history
+- [**Chat Messages**](./examples/chat/chat/) - Send messages, stop generation, get suggestions
+- [**File Management**](./examples/chat/file/) - Upload and manage files
+- [**Feedback Management**](./examples/chat/feedback/) - Submit and retrieve feedback
+- [**Conversation Management**](./examples/chat/conversation/) - Complete conversation operations
+- [**Audio Processing**](./examples/chat/audio/) - Speech-to-text and text-to-speech
+- [**Application Information**](./examples/chat/app/) - App configuration and settings
+- [**Annotation Management**](./examples/chat/annotation/) - Annotation CRUD and reply settings
 
 ### Completion Examples
 - [**Basic Completion**](./examples/completion/basic_completion.py) - Text generation

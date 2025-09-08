@@ -7,6 +7,8 @@ from dify_oapi.core.model.request_option import RequestOption
 
 from ..model.chat_request import ChatRequest
 from ..model.chat_response import ChatResponse
+from ..model.get_suggested_questions_request import GetSuggestedQuestionsRequest
+from ..model.get_suggested_questions_response import GetSuggestedQuestionsResponse
 from ..model.stop_chat_request import StopChatRequest
 from ..model.stop_chat_response import StopChatResponse
 
@@ -66,3 +68,15 @@ class Chat:
 
     async def astop(self, request: StopChatRequest, option: RequestOption | None = None) -> StopChatResponse:
         return await ATransport.aexecute(self.config, request, unmarshal_as=StopChatResponse, option=option)
+
+    def suggested(
+        self, request: GetSuggestedQuestionsRequest, option: RequestOption | None = None
+    ) -> GetSuggestedQuestionsResponse:
+        return Transport.execute(self.config, request, unmarshal_as=GetSuggestedQuestionsResponse, option=option)
+
+    async def asuggested(
+        self, request: GetSuggestedQuestionsRequest, option: RequestOption | None = None
+    ) -> GetSuggestedQuestionsResponse:
+        return await ATransport.aexecute(
+            self.config, request, unmarshal_as=GetSuggestedQuestionsResponse, option=option
+        )

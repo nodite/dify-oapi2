@@ -358,11 +358,16 @@ class TestChatAPIIntegration:
             )
             text_request = TextToAudioRequest.builder().request_body(text_body).build()
 
-            mock_execute.return_value = b"mock audio binary data"
+            # Create a mock response object with content attribute
+            class MockAudioResponse:
+                def __init__(self, content):
+                    self.content = content
 
-            text_response = client.chat.v1.audio.to_audio(text_request, request_option)
-            assert isinstance(text_response, bytes)
-            assert len(text_response) > 0
+            mock_execute.return_value = MockAudioResponse(b"mock audio binary data")
+
+            audio_binary_response = client.chat.v1.audio.to_audio(text_request, request_option)
+            assert isinstance(audio_binary_response, bytes)
+            assert len(audio_binary_response) > 0
 
     def test_application_information_flow(self, client, request_option):
         """Test complete application information flow."""

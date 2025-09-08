@@ -2,9 +2,14 @@
 
 from dify_oapi.api.chat.v1.model.app_info import AppInfo
 from dify_oapi.api.chat.v1.model.app_parameters import (
+    AnnotationReplyConfig,
     AppParameters,
     FileUploadConfig,
+    RetrieverResourceConfig,
+    SpeechToTextConfig,
+    SuggestedQuestionsAfterAnswerConfig,
     SystemParameters,
+    TextToSpeechConfig,
     UserInputFormItem,
 )
 from dify_oapi.api.chat.v1.model.get_app_info_request import GetAppInfoRequest
@@ -33,7 +38,7 @@ class TestGetAppInfoModels:
 
     def test_get_app_info_response_inheritance(self):
         """Test GetAppInfoResponse inherits from BaseResponse."""
-        response = GetAppInfoResponse()
+        response = GetAppInfoResponse(name="Test App", description="Test Description", tags=["ai", "chat"])
         assert isinstance(response, BaseResponse)
         assert isinstance(response, AppInfo)
         assert hasattr(response, "success")
@@ -67,7 +72,7 @@ class TestGetAppParametersModels:
         assert request.http_method == HttpMethod.GET
         assert request.uri == "/v1/parameters"
         # Query parameter should be added
-        assert "user" in request.query
+        assert any(k == "user" and v == "user-123" for k, v in request.queries)
 
     def test_get_app_parameters_response_inheritance(self):
         """Test GetAppParametersResponse inherits from BaseResponse."""
@@ -88,8 +93,7 @@ class TestGetAppParametersModels:
             FileUploadConfig.builder()
             .enabled(True)
             .number_limits(5)
-            .detail("high")
-            .transfer_methods(["local_file", "remote_url"])
+            .allowed_file_upload_methods(["local_file", "remote_url"])
             .build()
         )
 
@@ -108,11 +112,11 @@ class TestGetAppParametersModels:
             AppParameters.builder()
             .opening_statement("Welcome to the app!")
             .suggested_questions(["How can I help?", "What can you do?"])
-            .suggested_questions_after_answer(True)
-            .speech_to_text(True)
-            .text_to_speech(True, "alloy", "en", "enabled")
-            .retriever_resource(True)
-            .annotation_reply(False)
+            .suggested_questions_after_answer(SuggestedQuestionsAfterAnswerConfig.builder().enabled(True).build())
+            .speech_to_text(SpeechToTextConfig.builder().enabled(True).build())
+            .text_to_speech(TextToSpeechConfig.builder().enabled(True).voice("alloy").language("en").build())
+            .retriever_resource(RetrieverResourceConfig.builder().enabled(True).build())
+            .annotation_reply(AnnotationReplyConfig.builder().enabled(False).build())
             .user_input_form([form_item])
             .file_upload(file_config)
             .system_parameters(system_params)
@@ -121,50 +125,41 @@ class TestGetAppParametersModels:
 
         assert app_params.opening_statement == "Welcome to the app!"
         assert app_params.suggested_questions == ["How can I help?", "What can you do?"]
-        assert app_params.suggested_questions_after_answer == {"enabled": True}
-        assert app_params.speech_to_text == {"enabled": True}
-        assert app_params.text_to_speech == {
-            "enabled": True,
-            "voice": "alloy",
-            "language": "en",
-            "autoPlay": "enabled",
-        }
-        assert app_params.retriever_resource == {"enabled": True}
-        assert app_params.annotation_reply == {"enabled": False}
+        assert app_params.suggested_questions_after_answer.enabled is True
+        assert app_params.speech_to_text.enabled is True
+        assert app_params.text_to_speech.enabled is True
+        assert app_params.text_to_speech.voice == "alloy"
+        assert app_params.text_to_speech.language == "en"
+        assert app_params.retriever_resource.enabled is True
+        assert app_params.annotation_reply.enabled is False
         assert len(app_params.user_input_form) == 1
-        assert app_params.file_upload["image"] == file_config
+        assert app_params.file_upload == file_config
         assert app_params.system_parameters == system_params
 
     def test_user_input_form_item_builder(self):
         """Test UserInputFormItem builder pattern."""
         # Test text input
         text_item = UserInputFormItem.builder().text_input("Name", "name", True, "Default").build()
-        assert text_item.text_input == {
-            "label": "Name",
-            "variable": "name",
-            "required": True,
-            "default": "Default",
-        }
+        assert text_item.text_input.label == "Name"
+        assert text_item.text_input.variable == "name"
+        assert text_item.text_input.required is True
+        assert text_item.text_input.default == "Default"
 
         # Test paragraph input
         paragraph_item = UserInputFormItem.builder().paragraph("Description", "desc", False).build()
-        assert paragraph_item.paragraph == {
-            "label": "Description",
-            "variable": "desc",
-            "required": False,
-        }
+        assert paragraph_item.paragraph.label == "Description"
+        assert paragraph_item.paragraph.variable == "desc"
+        assert paragraph_item.paragraph.required is False
 
         # Test select input
         select_item = (
             UserInputFormItem.builder().select("Type", "type", True, ["option1", "option2"], "option1").build()
         )
-        assert select_item.select == {
-            "label": "Type",
-            "variable": "type",
-            "required": True,
-            "options": ["option1", "option2"],
-            "default": "option1",
-        }
+        assert select_item.select.label == "Type"
+        assert select_item.select.variable == "type"
+        assert select_item.select.required is True
+        assert select_item.select.options == ["option1", "option2"]
+        assert select_item.select.default == "option1"
 
     def test_file_upload_config_builder(self):
         """Test FileUploadConfig builder pattern."""
@@ -172,15 +167,13 @@ class TestGetAppParametersModels:
             FileUploadConfig.builder()
             .enabled(True)
             .number_limits(3)
-            .detail("low")
-            .transfer_methods(["local_file"])
+            .allowed_file_upload_methods(["local_file"])
             .build()
         )
 
         assert config.enabled is True
         assert config.number_limits == 3
-        assert config.detail == "low"
-        assert config.transfer_methods == ["local_file"]
+        assert config.allowed_file_upload_methods == ["local_file"]
 
     def test_system_parameters_builder(self):
         """Test SystemParameters builder pattern."""
@@ -200,18 +193,16 @@ class TestGetAppParametersModels:
 
     def test_auto_play_type_validation(self):
         """Test AutoPlay type validation."""
-        # Valid values
-        app_params = AppParameters.builder().text_to_speech(True, auto_play="enabled").build()
-        assert app_params.text_to_speech["autoPlay"] == "enabled"
-
-        app_params = AppParameters.builder().text_to_speech(True, auto_play="disabled").build()
-        assert app_params.text_to_speech["autoPlay"] == "disabled"
+        # Valid values - this test is no longer applicable since we removed AutoPlay type
+        # Just test that TextToSpeechConfig can be created
+        config = TextToSpeechConfig.builder().enabled(True).build()
+        assert config.enabled is True
 
     def test_transfer_method_type_validation(self):
         """Test TransferMethod type validation."""
         # Valid values
-        config = FileUploadConfig.builder().transfer_methods(["local_file", "remote_url"]).build()
-        assert config.transfer_methods == ["local_file", "remote_url"]
+        config = FileUploadConfig.builder().allowed_file_upload_methods(["local_file", "remote_url"]).build()
+        assert config.allowed_file_upload_methods == ["local_file", "remote_url"]
 
 
 class TestGetAppMetaModels:

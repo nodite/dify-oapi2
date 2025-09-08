@@ -30,7 +30,9 @@ class TestAppResource:
 
     @pytest.fixture
     def mock_atransport(self, monkeypatch):
-        mock = Mock()
+        from unittest.mock import AsyncMock
+
+        mock = AsyncMock()
         monkeypatch.setattr(ATransport, "aexecute", mock)
         return mock
 
@@ -39,7 +41,7 @@ class TestAppResource:
         request = GetAppInfoRequest.builder().build()
         option = RequestOption.builder().build()
 
-        mock_transport.return_value = GetAppInfoResponse()
+        mock_transport.return_value = GetAppInfoResponse(name="Test App", description="Test Description", tags=["ai"])
         result = app_resource.info(request, option)
 
         assert isinstance(result, GetAppInfoResponse)
@@ -92,7 +94,7 @@ class TestAppResource:
         request = GetAppInfoRequest.builder().build()
         option = RequestOption.builder().build()
 
-        mock_atransport.return_value = GetAppInfoResponse()
+        mock_atransport.return_value = GetAppInfoResponse(name="Test App", description="Test Description", tags=["ai"])
         result = await app_resource.ainfo(request, option)
 
         assert isinstance(result, GetAppInfoResponse)

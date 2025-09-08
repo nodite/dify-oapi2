@@ -331,13 +331,13 @@ class TestAppParameters:
 
     def test_app_parameters_builder(self):
         """Test AppParameters builder pattern."""
-        form_item = UserInputFormItem.builder().label("Name").variable("name").required(True).type("text-input").build()
+        form_item = UserInputFormItem.builder().text_input("Name", "name", True, "Default").build()
 
         file_config = (
             FileUploadConfig.builder()
             .enabled(True)
             .number_limits(5)
-            .transfer_methods(["local_file", "remote_url"])
+            .allowed_file_upload_methods(["local_file", "remote_url"])
             .build()
         )
 
@@ -346,16 +346,16 @@ class TestAppParameters:
             .opening_statement("Welcome!")
             .suggested_questions(["How can I help?", "What can you do?"])
             .user_input_form([form_item])
-            .file_upload({"image": file_config})
+            .file_upload(file_config)
             .build()
         )
 
         assert parameters.opening_statement == "Welcome!"
         assert parameters.suggested_questions == ["How can I help?", "What can you do?"]
         assert len(parameters.user_input_form) == 1
-        assert parameters.user_input_form[0].label == "Name"
-        assert "image" in parameters.file_upload
-        assert parameters.file_upload["image"].enabled is True
+        assert parameters.user_input_form[0].text_input.label == "Name"
+        assert parameters.file_upload == file_config
+        assert parameters.file_upload.enabled is True
 
     def test_app_parameters_validation(self):
         """Test AppParameters field validation."""
@@ -399,25 +399,25 @@ class TestToolIcon:
 
     def test_tool_icon_builder_with_string(self):
         """Test ToolIcon builder pattern with string icon."""
-        tool_icon = ToolIcon.builder().icon("https://example.com/icon.png").build()
+        tool_icon = ToolIcon.builder().tool_icons({"search": "https://example.com/icon.png"}).build()
 
-        assert tool_icon.icon == "https://example.com/icon.png"
+        assert tool_icon.tool_icons["search"] == "https://example.com/icon.png"
 
     def test_tool_icon_builder_with_detail(self):
         """Test ToolIcon builder pattern with detail icon."""
         icon_detail = ToolIconDetail.builder().background("#FF0000").content("🔧").build()
 
-        tool_icon = ToolIcon.builder().icon(icon_detail).build()
+        tool_icon = ToolIcon.builder().tool_icons({"calculator": icon_detail}).build()
 
-        assert isinstance(tool_icon.icon, ToolIconDetail)
-        assert tool_icon.icon.background == "#FF0000"
-        assert tool_icon.icon.content == "🔧"
+        assert isinstance(tool_icon.tool_icons["calculator"], ToolIconDetail)
+        assert tool_icon.tool_icons["calculator"].background == "#FF0000"
+        assert tool_icon.tool_icons["calculator"].content == "🔧"
 
     def test_tool_icon_validation(self):
         """Test ToolIcon field validation."""
-        tool_icon = ToolIcon.builder().icon("test").build()
+        tool_icon = ToolIcon.builder().tool_icons({"test": "test"}).build()
         assert isinstance(tool_icon, BaseModel)
-        assert tool_icon.icon == "test"
+        assert tool_icon.tool_icons["test"] == "test"
 
 
 class TestPaginationInfo:

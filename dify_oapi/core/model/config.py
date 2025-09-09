@@ -12,3 +12,6 @@ class Config:
         self.max_keepalive_connections: int = 20  # Max keepalive connections per pool
         self.max_connections: int = 100  # Max total connections per pool
         self.keepalive_expiry: float = 30.0  # Keepalive connection expiry time in seconds
+
+        # SSL settings
+        self.verify_ssl: bool = True  # SSL certificate verification, set to False to disable

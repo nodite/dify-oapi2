@@ -72,6 +72,7 @@ async def _async_stream_generator(
         getattr(conf, "max_keepalive_connections", 20),
         getattr(conf, "max_connections", 100),
         getattr(conf, "keepalive_expiry", 30.0),
+        getattr(conf, "verify_ssl", True),
     )
 
     for retry in range(conf.max_retry_count + 1):
@@ -195,6 +196,7 @@ class ATransport:
             getattr(conf, "max_keepalive_connections", 20),
             getattr(conf, "max_connections", 100),
             getattr(conf, "keepalive_expiry", 30.0),
+            getattr(conf, "verify_ssl", True),
         )
 
         for retry in range(conf.max_retry_count + 1):

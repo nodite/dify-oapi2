@@ -58,8 +58,8 @@ Implementation progress tracking for Chatflow API module with **17 APIs** across
 - [x] Testing: Create comprehensive tests for Conversation resource
 
 ### Step 12: Implement TTS API Models (2 APIs)
-- [ ] Implementation: Implement request and response models
-- [ ] Testing: Create comprehensive tests for TTS models
+- [x] Implementation: Implement request and response models
+- [x] Testing: Create comprehensive tests for TTS models
 
 ### Step 13: Implement TTS Resource Class
 - [ ] Implementation: Implement TTS resource class

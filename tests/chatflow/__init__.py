@@ -1,1 +1,1 @@
-# Chatflow tests module
+# Chatflow tests package

@@ -1,10 +1,10 @@
 from dify_oapi.core.model.config import Config
 
 from .resource.chatflow import Chatflow
+from .resource.conversation import Conversation
+from .resource.feedback import Feedback
 from .resource.file import File
 
-# from .resource.feedback import Feedback
-# from .resource.conversation import Conversation
 # from .resource.tts import TTS
 # from .resource.application import Application
 # from .resource.annotation import Annotation
@@ -31,9 +31,9 @@ class V1:
         """
         self.chatflow = Chatflow(config)
         self.file = File(config)
+        self.feedback = Feedback(config)
+        self.conversation = Conversation(config)
         # TODO: Uncomment these when resource classes are implemented
-        # self.feedback = Feedback(config)
-        # self.conversation = Conversation(config)
         # self.tts = TTS(config)
         # self.application = Application(config)
         # self.annotation = Annotation(config)

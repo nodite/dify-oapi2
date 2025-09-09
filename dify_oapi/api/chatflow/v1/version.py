@@ -1,8 +1,8 @@
 from dify_oapi.core.model.config import Config
 
 from .resource.chatflow import Chatflow
+from .resource.file import File
 
-# from .resource.file import File
 # from .resource.feedback import Feedback
 # from .resource.conversation import Conversation
 # from .resource.tts import TTS
@@ -30,8 +30,8 @@ class V1:
             config: The configuration object containing API settings
         """
         self.chatflow = Chatflow(config)
+        self.file = File(config)
         # TODO: Uncomment these when resource classes are implemented
-        # self.file = File(config)
         # self.feedback = Feedback(config)
         # self.conversation = Conversation(config)
         # self.tts = TTS(config)

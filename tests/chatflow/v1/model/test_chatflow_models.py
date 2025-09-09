@@ -133,9 +133,11 @@ class TestGetSuggestedQuestionsModels:
         request = GetSuggestedQuestionsRequest.builder().message_id("msg_123").user("user_456").build()
 
         # Check that query parameter was added
-        assert "user" in [param["key"] for param in request.query_params]
-        user_param = next(param for param in request.query_params if param["key"] == "user")
-        assert user_param["value"] == "user_456"
+        assert ("user", "user_456") in request.queries
+        # Verify the query parameter is correctly stored
+        user_queries = [q for q in request.queries if q[0] == "user"]
+        assert len(user_queries) == 1
+        assert user_queries[0][1] == "user_456"
 
     def test_response_inheritance(self):
         response = GetSuggestedQuestionsResponse()

@@ -39,12 +39,12 @@ class TestChatflowModuleStructure:
     def test_module_imports_work(self):
         """Test that module imports work correctly."""
         # Test chatflow service import
-        from dify_oapi.api.chatflow import ChatflowService
+        from dify_oapi.api.chatflow.service import ChatflowService
 
         assert ChatflowService is not None, "ChatflowService should be importable"
 
         # Test v1 version import
-        from dify_oapi.api.chatflow.v1 import V1
+        from dify_oapi.api.chatflow.v1.version import V1
 
         assert V1 is not None, "V1 should be importable"
 

@@ -22,8 +22,8 @@ Implementation progress tracking for Chatflow API module with **17 APIs** across
 - [x] Testing: Create comprehensive tests for types
 
 ### Step 3: Implement Core Public Models
-- [ ] Implementation: Implement core public model classes
-- [ ] Testing: Create comprehensive tests for public models
+- [x] Implementation: Implement core public model classes
+- [x] Testing: Create comprehensive tests for public models
 
 ### Step 4: Implement Chatflow API Models (3 APIs)
 - [ ] Implementation: Implement request and response models

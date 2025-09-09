@@ -1,13 +1,12 @@
 from dify_oapi.core.model.config import Config
 
+from .resource.annotation import Annotation
+from .resource.application import Application
 from .resource.chatflow import Chatflow
 from .resource.conversation import Conversation
 from .resource.feedback import Feedback
 from .resource.file import File
-
-# from .resource.tts import TTS
-# from .resource.application import Application
-# from .resource.annotation import Annotation
+from .resource.tts import TTS
 
 
 class V1:
@@ -29,11 +28,10 @@ class V1:
         Args:
             config: The configuration object containing API settings
         """
+        self.annotation = Annotation(config)
+        self.application = Application(config)
         self.chatflow = Chatflow(config)
-        self.file = File(config)
-        self.feedback = Feedback(config)
         self.conversation = Conversation(config)
-        # TODO: Uncomment these when resource classes are implemented
-        # self.tts = TTS(config)
-        # self.application = Application(config)
-        # self.annotation = Annotation(config)
+        self.feedback = Feedback(config)
+        self.file = File(config)
+        self.tts = TTS(config)

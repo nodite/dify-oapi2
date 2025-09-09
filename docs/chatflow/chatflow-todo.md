@@ -50,8 +50,8 @@ Implementation progress tracking for Chatflow API module with **17 APIs** across
 - [x] Testing: Create comprehensive tests for Feedback resource
 
 ### Step 10: Implement Conversation API Models (5 APIs)
-- [ ] Implementation: Implement request and response models
-- [ ] Testing: Create comprehensive tests for Conversation models
+- [x] Implementation: Implement request and response models
+- [x] Testing: Create comprehensive tests for Conversation models
 
 ### Step 11: Implement Conversation Resource Class
 - [ ] Implementation: Implement Conversation resource class

@@ -104,10 +104,8 @@ class TestGetAppFeedbacksModels:
 
         assert request.http_method == HttpMethod.GET
         assert request.uri == "/v1/app/feedbacks"
-        assert "page" in request.query
-        assert "limit" in request.query
-        assert request.query["page"] == "1"
-        assert request.query["limit"] == "20"
+        assert ("page", "1") in request.queries
+        assert ("limit", "20") in request.queries
 
     def test_request_validation(self):
         """Test GetAppFeedbacksRequest validation."""
@@ -121,20 +119,22 @@ class TestGetAppFeedbacksModels:
         """Test GetAppFeedbacksRequest pagination parameters."""
         request = GetAppFeedbacksRequest.builder().page(2).limit(50).build()
 
-        assert request.query["page"] == "2"
-        assert request.query["limit"] == "50"
+        assert ("page", "2") in request.queries
+        assert ("limit", "50") in request.queries
 
     def test_request_optional_parameters(self):
         """Test GetAppFeedbacksRequest optional parameters."""
         # Test with only page
         request = GetAppFeedbacksRequest.builder().page(3).build()
-        assert request.query["page"] == "3"
-        assert "limit" not in request.query
+        assert ("page", "3") in request.queries
+        limit_queries = [q for q in request.queries if q[0] == "limit"]
+        assert len(limit_queries) == 0
 
         # Test with only limit
         request = GetAppFeedbacksRequest.builder().limit(10).build()
-        assert request.query["limit"] == "10"
-        assert "page" not in request.query
+        assert ("limit", "10") in request.queries
+        page_queries = [q for q in request.queries if q[0] == "page"]
+        assert len(page_queries) == 0
 
     def test_response_inheritance(self):
         """Test GetAppFeedbacksResponse inherits from BaseResponse."""

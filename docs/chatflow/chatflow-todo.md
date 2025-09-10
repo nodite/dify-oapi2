@@ -110,8 +110,8 @@ Implementation progress tracking for Chatflow API module with **17 APIs** across
 - [x] Testing: Create tests to validate Conversation examples
 
 ### Step 25: Create TTS Examples
-- [ ] Implementation: Create comprehensive examples for TTS APIs
-- [ ] Testing: Create tests to validate TTS examples
+- [x] Implementation: Create comprehensive examples for TTS APIs
+- [x] Testing: Create tests to validate TTS examples
 
 ### Step 26: Create Application Examples
 - [ ] Implementation: Create comprehensive examples for Application APIs

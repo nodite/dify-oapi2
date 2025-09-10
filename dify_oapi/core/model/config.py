@@ -1,3 +1,5 @@
+import ssl
+
 from dify_oapi.core.enum import LogLevel
 
 
@@ -14,4 +16,4 @@ class Config:
         self.keepalive_expiry: float = 30.0  # Keepalive connection expiry time in seconds
 
         # SSL settings
-        self.verify_ssl: bool = True  # SSL certificate verification, set to False to disable
+        self.verify_ssl: ssl.SSLContext | str | bool = True  # SSL certificate verification

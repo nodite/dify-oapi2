@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import ssl
+
 from .api.chat.service import ChatService
 from .api.chatflow.service import ChatflowService
 from .api.completion.service import CompletionService
@@ -108,6 +110,16 @@ class ClientBuilder:
     def keepalive_expiry(self, seconds: float) -> ClientBuilder:
         """Set keepalive connection expiry time in seconds."""
         self._config.keepalive_expiry = seconds
+        return self
+
+    def timeout(self, seconds: float) -> ClientBuilder:
+        """Set client timeout in seconds."""
+        self._config.timeout = seconds
+        return self
+
+    def verify_ssl(self, verify: ssl.SSLContext | str | bool) -> ClientBuilder:
+        """Set SSL certificate verification."""
+        self._config.verify_ssl = verify
         return self
 
     def build(self) -> Client:

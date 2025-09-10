@@ -10,7 +10,7 @@ A Python SDK for interacting with the Dify Service-API. This library provides a 
 
 ## ✨ Features
 
-- **Multiple API Services**: Chat (22 APIs), Completion (15 APIs), Knowledge Base (33 APIs), Workflow, and Core Dify APIs
+- **Multiple API Services**: Chat (22 APIs), Completion (15 APIs), Knowledge Base (33 APIs), Chatflow (17 APIs), Workflow, and Core Dify APIs
 - **Builder Pattern**: Fluent, chainable interface for constructing requests
 - **Sync & Async Support**: Both synchronous and asynchronous operations
 - **Streaming Responses**: Real-time streaming for chat and completion
@@ -123,6 +123,17 @@ asyncio.run(async_chat())
 - **Tag Management**: 7 APIs for metadata and knowledge type tags
 - **Model Management**: 1 API for embedding model information
 
+### Chatflow API (17 APIs)
+- **Advanced Chat**: 3 APIs for enhanced chat functionality with workflow events
+- **File Management**: 1 API for multimodal file upload and processing
+- **Feedback System**: 2 APIs for comprehensive feedback collection and analysis
+- **Conversation Management**: 5 APIs for complete conversation lifecycle management
+- **TTS Integration**: 2 APIs for speech-to-text and text-to-speech capabilities
+- **Application Configuration**: 4 APIs for app settings and metadata management
+- **Annotation System**: 6 APIs for annotation management and reply settings
+- **Streaming Support**: Real-time streaming with comprehensive event handling
+- **Type Safety**: Strict Literal types for all predefined values
+
 ### Workflow API
 - Automated workflow execution
 - Parameter configuration
@@ -152,6 +163,15 @@ Explore comprehensive examples in the [examples directory](./examples):
 - [**Document Processing**](./examples/knowledge/document/) - File upload and text processing
 - [**Content Organization**](./examples/knowledge/segment/) - Segment and chunk management
 - [**Tag Management**](./examples/knowledge/tag/) - Metadata and tagging system
+
+### Chatflow Examples
+- [**Advanced Chat**](./examples/chatflow/chatflow/) - Enhanced chat with streaming and workflow events
+- [**File Operations**](./examples/chatflow/file/) - Multimodal file upload and processing
+- [**Feedback Management**](./examples/chatflow/feedback/) - Comprehensive feedback collection
+- [**Conversation Management**](./examples/chatflow/conversation/) - Complete conversation operations
+- [**TTS Operations**](./examples/chatflow/tts/) - Speech-to-text and text-to-speech
+- [**Application Configuration**](./examples/chatflow/application/) - App settings and metadata
+- [**Annotation Management**](./examples/chatflow/annotation/) - Annotation CRUD and reply settings
 
 For detailed examples and usage patterns, see the [examples README](./examples/README.md).
 
@@ -242,6 +262,7 @@ dify-oapi/
 │   │   ├── completion/  # Completion API
 │   │   ├── dify/        # Core Dify API
 │   │   ├── knowledge/ # Knowledge Base API (33 APIs)
+│   │   ├── chatflow/    # Chatflow API (17 APIs)
 │   │   └── workflow/    # Workflow API
 │   ├── core/            # Core functionality
 │   │   ├── http/        # HTTP transport layer

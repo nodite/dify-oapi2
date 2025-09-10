@@ -1,0 +1,9 @@
+from dify_oapi.core.model.base_response import BaseResponse
+
+from .annotation_info import AnnotationInfo
+
+
+class UpdateAnnotationResponse(AnnotationInfo, BaseResponse):
+    """Response for updating annotation."""
+
+    pass

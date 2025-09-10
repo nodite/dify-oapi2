@@ -33,9 +33,10 @@ class ConnectionPoolManager:
         max_keepalive: int = 20,
         max_connections: int = 100,
         keepalive_expiry: float = 30.0,
+        verify_ssl: bool = True,
     ) -> httpx.Client:
         """Get or create a sync HTTP client for the given domain."""
-        client_key = f"{domain}:{timeout}:{max_keepalive}:{max_connections}:{keepalive_expiry}"
+        client_key = f"{domain}:{timeout}:{max_keepalive}:{max_connections}:{keepalive_expiry}:{verify_ssl}"
 
         with self._client_lock:
             if client_key not in self._sync_clients:
@@ -49,6 +50,7 @@ class ConnectionPoolManager:
                 self._sync_clients[client_key] = httpx.Client(
                     timeout=timeout,
                     limits=limits,
+                    verify=verify_ssl,
                     # Note: HTTP/2 disabled to avoid h2 dependency requirement
                 )
 
@@ -61,9 +63,10 @@ class ConnectionPoolManager:
         max_keepalive: int = 20,
         max_connections: int = 100,
         keepalive_expiry: float = 30.0,
+        verify_ssl: bool = True,
     ) -> httpx.AsyncClient:
         """Get or create an async HTTP client for the given domain."""
-        client_key = f"{domain}:{timeout}:{max_keepalive}:{max_connections}:{keepalive_expiry}"
+        client_key = f"{domain}:{timeout}:{max_keepalive}:{max_connections}:{keepalive_expiry}:{verify_ssl}"
 
         with self._client_lock:
             if client_key not in self._async_clients:
@@ -77,6 +80,7 @@ class ConnectionPoolManager:
                 self._async_clients[client_key] = httpx.AsyncClient(
                     timeout=timeout,
                     limits=limits,
+                    verify=verify_ssl,
                     # Note: HTTP/2 disabled to avoid h2 dependency requirement
                 )
 

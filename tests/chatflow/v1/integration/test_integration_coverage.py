@@ -18,7 +18,6 @@ from dify_oapi.api.chatflow.v1.resource.feedback import Feedback
 from dify_oapi.api.chatflow.v1.resource.file import File
 from dify_oapi.api.chatflow.v1.resource.tts import TTS
 from dify_oapi.client import Client
-from dify_oapi.core.model.config import Config
 
 from .test_chatflow_api_integration import TestChatflowAPIIntegration
 
@@ -119,7 +118,7 @@ class TestIntegrationCoverage:
 
         # Verify streaming-specific testing
         assert "stream=True" in source, "Missing streaming mode test"
-        assert 'response_mode="streaming"' in source, "Missing streaming response mode"
+        assert 'response_mode("streaming")' in source, "Missing streaming response mode"
 
     def test_async_operations_tested(self, integration_test_class):
         """Verify async operations are tested."""
@@ -172,12 +171,15 @@ class TestIntegrationCoverage:
 
             # Verify mock responses are defined
             if "mock_execute.return_value" in source or "mock_execute.side_effect" in source:
-                assert "MagicMock" in source, f"Test method {test_method.__name__} uses mocks but doesn't use MagicMock"
+                # Allow either MagicMock or generator functions for streaming tests
+                has_mock_or_generator = "MagicMock" in source or "def mock_" in source
+                assert has_mock_or_generator, (
+                    f"Test method {test_method.__name__} uses mocks but doesn't use MagicMock or generator"
+                )
 
     def test_all_resources_integration_tested(self):
         """Verify all 6 resources are tested in integration."""
-        config = Config.builder().domain("https://api.dify.ai").build()
-        client = Client.builder().config(config).build()
+        client = Client.builder().domain("https://api.dify.ai").build()
 
         # Verify all resources exist and are accessible
         resources = {

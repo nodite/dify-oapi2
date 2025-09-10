@@ -51,8 +51,7 @@ class TestFeedbackResource:
         """Create mock message feedback response."""
         return MessageFeedbackResponse(
             result="success",
-            success=True,
-            code="200",
+            code=None,  # None for success=True
             msg="Feedback submitted successfully",
         )
 
@@ -89,8 +88,7 @@ class TestFeedbackResource:
         ]
         return GetAppFeedbacksResponse(
             data=feedback_items,
-            success=True,
-            code="200",
+            code=None,  # None for success=True
             msg="Feedbacks retrieved successfully",
         )
 
@@ -218,8 +216,7 @@ class TestFeedbackResource:
             # Create mock response
             mock_response = MessageFeedbackResponse(
                 result="success",
-                success=True,
-                code="200",
+                code=None,
                 msg=f"Feedback with {rating} submitted",
             )
             mock_execute.return_value = mock_response
@@ -240,8 +237,7 @@ class TestFeedbackResource:
 
         mock_response = MessageFeedbackResponse(
             result="success",
-            success=True,
-            code="200",
+            code=None,
             msg="Feedback submitted successfully",
         )
         mock_execute.return_value = mock_response
@@ -275,8 +271,7 @@ class TestFeedbackResource:
             # Create mock response
             mock_response = GetAppFeedbacksResponse(
                 data=[],
-                success=True,
-                code="200",
+                code=None,
                 msg=f"Page {page}, Limit {limit}",
             )
             mock_execute.return_value = mock_response
@@ -400,8 +395,7 @@ class TestFeedbackResource:
 
         mock_response = MessageFeedbackResponse(
             result="success",
-            success=True,
-            code="200",
+            code=None,
             msg="Long feedback submitted successfully",
         )
         mock_execute.return_value = mock_response
@@ -421,8 +415,7 @@ class TestFeedbackResource:
         # Create empty response
         empty_response = GetAppFeedbacksResponse(
             data=[],
-            success=True,
-            code="200",
+            code=None,
             msg="No feedbacks found",
         )
         mock_execute.return_value = empty_response
@@ -447,8 +440,7 @@ class TestFeedbackResource:
 
         mock_response = MessageFeedbackResponse(
             result="success",
-            success=True,
-            code="200",
+            code=None,
             msg="Special character feedback submitted",
         )
         mock_execute.return_value = mock_response
@@ -491,8 +483,7 @@ class TestFeedbackResource:
 
         large_response = GetAppFeedbacksResponse(
             data=large_feedback_list,
-            success=True,
-            code="200",
+            code=None,
             msg="Large dataset retrieved",
         )
         mock_execute.return_value = large_response

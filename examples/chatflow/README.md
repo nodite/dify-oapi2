@@ -67,6 +67,7 @@ export API_KEY="your-dify-api-key-here"
 ```python
 from dify_oapi.client import Client
 from dify_oapi.core.model.request_option import RequestOption
+from dify_oapi.api.chatflow.v1.model.send_chat_message_request import SendChatMessageRequest
 
 # Initialize client
 client = Client.builder().domain("https://api.dify.ai").build()
@@ -139,10 +140,10 @@ for chunk in response:
     print(chunk.decode("utf-8"), end="", flush=True)
 
 # With file attachment
-chat_file = ChatFile.builder()
-    .type("document")
-    .transfer_method("remote_url")
-    .url("https://example.com/doc.pdf")
+chat_file = ChatFile.builder() \
+    .type("document") \
+    .transfer_method("remote_url") \
+    .url("https://example.com/doc.pdf") \
     .build()
 ```
 
@@ -187,9 +188,9 @@ Comprehensive file upload examples:
 ```python
 # Upload file
 file_data = BytesIO(content.encode("utf-8"))
-request = UploadFileRequest.builder()
-    .file(file_data, "[Example]_document.txt")
-    .user("user-123")
+request = UploadFileRequest.builder() \
+    .file(file_data, "[Example]_document.txt") \
+    .user("user-123") \
     .build()
 
 response = client.chatflow.v1.file.upload(request, option)
@@ -205,10 +206,10 @@ file_id = response.id  # Use in ChatFile objects
 Provide feedback on chat messages:
 ```python
 # Like/dislike with optional comment
-request_body = MessageFeedbackRequestBody.builder()
-    .rating("like")  # "like" | "dislike" | None
-    .user("user-123")
-    .content("This response was very helpful!")
+request_body = MessageFeedbackRequestBody.builder() \
+    .rating("like") \
+    .user("user-123") \
+    .content("This response was very helpful!") \
     .build()
 ```
 
@@ -219,9 +220,9 @@ request_body = MessageFeedbackRequestBody.builder()
 Retrieve feedback history with pagination:
 ```python
 # Get feedbacks with pagination
-request = GetAppFeedbacksRequest.builder()
-    .page(1)
-    .limit(20)
+request = GetAppFeedbacksRequest.builder() \
+    .page(1) \
+    .limit(20) \
     .build()
 ```
 
@@ -233,10 +234,10 @@ request = GetAppFeedbacksRequest.builder()
 
 Retrieve message history with pagination:
 ```python
-request = GetConversationMessagesRequest.builder()
-    .conversation_id("conv-123")
-    .user("user-123")
-    .limit(20)
+request = GetConversationMessagesRequest.builder() \
+    .conversation_id("conv-123") \
+    .user("user-123") \
+    .limit(20) \
     .build()
 ```
 
@@ -246,10 +247,10 @@ request = GetConversationMessagesRequest.builder()
 
 List conversations with sorting and pagination:
 ```python
-request = GetConversationsRequest.builder()
-    .user("user-123")
-    .sort_by("-updated_at")  # Sort by most recent
-    .limit(20)
+request = GetConversationsRequest.builder() \
+    .user("user-123") \
+    .sort_by("-updated_at") \
+    .limit(20) \
     .build()
 ```
 
@@ -260,13 +261,13 @@ request = GetConversationsRequest.builder()
 Safely delete conversations:
 ```python
 # Only delete conversations with [Example] prefix for safety
-request = DeleteConversationRequest.builder()
-    .conversation_id("conv-123")
+request = DeleteConversationRequest.builder() \
+    .conversation_id("conv-123") \
     .request_body(
-        DeleteConversationRequestBody.builder()
-        .user("user-123")
-        .build()
-    )
+        DeleteConversationRequestBody.builder() \
+            .user("user-123") \
+            .build()
+    ) \
     .build()
 ```
 
@@ -277,15 +278,15 @@ request = DeleteConversationRequest.builder()
 Rename conversations manually or auto-generate:
 ```python
 # Manual rename
-request_body = RenameConversationRequestBody.builder()
-    .name("[Example] New Conversation Name")
-    .user("user-123")
+request_body = RenameConversationRequestBody.builder() \
+    .name("[Example] New Conversation Name") \
+    .user("user-123") \
     .build()
 
 # Auto-generate name
-request_body = RenameConversationRequestBody.builder()
-    .auto_generate(True)
-    .user("user-123")
+request_body = RenameConversationRequestBody.builder() \
+    .auto_generate(True) \
+    .user("user-123") \
     .build()
 ```
 
@@ -295,10 +296,10 @@ request_body = RenameConversationRequestBody.builder()
 
 Access conversation variables:
 ```python
-request = GetConversationVariablesRequest.builder()
-    .conversation_id("conv-123")
-    .user("user-123")
-    .variable_name("specific_var")  # Optional filter
+request = GetConversationVariablesRequest.builder() \
+    .conversation_id("conv-123") \
+    .user("user-123") \
+    .variable_name("specific_var") \
     .build()
 ```
 
@@ -312,9 +313,9 @@ Convert speech to text:
 ```python
 # Upload audio file for transcription
 audio_data = open("audio.mp3", "rb").read()
-request = AudioToTextRequest.builder()
-    .file(BytesIO(audio_data), "audio.mp3")
-    .user("user-123")
+request = AudioToTextRequest.builder() \
+    .file(BytesIO(audio_data), "audio.mp3") \
+    .user("user-123") \
     .build()
 
 response = client.chatflow.v1.tts.speech_to_text(request, option)
@@ -330,10 +331,10 @@ print(f"Transcription: {response.text}")
 Convert text to speech:
 ```python
 # Convert text to audio
-request_body = TextToAudioRequestBody.builder()
-    .text("Hello, this is a test message")
-    .user("user-123")
-    .streaming(False)
+request_body = TextToAudioRequestBody.builder() \
+    .text("Hello, this is a test message") \
+    .user("user-123") \
+    .streaming(False) \
     .build()
 
 # Returns binary audio data
@@ -397,9 +398,9 @@ print(f"Icon: {response.icon}")
 
 List annotation entries with pagination:
 ```python
-request = GetAnnotationsRequest.builder()
-    .page(1)
-    .limit(20)
+request = GetAnnotationsRequest.builder() \
+    .page(1) \
+    .limit(20) \
     .build()
 ```
 
@@ -409,9 +410,9 @@ request = GetAnnotationsRequest.builder()
 
 Create new annotation entries:
 ```python
-request_body = CreateAnnotationRequestBody.builder()
-    .question("What is machine learning?")
-    .answer("Machine learning is a subset of AI...")
+request_body = CreateAnnotationRequestBody.builder() \
+    .question("What is machine learning?") \
+    .answer("Machine learning is a subset of AI...") \
     .build()
 ```
 
@@ -421,9 +422,9 @@ request_body = CreateAnnotationRequestBody.builder()
 
 Modify existing annotations:
 ```python
-request_body = UpdateAnnotationRequestBody.builder()
-    .question("Updated question")
-    .answer("Updated answer")
+request_body = UpdateAnnotationRequestBody.builder() \
+    .question("Updated question") \
+    .answer("Updated answer") \
     .build()
 ```
 
@@ -434,8 +435,8 @@ request_body = UpdateAnnotationRequestBody.builder()
 Remove annotation entries:
 ```python
 # Only delete annotations with [Example] prefix for safety
-request = DeleteAnnotationRequest.builder()
-    .annotation_id("annotation-123")
+request = DeleteAnnotationRequest.builder() \
+    .annotation_id("annotation-123") \
     .build()
 ```
 
@@ -446,15 +447,15 @@ request = DeleteAnnotationRequest.builder()
 Configure annotation reply behavior:
 ```python
 # Enable annotation replies
-request_body = AnnotationReplySettingsRequestBody.builder()
-    .embedding_provider_name("openai")
-    .embedding_model_name("text-embedding-ada-002")
-    .score_threshold(0.8)
+request_body = AnnotationReplySettingsRequestBody.builder() \
+    .embedding_provider_name("openai") \
+    .embedding_model_name("text-embedding-ada-002") \
+    .score_threshold(0.8) \
     .build()
 
-request = AnnotationReplySettingsRequest.builder()
-    .action("enable")  # "enable" | "disable"
-    .request_body(request_body)
+request = AnnotationReplySettingsRequest.builder() \
+    .action("enable") \
+    .request_body(request_body) \
     .build()
 ```
 
@@ -464,16 +465,47 @@ request = AnnotationReplySettingsRequest.builder()
 
 Check annotation reply job status:
 ```python
-request = AnnotationReplyStatusRequest.builder()
-    .action("enable")
-    .job_id("job-123")
+request = AnnotationReplyStatusRequest.builder() \
+    .action("enable") \
+    .job_id("job-123") \
     .build()
 
 response = client.chatflow.v1.annotation.reply_status(request, option)
 print(f"Job status: {response.job_status}")
 ```
 
+## 🌐 API Endpoints
+
+The Chatflow APIs use standard HTTP methods:
+
+- **POST** `/v1/chat-messages` - Send chat messages
+- **POST** `/v1/chat-messages/:task_id/stop` - Stop chat generation
+- **GET** `/v1/messages/:message_id/suggested` - Get suggested questions
+- **POST** `/v1/files/upload` - Upload files
+- **POST** `/v1/messages/:message_id/feedbacks` - Submit feedback
+- **GET** `/v1/messages` - Get conversation messages
+- **GET** `/v1/conversations` - List conversations
+- **DELETE** `/v1/conversations/:conversation_id` - Delete conversations
+- **PUT** `/v1/conversations/:conversation_id` - Rename conversations
+
 ## 🔧 Common Patterns
+
+### Resource Access Patterns
+
+All Chatflow APIs follow consistent resource access patterns:
+
+```python
+# Resource access pattern
+client.chatflow.v1.resource.method(request, option)
+
+# Examples of method patterns:
+client.chatflow.v1.chatflow.send(request, option)     # .send(
+client.chatflow.v1.file.upload(request, option)       # .upload(
+client.chatflow.v1.application.info(request, option)  # .info(
+client.chatflow.v1.conversation.list(request, option) # .list(
+client.chatflow.v1.conversation.delete(request, option) # .delete(
+client.chatflow.v1.annotation.create(request, option) # .create(
+```
 
 ### Error Handling
 
@@ -559,16 +591,16 @@ feedback = client.chatflow.v1.feedback.message(feedback_request, option)
 file_response = client.chatflow.v1.file.upload(upload_request, option)
 
 # 2. Use file in chat
-chat_file = ChatFile.builder()
-    .type("document")
-    .transfer_method("local_file")
-    .upload_file_id(file_response.id)
+chat_file = ChatFile.builder() \
+    .type("document") \
+    .transfer_method("local_file") \
+    .upload_file_id(file_response.id) \
     .build()
 
 # 3. Send chat with file
-chat_request = SendChatMessageRequestBody.builder()
-    .query("Analyze this document")
-    .files([chat_file])
+chat_request = SendChatMessageRequestBody.builder() \
+    .query("Analyze this document") \
+    .files([chat_file]) \
     .build()
 ```
 
@@ -667,6 +699,14 @@ site = client.chatflow.v1.application.site(site_request, option)
    ```
    **Solution**: Check network connectivity and API endpoint availability
 
+### HTTP Error Codes
+
+- **400** Bad Request - Invalid request parameters or malformed data
+- **404** Not Found - Resource (conversation, message, file) not found
+- **413** Payload Too Large - File size exceeds limits
+- **415** Unsupported Media Type - File type not supported
+- **500** Internal Server Error - Server-side processing error
+
 ### Debug Tips
 
 1. **Enable Verbose Logging**: Add debug prints to track request/response flow
@@ -701,6 +741,6 @@ This project is licensed under the MIT License - see the [LICENSE](../../LICENSE
 
 ---
 
-**Total Examples**: 17 example files covering all Chatflow APIs
+**Total Examples**: 23 example files covering all Chatflow APIs
 **Resources Covered**: 6 resource categories with complete functionality
 **Features Demonstrated**: Streaming, file uploads, conversation management, TTS, application configuration, and annotation management

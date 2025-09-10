@@ -44,7 +44,6 @@ from dify_oapi.api.chatflow.v1.model.update_annotation_request import UpdateAnno
 from dify_oapi.api.chatflow.v1.model.update_annotation_request_body import UpdateAnnotationRequestBody
 from dify_oapi.api.chatflow.v1.model.upload_file_request import UploadFileRequest
 from dify_oapi.client import Client
-from dify_oapi.core.model.config import Config
 from dify_oapi.core.model.request_option import RequestOption
 
 
@@ -52,14 +51,9 @@ class TestChatflowAPIIntegration:
     """Integration tests for all Chatflow APIs."""
 
     @pytest.fixture
-    def config(self):
-        """Create test configuration."""
-        return Config.builder().domain("https://api.dify.ai").build()
-
-    @pytest.fixture
-    def client(self, config):
+    def client(self):
         """Create test client."""
-        return Client.builder().config(config).build()
+        return Client.builder().domain("https://api.dify.ai").build()
 
     @pytest.fixture
     def request_option(self):
@@ -70,21 +64,46 @@ class TestChatflowAPIIntegration:
         """Test complete chat conversation workflow."""
         with patch("dify_oapi.core.http.transport.Transport.execute") as mock_execute:
             # Mock responses for complete workflow
+            send_mock = MagicMock()
+            send_mock.success = True
+            send_mock.message_id = "msg-123"
+            send_mock.conversation_id = "conv-123"
+            send_mock.answer = "Hello!"
+
+            suggested_mock = MagicMock()
+            suggested_mock.success = True
+            suggested_mock.data = ["What can you do?", "How does this work?"]
+
+            stop_mock = MagicMock()
+            stop_mock.success = True
+            stop_mock.result = "success"
+
+            messages_mock = MagicMock()
+            messages_mock.success = True
+            messages_mock.data = [{"id": "msg-123", "query": "Hello", "answer": "Hello!"}]
+            messages_mock.has_more = False
+
+            rename_mock = MagicMock()
+            rename_mock.success = True
+            rename_mock.id = "conv-123"
+            rename_mock.name = "Test Chat"
+
+            variables_mock = MagicMock()
+            variables_mock.success = True
+            variables_mock.data = []
+            variables_mock.has_more = False
+
+            delete_mock = MagicMock()
+            delete_mock.success = True
+
             mock_responses = [
-                # Send chat message
-                MagicMock(success=True, message_id="msg-123", conversation_id="conv-123", answer="Hello!"),
-                # Get suggested questions
-                MagicMock(success=True, data=["What can you do?", "How does this work?"]),
-                # Stop chat message
-                MagicMock(success=True, result="success"),
-                # Get conversation messages
-                MagicMock(success=True, data=[{"id": "msg-123", "query": "Hello", "answer": "Hello!"}], has_more=False),
-                # Rename conversation
-                MagicMock(success=True, id="conv-123", name="Test Chat"),
-                # Get conversation variables
-                MagicMock(success=True, data=[], has_more=False),
-                # Delete conversation
-                MagicMock(success=True),
+                send_mock,
+                suggested_mock,
+                stop_mock,
+                messages_mock,
+                rename_mock,
+                variables_mock,
+                delete_mock,
             ]
             mock_execute.side_effect = mock_responses
 
@@ -160,11 +179,20 @@ class TestChatflowAPIIntegration:
         """Test file upload and usage in chat workflow."""
         with patch("dify_oapi.core.http.transport.Transport.execute") as mock_execute:
             # Mock responses
+            upload_mock = MagicMock()
+            upload_mock.success = True
+            upload_mock.id = "file-123"
+            upload_mock.name = "test.pdf"
+            upload_mock.size = 1024
+
+            chat_mock = MagicMock()
+            chat_mock.success = True
+            chat_mock.message_id = "msg-456"
+            chat_mock.answer = "File analyzed successfully"
+
             mock_responses = [
-                # Upload file
-                MagicMock(success=True, id="file-123", name="test.pdf", size=1024),
-                # Send chat with file
-                MagicMock(success=True, message_id="msg-456", answer="File analyzed successfully"),
+                upload_mock,
+                chat_mock,
             ]
             mock_execute.side_effect = mock_responses
 
@@ -195,11 +223,17 @@ class TestChatflowAPIIntegration:
         """Test feedback collection and retrieval workflow."""
         with patch("dify_oapi.core.http.transport.Transport.execute") as mock_execute:
             # Mock responses
+            feedback_mock = MagicMock()
+            feedback_mock.success = True
+            feedback_mock.result = "success"
+
+            list_mock = MagicMock()
+            list_mock.success = True
+            list_mock.data = [{"id": "feedback-123", "rating": "like", "content": "Great response!"}]
+
             mock_responses = [
-                # Provide feedback
-                MagicMock(success=True, result="success"),
-                # Get app feedbacks
-                MagicMock(success=True, data=[{"id": "feedback-123", "rating": "like", "content": "Great response!"}]),
+                feedback_mock,
+                list_mock,
             ]
             mock_execute.side_effect = mock_responses
 
@@ -229,11 +263,16 @@ class TestChatflowAPIIntegration:
         """Test TTS operations workflow."""
         with patch("dify_oapi.core.http.transport.Transport.execute") as mock_execute:
             # Mock responses
+            audio_mock = MagicMock()
+            audio_mock.success = True
+            audio_mock.text = "Hello, this is a test"
+
+            tts_mock = MagicMock()
+            tts_mock.success = True
+
             mock_responses = [
-                # Audio to text
-                MagicMock(success=True, text="Hello, this is a test"),
-                # Text to audio
-                MagicMock(success=True),  # Binary response
+                audio_mock,
+                tts_mock,
             ]
             mock_execute.side_effect = mock_responses
 
@@ -257,15 +296,30 @@ class TestChatflowAPIIntegration:
         """Test application configuration access workflow."""
         with patch("dify_oapi.core.http.transport.Transport.execute") as mock_execute:
             # Mock responses
+            info_mock = MagicMock()
+            info_mock.success = True
+            info_mock.name = "Test App"
+            info_mock.description = "Test Description"
+
+            params_mock = MagicMock()
+            params_mock.success = True
+            params_mock.opening_statement = "Welcome!"
+            params_mock.suggested_questions = ["What can you do?"]
+
+            meta_mock = MagicMock()
+            meta_mock.success = True
+            meta_mock.tool_icons = {}
+
+            site_mock = MagicMock()
+            site_mock.success = True
+            site_mock.title = "Test App"
+            site_mock.chat_color_theme = "blue"
+
             mock_responses = [
-                # Get info
-                MagicMock(success=True, name="Test App", description="Test Description"),
-                # Get parameters
-                MagicMock(success=True, opening_statement="Welcome!", suggested_questions=["What can you do?"]),
-                # Get meta
-                MagicMock(success=True, tool_icons={}),
-                # Get site
-                MagicMock(success=True, title="Test App", chat_color_theme="blue"),
+                info_mock,
+                params_mock,
+                meta_mock,
+                site_mock,
             ]
             mock_execute.side_effect = mock_responses
 
@@ -296,21 +350,43 @@ class TestChatflowAPIIntegration:
         """Test annotation management workflow."""
         with patch("dify_oapi.core.http.transport.Transport.execute") as mock_execute:
             # Mock responses
+            create_mock = MagicMock()
+            create_mock.success = True
+            create_mock.id = "annotation-123"
+            create_mock.question = "What is AI?"
+            create_mock.answer = "AI is artificial intelligence"
+
+            list_mock = MagicMock()
+            list_mock.success = True
+            list_mock.data = [{"id": "annotation-123", "question": "What is AI?"}]
+            list_mock.has_more = False
+
+            update_mock = MagicMock()
+            update_mock.success = True
+            update_mock.id = "annotation-123"
+            update_mock.question = "What is AI?"
+            update_mock.answer = "Updated answer"
+
+            settings_mock = MagicMock()
+            settings_mock.success = True
+            settings_mock.job_id = "job-123"
+            settings_mock.job_status = "running"
+
+            status_mock = MagicMock()
+            status_mock.success = True
+            status_mock.job_id = "job-123"
+            status_mock.job_status = "completed"
+
+            delete_mock = MagicMock()
+            delete_mock.success = True
+
             mock_responses = [
-                # Create annotation
-                MagicMock(
-                    success=True, id="annotation-123", question="What is AI?", answer="AI is artificial intelligence"
-                ),
-                # Get annotations
-                MagicMock(success=True, data=[{"id": "annotation-123", "question": "What is AI?"}], has_more=False),
-                # Update annotation
-                MagicMock(success=True, id="annotation-123", question="What is AI?", answer="Updated answer"),
-                # Reply settings
-                MagicMock(success=True, job_id="job-123", job_status="running"),
-                # Reply status
-                MagicMock(success=True, job_id="job-123", job_status="completed"),
-                # Delete annotation
-                MagicMock(success=True),
+                create_mock,
+                list_mock,
+                update_mock,
+                settings_mock,
+                status_mock,
+                delete_mock,
             ]
             mock_execute.side_effect = mock_responses
 
@@ -422,10 +498,24 @@ class TestChatflowAPIIntegration:
         """Test async operations workflow."""
         with patch("dify_oapi.core.http.transport.ATransport.aexecute") as mock_aexecute:
             # Mock async responses
+            async_send_mock = MagicMock()
+            async_send_mock.success = True
+            async_send_mock.message_id = "msg-async"
+            async_send_mock.answer = "Async response"
+
+            async_upload_mock = MagicMock()
+            async_upload_mock.success = True
+            async_upload_mock.id = "file-async"
+            async_upload_mock.name = "async.pdf"
+
+            async_feedback_mock = MagicMock()
+            async_feedback_mock.success = True
+            async_feedback_mock.result = "success"
+
             mock_responses = [
-                MagicMock(success=True, message_id="msg-async", answer="Async response"),
-                MagicMock(success=True, id="file-async", name="async.pdf"),
-                MagicMock(success=True, result="success"),
+                async_send_mock,
+                async_upload_mock,
+                async_feedback_mock,
             ]
 
             async def async_side_effect(*args, **kwargs):
@@ -470,10 +560,25 @@ class TestChatflowAPIIntegration:
         """Test error handling across all APIs."""
         with patch("dify_oapi.core.http.transport.Transport.execute") as mock_execute:
             # Mock error responses
+            error1_mock = MagicMock()
+            error1_mock.success = False
+            error1_mock.code = "invalid_request"
+            error1_mock.msg = "Invalid parameters"
+
+            error2_mock = MagicMock()
+            error2_mock.success = False
+            error2_mock.code = "not_found"
+            error2_mock.msg = "Resource not found"
+
+            error3_mock = MagicMock()
+            error3_mock.success = False
+            error3_mock.code = "unauthorized"
+            error3_mock.msg = "Invalid API key"
+
             error_responses = [
-                MagicMock(success=False, code="invalid_request", msg="Invalid parameters"),
-                MagicMock(success=False, code="not_found", msg="Resource not found"),
-                MagicMock(success=False, code="unauthorized", msg="Invalid API key"),
+                error1_mock,
+                error2_mock,
+                error3_mock,
             ]
             mock_execute.side_effect = error_responses
 
@@ -510,11 +615,21 @@ class TestChatflowAPIIntegration:
         """Test pagination across list APIs."""
         with patch("dify_oapi.core.http.transport.Transport.execute") as mock_execute:
             # Mock paginated responses
+            page1_mock = MagicMock()
+            page1_mock.success = True
+            page1_mock.data = [{"id": "item-1"}, {"id": "item-2"}]
+            page1_mock.has_more = True
+            page1_mock.limit = 2
+
+            page2_mock = MagicMock()
+            page2_mock.success = True
+            page2_mock.data = [{"id": "item-3"}]
+            page2_mock.has_more = False
+            page2_mock.limit = 2
+
             mock_responses = [
-                # First page
-                MagicMock(success=True, data=[{"id": "item-1"}, {"id": "item-2"}], has_more=True, limit=2),
-                # Second page
-                MagicMock(success=True, data=[{"id": "item-3"}], has_more=False, limit=2),
+                page1_mock,
+                page2_mock,
             ]
             mock_execute.side_effect = mock_responses
 

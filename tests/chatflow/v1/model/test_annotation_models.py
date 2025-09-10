@@ -30,10 +30,8 @@ class TestGetAnnotationsModels:
 
         assert request.http_method == HttpMethod.GET
         assert request.uri == "/v1/apps/annotations"
-        assert "page" in request.query
-        assert request.query["page"] == 1
-        assert "limit" in request.query
-        assert request.query["limit"] == 20
+        assert ("page", "1") in request.queries
+        assert ("limit", "20") in request.queries
 
     def test_request_validation(self):
         """Test GetAnnotationsRequest validation."""

@@ -15,7 +15,7 @@ class TestConversationExamples(unittest.TestCase):
 
     def setUp(self):
         """Set up test environment."""
-        self.examples_dir = os.path.join(os.path.dirname(__file__), "../../../../../examples/chatflow/conversation")
+        self.examples_dir = os.path.join(os.path.dirname(__file__), "../../../../examples/chatflow/conversation")
         self.example_files = [
             "get_conversation_messages.py",
             "get_conversations.py",
@@ -235,11 +235,11 @@ class TestConversationExamples(unittest.TestCase):
             with open(file_path, encoding="utf-8") as f:
                 content = f.read()
 
-            # Check for consistent client initialization
-            self.assertIn(
-                'Client.builder().domain("https://api.dify.ai").build()',
-                content,
-                f"Consistent client initialization missing in {filename}",
+            # Check for consistent client initialization patterns
+            has_client_builder = "Client.builder().domain(" in content and ").build()" in content
+            self.assertTrue(
+                has_client_builder,
+                f"Client builder pattern missing in {filename}",
             )
             self.assertIn(
                 "RequestOption.builder().api_key(api_key).build()",

@@ -1,4 +1,5 @@
 from io import BytesIO
+from unittest.mock import patch
 
 import pytest
 
@@ -8,8 +9,6 @@ from dify_oapi.api.chatflow.v1.model.text_to_audio_request import TextToAudioReq
 from dify_oapi.api.chatflow.v1.model.text_to_audio_request_body import TextToAudioRequestBody
 from dify_oapi.api.chatflow.v1.model.text_to_audio_response import TextToAudioResponse
 from dify_oapi.api.chatflow.v1.resource.tts import TTS
-from dify_oapi.core.http.transport.async_transport import ATransport
-from dify_oapi.core.http.transport.sync_transport import Transport
 from dify_oapi.core.model.config import Config
 from dify_oapi.core.model.request_option import RequestOption
 
@@ -26,10 +25,10 @@ class TestTTSResource:
         assert self.tts.config == self.config
         assert isinstance(self.tts, TTS)
 
-    def test_speech_to_text_sync(self, mocker):
+    @patch("dify_oapi.core.http.transport.Transport.execute")
+    def test_speech_to_text_sync(self, mock_execute):
         """Test speech_to_text method (sync)"""
         # Mock Transport.execute
-        mock_execute = mocker.patch.object(Transport, "execute")
         mock_response = AudioToTextResponse.builder().text("Transcribed text").build()
         mock_execute.return_value = mock_response
 
@@ -46,11 +45,11 @@ class TestTTSResource:
         )
         assert response == mock_response
 
+    @patch("dify_oapi.core.http.transport.ATransport.aexecute")
     @pytest.mark.asyncio
-    async def test_speech_to_text_async(self, mocker):
+    async def test_speech_to_text_async(self, mock_aexecute):
         """Test aspeech_to_text method (async)"""
         # Mock ATransport.aexecute
-        mock_aexecute = mocker.patch.object(ATransport, "aexecute")
         mock_response = AudioToTextResponse.builder().text("Transcribed text").build()
         mock_aexecute.return_value = mock_response
 
@@ -67,10 +66,10 @@ class TestTTSResource:
         )
         assert response == mock_response
 
-    def test_text_to_audio_sync(self, mocker):
+    @patch("dify_oapi.core.http.transport.Transport.execute")
+    def test_text_to_audio_sync(self, mock_execute):
         """Test text_to_audio method (sync)"""
         # Mock Transport.execute
-        mock_execute = mocker.patch.object(Transport, "execute")
         mock_response = TextToAudioResponse.builder().build()
         mock_execute.return_value = mock_response
 
@@ -87,11 +86,11 @@ class TestTTSResource:
         )
         assert response == mock_response
 
+    @patch("dify_oapi.core.http.transport.ATransport.aexecute")
     @pytest.mark.asyncio
-    async def test_text_to_audio_async(self, mocker):
+    async def test_text_to_audio_async(self, mock_aexecute):
         """Test atext_to_audio method (async)"""
         # Mock ATransport.aexecute
-        mock_aexecute = mocker.patch.object(ATransport, "aexecute")
         mock_response = TextToAudioResponse.builder().build()
         mock_aexecute.return_value = mock_response
 
@@ -108,10 +107,10 @@ class TestTTSResource:
         )
         assert response == mock_response
 
-    def test_speech_to_text_with_different_audio_formats(self, mocker):
+    @patch("dify_oapi.core.http.transport.Transport.execute")
+    def test_speech_to_text_with_different_audio_formats(self, mock_execute):
         """Test speech_to_text with different audio formats"""
         # Mock Transport.execute
-        mock_execute = mocker.patch.object(Transport, "execute")
         mock_response = AudioToTextResponse.builder().text("Transcribed text").build()
         mock_execute.return_value = mock_response
 
@@ -125,10 +124,10 @@ class TestTTSResource:
 
             assert response == mock_response
 
-    def test_text_to_audio_with_message_id(self, mocker):
+    @patch("dify_oapi.core.http.transport.Transport.execute")
+    def test_text_to_audio_with_message_id(self, mock_execute):
         """Test text_to_audio with message_id instead of text"""
         # Mock Transport.execute
-        mock_execute = mocker.patch.object(Transport, "execute")
         mock_response = TextToAudioResponse.builder().build()
         mock_execute.return_value = mock_response
 
@@ -145,10 +144,10 @@ class TestTTSResource:
         )
         assert response == mock_response
 
-    def test_text_to_audio_streaming_mode(self, mocker):
+    @patch("dify_oapi.core.http.transport.Transport.execute")
+    def test_text_to_audio_streaming_mode(self, mock_execute):
         """Test text_to_audio with streaming enabled"""
         # Mock Transport.execute
-        mock_execute = mocker.patch.object(Transport, "execute")
         mock_response = TextToAudioResponse.builder().build()
         mock_execute.return_value = mock_response
 
@@ -167,10 +166,10 @@ class TestTTSResource:
         )
         assert response == mock_response
 
-    def test_speech_to_text_error_handling(self, mocker):
+    @patch("dify_oapi.core.http.transport.Transport.execute")
+    def test_speech_to_text_error_handling(self, mock_execute):
         """Test speech_to_text error handling"""
         # Mock Transport.execute to raise exception
-        mock_execute = mocker.patch.object(Transport, "execute")
         mock_execute.side_effect = Exception("API Error")
 
         # Create request
@@ -181,11 +180,11 @@ class TestTTSResource:
         with pytest.raises(Exception, match="API Error"):
             self.tts.speech_to_text(request, self.request_option)
 
+    @patch("dify_oapi.core.http.transport.ATransport.aexecute")
     @pytest.mark.asyncio
-    async def test_text_to_audio_async_error_handling(self, mocker):
+    async def test_text_to_audio_async_error_handling(self, mock_aexecute):
         """Test atext_to_audio error handling"""
         # Mock ATransport.aexecute to raise exception
-        mock_aexecute = mocker.patch.object(ATransport, "aexecute")
         mock_aexecute.side_effect = Exception("Async API Error")
 
         # Create request
@@ -204,10 +203,10 @@ class TestTTSResourceIntegration:
         self.tts = TTS(self.config)
         self.request_option = RequestOption.builder().api_key("test-api-key").build()
 
-    def test_complete_speech_to_text_flow(self, mocker):
+    @patch("dify_oapi.core.http.transport.Transport.execute")
+    def test_complete_speech_to_text_flow(self, mock_execute):
         """Test complete speech-to-text workflow"""
         # Mock Transport.execute
-        mock_execute = mocker.patch.object(Transport, "execute")
         mock_response = AudioToTextResponse.builder().text("Hello, this is a test transcription").build()
         mock_execute.return_value = mock_response
 
@@ -222,11 +221,11 @@ class TestTTSResourceIntegration:
         assert response.text == "Hello, this is a test transcription"
         assert isinstance(response, AudioToTextResponse)
 
+    @patch("dify_oapi.core.http.transport.ATransport.aexecute")
     @pytest.mark.asyncio
-    async def test_complete_text_to_audio_flow(self, mocker):
+    async def test_complete_text_to_audio_flow(self, mock_aexecute):
         """Test complete text-to-audio workflow"""
         # Mock ATransport.aexecute
-        mock_aexecute = mocker.patch.object(ATransport, "aexecute")
         mock_response = TextToAudioResponse.builder().build()
         mock_aexecute.return_value = mock_response
 
@@ -246,10 +245,10 @@ class TestTTSResourceIntegration:
         # Verify response
         assert isinstance(response, TextToAudioResponse)
 
-    def test_tts_round_trip_simulation(self, mocker):
+    @patch("dify_oapi.core.http.transport.Transport.execute")
+    def test_tts_round_trip_simulation(self, mock_execute):
         """Test simulated round-trip: text -> audio -> text"""
         # Mock both operations
-        mock_execute = mocker.patch.object(Transport, "execute")
 
         # First call: text-to-audio
         audio_response = TextToAudioResponse.builder().build()

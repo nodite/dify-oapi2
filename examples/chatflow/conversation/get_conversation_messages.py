@@ -12,6 +12,7 @@ def get_conversation_messages_sync():
     """Get conversation messages synchronously with pagination."""
     # Validate environment variables
     api_key = os.getenv("API_KEY")
+    domain = os.getenv("DOMAIN", "https://api.dify.ai")
     if not api_key:
         raise ValueError("API_KEY environment variable is required")
 
@@ -20,7 +21,8 @@ def get_conversation_messages_sync():
         raise ValueError("CONVERSATION_ID environment variable is required")
 
     # Initialize client
-    client = Client.builder().domain("https://api.dify.ai").build()
+    domain = os.getenv("DOMAIN", "https://api.dify.ai")
+    client = Client.builder().domain(domain).build()
 
     # Build request
     request = (
@@ -55,6 +57,7 @@ async def get_conversation_messages_async():
     """Get conversation messages asynchronously with pagination."""
     # Validate environment variables
     api_key = os.getenv("API_KEY")
+    domain = os.getenv("DOMAIN", "https://api.dify.ai")
     if not api_key:
         raise ValueError("API_KEY environment variable is required")
 
@@ -63,7 +66,8 @@ async def get_conversation_messages_async():
         raise ValueError("CONVERSATION_ID environment variable is required")
 
     # Initialize client
-    client = Client.builder().domain("https://api.dify.ai").build()
+    domain = os.getenv("DOMAIN", "https://api.dify.ai")
+    client = Client.builder().domain(domain).build()
 
     # Build request with pagination
     request = (
@@ -98,6 +102,7 @@ def get_conversation_messages_with_pagination():
     """Get conversation messages with pagination example."""
     # Validate environment variables
     api_key = os.getenv("API_KEY")
+    domain = os.getenv("DOMAIN", "https://api.dify.ai")
     if not api_key:
         raise ValueError("API_KEY environment variable is required")
 
@@ -106,7 +111,8 @@ def get_conversation_messages_with_pagination():
         raise ValueError("CONVERSATION_ID environment variable is required")
 
     # Initialize client
-    client = Client.builder().domain("https://api.dify.ai").build()
+    domain = os.getenv("DOMAIN", "https://api.dify.ai")
+    client = Client.builder().domain(domain).build()
 
     # Build request option
     request_option = RequestOption.builder().api_key(api_key).build()

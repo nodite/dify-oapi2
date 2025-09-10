@@ -21,7 +21,8 @@ def rename_conversation_sync():
         raise ValueError("CONVERSATION_ID environment variable is required")
 
     # Initialize client
-    client = Client.builder().domain("https://api.dify.ai").build()
+    domain = os.getenv("DOMAIN", "https://api.dify.ai")
+    client = Client.builder().domain(domain).build()
 
     # Build request body with custom name
     request_body = (
@@ -62,7 +63,8 @@ async def rename_conversation_async():
         raise ValueError("CONVERSATION_ID environment variable is required")
 
     # Initialize client
-    client = Client.builder().domain("https://api.dify.ai").build()
+    domain = os.getenv("DOMAIN", "https://api.dify.ai")
+    client = Client.builder().domain(domain).build()
 
     # Build request body with custom name
     request_body = (
@@ -104,7 +106,8 @@ def rename_conversation_auto_generate():
         raise ValueError("CONVERSATION_ID environment variable is required")
 
     # Initialize client
-    client = Client.builder().domain("https://api.dify.ai").build()
+    domain = os.getenv("DOMAIN", "https://api.dify.ai")
+    client = Client.builder().domain(domain).build()
 
     # Build request body with auto-generate enabled
     request_body = RenameConversationRequestBody.builder().auto_generate(True).user("user-123").build()
@@ -143,7 +146,8 @@ def rename_conversation_clear_name():
         raise ValueError("CONVERSATION_ID environment variable is required")
 
     # Initialize client
-    client = Client.builder().domain("https://api.dify.ai").build()
+    domain = os.getenv("DOMAIN", "https://api.dify.ai")
+    client = Client.builder().domain(domain).build()
 
     # Build request body with name set to None
     request_body = RenameConversationRequestBody.builder().name(None).user("user-123").build()
@@ -177,7 +181,8 @@ def rename_example_conversation():
         raise ValueError("API_KEY environment variable is required")
 
     # Initialize client
-    client = Client.builder().domain("https://api.dify.ai").build()
+    domain = os.getenv("DOMAIN", "https://api.dify.ai")
+    client = Client.builder().domain(domain).build()
 
     # First, create an example conversation
     from dify_oapi.api.chatflow.v1.model.send_chat_message_request import SendChatMessageRequest

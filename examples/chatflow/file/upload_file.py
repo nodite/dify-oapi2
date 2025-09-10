@@ -19,9 +19,10 @@ from dify_oapi.core.model.request_option import RequestOption
 def validate_environment():
     """Validate required environment variables."""
     api_key = os.getenv("API_KEY")
+    domain = os.getenv("DOMAIN", "https://api.dify.ai")
     if not api_key:
         raise ValueError("API_KEY environment variable is required")
-    return api_key
+    return api_key, domain
 
 
 def create_sample_text_file():
@@ -71,9 +72,10 @@ def create_sample_csv_file():
 
 def upload_text_file():
     """Upload a text file (sync)."""
-    api_key = validate_environment()
+    api_key, domain = validate_environment()
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    domain = os.getenv("DOMAIN", "https://api.dify.ai")
+    client = Client.builder().domain(domain).build()
 
     # Create sample text file
     file_data = create_sample_text_file()
@@ -99,9 +101,10 @@ def upload_text_file():
 
 def upload_json_file():
     """Upload a JSON file (sync)."""
-    api_key = validate_environment()
+    api_key, domain = validate_environment()
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    domain = os.getenv("DOMAIN", "https://api.dify.ai")
+    client = Client.builder().domain(domain).build()
 
     # Create sample JSON file
     file_data = create_sample_json_file()
@@ -126,9 +129,10 @@ def upload_json_file():
 
 def upload_csv_file():
     """Upload a CSV file (sync)."""
-    api_key = validate_environment()
+    api_key, domain = validate_environment()
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    domain = os.getenv("DOMAIN", "https://api.dify.ai")
+    client = Client.builder().domain(domain).build()
 
     # Create sample CSV file
     file_data = create_sample_csv_file()
@@ -153,9 +157,10 @@ def upload_csv_file():
 
 async def upload_file_async():
     """Upload a file (async)."""
-    api_key = validate_environment()
+    api_key, domain = validate_environment()
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    domain = os.getenv("DOMAIN", "https://api.dify.ai")
+    client = Client.builder().domain(domain).build()
 
     # Create sample text file
     file_data = create_sample_text_file()
@@ -180,9 +185,10 @@ async def upload_file_async():
 
 def upload_multiple_files():
     """Upload multiple files sequentially."""
-    api_key = validate_environment()
+    api_key, domain = validate_environment()
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    domain = os.getenv("DOMAIN", "https://api.dify.ai")
+    client = Client.builder().domain(domain).build()
 
     # Define files to upload
     files_to_upload = [
@@ -221,9 +227,10 @@ def upload_multiple_files():
 
 def upload_file_with_error_handling():
     """Upload file with comprehensive error handling."""
-    api_key = validate_environment()
+    api_key, domain = validate_environment()
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    domain = os.getenv("DOMAIN", "https://api.dify.ai")
+    client = Client.builder().domain(domain).build()
 
     try:
         # Create sample file
@@ -264,9 +271,10 @@ def upload_file_with_error_handling():
 
 def demonstrate_file_usage_workflow():
     """Demonstrate complete file upload and usage workflow."""
-    api_key = validate_environment()
+    api_key, domain = validate_environment()
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    domain = os.getenv("DOMAIN", "https://api.dify.ai")
+    client = Client.builder().domain(domain).build()
 
     print("🔄 Demonstrating complete file upload workflow:")
     print("1. Upload file")

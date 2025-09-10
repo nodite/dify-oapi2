@@ -18,16 +18,18 @@ from dify_oapi.core.model.request_option import RequestOption
 def validate_environment():
     """Validate required environment variables."""
     api_key = os.getenv("API_KEY")
+    domain = os.getenv("DOMAIN", "https://api.dify.ai")
     if not api_key:
         raise ValueError("API_KEY environment variable is required")
-    return api_key
+    return api_key, domain
 
 
 def provide_like_feedback():
     """Provide like feedback for a message (sync)."""
-    api_key = validate_environment()
+    api_key, domain = validate_environment()
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    domain = os.getenv("DOMAIN", "https://api.dify.ai")
+    client = Client.builder().domain(domain).build()
 
     # Build request body
     req_body = (
@@ -55,9 +57,10 @@ def provide_like_feedback():
 
 def provide_dislike_feedback():
     """Provide dislike feedback for a message (sync)."""
-    api_key = validate_environment()
+    api_key, domain = validate_environment()
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    domain = os.getenv("DOMAIN", "https://api.dify.ai")
+    client = Client.builder().domain(domain).build()
 
     # Build request body
     req_body = (
@@ -85,9 +88,10 @@ def provide_dislike_feedback():
 
 async def provide_feedback_async():
     """Provide feedback for a message (async)."""
-    api_key = validate_environment()
+    api_key, domain = validate_environment()
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    domain = os.getenv("DOMAIN", "https://api.dify.ai")
+    client = Client.builder().domain(domain).build()
 
     # Build request body
     req_body = (

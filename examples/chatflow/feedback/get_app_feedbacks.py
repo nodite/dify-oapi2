@@ -17,16 +17,18 @@ from dify_oapi.core.model.request_option import RequestOption
 def validate_environment():
     """Validate required environment variables."""
     api_key = os.getenv("API_KEY")
+    domain = os.getenv("DOMAIN", "https://api.dify.ai")
     if not api_key:
         raise ValueError("API_KEY environment variable is required")
-    return api_key
+    return api_key, domain
 
 
 def get_feedbacks_basic():
     """Get application feedbacks with default pagination (sync)."""
-    api_key = validate_environment()
+    api_key, domain = validate_environment()
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    domain = os.getenv("DOMAIN", "https://api.dify.ai")
+    client = Client.builder().domain(domain).build()
 
     # Build request
     req = GetAppFeedbacksRequest.builder().build()
@@ -54,9 +56,10 @@ def get_feedbacks_basic():
 
 def get_feedbacks_with_pagination():
     """Get application feedbacks with custom pagination (sync)."""
-    api_key = validate_environment()
+    api_key, domain = validate_environment()
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    domain = os.getenv("DOMAIN", "https://api.dify.ai")
+    client = Client.builder().domain(domain).build()
 
     # Build request with pagination
     req = GetAppFeedbacksRequest.builder().page(1).limit(5).build()
@@ -86,9 +89,10 @@ def get_feedbacks_with_pagination():
 
 async def get_feedbacks_async():
     """Get application feedbacks (async)."""
-    api_key = validate_environment()
+    api_key, domain = validate_environment()
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    domain = os.getenv("DOMAIN", "https://api.dify.ai")
+    client = Client.builder().domain(domain).build()
 
     # Build request
     req = GetAppFeedbacksRequest.builder().page(1).limit(10).build()
@@ -117,9 +121,10 @@ async def get_feedbacks_async():
 
 def get_feedbacks_multiple_pages():
     """Get feedbacks from multiple pages."""
-    api_key = validate_environment()
+    api_key, domain = validate_environment()
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    domain = os.getenv("DOMAIN", "https://api.dify.ai")
+    client = Client.builder().domain(domain).build()
 
     all_feedbacks = []
     page = 1
@@ -172,9 +177,10 @@ def get_feedbacks_multiple_pages():
 
 def get_feedbacks_with_error_handling():
     """Get feedbacks with comprehensive error handling."""
-    api_key = validate_environment()
+    api_key, domain = validate_environment()
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    domain = os.getenv("DOMAIN", "https://api.dify.ai")
+    client = Client.builder().domain(domain).build()
 
     try:
         # Build request
@@ -219,9 +225,10 @@ def get_feedbacks_with_error_handling():
 
 def demonstrate_feedback_analysis():
     """Demonstrate feedback analysis workflow."""
-    api_key = validate_environment()
+    api_key, domain = validate_environment()
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    domain = os.getenv("DOMAIN", "https://api.dify.ai")
+    client = Client.builder().domain(domain).build()
 
     print("🔄 Demonstrating feedback analysis workflow:")
     print("1. Retrieve feedbacks")

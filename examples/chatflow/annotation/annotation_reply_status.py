@@ -21,7 +21,8 @@ def get_annotation_reply_status_sync():
         raise ValueError("JOB_ID environment variable is required")
 
     # Initialize client
-    client = Client.builder().domain("https://api.dify.ai").build()
+    domain = os.getenv("DOMAIN", "https://api.dify.ai")
+    client = Client.builder().domain(domain).build()
 
     # Build request
     request = AnnotationReplyStatusRequest.builder().action("enable").job_id(job_id).build()
@@ -58,7 +59,8 @@ async def get_annotation_reply_status_async():
         raise ValueError("JOB_ID environment variable is required")
 
     # Initialize client
-    client = Client.builder().domain("https://api.dify.ai").build()
+    domain = os.getenv("DOMAIN", "https://api.dify.ai")
+    client = Client.builder().domain(domain).build()
 
     # Build request
     request = AnnotationReplyStatusRequest.builder().action("enable").job_id(job_id).build()
@@ -95,7 +97,8 @@ def poll_annotation_reply_status():
         raise ValueError("JOB_ID environment variable is required")
 
     # Initialize client
-    client = Client.builder().domain("https://api.dify.ai").build()
+    domain = os.getenv("DOMAIN", "https://api.dify.ai")
+    client = Client.builder().domain(domain).build()
 
     # Build request option
     request_option = RequestOption.builder().api_key(api_key).build()
@@ -165,7 +168,8 @@ def check_multiple_job_statuses():
             return
 
     # Initialize client
-    client = Client.builder().domain("https://api.dify.ai").build()
+    domain = os.getenv("DOMAIN", "https://api.dify.ai")
+    client = Client.builder().domain(domain).build()
 
     # Build request option
     request_option = RequestOption.builder().api_key(api_key).build()

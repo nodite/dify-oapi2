@@ -17,7 +17,8 @@ def audio_to_text_sync():
         raise ValueError("API_KEY environment variable is required")
 
     # Initialize client
-    client = Client.builder().domain("https://api.dify.ai").build()
+    domain = os.getenv("DOMAIN", "https://api.dify.ai")
+    client = Client.builder().domain(domain).build()
 
     # Create sample audio file (in real usage, load from file)
     audio_data = b"fake_audio_data_for_example"
@@ -50,7 +51,8 @@ async def audio_to_text_async():
         raise ValueError("API_KEY environment variable is required")
 
     # Initialize client
-    client = Client.builder().domain("https://api.dify.ai").build()
+    domain = os.getenv("DOMAIN", "https://api.dify.ai")
+    client = Client.builder().domain(domain).build()
 
     # Create sample audio file (in real usage, load from file)
     audio_data = b"fake_audio_data_for_example"
@@ -83,7 +85,8 @@ def audio_to_text_with_different_formats():
         raise ValueError("API_KEY environment variable is required")
 
     # Initialize client
-    client = Client.builder().domain("https://api.dify.ai").build()
+    domain = os.getenv("DOMAIN", "https://api.dify.ai")
+    client = Client.builder().domain(domain).build()
 
     # Build request option
     request_option = RequestOption.builder().api_key(api_key).build()

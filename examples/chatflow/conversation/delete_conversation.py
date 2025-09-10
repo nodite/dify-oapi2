@@ -21,7 +21,8 @@ def delete_conversation_sync():
         raise ValueError("CONVERSATION_ID environment variable is required")
 
     # Initialize client
-    client = Client.builder().domain("https://api.dify.ai").build()
+    domain = os.getenv("DOMAIN", "https://api.dify.ai")
+    client = Client.builder().domain(domain).build()
 
     # Build request body
     request_body = DeleteConversationRequestBody.builder().user("user-123").build()
@@ -57,7 +58,8 @@ async def delete_conversation_async():
         raise ValueError("CONVERSATION_ID_2 environment variable is required")
 
     # Initialize client
-    client = Client.builder().domain("https://api.dify.ai").build()
+    domain = os.getenv("DOMAIN", "https://api.dify.ai")
+    client = Client.builder().domain(domain).build()
 
     # Build request body
     request_body = DeleteConversationRequestBody.builder().user("user-123").build()
@@ -89,7 +91,8 @@ def delete_example_conversation():
         raise ValueError("API_KEY environment variable is required")
 
     # Initialize client
-    client = Client.builder().domain("https://api.dify.ai").build()
+    domain = os.getenv("DOMAIN", "https://api.dify.ai")
+    client = Client.builder().domain(domain).build()
 
     # First, create an example conversation to delete
     from dify_oapi.api.chatflow.v1.model.send_chat_message_request import SendChatMessageRequest
@@ -157,7 +160,8 @@ def delete_conversation_with_confirmation():
         return
 
     # Initialize client
-    client = Client.builder().domain("https://api.dify.ai").build()
+    domain = os.getenv("DOMAIN", "https://api.dify.ai")
+    client = Client.builder().domain(domain).build()
 
     # Build request body
     request_body = DeleteConversationRequestBody.builder().user("user-123").build()

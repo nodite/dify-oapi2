@@ -17,16 +17,18 @@ from dify_oapi.core.model.request_option import RequestOption
 def validate_environment():
     """Validate required environment variables."""
     api_key = os.getenv("API_KEY")
+    domain = os.getenv("DOMAIN", "https://api.dify.ai")
     if not api_key:
         raise ValueError("API_KEY environment variable is required")
-    return api_key
+    return api_key, domain
 
 
 def get_suggested_questions():
     """Get suggested questions for a message (sync)."""
-    api_key = validate_environment()
+    api_key, domain = validate_environment()
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    domain = os.getenv("DOMAIN", "https://api.dify.ai")
+    client = Client.builder().domain(domain).build()
 
     # Example message ID from a previous chat message
     message_id = "msg-12345"  # Replace with actual message ID
@@ -54,9 +56,10 @@ def get_suggested_questions():
 
 async def get_suggested_questions_async():
     """Get suggested questions for a message (async)."""
-    api_key = validate_environment()
+    api_key, domain = validate_environment()
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    domain = os.getenv("DOMAIN", "https://api.dify.ai")
+    client = Client.builder().domain(domain).build()
 
     # Example message ID from a previous chat message
     message_id = "msg-67890"  # Replace with actual message ID
@@ -84,9 +87,10 @@ async def get_suggested_questions_async():
 
 def get_suggested_questions_for_multiple_messages():
     """Get suggested questions for multiple messages."""
-    api_key = validate_environment()
+    api_key, domain = validate_environment()
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    domain = os.getenv("DOMAIN", "https://api.dify.ai")
+    client = Client.builder().domain(domain).build()
 
     # Example message IDs from previous chat messages
     message_ids = ["msg-111", "msg-222", "msg-333"]
@@ -116,7 +120,7 @@ def get_suggested_questions_for_multiple_messages():
 
 def demonstrate_conversation_flow():
     """Demonstrate a complete conversation flow with suggested questions."""
-    api_key = validate_environment()
+    api_key, domain = validate_environment()
 
     print("🔄 This example shows how suggested questions work in a conversation flow.")
     print("In a real scenario, you would:")
@@ -135,7 +139,8 @@ def demonstrate_conversation_flow():
     # Simulate getting suggestions with the extracted message_id
     message_id = "msg-abc123"
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    domain = os.getenv("DOMAIN", "https://api.dify.ai")
+    client = Client.builder().domain(domain).build()
 
     # Build request
     req = GetSuggestedQuestionsRequest.builder().message_id(message_id).user("user-123").build()
@@ -160,9 +165,10 @@ def demonstrate_conversation_flow():
 
 def get_suggestions_with_different_users():
     """Get suggested questions with different user contexts."""
-    api_key = validate_environment()
+    api_key, domain = validate_environment()
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    domain = os.getenv("DOMAIN", "https://api.dify.ai")
+    client = Client.builder().domain(domain).build()
 
     # Same message ID but different users
     message_id = "msg-shared-123"

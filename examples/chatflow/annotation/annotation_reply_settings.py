@@ -17,7 +17,8 @@ def enable_annotation_reply_sync():
         raise ValueError("API_KEY environment variable is required")
 
     # Initialize client
-    client = Client.builder().domain("https://api.dify.ai").build()
+    domain = os.getenv("DOMAIN", "https://api.dify.ai")
+    client = Client.builder().domain(domain).build()
 
     # Build request body
     req_body = (
@@ -57,7 +58,8 @@ async def enable_annotation_reply_async():
         raise ValueError("API_KEY environment variable is required")
 
     # Initialize client
-    client = Client.builder().domain("https://api.dify.ai").build()
+    domain = os.getenv("DOMAIN", "https://api.dify.ai")
+    client = Client.builder().domain(domain).build()
 
     # Build request body
     req_body = (
@@ -97,7 +99,8 @@ def disable_annotation_reply_sync():
         raise ValueError("API_KEY environment variable is required")
 
     # Initialize client
-    client = Client.builder().domain("https://api.dify.ai").build()
+    domain = os.getenv("DOMAIN", "https://api.dify.ai")
+    client = Client.builder().domain(domain).build()
 
     # Build request body (minimal for disable)
     req_body = AnnotationReplySettingsRequestBody.builder().score_threshold(0.0).build()
@@ -131,7 +134,8 @@ def configure_annotation_reply_with_different_models():
         raise ValueError("API_KEY environment variable is required")
 
     # Initialize client
-    client = Client.builder().domain("https://api.dify.ai").build()
+    domain = os.getenv("DOMAIN", "https://api.dify.ai")
+    client = Client.builder().domain(domain).build()
 
     # Build request option
     request_option = RequestOption.builder().api_key(api_key).build()

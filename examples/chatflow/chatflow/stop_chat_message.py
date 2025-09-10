@@ -18,16 +18,18 @@ from dify_oapi.core.model.request_option import RequestOption
 def validate_environment():
     """Validate required environment variables."""
     api_key = os.getenv("API_KEY")
+    domain = os.getenv("DOMAIN", "https://api.dify.ai")
     if not api_key:
         raise ValueError("API_KEY environment variable is required")
-    return api_key
+    return api_key, domain
 
 
 def stop_chat_message():
     """Stop chat message generation (sync)."""
-    api_key = validate_environment()
+    api_key, domain = validate_environment()
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    domain = os.getenv("DOMAIN", "https://api.dify.ai")
+    client = Client.builder().domain(domain).build()
 
     # Example task ID from a streaming chat message
     task_id = "task-12345"  # Replace with actual task ID from streaming response
@@ -52,9 +54,10 @@ def stop_chat_message():
 
 async def stop_chat_message_async():
     """Stop chat message generation (async)."""
-    api_key = validate_environment()
+    api_key, domain = validate_environment()
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    domain = os.getenv("DOMAIN", "https://api.dify.ai")
+    client = Client.builder().domain(domain).build()
 
     # Example task ID from a streaming chat message
     task_id = "task-67890"  # Replace with actual task ID from streaming response
@@ -79,9 +82,10 @@ async def stop_chat_message_async():
 
 def stop_multiple_tasks():
     """Stop multiple chat message generation tasks."""
-    api_key = validate_environment()
+    api_key, domain = validate_environment()
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    domain = os.getenv("DOMAIN", "https://api.dify.ai")
+    client = Client.builder().domain(domain).build()
 
     # Example task IDs from multiple streaming chat messages
     task_ids = ["task-111", "task-222", "task-333"]
@@ -108,9 +112,10 @@ def stop_multiple_tasks():
 
 def demonstrate_streaming_with_stop():
     """Demonstrate starting a streaming chat and then stopping it."""
-    api_key = validate_environment()
+    api_key, domain = validate_environment()
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    domain = os.getenv("DOMAIN", "https://api.dify.ai")
+    client = Client.builder().domain(domain).build()
 
     print("🔄 This example shows how to stop a streaming chat message.")
     print("In a real scenario, you would:")

@@ -21,7 +21,8 @@ def update_annotation_sync():
         raise ValueError("ANNOTATION_ID environment variable is required")
 
     # Initialize client
-    client = Client.builder().domain("https://api.dify.ai").build()
+    domain = os.getenv("DOMAIN", "https://api.dify.ai")
+    client = Client.builder().domain(domain).build()
 
     # Build request body
     req_body = (
@@ -69,7 +70,8 @@ async def update_annotation_async():
         raise ValueError("ANNOTATION_ID environment variable is required")
 
     # Initialize client
-    client = Client.builder().domain("https://api.dify.ai").build()
+    domain = os.getenv("DOMAIN", "https://api.dify.ai")
+    client = Client.builder().domain(domain).build()
 
     # Build request body
     req_body = (
@@ -116,7 +118,8 @@ def update_annotation_with_validation():
         raise ValueError("ANNOTATION_ID environment variable is required")
 
     # Initialize client
-    client = Client.builder().domain("https://api.dify.ai").build()
+    domain = os.getenv("DOMAIN", "https://api.dify.ai")
+    client = Client.builder().domain(domain).build()
 
     # Build request option
     request_option = RequestOption.builder().api_key(api_key).build()

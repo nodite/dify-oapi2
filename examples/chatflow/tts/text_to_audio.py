@@ -17,7 +17,8 @@ def text_to_audio_sync():
         raise ValueError("API_KEY environment variable is required")
 
     # Initialize client
-    client = Client.builder().domain("https://api.dify.ai").build()
+    domain = os.getenv("DOMAIN", "https://api.dify.ai")
+    client = Client.builder().domain(domain).build()
 
     # Build request body
     req_body = (
@@ -58,7 +59,8 @@ async def text_to_audio_async():
         raise ValueError("API_KEY environment variable is required")
 
     # Initialize client
-    client = Client.builder().domain("https://api.dify.ai").build()
+    domain = os.getenv("DOMAIN", "https://api.dify.ai")
+    client = Client.builder().domain(domain).build()
 
     # Build request body
     req_body = (
@@ -101,7 +103,8 @@ def text_to_audio_with_message_id():
         return text_to_audio_sync()
 
     # Initialize client
-    client = Client.builder().domain("https://api.dify.ai").build()
+    domain = os.getenv("DOMAIN", "https://api.dify.ai")
+    client = Client.builder().domain(domain).build()
 
     # Build request body with message_id
     req_body = TextToAudioRequestBody.builder().message_id(message_id).user("user-123").streaming(False).build()
@@ -133,7 +136,8 @@ def text_to_audio_streaming():
         raise ValueError("API_KEY environment variable is required")
 
     # Initialize client
-    client = Client.builder().domain("https://api.dify.ai").build()
+    domain = os.getenv("DOMAIN", "https://api.dify.ai")
+    client = Client.builder().domain(domain).build()
 
     # Build request body with streaming enabled
     req_body = (

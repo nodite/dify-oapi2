@@ -20,7 +20,8 @@ def delete_annotation_sync():
         raise ValueError("ANNOTATION_ID environment variable is required")
 
     # Initialize client
-    client = Client.builder().domain("https://api.dify.ai").build()
+    domain = os.getenv("DOMAIN", "https://api.dify.ai")
+    client = Client.builder().domain(domain).build()
 
     # Build request
     request = DeleteAnnotationRequest.builder().annotation_id(annotation_id).build()
@@ -54,7 +55,8 @@ async def delete_annotation_async():
         raise ValueError("ANNOTATION_ID environment variable is required")
 
     # Initialize client
-    client = Client.builder().domain("https://api.dify.ai").build()
+    domain = os.getenv("DOMAIN", "https://api.dify.ai")
+    client = Client.builder().domain(domain).build()
 
     # Build request
     request = DeleteAnnotationRequest.builder().annotation_id(annotation_id).build()
@@ -84,7 +86,8 @@ def delete_example_annotations():
         raise ValueError("API_KEY environment variable is required")
 
     # Initialize client
-    client = Client.builder().domain("https://api.dify.ai").build()
+    domain = os.getenv("DOMAIN", "https://api.dify.ai")
+    client = Client.builder().domain(domain).build()
 
     # Build request option
     request_option = RequestOption.builder().api_key(api_key).build()
@@ -148,7 +151,8 @@ def delete_annotation_with_confirmation():
         raise ValueError("ANNOTATION_ID environment variable is required")
 
     # Initialize client
-    client = Client.builder().domain("https://api.dify.ai").build()
+    domain = os.getenv("DOMAIN", "https://api.dify.ai")
+    client = Client.builder().domain(domain).build()
 
     # Build request option
     request_option = RequestOption.builder().api_key(api_key).build()

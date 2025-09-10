@@ -19,16 +19,18 @@ from dify_oapi.core.model.request_option import RequestOption
 def validate_environment():
     """Validate required environment variables."""
     api_key = os.getenv("API_KEY")
+    domain = os.getenv("DOMAIN", "https://api.dify.ai")
     if not api_key:
         raise ValueError("API_KEY environment variable is required")
-    return api_key
+    return api_key, domain
 
 
 def send_chat_message_blocking():
     """Send chat message in blocking mode (sync)."""
-    api_key = validate_environment()
+    api_key, domain = validate_environment()
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    domain = os.getenv("DOMAIN", "https://api.dify.ai")
+    client = Client.builder().domain(domain).build()
 
     # Build request body
     req_body = (
@@ -59,9 +61,10 @@ def send_chat_message_blocking():
 
 def send_chat_message_streaming():
     """Send chat message in streaming mode (sync)."""
-    api_key = validate_environment()
+    api_key, domain = validate_environment()
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    domain = os.getenv("DOMAIN", "https://api.dify.ai")
+    client = Client.builder().domain(domain).build()
 
     # Build request body for streaming
     req_body = (
@@ -89,9 +92,10 @@ def send_chat_message_streaming():
 
 def send_chat_message_with_file():
     """Send chat message with file attachment (blocking mode)."""
-    api_key = validate_environment()
+    api_key, domain = validate_environment()
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    domain = os.getenv("DOMAIN", "https://api.dify.ai")
+    client = Client.builder().domain(domain).build()
 
     # Create a file attachment
     chat_file = (
@@ -129,9 +133,10 @@ def send_chat_message_with_file():
 
 async def send_chat_message_async_blocking():
     """Send chat message in blocking mode (async)."""
-    api_key = validate_environment()
+    api_key, domain = validate_environment()
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    domain = os.getenv("DOMAIN", "https://api.dify.ai")
+    client = Client.builder().domain(domain).build()
 
     # Build request body
     req_body = (
@@ -161,9 +166,10 @@ async def send_chat_message_async_blocking():
 
 async def send_chat_message_async_streaming():
     """Send chat message in streaming mode (async)."""
-    api_key = validate_environment()
+    api_key, domain = validate_environment()
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    domain = os.getenv("DOMAIN", "https://api.dify.ai")
+    client = Client.builder().domain(domain).build()
 
     # Build request body for streaming
     req_body = (
@@ -191,9 +197,10 @@ async def send_chat_message_async_streaming():
 
 def send_chat_message_with_conversation():
     """Send chat message continuing an existing conversation."""
-    api_key = validate_environment()
+    api_key, domain = validate_environment()
 
-    client = Client.builder().domain("https://api.dify.ai").build()
+    domain = os.getenv("DOMAIN", "https://api.dify.ai")
+    client = Client.builder().domain(domain).build()
 
     # Build request body with conversation ID
     req_body = (

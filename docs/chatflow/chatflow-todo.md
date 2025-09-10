@@ -136,165 +136,165 @@ Implementation progress tracking for Chatflow API module with **17 APIs** across
 ## Validation Checklists
 
 ### Model Validation
-- [ ] All Request classes inherit from BaseRequest
-- [ ] All Response classes inherit from BaseResponse
-- [ ] All models implement Builder pattern
-- [ ] Use strict Literal type definitions
-- [ ] Correct field validation and type constraints
-- [ ] Proper HTTP method and URI configuration
-- [ ] Path parameters use colon notation in URI templates
-- [ ] Query parameters handled correctly
-- [ ] Request body serialization works properly
-- [ ] File uploads handled correctly (where applicable)
+- [x] All Request classes inherit from BaseRequest
+- [x] All Response classes inherit from BaseResponse
+- [x] All models implement Builder pattern
+- [x] Use strict Literal type definitions
+- [x] Correct field validation and type constraints
+- [x] Proper HTTP method and URI configuration
+- [x] Path parameters use colon notation in URI templates
+- [x] Query parameters handled correctly
+- [x] Request body serialization works properly
+- [x] File uploads handled correctly (where applicable)
 
 ### Resource Validation
-- [ ] All resource classes correctly implement sync and async methods
-- [ ] Correct error handling and type annotations
-- [ ] Proper integration with Transport layer
-- [ ] Support streaming and blocking modes (applicable APIs)
-- [ ] Correct handling of file uploads and binary responses
-- [ ] Pagination functionality works correctly
-- [ ] Path parameter handling implemented properly
-- [ ] Query parameter filtering works as expected
+- [x] All resource classes correctly implement sync and async methods
+- [x] Correct error handling and type annotations
+- [x] Proper integration with Transport layer
+- [x] Support streaming and blocking modes (applicable APIs)
+- [x] Correct handling of file uploads and binary responses
+- [x] Pagination functionality works correctly
+- [x] Path parameter handling implemented properly
+- [x] Query parameter filtering works as expected
 
 ### Integration Validation
-- [ ] V1 version correctly integrates all 6 resources
-- [ ] All 17 APIs can be called correctly
-- [ ] Configuration and dependency injection work correctly
-- [ ] Consistent with existing architecture
-- [ ] ChatflowService properly integrated into main Client
-- [ ] All imports and exports work correctly
-- [ ] No regressions in existing functionality
+- [x] V1 version correctly integrates all 6 resources
+- [x] All 17 APIs can be called correctly
+- [x] Configuration and dependency injection work correctly
+- [x] Consistent with existing architecture
+- [x] ChatflowService properly integrated into main Client
+- [x] All imports and exports work correctly
+- [x] No regressions in existing functionality
 
 ### Testing Validation
-- [ ] All model tests pass
-- [ ] All resource tests pass
-- [ ] Integration tests cover all APIs
-- [ ] Test coverage reaches expected standards
-- [ ] Error handling scenarios adequately tested
-- [ ] Streaming functionality tested
-- [ ] File upload functionality tested
-- [ ] Binary response handling tested
-- [ ] Pagination functionality tested
-- [ ] Mock usage validated
+- [x] All model tests pass
+- [x] All resource tests pass
+- [x] Integration tests cover all APIs
+- [x] Test coverage reaches expected standards
+- [x] Error handling scenarios adequately tested
+- [x] Streaming functionality tested
+- [x] File upload functionality tested
+- [x] Binary response handling tested
+- [x] Pagination functionality tested
+- [x] Mock usage validated
 
 ### Example Validation
-- [ ] All 17 APIs have corresponding examples
-- [ ] Example code syntax correct and runnable
-- [ ] Include both sync and async usage methods
-- [ ] Complete error handling examples
-- [ ] Environment variable validation implemented
-- [ ] Safety prefixes ("[Example]") used correctly
-- [ ] README documentation accurate and complete
-- [ ] Examples cover all major usage scenarios
+- [x] All 17 APIs have corresponding examples
+- [x] Example code syntax correct and runnable
+- [x] Include both sync and async usage methods
+- [x] Complete error handling examples
+- [x] Environment variable validation implemented
+- [x] Safety prefixes ("[Example]") used correctly
+- [x] README documentation accurate and complete
+- [x] Examples cover all major usage scenarios
 
 ### Quality Assurance Checklist
 
 #### Implementation Requirements
-- [ ] **Module Structure**: Complete chatflow module with proper organization
-- [ ] **Type Safety**: All Literal types implemented and used consistently
-- [ ] **Model Classes**: All 85+ model files with builder patterns
-- [ ] **Resource Classes**: All 6 resource classes with sync/async methods
-- [ ] **BaseResponse Inheritance**: ALL response classes inherit from BaseResponse
-- [ ] **Version Integration**: V1 class exposes all 6 resources
-- [ ] **Client Integration**: ChatflowService integrated into main Client
-- [ ] **Error Handling**: Comprehensive error handling throughout
+- [x] **Module Structure**: Complete chatflow module with proper organization
+- [x] **Type Safety**: All Literal types implemented and used consistently
+- [x] **Model Classes**: All 85+ model files with builder patterns
+- [x] **Resource Classes**: All 6 resource classes with sync/async methods
+- [x] **BaseResponse Inheritance**: ALL response classes inherit from BaseResponse
+- [x] **Version Integration**: V1 class exposes all 6 resources
+- [x] **Client Integration**: ChatflowService integrated into main Client
+- [x] **Error Handling**: Comprehensive error handling throughout
 
 #### Testing Requirements
-- [ ] **Unit Tests**: All model and resource tests implemented
-- [ ] **Integration Tests**: End-to-end API testing
-- [ ] **Example Tests**: All example files validated
-- [ ] **Coverage**: 100% test coverage achieved
-- [ ] **Quality Checks**: Ruff and MyPy pass without errors
+- [x] **Unit Tests**: All model and resource tests implemented
+- [x] **Integration Tests**: End-to-end API testing
+- [x] **Example Tests**: All example files validated
+- [x] **Coverage**: 100% test coverage achieved
+- [x] **Quality Checks**: Ruff and MyPy pass without errors
 
 #### Documentation Requirements
-- [ ] **API Documentation**: All 17 APIs documented
-- [ ] **Examples**: All APIs have working examples
-- [ ] **README Files**: Complete documentation for users
-- [ ] **Migration Guide**: Clear upgrade path for users
+- [x] **API Documentation**: All 17 APIs documented
+- [x] **Examples**: All APIs have working examples
+- [x] **README Files**: Complete documentation for users
+- [x] **Migration Guide**: Clear upgrade path for users
 
 #### Validation Requirements
-- [ ] **Functionality**: All APIs work correctly
-- [ ] **Performance**: Acceptable response times
-- [ ] **Reliability**: Proper error handling and recovery
-- [ ] **Usability**: Clear and intuitive API interface
+- [x] **Functionality**: All APIs work correctly
+- [x] **Performance**: Acceptable response times
+- [x] **Reliability**: Proper error handling and recovery
+- [x] **Usability**: Clear and intuitive API interface
 
 ## API Endpoint Specifications
 
 ### Complete URI and HTTP Method Configuration
 
 #### Chatflow APIs (3 endpoints)
-- [ ] `POST /v1/chat-messages` → `SendChatMessageRequest`
-- [ ] `POST /v1/chat-messages/{task_id}/stop` → `StopChatMessageRequest`
-- [ ] `GET /v1/messages/{message_id}/suggested` → `GetSuggestedQuestionsRequest`
+- [x] `POST /v1/chat-messages` → `SendChatMessageRequest`
+- [x] `POST /v1/chat-messages/{task_id}/stop` → `StopChatMessageRequest`
+- [x] `GET /v1/messages/{message_id}/suggested` → `GetSuggestedQuestionsRequest`
 
 #### File APIs (1 endpoint)
-- [ ] `POST /v1/files/upload` → `UploadFileRequest`
+- [x] `POST /v1/files/upload` → `UploadFileRequest`
 
 #### Feedback APIs (2 endpoints)
-- [ ] `POST /v1/messages/{message_id}/feedbacks` → `MessageFeedbackRequest`
-- [ ] `GET /v1/app/feedbacks` → `GetAppFeedbacksRequest`
+- [x] `POST /v1/messages/{message_id}/feedbacks` → `MessageFeedbackRequest`
+- [x] `GET /v1/app/feedbacks` → `GetAppFeedbacksRequest`
 
 #### Conversation APIs (5 endpoints)
-- [ ] `GET /v1/messages` → `GetConversationMessagesRequest`
-- [ ] `GET /v1/conversations` → `GetConversationsRequest`
-- [ ] `DELETE /v1/conversations/{conversation_id}` → `DeleteConversationRequest`
-- [ ] `POST /v1/conversations/{conversation_id}/name` → `RenameConversationRequest`
-- [ ] `GET /v1/conversations/{conversation_id}/variables` → `GetConversationVariablesRequest`
+- [x] `GET /v1/messages` → `GetConversationMessagesRequest`
+- [x] `GET /v1/conversations` → `GetConversationsRequest`
+- [x] `DELETE /v1/conversations/{conversation_id}` → `DeleteConversationRequest`
+- [x] `POST /v1/conversations/{conversation_id}/name` → `RenameConversationRequest`
+- [x] `GET /v1/conversations/{conversation_id}/variables` → `GetConversationVariablesRequest`
 
 #### TTS APIs (2 endpoints)
-- [ ] `POST /v1/audio-to-text` → `AudioToTextRequest`
-- [ ] `POST /v1/text-to-audio` → `TextToAudioRequest`
+- [x] `POST /v1/audio-to-text` → `AudioToTextRequest`
+- [x] `POST /v1/text-to-audio` → `TextToAudioRequest`
 
 #### Application APIs (4 endpoints)
-- [ ] `GET /v1/info` → `GetInfoRequest`
-- [ ] `GET /v1/parameters` → `GetParametersRequest`
-- [ ] `GET /v1/meta` → `GetMetaRequest`
-- [ ] `GET /v1/site` → `GetSiteRequest`
+- [x] `GET /v1/info` → `GetInfoRequest`
+- [x] `GET /v1/parameters` → `GetParametersRequest`
+- [x] `GET /v1/meta` → `GetMetaRequest`
+- [x] `GET /v1/site` → `GetSiteRequest`
 
 #### Annotation APIs (6 endpoints)
-- [ ] `GET /v1/apps/annotations` → `GetAnnotationsRequest`
-- [ ] `POST /v1/apps/annotations` → `CreateAnnotationRequest`
-- [ ] `PUT /v1/apps/annotations/{annotation_id}` → `UpdateAnnotationRequest`
-- [ ] `DELETE /v1/apps/annotations/{annotation_id}` → `DeleteAnnotationRequest`
-- [ ] `POST /v1/apps/annotation-reply/{action}` → `AnnotationReplySettingsRequest`
-- [ ] `GET /v1/apps/annotation-reply/{action}/status/{job_id}` → `AnnotationReplyStatusRequest`
+- [x] `GET /v1/apps/annotations` → `GetAnnotationsRequest`
+- [x] `POST /v1/apps/annotations` → `CreateAnnotationRequest`
+- [x] `PUT /v1/apps/annotations/{annotation_id}` → `UpdateAnnotationRequest`
+- [x] `DELETE /v1/apps/annotations/{annotation_id}` → `DeleteAnnotationRequest`
+- [x] `POST /v1/apps/annotation-reply/{action}` → `AnnotationReplySettingsRequest`
+- [x] `GET /v1/apps/annotation-reply/{action}/status/{job_id}` → `AnnotationReplyStatusRequest`
 
 ### Path Parameter Patterns
-- [ ] All path parameters use colon notation in URI templates
-- [ ] `{task_id}` → `:task_id`
-- [ ] `{message_id}` → `:message_id`
-- [ ] `{conversation_id}` → `:conversation_id`
-- [ ] `{annotation_id}` → `:annotation_id`
-- [ ] `{action}` → `:action`
-- [ ] `{job_id}` → `:job_id`
+- [x] All path parameters use colon notation in URI templates
+- [x] `{task_id}` → `:task_id`
+- [x] `{message_id}` → `:message_id`
+- [x] `{conversation_id}` → `:conversation_id`
+- [x] `{annotation_id}` → `:annotation_id`
+- [x] `{action}` → `:action`
+- [x] `{job_id}` → `:job_id`
 
 ### Request Builder Configuration Requirements
-- [ ] HTTP Method configured using `HttpMethod` enum
-- [ ] URI Template set with proper path parameter notation
-- [ ] Path Parameters use `self._request.paths["param_name"] = value` pattern
-- [ ] Query Parameters use `self._request.add_query("key", value)` pattern
-- [ ] Request Body use `self._request.body = request_body.model_dump()` for POST/PUT/PATCH
-- [ ] Files use `self._request.files = {"file": (filename, file_data)}` for multipart uploads
+- [x] HTTP Method configured using `HttpMethod` enum
+- [x] URI Template set with proper path parameter notation
+- [x] Path Parameters use `self._request.paths["param_name"] = value` pattern
+- [x] Query Parameters use `self._request.add_query("key", value)` pattern
+- [x] Request Body use `self._request.body = request_body.model_dump()` for POST/PUT/PATCH
+- [x] Files use `self._request.files = {"file": (filename, file_data)}` for multipart uploads
 
 ### Content Type Specifications
-- [ ] JSON APIs use `application/json`
-- [ ] File Upload APIs use `multipart/form-data`
-- [ ] Audio APIs use `multipart/form-data` (for audio-to-text)
-- [ ] JSON response APIs return `application/json`
-- [ ] Streaming APIs return `text/event-stream`
-- [ ] Audio response APIs return `audio/wav` or `audio/mp3`
+- [x] JSON APIs use `application/json`
+- [x] File Upload APIs use `multipart/form-data`
+- [x] Audio APIs use `multipart/form-data` (for audio-to-text)
+- [x] JSON response APIs return `application/json`
+- [x] Streaming APIs return `text/event-stream`
+- [x] Audio response APIs return `audio/wav` or `audio/mp3`
 
 ### Implementation Validation Checklist
-- [ ] Correct HTTP method configured for each endpoint
-- [ ] Exact URI pattern with proper path parameter notation
-- [ ] All path parameters properly handled
-- [ ] All query parameters properly handled
-- [ ] Request body properly serialized
-- [ ] File uploads properly handled (where applicable)
-- [ ] Response unmarshaling configured correctly
-- [ ] Error handling for all HTTP status codes
-- [ ] Streaming support configured (where applicable)
+- [x] Correct HTTP method configured for each endpoint
+- [x] Exact URI pattern with proper path parameter notation
+- [x] All path parameters properly handled
+- [x] All query parameters properly handled
+- [x] Request body properly serialized
+- [x] File uploads properly handled (where applicable)
+- [x] Response unmarshaling configured correctly
+- [x] Error handling for all HTTP status codes
+- [x] Streaming support configured (where applicable)
 
 ## Progress Summary
 

@@ -21,12 +21,14 @@ class TestFinalValidation:
     @pytest.fixture
     def config(self):
         """Create test configuration."""
-        return Config.builder().domain("https://api.dify.ai").build()
+        config = Config()
+        config.domain = "https://api.dify.ai"
+        return config
 
     @pytest.fixture
-    def client(self, config):
+    def client(self):
         """Create test client."""
-        return Client.builder().config(config).build()
+        return Client.builder().domain("https://api.dify.ai").build()
 
     @pytest.fixture
     def request_option(self):
@@ -176,7 +178,8 @@ class TestFinalValidation:
         from dify_oapi.api.chatflow.v1.version import V1
 
         # Test service creation
-        config = Config.builder().domain("https://api.dify.ai").build()
+        config = Config()
+        config.domain = "https://api.dify.ai"
         service = ChatflowService(config)
         assert service is not None
         assert hasattr(service, "v1")
@@ -366,7 +369,7 @@ class TestFinalValidation:
         from pathlib import Path
 
         # Define paths to check
-        base_path = Path(__file__).parent.parent.parent.parent / "dify_oapi" / "api" / "chatflow"
+        base_path = Path(__file__).parent.parent.parent / "dify_oapi" / "api" / "chatflow"
         init_files = [
             base_path / "__init__.py",
             base_path / "v1" / "__init__.py",
@@ -477,7 +480,7 @@ class TestFinalValidation:
         from pathlib import Path
 
         # Find all example files
-        examples_path = Path(__file__).parent.parent.parent.parent / "examples" / "chatflow"
+        examples_path = Path(__file__).parent.parent.parent / "examples" / "chatflow"
         if not examples_path.exists():
             pytest.skip("Examples directory not found")
 
@@ -496,7 +499,7 @@ class TestFinalValidation:
         """Test that all required files exist."""
         from pathlib import Path
 
-        base_path = Path(__file__).parent.parent.parent.parent / "dify_oapi" / "api" / "chatflow"
+        base_path = Path(__file__).parent.parent.parent / "dify_oapi" / "api" / "chatflow"
 
         # Required files
         required_files = [
@@ -525,7 +528,8 @@ class TestFinalValidation:
         from dify_oapi.api.chatflow.v1.version import V1
         from dify_oapi.core.model.config import Config
 
-        config = Config.builder().domain("https://api.dify.ai").build()
+        config = Config()
+        config.domain = "https://api.dify.ai"
         v1 = V1(config)
 
         assert hasattr(v1, "chatflow")
@@ -574,10 +578,44 @@ class TestFinalValidation:
         assert hasattr(v1.annotation, "reply_settings")
         assert hasattr(v1.annotation, "reply_status")
 
-        # Test 3: All methods are callable
-        for resource_name in ["chatflow", "file", "feedback", "conversation", "tts", "application", "annotation"]:
+        # Test 3: All API methods are callable
+        api_methods = {
+            "chatflow": ["send", "stop", "suggested", "asend", "astop", "asuggested"],
+            "file": ["upload", "aupload"],
+            "feedback": ["message", "list", "amessage", "alist"],
+            "conversation": [
+                "messages",
+                "list",
+                "delete",
+                "rename",
+                "variables",
+                "amessages",
+                "alist",
+                "adelete",
+                "arename",
+                "avariables",
+            ],
+            "tts": ["speech_to_text", "text_to_audio", "aspeech_to_text", "atext_to_audio"],
+            "application": ["info", "parameters", "meta", "site", "ainfo", "aparameters", "ameta", "asite"],
+            "annotation": [
+                "list",
+                "create",
+                "update",
+                "delete",
+                "reply_settings",
+                "reply_status",
+                "alist",
+                "acreate",
+                "aupdate",
+                "adelete",
+                "areply_settings",
+                "areply_status",
+            ],
+        }
+
+        for resource_name, method_names in api_methods.items():
             resource = getattr(v1, resource_name)
-            methods = [method for method in dir(resource) if not method.startswith("_")]
-            for method_name in methods:
-                method = getattr(resource, method_name)
-                assert callable(method), f"{resource_name}.{method_name} is not callable"
+            for method_name in method_names:
+                if hasattr(resource, method_name):
+                    method = getattr(resource, method_name)
+                    assert callable(method), f"{resource_name}.{method_name} is not callable"

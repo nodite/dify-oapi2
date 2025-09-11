@@ -8,7 +8,7 @@ from unittest.mock import AsyncMock, Mock
 
 import pytest
 
-from dify_oapi.api.knowledge.service import Knowledge
+from dify_oapi.api.knowledge.service import KnowledgeService
 from dify_oapi.api.knowledge.v1.version import V1
 from dify_oapi.client import Client
 from dify_oapi.core.model.config import Config
@@ -85,7 +85,7 @@ class TestComprehensiveIntegrationValidation:
 
     def test_knowledge_service_integration(self, config: Config) -> None:
         """Test Knowledge service integration."""
-        knowledge_service = Knowledge(config)
+        knowledge_service = KnowledgeService(config)
 
         # Verify V1 integration
         assert hasattr(knowledge_service, "v1")

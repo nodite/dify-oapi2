@@ -1,6 +1,6 @@
 """Integration tests for Knowledge service class."""
 
-from dify_oapi.api.knowledge.service import Knowledge
+from dify_oapi.api.knowledge.service import KnowledgeService
 from dify_oapi.api.knowledge.v1.version import V1
 from dify_oapi.core.model.config import Config
 
@@ -11,7 +11,7 @@ class TestKnowledgeServiceIntegration:
     def test_knowledge_service_initialization(self) -> None:
         """Test Knowledge service initialization."""
         config = Config()
-        knowledge = Knowledge(config)
+        knowledge = KnowledgeService(config)
 
         # Test V1 is properly initialized
         assert isinstance(knowledge.v1, V1)
@@ -20,7 +20,7 @@ class TestKnowledgeServiceIntegration:
     def test_knowledge_service_v1_access(self) -> None:
         """Test Knowledge service V1 access."""
         config = Config()
-        knowledge = Knowledge(config)
+        knowledge = KnowledgeService(config)
 
         # Test V1 can be accessed
         v1 = knowledge.v1
@@ -37,7 +37,7 @@ class TestKnowledgeServiceIntegration:
     def test_knowledge_service_config_propagation(self) -> None:
         """Test config is properly propagated through service layers."""
         config = Config()
-        knowledge = Knowledge(config)
+        knowledge = KnowledgeService(config)
 
         # Test config propagation through service -> V1 -> resources
         assert knowledge.v1.dataset.config is config
@@ -50,7 +50,7 @@ class TestKnowledgeServiceIntegration:
     def test_knowledge_service_resource_methods(self) -> None:
         """Test all resources have expected methods through service."""
         config = Config()
-        knowledge = Knowledge(config)
+        knowledge = KnowledgeService(config)
 
         # Test dataset resource methods (6 APIs)
         dataset = knowledge.v1.dataset
@@ -106,7 +106,7 @@ class TestKnowledgeServiceIntegration:
     def test_knowledge_service_async_methods(self) -> None:
         """Test all resources have async method variants through service."""
         config = Config()
-        knowledge = Knowledge(config)
+        knowledge = KnowledgeService(config)
 
         # Test dataset async methods
         dataset = knowledge.v1.dataset

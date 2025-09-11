@@ -1,5 +1,4 @@
-from dify_oapi.core.http.transport.async_transport import ATransport
-from dify_oapi.core.http.transport.sync_transport import Transport
+from dify_oapi.core.http.transport import ATransport, Transport
 from dify_oapi.core.model.config import Config
 from dify_oapi.core.model.request_option import RequestOption
 
@@ -16,88 +15,60 @@ from ..model.rename_conversation_response import RenameConversationResponse
 
 
 class Conversation:
-    def __init__(self, config: Config):
+    def __init__(self, config: Config) -> None:
         self.config = config
 
     def messages(
-        self,
-        request: GetConversationMessagesRequest,
-        request_option: RequestOption,
+        self, request: GetConversationMessagesRequest, request_option: RequestOption
     ) -> GetConversationMessagesResponse:
         return Transport.execute(
             self.config, request, unmarshal_as=GetConversationMessagesResponse, option=request_option
         )
 
     async def amessages(
-        self,
-        request: GetConversationMessagesRequest,
-        request_option: RequestOption,
+        self, request: GetConversationMessagesRequest, request_option: RequestOption
     ) -> GetConversationMessagesResponse:
         return await ATransport.aexecute(
             self.config, request, unmarshal_as=GetConversationMessagesResponse, option=request_option
         )
 
-    def list(
-        self,
-        request: GetConversationsRequest,
-        request_option: RequestOption,
-    ) -> GetConversationsResponse:
+    def list(self, request: GetConversationsRequest, request_option: RequestOption) -> GetConversationsResponse:
         return Transport.execute(self.config, request, unmarshal_as=GetConversationsResponse, option=request_option)
 
-    async def alist(
-        self,
-        request: GetConversationsRequest,
-        request_option: RequestOption,
-    ) -> GetConversationsResponse:
+    async def alist(self, request: GetConversationsRequest, request_option: RequestOption) -> GetConversationsResponse:
         return await ATransport.aexecute(
             self.config, request, unmarshal_as=GetConversationsResponse, option=request_option
         )
 
-    def delete(
-        self,
-        request: DeleteConversationRequest,
-        request_option: RequestOption,
-    ) -> DeleteConversationResponse:
+    def delete(self, request: DeleteConversationRequest, request_option: RequestOption) -> DeleteConversationResponse:
         return Transport.execute(self.config, request, unmarshal_as=DeleteConversationResponse, option=request_option)
 
     async def adelete(
-        self,
-        request: DeleteConversationRequest,
-        request_option: RequestOption,
+        self, request: DeleteConversationRequest, request_option: RequestOption
     ) -> DeleteConversationResponse:
         return await ATransport.aexecute(
             self.config, request, unmarshal_as=DeleteConversationResponse, option=request_option
         )
 
-    def rename(
-        self,
-        request: RenameConversationRequest,
-        request_option: RequestOption,
-    ) -> RenameConversationResponse:
+    def rename(self, request: RenameConversationRequest, request_option: RequestOption) -> RenameConversationResponse:
         return Transport.execute(self.config, request, unmarshal_as=RenameConversationResponse, option=request_option)
 
     async def arename(
-        self,
-        request: RenameConversationRequest,
-        request_option: RequestOption,
+        self, request: RenameConversationRequest, request_option: RequestOption
     ) -> RenameConversationResponse:
         return await ATransport.aexecute(
             self.config, request, unmarshal_as=RenameConversationResponse, option=request_option
         )
 
     def variables(
-        self,
-        request: GetConversationVariablesRequest,
-        request_option: RequestOption,
+        self, request: GetConversationVariablesRequest, request_option: RequestOption
     ) -> GetConversationVariablesResponse:
         return Transport.execute(
             self.config, request, unmarshal_as=GetConversationVariablesResponse, option=request_option
         )
 
     async def avariables(
-        self,
-        request: GetConversationVariablesRequest,
-        request_option: RequestOption,
+        self, request: GetConversationVariablesRequest, request_option: RequestOption
     ) -> GetConversationVariablesResponse:
         return await ATransport.aexecute(
             self.config, request, unmarshal_as=GetConversationVariablesResponse, option=request_option

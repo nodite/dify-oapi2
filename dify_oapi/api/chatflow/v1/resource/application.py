@@ -1,5 +1,4 @@
-from dify_oapi.core.http.transport.async_transport import ATransport
-from dify_oapi.core.http.transport.sync_transport import Transport
+from dify_oapi.core.http.transport import ATransport, Transport
 from dify_oapi.core.model.config import Config
 from dify_oapi.core.model.request_option import RequestOption
 
@@ -14,63 +13,31 @@ from ..model.get_site_response import GetSiteResponse
 
 
 class Application:
-    def __init__(self, config: Config):
+    def __init__(self, config: Config) -> None:
         self.config = config
 
-    def info(
-        self,
-        request: GetInfoRequest,
-        request_option: RequestOption,
-    ) -> GetInfoResponse:
+    def info(self, request: GetInfoRequest, request_option: RequestOption) -> GetInfoResponse:
         return Transport.execute(self.config, request, unmarshal_as=GetInfoResponse, option=request_option)
 
-    async def ainfo(
-        self,
-        request: GetInfoRequest,
-        request_option: RequestOption,
-    ) -> GetInfoResponse:
+    async def ainfo(self, request: GetInfoRequest, request_option: RequestOption) -> GetInfoResponse:
         return await ATransport.aexecute(self.config, request, unmarshal_as=GetInfoResponse, option=request_option)
 
-    def parameters(
-        self,
-        request: GetParametersRequest,
-        request_option: RequestOption,
-    ) -> GetParametersResponse:
+    def parameters(self, request: GetParametersRequest, request_option: RequestOption) -> GetParametersResponse:
         return Transport.execute(self.config, request, unmarshal_as=GetParametersResponse, option=request_option)
 
-    async def aparameters(
-        self,
-        request: GetParametersRequest,
-        request_option: RequestOption,
-    ) -> GetParametersResponse:
+    async def aparameters(self, request: GetParametersRequest, request_option: RequestOption) -> GetParametersResponse:
         return await ATransport.aexecute(
             self.config, request, unmarshal_as=GetParametersResponse, option=request_option
         )
 
-    def meta(
-        self,
-        request: GetMetaRequest,
-        request_option: RequestOption,
-    ) -> GetMetaResponse:
+    def meta(self, request: GetMetaRequest, request_option: RequestOption) -> GetMetaResponse:
         return Transport.execute(self.config, request, unmarshal_as=GetMetaResponse, option=request_option)
 
-    async def ameta(
-        self,
-        request: GetMetaRequest,
-        request_option: RequestOption,
-    ) -> GetMetaResponse:
+    async def ameta(self, request: GetMetaRequest, request_option: RequestOption) -> GetMetaResponse:
         return await ATransport.aexecute(self.config, request, unmarshal_as=GetMetaResponse, option=request_option)
 
-    def site(
-        self,
-        request: GetSiteRequest,
-        request_option: RequestOption,
-    ) -> GetSiteResponse:
+    def site(self, request: GetSiteRequest, request_option: RequestOption) -> GetSiteResponse:
         return Transport.execute(self.config, request, unmarshal_as=GetSiteResponse, option=request_option)
 
-    async def asite(
-        self,
-        request: GetSiteRequest,
-        request_option: RequestOption,
-    ) -> GetSiteResponse:
+    async def asite(self, request: GetSiteRequest, request_option: RequestOption) -> GetSiteResponse:
         return await ATransport.aexecute(self.config, request, unmarshal_as=GetSiteResponse, option=request_option)

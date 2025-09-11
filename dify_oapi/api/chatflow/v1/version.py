@@ -1,5 +1,3 @@
-"""Chatflow API V1 version integration."""
-
 from dify_oapi.core.model.config import Config
 
 from .resource.annotation import Annotation
@@ -12,14 +10,7 @@ from .resource.tts import TTS
 
 
 class V1:
-    """Chatflow API V1 version class that integrates all resources."""
-
-    def __init__(self, config: Config):
-        """Initialize V1 with all chatflow resources.
-
-        Args:
-            config: Configuration object containing API settings
-        """
+    def __init__(self, config: Config) -> None:
         self.chatflow = Chatflow(config)
         self.file = File(config)
         self.feedback = Feedback(config)

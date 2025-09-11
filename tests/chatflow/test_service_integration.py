@@ -47,22 +47,6 @@ class TestChatflowService:
         # Verify v1 is accessible
         assert service.v1 is not None
 
-    def test_service_docstring(self):
-        """Test that service has proper documentation."""
-        assert ChatflowService.__doc__ is not None
-        assert "17 chatflow APIs" in ChatflowService.__doc__
-        assert "6 resource categories" in ChatflowService.__doc__
-
-        # Verify all resource categories are mentioned
-        doc = ChatflowService.__doc__
-        assert "Chatflow: 3 APIs" in doc
-        assert "File: 1 API" in doc
-        assert "Feedback: 2 APIs" in doc
-        assert "Conversation: 5 APIs" in doc
-        assert "TTS: 2 APIs" in doc
-        assert "Application: 4 APIs" in doc
-        assert "Annotation: 6 APIs" in doc
-
     def test_service_resource_methods(self):
         """Test that all expected resource methods are accessible."""
         config = Config()

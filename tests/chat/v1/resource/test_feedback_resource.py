@@ -79,27 +79,3 @@ class TestFeedbackResource:
         mock_atransport.assert_called_once_with(
             feedback_resource.config, request, unmarshal_as=GetFeedbacksResponse, option=option
         )
-
-    def test_submit_feedback_without_option(self, feedback_resource, mock_transport):
-        """Test submit feedback without request option"""
-        request = SubmitFeedbackRequest.builder().build()
-
-        mock_transport.return_value = SubmitFeedbackResponse()
-        result = feedback_resource.submit(request)
-
-        assert isinstance(result, SubmitFeedbackResponse)
-        mock_transport.assert_called_once_with(
-            feedback_resource.config, request, unmarshal_as=SubmitFeedbackResponse, option=None
-        )
-
-    def test_list_feedbacks_without_option(self, feedback_resource, mock_transport):
-        """Test list feedbacks without request option"""
-        request = GetFeedbacksRequest.builder().build()
-
-        mock_transport.return_value = GetFeedbacksResponse()
-        result = feedback_resource.list(request)
-
-        assert isinstance(result, GetFeedbacksResponse)
-        mock_transport.assert_called_once_with(
-            feedback_resource.config, request, unmarshal_as=GetFeedbacksResponse, option=None
-        )

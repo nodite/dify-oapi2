@@ -143,13 +143,13 @@ class TestAudioResource:
         sig = inspect.signature(audio_resource.to_text)
         params = list(sig.parameters.keys())
         assert "request" in params
-        assert "option" in params
+        assert "request_option" in params
 
         # Test to_audio method signature
         sig = inspect.signature(audio_resource.to_audio)
         params = list(sig.parameters.keys())
         assert "request" in params
-        assert "option" in params
+        assert "request_option" in params
 
         # Test async methods exist
         assert hasattr(audio_resource, "ato_text")

@@ -9,23 +9,19 @@ from ..model.submit_feedback_response import SubmitFeedbackResponse
 
 
 class Feedback:
-    def __init__(self, config: Config):
+    def __init__(self, config: Config) -> None:
         self.config = config
 
-    def submit(self, request: SubmitFeedbackRequest, option: RequestOption | None = None) -> SubmitFeedbackResponse:
-        """Submit feedback for a message."""
-        return Transport.execute(self.config, request, unmarshal_as=SubmitFeedbackResponse, option=option)
+    def submit(self, request: SubmitFeedbackRequest, request_option: RequestOption) -> SubmitFeedbackResponse:
+        return Transport.execute(self.config, request, unmarshal_as=SubmitFeedbackResponse, option=request_option)
 
-    async def asubmit(
-        self, request: SubmitFeedbackRequest, option: RequestOption | None = None
-    ) -> SubmitFeedbackResponse:
-        """Submit feedback for a message asynchronously."""
-        return await ATransport.aexecute(self.config, request, unmarshal_as=SubmitFeedbackResponse, option=option)
+    async def asubmit(self, request: SubmitFeedbackRequest, request_option: RequestOption) -> SubmitFeedbackResponse:
+        return await ATransport.aexecute(
+            self.config, request, unmarshal_as=SubmitFeedbackResponse, option=request_option
+        )
 
-    def list(self, request: GetFeedbacksRequest, option: RequestOption | None = None) -> GetFeedbacksResponse:
-        """Get application feedbacks."""
-        return Transport.execute(self.config, request, unmarshal_as=GetFeedbacksResponse, option=option)
+    def list(self, request: GetFeedbacksRequest, request_option: RequestOption) -> GetFeedbacksResponse:
+        return Transport.execute(self.config, request, unmarshal_as=GetFeedbacksResponse, option=request_option)
 
-    async def alist(self, request: GetFeedbacksRequest, option: RequestOption | None = None) -> GetFeedbacksResponse:
-        """Get application feedbacks asynchronously."""
-        return await ATransport.aexecute(self.config, request, unmarshal_as=GetFeedbacksResponse, option=option)
+    async def alist(self, request: GetFeedbacksRequest, request_option: RequestOption) -> GetFeedbacksResponse:
+        return await ATransport.aexecute(self.config, request, unmarshal_as=GetFeedbacksResponse, option=request_option)

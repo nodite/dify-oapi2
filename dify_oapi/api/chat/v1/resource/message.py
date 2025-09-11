@@ -10,30 +10,28 @@ from ..model.message_history_response import GetMessageHistoryResponse
 
 class Message:
     def __init__(self, config: Config) -> None:
-        self.config: Config = config
+        self.config = config
 
     def suggested(
-        self, request: GetSuggestedQuestionsRequest, option: RequestOption | None = None
+        self, request: GetSuggestedQuestionsRequest, request_option: RequestOption
     ) -> GetSuggestedQuestionsResponse:
-        # Send request
-        return Transport.execute(self.config, request, unmarshal_as=GetSuggestedQuestionsResponse, option=option)
-
-    async def asuggested(
-        self, request: GetSuggestedQuestionsRequest, option: RequestOption | None = None
-    ) -> GetSuggestedQuestionsResponse:
-        # Send request
-        return await ATransport.aexecute(
-            self.config, request, unmarshal_as=GetSuggestedQuestionsResponse, option=option
+        return Transport.execute(
+            self.config, request, unmarshal_as=GetSuggestedQuestionsResponse, option=request_option
         )
 
-    def history(
-        self, request: GetMessageHistoryRequest, option: RequestOption | None = None
-    ) -> GetMessageHistoryResponse:
-        # Send request
-        return Transport.execute(self.config, request, unmarshal_as=GetMessageHistoryResponse, option=option)
+    async def asuggested(
+        self, request: GetSuggestedQuestionsRequest, request_option: RequestOption
+    ) -> GetSuggestedQuestionsResponse:
+        return await ATransport.aexecute(
+            self.config, request, unmarshal_as=GetSuggestedQuestionsResponse, option=request_option
+        )
+
+    def history(self, request: GetMessageHistoryRequest, request_option: RequestOption) -> GetMessageHistoryResponse:
+        return Transport.execute(self.config, request, unmarshal_as=GetMessageHistoryResponse, option=request_option)
 
     async def ahistory(
-        self, request: GetMessageHistoryRequest, option: RequestOption | None = None
+        self, request: GetMessageHistoryRequest, request_option: RequestOption
     ) -> GetMessageHistoryResponse:
-        # Send request
-        return await ATransport.aexecute(self.config, request, unmarshal_as=GetMessageHistoryResponse, option=option)
+        return await ATransport.aexecute(
+            self.config, request, unmarshal_as=GetMessageHistoryResponse, option=request_option
+        )

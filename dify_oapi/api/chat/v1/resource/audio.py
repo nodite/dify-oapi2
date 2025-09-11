@@ -9,22 +9,22 @@ from ..model.text_to_audio_request import TextToAudioRequest
 
 class Audio:
     def __init__(self, config: Config) -> None:
-        self.config: Config = config
+        self.config = config
 
-    def to_text(self, request: AudioToTextRequest, option: RequestOption | None = None) -> AudioToTextResponse:
-        return Transport.execute(self.config, request, unmarshal_as=AudioToTextResponse, option=option)
+    def to_text(self, request: AudioToTextRequest, request_option: RequestOption) -> AudioToTextResponse:
+        return Transport.execute(self.config, request, unmarshal_as=AudioToTextResponse, option=request_option)
 
-    async def ato_text(self, request: AudioToTextRequest, option: RequestOption | None = None) -> AudioToTextResponse:
-        return await ATransport.aexecute(self.config, request, unmarshal_as=AudioToTextResponse, option=option)
+    async def ato_text(self, request: AudioToTextRequest, request_option: RequestOption) -> AudioToTextResponse:
+        return await ATransport.aexecute(self.config, request, unmarshal_as=AudioToTextResponse, option=request_option)
 
-    def to_audio(self, request: TextToAudioRequest, option: RequestOption | None = None) -> bytes:
-        response = Transport.execute(self.config, request, option=option)
+    def to_audio(self, request: TextToAudioRequest, request_option: RequestOption) -> bytes:
+        response = Transport.execute(self.config, request, option=request_option)
         if hasattr(response, "content") and response.content is not None:
             return bytes(response.content)
         return b""
 
-    async def ato_audio(self, request: TextToAudioRequest, option: RequestOption | None = None) -> bytes:
-        response = await ATransport.aexecute(self.config, request, option=option)
+    async def ato_audio(self, request: TextToAudioRequest, request_option: RequestOption) -> bytes:
+        response = await ATransport.aexecute(self.config, request, option=request_option)
         if hasattr(response, "content") and response.content is not None:
             return bytes(response.content)
         return b""

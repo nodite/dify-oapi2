@@ -65,19 +65,6 @@ class TestFileResource:
             file_resource.config, upload_request, unmarshal_as=UploadFileResponse, option=request_option
         )
 
-    @patch("dify_oapi.core.http.transport.Transport.execute")
-    def test_upload_file_without_option(self, mock_execute, file_resource, upload_request):
-        """Test file upload without request option"""
-        mock_response = UploadFileResponse()
-        mock_execute.return_value = mock_response
-
-        result = file_resource.upload(upload_request)
-
-        assert isinstance(result, UploadFileResponse)
-        mock_execute.assert_called_once_with(
-            file_resource.config, upload_request, unmarshal_as=UploadFileResponse, option=None
-        )
-
     def test_file_resource_initialization(self):
         """Test File resource initialization"""
         config = Config()
@@ -88,7 +75,7 @@ class TestFileResource:
         assert hasattr(file_resource, "aupload")
 
     @patch("dify_oapi.core.http.transport.Transport.execute")
-    def test_upload_file_type_validation(self, mock_execute, file_resource):
+    def test_upload_file_type_validation(self, mock_execute, file_resource, request_option):
         """Test file type validation through request"""
         # Test with different file types
         image_data = BytesIO(b"fake image data")
@@ -99,13 +86,13 @@ class TestFileResource:
         mock_response.mime_type = "image/png"
         mock_execute.return_value = mock_response
 
-        result = file_resource.upload(request)
+        result = file_resource.upload(request, request_option)
 
         assert result.mime_type == "image/png"
         mock_execute.assert_called_once()
 
     @patch("dify_oapi.core.http.transport.Transport.execute")
-    def test_upload_file_size_handling(self, mock_execute, file_resource):
+    def test_upload_file_size_handling(self, mock_execute, file_resource, request_option):
         """Test file size handling"""
         large_file_data = BytesIO(b"x" * 1024 * 1024)  # 1MB file
         request_body = UploadFileRequestBody.builder().user("test-user").build()
@@ -115,7 +102,7 @@ class TestFileResource:
         mock_response.size = 1024 * 1024
         mock_execute.return_value = mock_response
 
-        result = file_resource.upload(request)
+        result = file_resource.upload(request, request_option)
 
         assert result.size == 1024 * 1024
         mock_execute.assert_called_once()

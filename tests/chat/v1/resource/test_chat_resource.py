@@ -245,48 +245,6 @@ class TestChatResource:
             option=request_option,
         )
 
-    def test_chat_without_option(self, chat_resource, chat_request):
-        """Test chat method without request option"""
-        with patch("dify_oapi.core.http.transport.Transport.execute") as mock_execute:
-            mock_response = ChatResponse(answer="Response without option")
-            mock_execute.return_value = mock_response
-
-            result = chat_resource.chat(chat_request)
-
-            assert isinstance(result, ChatResponse)
-            mock_execute.assert_called_once_with(
-                chat_resource.config, chat_request, unmarshal_as=ChatResponse, option=None
-            )
-
-    def test_stop_without_option(self, chat_resource, stop_chat_request):
-        """Test stop method without request option"""
-        with patch("dify_oapi.core.http.transport.Transport.execute") as mock_execute:
-            mock_response = StopChatResponse(result="success")
-            mock_execute.return_value = mock_response
-
-            result = chat_resource.stop(stop_chat_request)
-
-            assert isinstance(result, StopChatResponse)
-            mock_execute.assert_called_once_with(
-                chat_resource.config, stop_chat_request, unmarshal_as=StopChatResponse, option=None
-            )
-
-    def test_suggested_without_option(self, chat_resource, suggested_questions_request):
-        """Test suggested method without request option"""
-        with patch("dify_oapi.core.http.transport.Transport.execute") as mock_execute:
-            mock_response = GetSuggestedQuestionsResponse(result="success", data=[])
-            mock_execute.return_value = mock_response
-
-            result = chat_resource.suggested(suggested_questions_request)
-
-            assert isinstance(result, GetSuggestedQuestionsResponse)
-            mock_execute.assert_called_once_with(
-                chat_resource.config,
-                suggested_questions_request,
-                unmarshal_as=GetSuggestedQuestionsResponse,
-                option=None,
-            )
-
     @patch("dify_oapi.core.http.transport.Transport.execute")
     def test_error_handling(self, mock_execute, chat_resource, chat_request, request_option):
         """Test error handling in chat methods"""

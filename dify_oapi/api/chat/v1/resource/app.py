@@ -14,34 +14,34 @@ from ..model.get_site_settings_response import GetSiteSettingsResponse
 
 class App:
     def __init__(self, config: Config) -> None:
-        self.config: Config = config
+        self.config = config
 
-    def info(self, request: GetAppInfoRequest, option: RequestOption | None = None) -> GetAppInfoResponse:
-        return Transport.execute(self.config, request, unmarshal_as=GetAppInfoResponse, option=option)
+    def info(self, request: GetAppInfoRequest, request_option: RequestOption) -> GetAppInfoResponse:
+        return Transport.execute(self.config, request, unmarshal_as=GetAppInfoResponse, option=request_option)
 
-    async def ainfo(self, request: GetAppInfoRequest, option: RequestOption | None = None) -> GetAppInfoResponse:
-        return await ATransport.aexecute(self.config, request, unmarshal_as=GetAppInfoResponse, option=option)
+    async def ainfo(self, request: GetAppInfoRequest, request_option: RequestOption) -> GetAppInfoResponse:
+        return await ATransport.aexecute(self.config, request, unmarshal_as=GetAppInfoResponse, option=request_option)
 
-    def parameters(
-        self, request: GetAppParametersRequest, option: RequestOption | None = None
-    ) -> GetAppParametersResponse:
-        return Transport.execute(self.config, request, unmarshal_as=GetAppParametersResponse, option=option)
+    def parameters(self, request: GetAppParametersRequest, request_option: RequestOption) -> GetAppParametersResponse:
+        return Transport.execute(self.config, request, unmarshal_as=GetAppParametersResponse, option=request_option)
 
     async def aparameters(
-        self, request: GetAppParametersRequest, option: RequestOption | None = None
+        self, request: GetAppParametersRequest, request_option: RequestOption
     ) -> GetAppParametersResponse:
-        return await ATransport.aexecute(self.config, request, unmarshal_as=GetAppParametersResponse, option=option)
+        return await ATransport.aexecute(
+            self.config, request, unmarshal_as=GetAppParametersResponse, option=request_option
+        )
 
-    def meta(self, request: GetAppMetaRequest, option: RequestOption | None = None) -> GetAppMetaResponse:
-        return Transport.execute(self.config, request, unmarshal_as=GetAppMetaResponse, option=option)
+    def meta(self, request: GetAppMetaRequest, request_option: RequestOption) -> GetAppMetaResponse:
+        return Transport.execute(self.config, request, unmarshal_as=GetAppMetaResponse, option=request_option)
 
-    async def ameta(self, request: GetAppMetaRequest, option: RequestOption | None = None) -> GetAppMetaResponse:
-        return await ATransport.aexecute(self.config, request, unmarshal_as=GetAppMetaResponse, option=option)
+    async def ameta(self, request: GetAppMetaRequest, request_option: RequestOption) -> GetAppMetaResponse:
+        return await ATransport.aexecute(self.config, request, unmarshal_as=GetAppMetaResponse, option=request_option)
 
-    def site(self, request: GetSiteSettingsRequest, option: RequestOption | None = None) -> GetSiteSettingsResponse:
-        return Transport.execute(self.config, request, unmarshal_as=GetSiteSettingsResponse, option=option)
+    def site(self, request: GetSiteSettingsRequest, request_option: RequestOption) -> GetSiteSettingsResponse:
+        return Transport.execute(self.config, request, unmarshal_as=GetSiteSettingsResponse, option=request_option)
 
-    async def asite(
-        self, request: GetSiteSettingsRequest, option: RequestOption | None = None
-    ) -> GetSiteSettingsResponse:
-        return await ATransport.aexecute(self.config, request, unmarshal_as=GetSiteSettingsResponse, option=option)
+    async def asite(self, request: GetSiteSettingsRequest, request_option: RequestOption) -> GetSiteSettingsResponse:
+        return await ATransport.aexecute(
+            self.config, request, unmarshal_as=GetSiteSettingsResponse, option=request_option
+        )

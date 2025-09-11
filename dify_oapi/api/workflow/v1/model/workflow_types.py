@@ -1,18 +1,27 @@
+"""Workflow API type definitions.
+
+This module contains all Literal type definitions for the Workflow API,
+ensuring strict type safety throughout the workflow module.
+"""
+
 from typing import Literal
 
-# Response mode types
+# Response mode types for workflow execution
 ResponseMode = Literal["streaming", "blocking"]
 
-# File types
+# File types supported in workflow inputs
 FileType = Literal["document", "image", "audio", "video", "custom"]
 
-# Transfer method types
+# File transfer methods
 TransferMethod = Literal["remote_url", "local_file"]
 
-# Workflow status types
+# Workflow execution status
 WorkflowStatus = Literal["running", "succeeded", "failed", "stopped"]
 
-# Event types
+# Node execution status
+NodeStatus = Literal["running", "succeeded", "failed", "stopped"]
+
+# Streaming event types
 EventType = Literal[
     "workflow_started",
     "node_started",
@@ -24,7 +33,7 @@ EventType = Literal[
     "ping",
 ]
 
-# Node types
+# Workflow node types
 NodeType = Literal[
     "start",
     "end",
@@ -38,17 +47,23 @@ NodeType = Literal[
     "parameter_extractor",
 ]
 
-# Icon types
+# WebApp icon types
 IconType = Literal["emoji", "image"]
 
-# App mode types
+# Application mode types
 AppMode = Literal["workflow"]
 
-# Log status types
-LogStatus = Literal["succeeded", "failed", "stopped"]
+# Log status filter types (includes "running" for filtering)
+LogStatus = Literal["succeeded", "failed", "stopped", "running"]
 
-# Created by role types
+# Creator role types
 CreatedByRole = Literal["end_user", "account"]
 
-# Created from types
+# Creation source types
 CreatedFrom = Literal["service-api", "web-app"]
+
+# User input form control types
+UserInputFormType = Literal["text-input", "paragraph", "select"]
+
+# UUID format validation pattern
+UUID_PATTERN = r"^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"

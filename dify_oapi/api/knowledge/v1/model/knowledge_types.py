@@ -15,7 +15,7 @@ SearchMethod = Literal["hybrid_search", "semantic_search", "full_text_search", "
 DocumentStatus = Literal["indexing", "completed", "error", "paused"]
 
 # Processing mode types
-ProcessingMode = Literal["automatic", "custom"]
+ProcessingMode = Literal["automatic", "custom", "hierarchical"]
 
 # File types
 FileType = Literal["document", "image", "audio", "video", "custom"]
@@ -79,7 +79,7 @@ ExternalKnowledgeProvider = Literal["external_api", "notion", "web_crawler"]
 DocumentCreatedFrom = Literal["api", "web", "upload"]
 
 # Document display status types
-DocumentDisplayStatus = Literal["available", "indexing", "error", "paused", "archived"]
+DocumentDisplayStatus = Literal["available", "indexing", "error", "paused", "archived", "queuing"]
 
 # Batch processing status types
 BatchProcessingStatus = Literal["processing", "completed", "failed", "cancelled"]

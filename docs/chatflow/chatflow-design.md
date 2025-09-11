@@ -474,9 +474,30 @@ resource/
 └── annotation.py    # Annotation operations
 ```
 
+#### __init__.py File Policy (MANDATORY)
+**Decision**: ALL `__init__.py` files MUST remain empty for clean module structure
+
+**STRICT RULE**: Every `__init__.py` file in the project MUST be empty
+- **Rationale**: Maintains clean module structure and avoids import complexity
+- **Scope**: Applies to ALL modules including api/, model/, resource/, tests/, examples/
+- **Zero Exceptions**: No `__init__.py` file may contain any imports or exports
+- **Import Pattern**: Use direct imports from specific modules instead of package-level exports
+
+**Correct Import Patterns**:
+```python
+# ✅ CORRECT: Direct imports from specific modules
+from dify_oapi.api.chatflow.service import ChatflowService
+from dify_oapi.api.chatflow.v1.model.send_chat_message_request import SendChatMessageRequest
+
+# ❌ WRONG: Package-level imports (requires __init__.py exports)
+from dify_oapi.api.chatflow import ChatflowService  # NEVER DO THIS
+from dify_oapi.api.chatflow.v1.model import SendChatMessageRequest  # NEVER DO THIS
+```
+
 **Rationale**:
 - **Models**: Flat structure for easy imports and reduced nesting
 - **Resources**: Grouped by domain for logical separation of concerns
+- **Clean Modules**: Empty `__init__.py` files prevent import pollution and circular dependencies
 
 ## API Implementation Plan
 

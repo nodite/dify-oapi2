@@ -4,7 +4,7 @@ from pydantic import BaseModel
 
 
 class AudioToTextRequestBody(BaseModel):
-    user: str | None = None
+    user: str
 
     @staticmethod
     def builder() -> AudioToTextRequestBodyBuilder:
@@ -13,7 +13,7 @@ class AudioToTextRequestBody(BaseModel):
 
 class AudioToTextRequestBodyBuilder:
     def __init__(self):
-        self._audio_to_text_request_body = AudioToTextRequestBody()
+        self._audio_to_text_request_body = AudioToTextRequestBody(user="")
 
     def build(self) -> AudioToTextRequestBody:
         return self._audio_to_text_request_body

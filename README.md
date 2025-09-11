@@ -10,13 +10,14 @@ A Python SDK for interacting with the Dify Service-API. This library provides a 
 
 ## ✨ Features
 
-- **Multiple API Services**: Chat, Completion, Knowledge Base (33 APIs), Workflow, and Core Dify APIs
+- **Multiple API Services**: Chat (22 APIs), Completion (15 APIs), Knowledge Base (33 APIs), Chatflow (17 APIs), Workflow, and Core Dify APIs
 - **Builder Pattern**: Fluent, chainable interface for constructing requests
 - **Sync & Async Support**: Both synchronous and asynchronous operations
 - **Streaming Responses**: Real-time streaming for chat and completion
 - **Type Safety**: Comprehensive type hints with Pydantic validation
 - **File Upload**: Support for images and documents
 - **Modern HTTP Client**: Built on httpx for reliable API communication
+- **Connection Pool Optimization**: Efficient TCP connection reuse to reduce resource overhead
 
 ## 📦 Installation
 
@@ -95,11 +96,16 @@ asyncio.run(async_chat())
 
 ## 🔧 API Services
 
-### Chat API
-- Interactive conversations with AI assistants
-- File upload support (images, documents)
-- Conversation and message history management
-- Streaming and blocking response modes
+### Chat API (22 APIs)
+- **Chat Messages**: Interactive conversations with AI assistants (3 APIs)
+- **File Management**: Upload and manage images and documents (1 API)
+- **Feedback Management**: Collect and analyze user feedback (2 APIs)
+- **Conversation Management**: Complete conversation lifecycle management (5 APIs)
+- **Audio Processing**: Speech-to-text and text-to-speech capabilities (2 APIs)
+- **Application Information**: App configuration and metadata retrieval (4 APIs)
+- **Annotation Management**: Create and manage annotations with reply settings (6 APIs)
+- **Streaming Support**: Real-time streaming for chat and completion
+- **Type Safety**: Comprehensive type hints with strict Literal types
 
 ### Completion API (15 APIs)
 - **Message Processing**: Send messages and control responses
@@ -117,6 +123,17 @@ asyncio.run(async_chat())
 - **Tag Management**: 7 APIs for metadata and knowledge type tags
 - **Model Management**: 1 API for embedding model information
 
+### Chatflow API (17 APIs)
+- **Advanced Chat**: 3 APIs for enhanced chat functionality with workflow events
+- **File Management**: 1 API for multimodal file upload and processing
+- **Feedback System**: 2 APIs for comprehensive feedback collection and analysis
+- **Conversation Management**: 5 APIs for complete conversation lifecycle management
+- **TTS Integration**: 2 APIs for speech-to-text and text-to-speech capabilities
+- **Application Configuration**: 4 APIs for app settings and metadata management
+- **Annotation System**: 6 APIs for annotation management and reply settings
+- **Streaming Support**: Real-time streaming with comprehensive event handling
+- **Type Safety**: Strict Literal types for all predefined values
+
 ### Workflow API
 - Automated workflow execution
 - Parameter configuration
@@ -130,9 +147,13 @@ asyncio.run(async_chat())
 Explore comprehensive examples in the [examples directory](./examples):
 
 ### Chat Examples
-- [**Blocking Response**](./examples/chat/blocking_response.py) - Standard chat interactions
-- [**Streaming Response**](./examples/chat/streaming_response.py) - Real-time streaming chat
-- [**Conversation Management**](./examples/chat/conversation_management.py) - Managing chat history
+- [**Chat Messages**](./examples/chat/chat/) - Send messages, stop generation, get suggestions
+- [**File Management**](./examples/chat/file/) - Upload and manage files
+- [**Feedback Management**](./examples/chat/feedback/) - Submit and retrieve feedback
+- [**Conversation Management**](./examples/chat/conversation/) - Complete conversation operations
+- [**Audio Processing**](./examples/chat/audio/) - Speech-to-text and text-to-speech
+- [**Application Information**](./examples/chat/app/) - App configuration and settings
+- [**Annotation Management**](./examples/chat/annotation/) - Annotation CRUD and reply settings
 
 ### Completion Examples
 - [**Basic Completion**](./examples/completion/basic_completion.py) - Text generation
@@ -142,6 +163,15 @@ Explore comprehensive examples in the [examples directory](./examples):
 - [**Document Processing**](./examples/knowledge/document/) - File upload and text processing
 - [**Content Organization**](./examples/knowledge/segment/) - Segment and chunk management
 - [**Tag Management**](./examples/knowledge/tag/) - Metadata and tagging system
+
+### Chatflow Examples
+- [**Advanced Chat**](./examples/chatflow/chatflow/) - Enhanced chat with streaming and workflow events
+- [**File Operations**](./examples/chatflow/file/) - Multimodal file upload and processing
+- [**Feedback Management**](./examples/chatflow/feedback/) - Comprehensive feedback collection
+- [**Conversation Management**](./examples/chatflow/conversation/) - Complete conversation operations
+- [**TTS Operations**](./examples/chatflow/tts/) - Speech-to-text and text-to-speech
+- [**Application Configuration**](./examples/chatflow/application/) - App settings and metadata
+- [**Annotation Management**](./examples/chatflow/annotation/) - Annotation CRUD and reply settings
 
 For detailed examples and usage patterns, see the [examples README](./examples/README.md).
 
@@ -232,6 +262,7 @@ dify-oapi/
 │   │   ├── completion/  # Completion API
 │   │   ├── dify/        # Core Dify API
 │   │   ├── knowledge/ # Knowledge Base API (33 APIs)
+│   │   ├── chatflow/    # Chatflow API (17 APIs)
 │   │   └── workflow/    # Workflow API
 │   ├── core/            # Core functionality
 │   │   ├── http/        # HTTP transport layer
@@ -247,6 +278,7 @@ dify-oapi/
 ## 📖 Documentation
 
 - [**Project Overview**](./docs/overview.md) - Architecture and technical details
+- [**TCP Connection Optimization**](./docs/tcp-optimization.md) - Connection pool configuration and performance tuning
 - [**Completion APIs**](./docs/completion/apis.md) - Complete completion API documentation
 - [**Knowledge Base APIs**](./docs/knowledge/apis.md) - Complete knowledge base API documentation
 - [**Examples**](./examples/README.md) - Usage examples and patterns

@@ -103,17 +103,17 @@ max-statements = 50  # function max statement
 
 [tool.poetry.dependencies]
 python = ">=3.10"
-pydantic = ">=1.10,<3.0.0"
-httpx = ">=0.24,<1.0"
+pydantic = "^2"
+httpx = "^0"
 
 [tool.poetry.group.dev]
 optional = true
 [tool.poetry.group.dev.dependencies]
-pytest = "^8.3.3"
-pytest-env = "^1.1.5"
-pytest-asyncio = "^1.1.0"
-pre-commit = "^4.2.0"
-commitizen = "^3.29.0"
+pytest = "^8"
+pytest-env = "^1"
+pytest-asyncio = "^1"
+pre-commit = "^4"
+commitizen = "^4"
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
@@ -137,10 +137,10 @@ addopts = [
 [tool.poetry.group.format]
 optional = true
 [tool.poetry.group.format.dependencies]
-pre-commit = "^4.0.1"
-mypy = "^1.16.1"
-ruff = "^0.6.0"
-black = "^24.0.0"
+pre-commit = "^4"
+mypy = "^1"
+ruff = "^0"
+black = "^25"
 
 [tool.commitizen]
 name = "cz_conventional_commits"

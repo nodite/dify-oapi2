@@ -4,9 +4,10 @@ from typing import Optional
 
 from pydantic import BaseModel
 
-from .document_metadata import DocumentMetadata
+from .dataset_metadata import DatasetMetadata
 from .external_knowledge_info import ExternalKnowledgeInfo
-from .knowledge_types import DataSourceType, IndexingTechnique, Permission
+from .external_retrieval_model import ExternalRetrievalModel
+from .knowledge_types import DataSourceType, DocumentForm, IndexingTechnique, Permission
 from .retrieval_model import RetrievalModel
 from .tag_info import TagInfo
 
@@ -25,18 +26,18 @@ class DatasetInfo(BaseModel):
     document_count: Optional[int] = None
     word_count: Optional[int] = None
     created_by: Optional[str] = None
-    created_at: Optional[float] = None
+    created_at: Optional[int] = None
     updated_by: Optional[str] = None
-    updated_at: Optional[float] = None
+    updated_at: Optional[int] = None
     embedding_model: Optional[str] = None
     embedding_model_provider: Optional[str] = None
     embedding_available: Optional[bool] = None
     retrieval_model_dict: Optional[RetrievalModel] = None
     tags: Optional[list[TagInfo]] = None
-    doc_form: Optional[str] = None
+    doc_form: Optional[DocumentForm] = None
     external_knowledge_info: Optional[ExternalKnowledgeInfo] = None
-    external_retrieval_model: Optional[RetrievalModel] = None
-    doc_metadata: Optional[list[DocumentMetadata]] = None
+    external_retrieval_model: Optional[ExternalRetrievalModel] = None
+    doc_metadata: Optional[list[DatasetMetadata]] = None
     built_in_field_enabled: Optional[bool] = None
 
     @staticmethod
@@ -89,7 +90,7 @@ class DatasetInfoBuilder:
         self._dataset_info.created_by = created_by
         return self
 
-    def created_at(self, created_at: float) -> "DatasetInfoBuilder":
+    def created_at(self, created_at: int) -> "DatasetInfoBuilder":
         self._dataset_info.created_at = created_at
         return self
 
@@ -97,7 +98,7 @@ class DatasetInfoBuilder:
         self._dataset_info.updated_by = updated_by
         return self
 
-    def updated_at(self, updated_at: float) -> "DatasetInfoBuilder":
+    def updated_at(self, updated_at: int) -> "DatasetInfoBuilder":
         self._dataset_info.updated_at = updated_at
         return self
 

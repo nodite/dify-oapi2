@@ -1336,3 +1336,24 @@ The implementation will provide developers with a powerful, type-safe, and well-
 - [ ] Response unmarshaling configured correctly
 - [ ] Error handling for all HTTP status codes
 - [ ] Streaming support configured (where applicable)
+- [ ] All `__init__.py` files remain empty (MANDATORY)
+
+### Module Structure Rules (MANDATORY)
+
+**__init__.py File Policy**:
+- **STRICT RULE**: ALL `__init__.py` files MUST remain empty
+- **Scope**: Applies to ALL directories including api/, model/, resource/, tests/, examples/
+- **Zero Exceptions**: No `__init__.py` file may contain any code, imports, or exports
+- **Import Pattern**: Always use direct imports from specific modules
+
+**Correct Import Examples**:
+```python
+# ✅ CORRECT: Direct module imports
+from dify_oapi.api.chatflow.service import ChatflowService
+from dify_oapi.api.chatflow.v1.model.send_chat_message_request import SendChatMessageRequest
+from dify_oapi.api.chatflow.v1.resource.chatflow import Chatflow
+
+# ❌ WRONG: Package-level imports
+from dify_oapi.api.chatflow import ChatflowService  # NEVER
+from dify_oapi.api.chatflow.v1.model import SendChatMessageRequest  # NEVER
+```

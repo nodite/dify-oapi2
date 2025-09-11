@@ -1,48 +1,49 @@
 from __future__ import annotations
 
+from dify_oapi.api.chat.v1.model.chat_types import SortBy
 from dify_oapi.core.enum import HttpMethod
 from dify_oapi.core.model.base_request import BaseRequest
 
 
-class GetConversationListRequest(BaseRequest):
+class GetConversationsRequest(BaseRequest):
     def __init__(self):
         super().__init__()
         self.user: str | None = None
         self.last_id: str | None = None
         self.limit: int | None = None
-        self.pinned: bool | None = None
+        self.sort_by: SortBy | None = None
 
     @staticmethod
-    def builder() -> GetConversationListRequestBuilder:
-        return GetConversationListRequestBuilder()
+    def builder() -> GetConversationsRequestBuilder:
+        return GetConversationsRequestBuilder()
 
 
-class GetConversationListRequestBuilder:
+class GetConversationsRequestBuilder:
     def __init__(self):
-        get_conversation_list_request = GetConversationListRequest()
-        get_conversation_list_request.http_method = HttpMethod.GET
-        get_conversation_list_request.uri = "/v1/conversations"
-        self._get_conversation_list_request = get_conversation_list_request
+        get_conversations_request = GetConversationsRequest()
+        get_conversations_request.http_method = HttpMethod.GET
+        get_conversations_request.uri = "/v1/conversations"
+        self._get_conversations_request = get_conversations_request
 
-    def user(self, user: str) -> GetConversationListRequestBuilder:
-        self._get_conversation_list_request.user = user
-        self._get_conversation_list_request.add_query("user", user)
+    def user(self, user: str) -> GetConversationsRequestBuilder:
+        self._get_conversations_request.user = user
+        self._get_conversations_request.add_query("user", user)
         return self
 
-    def last_id(self, last_id: str) -> GetConversationListRequestBuilder:
-        self._get_conversation_list_request.last_id = last_id
-        self._get_conversation_list_request.add_query("last_id", last_id)
+    def last_id(self, last_id: str) -> GetConversationsRequestBuilder:
+        self._get_conversations_request.last_id = last_id
+        self._get_conversations_request.add_query("last_id", last_id)
         return self
 
-    def limit(self, limit: int) -> GetConversationListRequestBuilder:
-        self._get_conversation_list_request.limit = limit
-        self._get_conversation_list_request.add_query("limit", limit)
+    def limit(self, limit: int) -> GetConversationsRequestBuilder:
+        self._get_conversations_request.limit = limit
+        self._get_conversations_request.add_query("limit", limit)
         return self
 
-    def pinned(self, pinned: bool) -> GetConversationListRequestBuilder:
-        self._get_conversation_list_request.pinned = pinned
-        self._get_conversation_list_request.add_query("pinned", str(pinned).lower())
+    def sort_by(self, sort_by: SortBy) -> GetConversationsRequestBuilder:
+        self._get_conversations_request.sort_by = sort_by
+        self._get_conversations_request.add_query("sort_by", sort_by)
         return self
 
-    def build(self) -> GetConversationListRequest:
-        return self._get_conversation_list_request
+    def build(self) -> GetConversationsRequest:
+        return self._get_conversations_request

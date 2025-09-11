@@ -7,13 +7,16 @@ from dify_oapi.core.model.request_option import RequestOption
 
 
 def update_dataset_example():
-    api_key = os.getenv("API_KEY")
+    api_key = os.getenv("KNOWLEDGE_API_KEY")
     if not api_key:
-        raise ValueError("API_KEY environment variable is required")
+        raise ValueError("KNOWLEDGE_API_KEY environment variable is required")
 
     dataset_id = os.getenv("DATASET_ID")
     if not dataset_id:
-        raise ValueError("DATASET_ID environment variable is required")
+        print("Note: DATASET_ID environment variable is required for this example.")
+        print("This example demonstrates the API structure but needs a real dataset id to execute.")
+        print("Set DATASET_ID environment variable with a valid ID to test this functionality.")
+        return
 
     client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
@@ -33,13 +36,16 @@ def update_dataset_example():
 
 
 async def aupdate_dataset_example():
-    api_key = os.getenv("API_KEY")
+    api_key = os.getenv("KNOWLEDGE_API_KEY")
     if not api_key:
-        raise ValueError("API_KEY environment variable is required")
+        raise ValueError("KNOWLEDGE_API_KEY environment variable is required")
 
     dataset_id = os.getenv("DATASET_ID")
     if not dataset_id:
-        raise ValueError("DATASET_ID environment variable is required")
+        print("Note: DATASET_ID environment variable is required for this example.")
+        print("This example demonstrates the API structure but needs a real dataset id to execute.")
+        print("Set DATASET_ID environment variable with a valid ID to test this functionality.")
+        return
 
     client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 

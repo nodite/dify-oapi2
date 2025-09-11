@@ -5,12 +5,6 @@ from dify_oapi.core.http.transport import ATransport, Transport
 from dify_oapi.core.model.config import Config
 from dify_oapi.core.model.request_option import RequestOption
 
-from ..model.get_info_request import GetInfoRequest
-from ..model.get_info_response import GetInfoResponse
-from ..model.get_parameters_request import GetParametersRequest
-from ..model.get_parameters_response import GetParametersResponse
-from ..model.get_site_request import GetSiteRequest
-from ..model.get_site_response import GetSiteResponse
 from ..model.get_workflow_logs_request import GetWorkflowLogsRequest
 from ..model.get_workflow_logs_response import GetWorkflowLogsResponse
 from ..model.get_workflow_run_detail_request import GetWorkflowRunDetailRequest
@@ -19,8 +13,6 @@ from ..model.run_workflow_request import RunWorkflowRequest
 from ..model.run_workflow_response import RunWorkflowResponse
 from ..model.stop_workflow_request import StopWorkflowRequest
 from ..model.stop_workflow_response import StopWorkflowResponse
-from ..model.upload_file_request import UploadFileRequest
-from ..model.upload_file_response import UploadFileResponse
 
 
 class Workflow:
@@ -97,12 +89,6 @@ class Workflow:
     async def astop(self, request: StopWorkflowRequest, request_option: RequestOption) -> StopWorkflowResponse:
         return await ATransport.aexecute(self.config, request, unmarshal_as=StopWorkflowResponse, option=request_option)
 
-    def upload(self, request: UploadFileRequest, request_option: RequestOption) -> UploadFileResponse:
-        return Transport.execute(self.config, request, unmarshal_as=UploadFileResponse, option=request_option)
-
-    async def aupload(self, request: UploadFileRequest, request_option: RequestOption) -> UploadFileResponse:
-        return await ATransport.aexecute(self.config, request, unmarshal_as=UploadFileResponse, option=request_option)
-
     def logs(self, request: GetWorkflowLogsRequest, request_option: RequestOption) -> GetWorkflowLogsResponse:
         return Transport.execute(self.config, request, unmarshal_as=GetWorkflowLogsResponse, option=request_option)
 
@@ -110,23 +96,3 @@ class Workflow:
         return await ATransport.aexecute(
             self.config, request, unmarshal_as=GetWorkflowLogsResponse, option=request_option
         )
-
-    def info(self, request: GetInfoRequest, request_option: RequestOption) -> GetInfoResponse:
-        return Transport.execute(self.config, request, unmarshal_as=GetInfoResponse, option=request_option)
-
-    async def ainfo(self, request: GetInfoRequest, request_option: RequestOption) -> GetInfoResponse:
-        return await ATransport.aexecute(self.config, request, unmarshal_as=GetInfoResponse, option=request_option)
-
-    def parameters(self, request: GetParametersRequest, request_option: RequestOption) -> GetParametersResponse:
-        return Transport.execute(self.config, request, unmarshal_as=GetParametersResponse, option=request_option)
-
-    async def aparameters(self, request: GetParametersRequest, request_option: RequestOption) -> GetParametersResponse:
-        return await ATransport.aexecute(
-            self.config, request, unmarshal_as=GetParametersResponse, option=request_option
-        )
-
-    def site(self, request: GetSiteRequest, request_option: RequestOption) -> GetSiteResponse:
-        return Transport.execute(self.config, request, unmarshal_as=GetSiteResponse, option=request_option)
-
-    async def asite(self, request: GetSiteRequest, request_option: RequestOption) -> GetSiteResponse:
-        return await ATransport.aexecute(self.config, request, unmarshal_as=GetSiteResponse, option=request_option)

@@ -2,10 +2,18 @@
 
 This directory contains example code for using the Dify-OAPI SDK.
 
+## System-Level API Examples (Recommended)
+- [**Dify System APIs**](./dify/) - Unified system-level APIs for all modules
+  - [File Upload](./dify/file/upload_file.py) - Unified file upload interface
+  - [Audio Processing](./dify/audio/audio_processing.py) - Audio-to-text and text-to-audio
+  - [Application Info](./dify/info/app_info.py) - App info, parameters, metadata, site settings
+  - [Feedback Management](./dify/feedback/feedback_management.py) - Submit and retrieve feedback
+
 ## Chat Examples
 - [Blocking Response](./chat/blocking_response.py): Example of using the Chat API with blocking response mode
 - [Streaming Response](./chat/streaming_response.py): Example of using the Chat API with streaming response mode
 - [Conversation Management](./chat/conversation_management.py): Example of managing conversations and retrieving message history
+- [Annotation Management](./chat/annotation/) - Annotation CRUD and reply settings
 
 ## Completion Examples
 
@@ -21,20 +29,7 @@ This directory contains example code for using the Dify-OAPI SDK.
 - [Annotation Reply Settings](./completion/annotation/annotation_reply_settings.py): Configure annotation reply settings
 - [Query Annotation Reply Status](./completion/annotation/query_annotation_reply_status.py): Check annotation reply operation status
 
-### Audio Processing
-- [Text to Audio](./completion/audio/text_to_audio.py): Convert text responses to audio format
 
-### Feedback Management
-- [Message Feedback](./completion/feedback/message_feedback.py): Submit feedback for completion messages
-- [Get Feedbacks](./completion/feedback/get_feedbacks.py): Retrieve feedback data for analysis
-
-### File Management
-- [Upload File](./completion/file/upload_file.py): Upload files for use in completion requests
-
-### Application Information
-- [Get Application Info](./completion/info/get_info.py): Retrieve application configuration
-- [Get Parameters](./completion/info/get_parameters.py): Get application parameters and settings
-- [Get Site Info](./completion/info/get_site.py): Retrieve site-specific information
 
 ## Knowledge Base Examples
 
@@ -73,16 +68,8 @@ This directory contains example code for using the Dify-OAPI SDK.
 - [Get Workflow Run Detail](./workflow/get_workflow_run_detail.py): Retrieve workflow execution details and status
 - [Stop Workflow](./workflow/stop_workflow.py): Stop running workflow executions
 
-### File Management
-- [Upload File](./workflow/upload_file.py): Upload files for multimodal workflow support
-
 ### Logging and Monitoring
 - [Get Workflow Logs](./workflow/get_workflow_logs.py): Retrieve workflow execution logs with filtering
-
-### Application Configuration
-- [Get Application Info](./workflow/get_info.py): Retrieve basic application information
-- [Get Application Parameters](./workflow/get_parameters.py): Get application parameter configuration
-- [Get WebApp Settings](./workflow/get_site.py): Retrieve WebApp settings and theming
 
 ### Documentation
 - [Workflow README](./workflow/README.md): Comprehensive workflow API usage guide with safety features

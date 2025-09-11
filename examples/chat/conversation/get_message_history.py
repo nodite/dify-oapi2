@@ -8,12 +8,15 @@ from dify_oapi.core.model.request_option import RequestOption
 
 def get_message_history():
     """Get conversation message history"""
-    api_key = os.getenv("API_KEY")
+    api_key = os.getenv("CHAT_API_KEY")
     conversation_id = os.getenv("CONVERSATION_ID")
     if not api_key:
-        raise ValueError("API_KEY environment variable is required")
+        raise ValueError("CHAT_API_KEY environment variable is required")
     if not conversation_id:
-        raise ValueError("CONVERSATION_ID environment variable is required")
+        print("Note: CONVERSATION_ID environment variable is required for this example.")
+        print("This example demonstrates the API structure but needs a real conversation id to execute.")
+        print("Set CONVERSATION_ID environment variable with a valid ID to test this functionality.")
+        return
 
     client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
@@ -40,13 +43,16 @@ def get_message_history():
 
 def get_message_history_paginated():
     """Get message history with pagination"""
-    api_key = os.getenv("API_KEY")
+    api_key = os.getenv("CHAT_API_KEY")
     conversation_id = os.getenv("CONVERSATION_ID")
     first_id = os.getenv("FIRST_ID")
     if not api_key:
-        raise ValueError("API_KEY environment variable is required")
+        raise ValueError("CHAT_API_KEY environment variable is required")
     if not conversation_id:
-        raise ValueError("CONVERSATION_ID environment variable is required")
+        print("Note: CONVERSATION_ID environment variable is required for this example.")
+        print("This example demonstrates the API structure but needs a real conversation id to execute.")
+        print("Set CONVERSATION_ID environment variable with a valid ID to test this functionality.")
+        return
 
     client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
@@ -72,12 +78,15 @@ def get_message_history_paginated():
 
 async def get_message_history_async():
     """Get message history asynchronously"""
-    api_key = os.getenv("API_KEY")
+    api_key = os.getenv("CHAT_API_KEY")
     conversation_id = os.getenv("CONVERSATION_ID")
     if not api_key:
-        raise ValueError("API_KEY environment variable is required")
+        raise ValueError("CHAT_API_KEY environment variable is required")
     if not conversation_id:
-        raise ValueError("CONVERSATION_ID environment variable is required")
+        print("Note: CONVERSATION_ID environment variable is required for this example.")
+        print("This example demonstrates the API structure but needs a real conversation id to execute.")
+        print("Set CONVERSATION_ID environment variable with a valid ID to test this functionality.")
+        return
 
     client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 

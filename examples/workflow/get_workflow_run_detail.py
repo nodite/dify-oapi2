@@ -11,9 +11,9 @@ from dify_oapi.core.model.request_option import RequestOption
 def get_workflow_run_detail_sync() -> None:
     try:
         # Check required environment variables (MUST be first)
-        api_key = os.getenv("API_KEY")
+        api_key = os.getenv("WORKFLOW_API_KEY")
         if not api_key:
-            raise ValueError("API_KEY environment variable is required")
+            raise ValueError("WORKFLOW_API_KEY environment variable is required")
 
         workflow_run_id = os.getenv("WORKFLOW_RUN_ID")
         if not workflow_run_id:
@@ -40,9 +40,9 @@ def get_workflow_run_detail_sync() -> None:
 async def get_workflow_run_detail_async() -> None:
     try:
         # Check required environment variables (MUST be first)
-        api_key = os.getenv("API_KEY")
+        api_key = os.getenv("WORKFLOW_API_KEY")
         if not api_key:
-            raise ValueError("API_KEY environment variable is required")
+            raise ValueError("WORKFLOW_API_KEY environment variable is required")
 
         workflow_run_id = os.getenv("WORKFLOW_RUN_ID")
         if not workflow_run_id:

@@ -8,9 +8,9 @@ from dify_oapi.core.model.request_option import RequestOption
 
 
 def delete_example_tags():
-    api_key = os.getenv("API_KEY")
+    api_key = os.getenv("KNOWLEDGE_API_KEY")
     if not api_key:
-        raise ValueError("API_KEY environment variable is required")
+        raise ValueError("KNOWLEDGE_API_KEY environment variable is required")
 
     client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
     req_option = RequestOption.builder().api_key(api_key).build()
@@ -32,9 +32,9 @@ def delete_example_tags():
 
 
 async def adelete_example_tags():
-    api_key = os.getenv("API_KEY")
+    api_key = os.getenv("KNOWLEDGE_API_KEY")
     if not api_key:
-        raise ValueError("API_KEY environment variable is required")
+        raise ValueError("KNOWLEDGE_API_KEY environment variable is required")
 
     client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
     req_option = RequestOption.builder().api_key(api_key).build()

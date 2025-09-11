@@ -1,8 +1,8 @@
 import os
 
+from dify_oapi.api.chat.v1.model.chat_file import ChatFile
 from dify_oapi.api.chat.v1.model.chat_request import ChatRequest
 from dify_oapi.api.chat.v1.model.chat_request_body import ChatRequestBody
-from dify_oapi.api.chat.v1.model.chat_request_file import ChatRequestFile
 from dify_oapi.client import Client
 from dify_oapi.core.model.request_option import RequestOption
 
@@ -10,7 +10,7 @@ from dify_oapi.core.model.request_option import RequestOption
 def main():
     client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
     req_file = (
-        ChatRequestFile.builder()
+        ChatFile.builder()
         .type("image")
         .transfer_method("remote_url")
         .url("https://cloud.dify.ai/logo/logo-site.png")
@@ -27,7 +27,10 @@ def main():
         .build()
     )
     req = ChatRequest.builder().request_body(req_body).build()
-    req_option = RequestOption.builder().api_key("<your-api-key>").build()
+    api_key = os.getenv("CHAT_API_KEY")
+    if not api_key:
+        raise ValueError("CHAT_API_KEY environment variable is required")
+    req_option = RequestOption.builder().api_key(api_key).build()
     response = client.chat.v1.chat.chat(req, req_option, False)
     # response = await client.chat.v1.chat.achat(req, req_option, False)
     print(response.success)

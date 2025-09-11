@@ -6,9 +6,9 @@ from dify_oapi.core.model.request_option import RequestOption
 
 
 def get_embedding_models_sync():
-    api_key = os.getenv("API_KEY")
+    api_key = os.getenv("KNOWLEDGE_API_KEY")
     if not api_key:
-        raise ValueError("API_KEY environment variable is required")
+        raise ValueError("KNOWLEDGE_API_KEY environment variable is required")
 
     client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
@@ -34,9 +34,9 @@ def get_embedding_models_sync():
 async def get_embedding_models_async():
     """Get embedding models asynchronously."""
     try:
-        api_key = os.getenv("API_KEY")
+        api_key = os.getenv("KNOWLEDGE_API_KEY")
         if not api_key:
-            raise ValueError("API_KEY environment variable is required")
+            raise ValueError("KNOWLEDGE_API_KEY environment variable is required")
 
         client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 

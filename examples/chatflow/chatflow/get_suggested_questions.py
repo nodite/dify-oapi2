@@ -16,10 +16,10 @@ from dify_oapi.core.model.request_option import RequestOption
 
 def validate_environment():
     """Validate required environment variables."""
-    api_key = os.getenv("API_KEY")
+    api_key = os.getenv("CHATFLOW_API_KEY")
     domain = os.getenv("DOMAIN", "https://api.dify.ai")
     if not api_key:
-        raise ValueError("API_KEY environment variable is required")
+        raise ValueError("CHATFLOW_API_KEY environment variable is required")
     return api_key, domain
 
 

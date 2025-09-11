@@ -4,15 +4,13 @@ This directory contains comprehensive examples for all 22 Chat APIs organized by
 
 ## Overview
 
-The Chat API provides 22 endpoints across 7 resource categories:
+The Chat API provides business-specific endpoints across 3 resource categories:
 
 - **Chat Messages** (3 APIs): Chat message processing
-- **File Management** (1 API): File management  
-- **Feedback Management** (2 APIs): Feedback management
 - **Conversation Management** (5 APIs): Conversation management
-- **Audio Processing** (2 APIs): Audio processing
-- **Application Information** (4 APIs): Application information
 - **Annotation Management** (6 APIs): Annotation management
+
+**System-Level APIs**: File management, audio processing, feedback management, and application information are now provided by the unified [Dify System APIs](../dify/). These can be accessed via `client.chat.v1.*` or directly via `client.dify.v1.*`.
 
 ## Directory Structure
 
@@ -22,25 +20,12 @@ examples/chat/
 │   ├── send_chat_message.py        # Send chat message
 │   ├── stop_chat_generation.py     # Stop chat generation
 │   └── get_suggested_questions.py  # Get suggested questions
-├── file/                           # File Management (1 API)
-│   └── upload_file.py              # Upload file
-├── feedback/                       # Feedback Management (2 APIs)
-│   ├── submit_feedback.py          # Submit feedback
-│   └── get_feedbacks.py            # Get feedbacks
 ├── conversation/                   # Conversation Management (5 APIs)
 │   ├── get_message_history.py      # Get message history
 │   ├── get_conversations.py        # Get conversations
 │   ├── delete_conversation.py      # Delete conversation
 │   ├── rename_conversation.py      # Rename conversation
 │   └── get_conversation_variables.py # Get conversation variables
-├── audio/                          # Audio Processing (2 APIs)
-│   ├── audio_to_text.py            # Audio to text
-│   └── text_to_audio.py            # Text to audio
-├── app/                            # Application Information (4 APIs)
-│   ├── get_app_info.py             # Get app info
-│   ├── get_app_parameters.py       # Get app parameters
-│   ├── get_app_meta.py             # Get app meta
-│   └── get_site_settings.py        # Get site settings
 ├── annotation/                     # Annotation Management (6 APIs)
 │   ├── list_annotations.py         # List annotations
 │   ├── create_annotation.py        # Create annotation

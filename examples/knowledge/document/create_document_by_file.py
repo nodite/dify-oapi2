@@ -28,9 +28,9 @@ def create_sample_file() -> str:
 def create_document_by_file_sync() -> None:
     """Create a document by file synchronously."""
     try:
-        api_key = os.getenv("API_KEY")
+        api_key = os.getenv("KNOWLEDGE_API_KEY")
         if not api_key:
-            raise ValueError("API_KEY environment variable is required")
+            raise ValueError("KNOWLEDGE_API_KEY environment variable is required")
 
         dataset_id = os.getenv("DATASET_ID")
         if not dataset_id:
@@ -88,9 +88,9 @@ def create_document_by_file_sync() -> None:
 async def create_document_by_file_async() -> None:
     """Create a document by file asynchronously."""
     try:
-        api_key = os.getenv("API_KEY")
+        api_key = os.getenv("KNOWLEDGE_API_KEY")
         if not api_key:
-            raise ValueError("API_KEY environment variable is required")
+            raise ValueError("KNOWLEDGE_API_KEY environment variable is required")
 
         dataset_id = os.getenv("DATASET_ID")
         if not dataset_id:

@@ -11,9 +11,9 @@ from dify_oapi.core.model.request_option import RequestOption
 def get_workflow_logs_sync() -> None:
     try:
         # Check required environment variables (MUST be first)
-        api_key = os.getenv("API_KEY")
+        api_key = os.getenv("WORKFLOW_API_KEY")
         if not api_key:
-            raise ValueError("API_KEY environment variable is required")
+            raise ValueError("WORKFLOW_API_KEY environment variable is required")
 
         client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
@@ -34,9 +34,9 @@ def get_workflow_logs_sync() -> None:
 async def get_workflow_logs_async() -> None:
     try:
         # Check required environment variables (MUST be first)
-        api_key = os.getenv("API_KEY")
+        api_key = os.getenv("WORKFLOW_API_KEY")
         if not api_key:
-            raise ValueError("API_KEY environment variable is required")
+            raise ValueError("WORKFLOW_API_KEY environment variable is required")
 
         client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
@@ -57,9 +57,9 @@ async def get_workflow_logs_async() -> None:
 def get_workflow_logs_filtered() -> None:
     try:
         # Check required environment variables (MUST be first)
-        api_key = os.getenv("API_KEY")
+        api_key = os.getenv("WORKFLOW_API_KEY")
         if not api_key:
-            raise ValueError("API_KEY environment variable is required")
+            raise ValueError("WORKFLOW_API_KEY environment variable is required")
 
         client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 

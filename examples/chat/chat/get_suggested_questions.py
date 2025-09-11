@@ -8,12 +8,15 @@ from dify_oapi.core.model.request_option import RequestOption
 
 def get_suggested_questions():
     """Get suggested questions for a message"""
-    api_key = os.getenv("API_KEY")
+    api_key = os.getenv("CHAT_API_KEY")
     message_id = os.getenv("MESSAGE_ID")
     if not api_key:
-        raise ValueError("API_KEY environment variable is required")
+        raise ValueError("CHAT_API_KEY environment variable is required")
     if not message_id:
-        raise ValueError("MESSAGE_ID environment variable is required")
+        print("Note: MESSAGE_ID environment variable is required for this example.")
+        print("This example demonstrates the API structure but needs a real message id to execute.")
+        print("Set MESSAGE_ID environment variable with a valid ID to test this functionality.")
+        return
 
     client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
@@ -36,12 +39,15 @@ def get_suggested_questions():
 
 async def get_suggested_questions_async():
     """Get suggested questions for a message asynchronously"""
-    api_key = os.getenv("API_KEY")
+    api_key = os.getenv("CHAT_API_KEY")
     message_id = os.getenv("MESSAGE_ID")
     if not api_key:
-        raise ValueError("API_KEY environment variable is required")
+        raise ValueError("CHAT_API_KEY environment variable is required")
     if not message_id:
-        raise ValueError("MESSAGE_ID environment variable is required")
+        print("Note: MESSAGE_ID environment variable is required for this example.")
+        print("This example demonstrates the API structure but needs a real message id to execute.")
+        print("Set MESSAGE_ID environment variable with a valid ID to test this functionality.")
+        return
 
     client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 

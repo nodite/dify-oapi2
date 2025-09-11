@@ -12,13 +12,16 @@ from dify_oapi.core.model.request_option import RequestOption
 def get_annotation_reply_status_sync():
     """Get annotation reply status synchronously."""
     # Validate environment variables
-    api_key = os.getenv("API_KEY")
+    api_key = os.getenv("CHATFLOW_API_KEY")
     if not api_key:
-        raise ValueError("API_KEY environment variable is required")
+        raise ValueError("CHATFLOW_API_KEY environment variable is required")
 
     job_id = os.getenv("JOB_ID")
     if not job_id:
-        raise ValueError("JOB_ID environment variable is required")
+        print("Note: JOB_ID environment variable is required for this example.")
+        print("This example demonstrates the API structure but needs a real job id to execute.")
+        print("Set JOB_ID environment variable with a valid ID to test this functionality.")
+        return
 
     # Initialize client
     domain = os.getenv("DOMAIN", "https://api.dify.ai")
@@ -50,13 +53,16 @@ def get_annotation_reply_status_sync():
 async def get_annotation_reply_status_async():
     """Get annotation reply status asynchronously."""
     # Validate environment variables
-    api_key = os.getenv("API_KEY")
+    api_key = os.getenv("CHATFLOW_API_KEY")
     if not api_key:
-        raise ValueError("API_KEY environment variable is required")
+        raise ValueError("CHATFLOW_API_KEY environment variable is required")
 
     job_id = os.getenv("JOB_ID")
     if not job_id:
-        raise ValueError("JOB_ID environment variable is required")
+        print("Note: JOB_ID environment variable is required for this example.")
+        print("This example demonstrates the API structure but needs a real job id to execute.")
+        print("Set JOB_ID environment variable with a valid ID to test this functionality.")
+        return
 
     # Initialize client
     domain = os.getenv("DOMAIN", "https://api.dify.ai")
@@ -88,13 +94,16 @@ async def get_annotation_reply_status_async():
 def poll_annotation_reply_status():
     """Poll annotation reply status until completion."""
     # Validate environment variables
-    api_key = os.getenv("API_KEY")
+    api_key = os.getenv("CHATFLOW_API_KEY")
     if not api_key:
-        raise ValueError("API_KEY environment variable is required")
+        raise ValueError("CHATFLOW_API_KEY environment variable is required")
 
     job_id = os.getenv("JOB_ID")
     if not job_id:
-        raise ValueError("JOB_ID environment variable is required")
+        print("Note: JOB_ID environment variable is required for this example.")
+        print("This example demonstrates the API structure but needs a real job id to execute.")
+        print("Set JOB_ID environment variable with a valid ID to test this functionality.")
+        return
 
     # Initialize client
     domain = os.getenv("DOMAIN", "https://api.dify.ai")
@@ -151,9 +160,9 @@ def poll_annotation_reply_status():
 def check_multiple_job_statuses():
     """Check status of multiple annotation reply jobs."""
     # Validate environment variables
-    api_key = os.getenv("API_KEY")
+    api_key = os.getenv("CHATFLOW_API_KEY")
     if not api_key:
-        raise ValueError("API_KEY environment variable is required")
+        raise ValueError("CHATFLOW_API_KEY environment variable is required")
 
     # Example job IDs (in real usage, these would come from previous reply_settings calls)
     job_ids = os.getenv("JOB_IDS", "").split(",") if os.getenv("JOB_IDS") else []

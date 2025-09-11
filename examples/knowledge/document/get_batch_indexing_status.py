@@ -16,9 +16,9 @@ from dify_oapi.core.model.request_option import RequestOption
 def check_indexing_status_sync() -> None:
     """Check document indexing status synchronously."""
     try:
-        api_key = os.getenv("API_KEY")
+        api_key = os.getenv("KNOWLEDGE_API_KEY")
         if not api_key:
-            raise ValueError("API_KEY environment variable is required")
+            raise ValueError("KNOWLEDGE_API_KEY environment variable is required")
 
         dataset_id = os.getenv("DATASET_ID")
         if not dataset_id:
@@ -74,9 +74,9 @@ def check_indexing_status_sync() -> None:
 async def check_indexing_status_async() -> None:
     """Check document indexing status asynchronously."""
     try:
-        api_key = os.getenv("API_KEY")
+        api_key = os.getenv("KNOWLEDGE_API_KEY")
         if not api_key:
-            raise ValueError("API_KEY environment variable is required")
+            raise ValueError("KNOWLEDGE_API_KEY environment variable is required")
 
         dataset_id = os.getenv("DATASET_ID")
         if not dataset_id:

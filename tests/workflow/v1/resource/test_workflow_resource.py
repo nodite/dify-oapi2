@@ -1,152 +1,113 @@
-"""Tests for consolidated Workflow resource class."""
+"""
+Workflow Resource Tests
 
-from unittest.mock import Mock
+Test core business resources of the workflow module
+"""
+
+from unittest.mock import Mock, patch
 
 import pytest
 
-from dify_oapi.api.workflow.v1.model.get_info_request import GetInfoRequest
-from dify_oapi.api.workflow.v1.model.get_info_response import GetInfoResponse
-from dify_oapi.api.workflow.v1.model.get_parameters_request import GetParametersRequest
-from dify_oapi.api.workflow.v1.model.get_parameters_response import GetParametersResponse
-from dify_oapi.api.workflow.v1.model.get_site_request import GetSiteRequest
-from dify_oapi.api.workflow.v1.model.get_site_response import GetSiteResponse
-from dify_oapi.api.workflow.v1.model.get_workflow_logs_request import GetWorkflowLogsRequest
-from dify_oapi.api.workflow.v1.model.get_workflow_logs_response import GetWorkflowLogsResponse
-from dify_oapi.api.workflow.v1.model.get_workflow_run_detail_request import GetWorkflowRunDetailRequest
-from dify_oapi.api.workflow.v1.model.get_workflow_run_detail_response import GetWorkflowRunDetailResponse
-from dify_oapi.api.workflow.v1.model.run_workflow_request import RunWorkflowRequest
-from dify_oapi.api.workflow.v1.model.run_workflow_response import RunWorkflowResponse
-from dify_oapi.api.workflow.v1.model.stop_workflow_request import StopWorkflowRequest
-from dify_oapi.api.workflow.v1.model.stop_workflow_response import StopWorkflowResponse
-from dify_oapi.api.workflow.v1.model.upload_file_request import UploadFileRequest
-from dify_oapi.api.workflow.v1.model.upload_file_response import UploadFileResponse
 from dify_oapi.api.workflow.v1.resource.workflow import Workflow
 from dify_oapi.core.model.config import Config
 from dify_oapi.core.model.request_option import RequestOption
 
 
 class TestWorkflowResource:
-    """Test consolidated Workflow resource class."""
+    """Workflow Resource Tests"""
 
     @pytest.fixture
-    def workflow_resource(self) -> Workflow:
-        """Create workflow resource instance."""
-        config = Mock(spec=Config)
-        return Workflow(config)
+    def config(self):
+        return Config()
 
     @pytest.fixture
-    def request_option(self) -> RequestOption:
-        """Create request option."""
+    def request_option(self):
         return RequestOption.builder().api_key("test-api-key").build()
 
-    def test_run_sync(self, workflow_resource: Workflow, request_option: RequestOption) -> None:
-        """Test sync workflow execution."""
+    @pytest.fixture
+    def workflow_resource(self, config):
+        return Workflow(config)
+
+    def test_workflow_resource_init(self, workflow_resource):
+        """Test Workflow resource initialization"""
+        assert workflow_resource.config is not None
+        assert hasattr(workflow_resource, "run")
+        assert hasattr(workflow_resource, "arun")
+        assert hasattr(workflow_resource, "stop")
+        assert hasattr(workflow_resource, "astop")
+        assert hasattr(workflow_resource, "detail")
+        assert hasattr(workflow_resource, "adetail")
+        assert hasattr(workflow_resource, "logs")
+        assert hasattr(workflow_resource, "alogs")
+
+    @patch("dify_oapi.core.http.transport.Transport.execute")
+    def test_run_method(self, mock_execute, workflow_resource, request_option):
+        """Test run method"""
+        from dify_oapi.api.workflow.v1.model.run_workflow_request import RunWorkflowRequest
+
+        mock_response = Mock()
+        mock_response.workflow_run_id = "run-123"
+        mock_execute.return_value = mock_response
+
         request = RunWorkflowRequest.builder().build()
+        response = workflow_resource.run(request, request_option, False)
 
-        with pytest.MonkeyPatch().context() as m:
-            mock_transport = Mock()
-            mock_transport.execute.return_value = RunWorkflowResponse()
-            m.setattr("dify_oapi.api.workflow.v1.resource.workflow.Transport", mock_transport)
+        assert response.workflow_run_id == "run-123"
+        mock_execute.assert_called_once()
 
-            result = workflow_resource.run(request, request_option, False)
+    @patch("dify_oapi.core.http.transport.ATransport.aexecute")
+    async def test_async_run_method(self, mock_aexecute, workflow_resource, request_option):
+        """Test async run method"""
+        from dify_oapi.api.workflow.v1.model.run_workflow_request import RunWorkflowRequest
 
-            assert isinstance(result, RunWorkflowResponse)
-            mock_transport.execute.assert_called_once()
+        mock_response = Mock()
+        mock_response.workflow_run_id = "async-run-123"
+        mock_aexecute.return_value = mock_response
 
-    def test_detail(self, workflow_resource: Workflow, request_option: RequestOption) -> None:
-        """Test get workflow run detail."""
-        request = GetWorkflowRunDetailRequest.builder().workflow_run_id("run-123").build()
+        request = RunWorkflowRequest.builder().build()
+        response = await workflow_resource.arun(request, request_option, False)
 
-        with pytest.MonkeyPatch().context() as m:
-            mock_transport = Mock()
-            mock_transport.execute.return_value = GetWorkflowRunDetailResponse()
-            m.setattr("dify_oapi.api.workflow.v1.resource.workflow.Transport", mock_transport)
+        assert response.workflow_run_id == "async-run-123"
+        mock_aexecute.assert_called_once()
 
-            result = workflow_resource.detail(request, request_option)
+    @patch("dify_oapi.core.http.transport.Transport.execute")
+    def test_detail_method(self, mock_execute, workflow_resource, request_option):
+        """Test detail method"""
+        from dify_oapi.api.workflow.v1.model.get_workflow_run_detail_request import GetWorkflowRunDetailRequest
 
-            assert isinstance(result, GetWorkflowRunDetailResponse)
-            mock_transport.execute.assert_called_once()
+        mock_response = Mock()
+        mock_response.status = "completed"
+        mock_execute.return_value = mock_response
 
-    def test_stop(self, workflow_resource: Workflow, request_option: RequestOption) -> None:
-        """Test stop workflow."""
-        request = StopWorkflowRequest.builder().task_id("task-123").build()
+        request = GetWorkflowRunDetailRequest.builder().build()
+        response = workflow_resource.detail(request, request_option)
 
-        with pytest.MonkeyPatch().context() as m:
-            mock_transport = Mock()
-            mock_transport.execute.return_value = StopWorkflowResponse()
-            m.setattr("dify_oapi.api.workflow.v1.resource.workflow.Transport", mock_transport)
+        assert response.status == "completed"
+        mock_execute.assert_called_once()
 
-            result = workflow_resource.stop(request, request_option)
+    @patch("dify_oapi.core.http.transport.Transport.execute")
+    def test_logs_method(self, mock_execute, workflow_resource, request_option):
+        """Test logs method"""
+        from dify_oapi.api.workflow.v1.model.get_workflow_logs_request import GetWorkflowLogsRequest
 
-            assert isinstance(result, StopWorkflowResponse)
-            mock_transport.execute.assert_called_once()
+        mock_response = Mock()
+        mock_response.logs = ["log1", "log2"]
+        mock_execute.return_value = mock_response
 
-    def test_upload(self, workflow_resource: Workflow, request_option: RequestOption) -> None:
-        """Test file upload."""
-        request = UploadFileRequest.builder().build()
-
-        with pytest.MonkeyPatch().context() as m:
-            mock_transport = Mock()
-            mock_transport.execute.return_value = UploadFileResponse()
-            m.setattr("dify_oapi.api.workflow.v1.resource.workflow.Transport", mock_transport)
-
-            result = workflow_resource.upload(request, request_option)
-
-            assert isinstance(result, UploadFileResponse)
-            mock_transport.execute.assert_called_once()
-
-    def test_logs(self, workflow_resource: Workflow, request_option: RequestOption) -> None:
-        """Test get workflow logs."""
         request = GetWorkflowLogsRequest.builder().build()
+        response = workflow_resource.logs(request, request_option)
 
-        with pytest.MonkeyPatch().context() as m:
-            mock_transport = Mock()
-            mock_transport.execute.return_value = GetWorkflowLogsResponse()
-            m.setattr("dify_oapi.api.workflow.v1.resource.workflow.Transport", mock_transport)
+        assert response.logs == ["log1", "log2"]
+        mock_execute.assert_called_once()
 
-            result = workflow_resource.logs(request, request_option)
+    def test_workflow_resource_methods_exist(self, workflow_resource):
+        """Test Workflow resource methods exist"""
+        methods = ["run", "arun", "stop", "astop", "detail", "adetail", "logs", "alogs"]
 
-            assert isinstance(result, GetWorkflowLogsResponse)
-            mock_transport.execute.assert_called_once()
+        for method in methods:
+            assert hasattr(workflow_resource, method)
+            assert callable(getattr(workflow_resource, method))
 
-    def test_info(self, workflow_resource: Workflow, request_option: RequestOption) -> None:
-        """Test get application info."""
-        request = GetInfoRequest.builder().build()
 
-        with pytest.MonkeyPatch().context() as m:
-            mock_transport = Mock()
-            mock_transport.execute.return_value = GetInfoResponse()
-            m.setattr("dify_oapi.api.workflow.v1.resource.workflow.Transport", mock_transport)
-
-            result = workflow_resource.info(request, request_option)
-
-            assert isinstance(result, GetInfoResponse)
-            mock_transport.execute.assert_called_once()
-
-    def test_parameters(self, workflow_resource: Workflow, request_option: RequestOption) -> None:
-        """Test get application parameters."""
-        request = GetParametersRequest.builder().build()
-
-        with pytest.MonkeyPatch().context() as m:
-            mock_transport = Mock()
-            mock_transport.execute.return_value = GetParametersResponse()
-            m.setattr("dify_oapi.api.workflow.v1.resource.workflow.Transport", mock_transport)
-
-            result = workflow_resource.parameters(request, request_option)
-
-            assert isinstance(result, GetParametersResponse)
-            mock_transport.execute.assert_called_once()
-
-    def test_site(self, workflow_resource: Workflow, request_option: RequestOption) -> None:
-        """Test get site settings."""
-        request = GetSiteRequest.builder().build()
-
-        with pytest.MonkeyPatch().context() as m:
-            mock_transport = Mock()
-            mock_transport.execute.return_value = GetSiteResponse()
-            m.setattr("dify_oapi.api.workflow.v1.resource.workflow.Transport", mock_transport)
-
-            result = workflow_resource.site(request, request_option)
-
-            assert isinstance(result, GetSiteResponse)
-            mock_transport.execute.assert_called_once()
+if __name__ == "__main__":
+    pytest.main([__file__])

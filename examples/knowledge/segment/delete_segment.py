@@ -7,13 +7,16 @@ from dify_oapi.core.model.request_option import RequestOption
 
 
 def delete_example_segments():
-    api_key = os.getenv("API_KEY")
+    api_key = os.getenv("KNOWLEDGE_API_KEY")
     if not api_key:
-        raise ValueError("API_KEY environment variable is required")
+        raise ValueError("KNOWLEDGE_API_KEY environment variable is required")
 
     dataset_id = os.getenv("DATASET_ID")
     if not dataset_id:
-        raise ValueError("DATASET_ID environment variable is required")
+        print("Note: DATASET_ID environment variable is required for this example.")
+        print("This example demonstrates the API structure but needs a real dataset id to execute.")
+        print("Set DATASET_ID environment variable with a valid ID to test this functionality.")
+        return
 
     document_id = os.getenv("DOCUMENT_ID")
     if not document_id:
@@ -44,13 +47,16 @@ def delete_example_segments():
 
 
 async def adelete_example_segments():
-    api_key = os.getenv("API_KEY")
+    api_key = os.getenv("KNOWLEDGE_API_KEY")
     if not api_key:
-        raise ValueError("API_KEY environment variable is required")
+        raise ValueError("KNOWLEDGE_API_KEY environment variable is required")
 
     dataset_id = os.getenv("DATASET_ID")
     if not dataset_id:
-        raise ValueError("DATASET_ID environment variable is required")
+        print("Note: DATASET_ID environment variable is required for this example.")
+        print("This example demonstrates the API structure but needs a real dataset id to execute.")
+        print("Set DATASET_ID environment variable with a valid ID to test this functionality.")
+        return
 
     document_id = os.getenv("DOCUMENT_ID")
     if not document_id:

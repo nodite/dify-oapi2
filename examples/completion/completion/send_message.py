@@ -13,9 +13,9 @@ from dify_oapi.core.model.request_option import RequestOption
 def send_message_sync() -> str | None:
     try:
         # Check required environment variables
-        api_key = os.getenv("API_KEY")
+        api_key = os.getenv("COMPLETION_API_KEY")
         if not api_key:
-            raise ValueError("API_KEY environment variable is required")
+            raise ValueError("COMPLETION_API_KEY environment variable is required")
 
         client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
         req_option = RequestOption.builder().api_key(api_key).build()
@@ -43,9 +43,9 @@ def send_message_sync() -> str | None:
 async def send_message_async() -> str | None:
     try:
         # Check required environment variables
-        api_key = os.getenv("API_KEY")
+        api_key = os.getenv("COMPLETION_API_KEY")
         if not api_key:
-            raise ValueError("API_KEY environment variable is required")
+            raise ValueError("COMPLETION_API_KEY environment variable is required")
 
         client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
         req_option = RequestOption.builder().api_key(api_key).build()
@@ -73,9 +73,9 @@ async def send_message_async() -> str | None:
 def send_message_streaming_sync() -> None:
     try:
         # Check required environment variables
-        api_key = os.getenv("API_KEY")
+        api_key = os.getenv("COMPLETION_API_KEY")
         if not api_key:
-            raise ValueError("API_KEY environment variable is required")
+            raise ValueError("COMPLETION_API_KEY environment variable is required")
 
         client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
         req_option = RequestOption.builder().api_key(api_key).build()
@@ -105,9 +105,9 @@ def send_message_streaming_sync() -> None:
 async def send_message_streaming_async() -> None:
     try:
         # Check required environment variables
-        api_key = os.getenv("API_KEY")
+        api_key = os.getenv("COMPLETION_API_KEY")
         if not api_key:
-            raise ValueError("API_KEY environment variable is required")
+            raise ValueError("COMPLETION_API_KEY environment variable is required")
 
         client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
         req_option = RequestOption.builder().api_key(api_key).build()

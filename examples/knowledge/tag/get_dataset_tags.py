@@ -16,9 +16,9 @@ from dify_oapi.core.model.request_option import RequestOption
 def query_bound_tags_sync() -> None:
     """Query bound tags synchronously."""
     try:
-        api_key = os.getenv("API_KEY")
+        api_key = os.getenv("KNOWLEDGE_API_KEY")
         if not api_key:
-            raise ValueError("API_KEY environment variable is required")
+            raise ValueError("KNOWLEDGE_API_KEY environment variable is required")
 
         dataset_id = os.getenv("DATASET_ID")
         if not dataset_id:
@@ -57,9 +57,9 @@ def query_bound_tags_sync() -> None:
 async def query_bound_tags_async() -> None:
     """Query bound tags asynchronously."""
     try:
-        api_key = os.getenv("API_KEY")
+        api_key = os.getenv("KNOWLEDGE_API_KEY")
         if not api_key:
-            raise ValueError("API_KEY environment variable is required")
+            raise ValueError("KNOWLEDGE_API_KEY environment variable is required")
 
         dataset_id = os.getenv("DATASET_ID")
         if not dataset_id:

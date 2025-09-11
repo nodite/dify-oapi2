@@ -1,8 +1,8 @@
 import os
 
+from dify_oapi.api.chat.v1.model.chat_file import ChatFile
 from dify_oapi.api.chat.v1.model.chat_request import ChatRequest
 from dify_oapi.api.chat.v1.model.chat_request_body import ChatRequestBody
-from dify_oapi.api.chat.v1.model.chat_request_file import ChatRequestFile
 from dify_oapi.client import Client
 from dify_oapi.core.model.request_option import RequestOption
 
@@ -10,7 +10,7 @@ from dify_oapi.core.model.request_option import RequestOption
 def main():
     client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
     req_file = (
-        ChatRequestFile.builder()
+        ChatFile.builder()
         .type("image")
         .transfer_method("remote_url")
         .url("https://cloud.dify.ai/logo/logo-site.png")

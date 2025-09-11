@@ -18,9 +18,9 @@ from dify_oapi.core.model.request_option import RequestOption
 def create_document_by_text_sync() -> None:
     """Create a document by text synchronously."""
     try:
-        api_key = os.getenv("API_KEY")
+        api_key = os.getenv("KNOWLEDGE_API_KEY")
         if not api_key:
-            raise ValueError("API_KEY environment variable is required")
+            raise ValueError("KNOWLEDGE_API_KEY environment variable is required")
 
         dataset_id = os.getenv("DATASET_ID")
         if not dataset_id:
@@ -62,9 +62,9 @@ def create_document_by_text_sync() -> None:
 async def create_document_by_text_async() -> None:
     """Create a document by text asynchronously."""
     try:
-        api_key = os.getenv("API_KEY")
+        api_key = os.getenv("KNOWLEDGE_API_KEY")
         if not api_key:
-            raise ValueError("API_KEY environment variable is required")
+            raise ValueError("KNOWLEDGE_API_KEY environment variable is required")
 
         dataset_id = os.getenv("DATASET_ID")
         if not dataset_id:

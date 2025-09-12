@@ -1,6 +1,6 @@
 # Chatflow API Examples
 
-The Chatflow API provides enhanced chat functionality with workflow events and advanced streaming capabilities. This directory contains examples for all chatflow-related operations.
+The Chatflow API provides enhanced chat functionality with workflow events and advanced streaming capabilities. This directory contains examples for all chatflow operations with 15 APIs across 3 resource types.
 
 ## 📁 Resources
 
@@ -33,25 +33,7 @@ Manage conversation lifecycle with enhanced features.
 - `get_conversations.py` - List conversations
 - `rename_conversation.py` - Rename conversations
 
-### [file/](./file/) - File Management
-Upload and manage files for chatflow interactions.
-
-**Available Examples:**
-- `upload_file.py` - Upload files for processing
-
-### [feedback/](./feedback/) - Feedback Management
-Collect and manage user feedback on chatflow responses.
-
-**Available Examples:**
-- `get_feedbacks.py` - Retrieve feedback data
-- `submit_feedback.py` - Submit user feedback
-
-### [audio/](./audio/) - Audio Processing
-Speech-to-text and text-to-speech capabilities.
-
-**Available Examples:**
-- `audio_to_text.py` - Convert audio to text
-- `text_to_audio.py` - Convert text to audio
+**Note**: File upload, audio processing, and feedback examples are available in the [Dify Core API](../dify/) examples, as these are system-level features shared across all APIs.
 
 ## 🚀 Quick Start
 
@@ -79,11 +61,34 @@ for chunk in response:
 
 ## 🔧 Features
 
-- **Enhanced Streaming**: Advanced streaming with workflow events
+### Chatflow Operations (3 APIs)
+- **Enhanced Chat**: Advanced chat functionality with workflow integration
+- **Message Control**: Send messages and stop generation
+- **Suggested Questions**: AI-powered follow-up question suggestions
+
+### Conversation Management (6 APIs)
+- **Conversation CRUD**: Complete conversation lifecycle management
+- **Message History**: Access to conversation message history
+- **Variable Management**: Get and set conversation variables
+- **Conversation Listing**: Paginated conversation retrieval
+- **Rename Operations**: Update conversation titles
+- **Delete Operations**: Clean up conversations
+
+### Annotation Management (6 APIs)
+- **Annotation CRUD**: Create, read, update, delete annotations
+- **Reply Settings**: Configure annotation reply behavior
+- **Status Monitoring**: Track annotation reply status
+- **Content Management**: Rich annotation content handling
+
+### Advanced Features
+- **Enhanced Streaming**: Advanced streaming with comprehensive workflow events
 - **Workflow Integration**: Seamless integration with workflow systems
-- **File Support**: Upload and process various file types
-- **Event Handling**: Comprehensive event streaming and handling
-- **Annotation System**: Rich annotation and reply management
+- **Event Handling**: Real-time event streaming and processing
+- **File Support**: Upload and process various file types (via Dify Core API)
+- **Audio Processing**: Speech-to-text and text-to-speech (via Dify Core API)
+- **Feedback System**: User feedback collection (via Dify Core API)
+- **Type Safety**: Comprehensive type hints with strict Literal types
+- **Builder Pattern**: Fluent API construction
 
 ## 📖 Environment Variables
 

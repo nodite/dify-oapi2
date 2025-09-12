@@ -1,6 +1,6 @@
 # Document Management Examples
 
-This directory contains examples demonstrating how to use the Dify Knowledge Base Document Management API.
+This directory contains examples demonstrating how to use the Dify Knowledge Base Document Management API (10 APIs). Documents are the primary content units within datasets, supporting various file formats and processing methods.
 
 ## Prerequisites
 
@@ -103,13 +103,64 @@ Retrieves information about the original uploaded file for a document.
 python get_upload_file.py
 ```
 
-## Common Operations
+## 🔧 API Features
+
+### Document Creation (2 APIs)
+- **Create by Text**: Direct text content upload with custom processing
+- **Create by File**: File upload with automatic format detection and parsing
+
+### Document Management (4 APIs)
+- **Get Document**: Retrieve detailed document information and metadata
+- **List Documents**: Browse documents with pagination, filtering, and sorting
+- **Update by Text**: Modify document content using text input
+- **Update by File**: Replace document content with new file upload
+
+### Document Operations (4 APIs)
+- **Delete Document**: Remove documents and associated content
+- **Update Status**: Batch status updates (enable, disable, archive)
+- **Get Indexing Status**: Monitor batch processing and indexing progress
+- **Get Upload File Info**: Retrieve original file metadata and processing details
+
+### Advanced Capabilities
+- **Multi-format Support**: PDF, DOCX, TXT, Markdown, HTML, and more
+- **Batch Processing**: Efficient handling of multiple documents
+- **Status Management**: Granular control over document lifecycle
+- **Indexing Control**: Monitor and manage content processing
+- **Metadata Extraction**: Automatic extraction of file properties
+- **Version Tracking**: Track document updates and changes
+
+## 🚀 Processing Features
+
+### Indexing Techniques
+- **High Quality**: Advanced processing with better accuracy
+- **Economy**: Faster processing with standard quality
+- **Custom**: Configurable processing parameters
+
+### File Processing
+- **Automatic Parsing**: Intelligent content extraction
+- **Custom Rules**: Define processing and segmentation rules
+- **Quality Control**: Validation and error handling
+- **Progress Tracking**: Real-time processing status updates
+
+## 📊 Monitoring & Analytics
+
+### Status Tracking
+- **Processing States**: queuing, indexing, completed, error
+- **Batch Operations**: Monitor multiple document processing
+- **Error Reporting**: Detailed error messages and recovery options
+- **Performance Metrics**: Processing time and resource usage
+
+## 🔧 Common Operations
 
 Each example demonstrates both synchronous and asynchronous API usage:
 
-- Synchronous: Uses standard function calls like `client.knowledge.v1.document.create_by_text()`
-- Asynchronous: Uses async functions like `client.knowledge.v1.document.acreate_by_text()`
+- **Synchronous**: Standard function calls like `client.knowledge.v1.document.create_document_by_text()`
+- **Asynchronous**: Async functions like `client.knowledge.v1.document.acreate_document_by_text()`
 
-## Error Handling
+## ⚠️ Error Handling
 
-All examples include proper error handling with try/except blocks to gracefully handle API errors.
+All examples include comprehensive error handling:
+- API error responses with detailed messages
+- Network timeout and retry logic
+- File validation and format checking
+- Graceful degradation for partial failures

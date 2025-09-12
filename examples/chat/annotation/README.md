@@ -1,6 +1,6 @@
 # Chat Annotation Examples
 
-This directory contains examples for managing annotations in the Chat API. Annotations allow you to add metadata, corrections, and reply settings to chat messages.
+This directory contains examples for managing annotations in the Chat API (6 APIs). Annotations allow you to add metadata, corrections, and reply settings to chat messages for improved content quality and automated responses.
 
 ## 📋 Available Examples
 
@@ -52,11 +52,23 @@ response = client.chat.v1.annotation.configure_annotation_reply(req, req_option)
 
 ## 🔧 Features
 
-- **CRUD Operations**: Complete create, read, update, delete functionality
-- **Reply Settings**: Configure automatic annotation replies
-- **Status Monitoring**: Check annotation reply status
-- **Pagination**: Handle large annotation lists efficiently
-- **Error Handling**: Robust error handling for all operations
+### Annotation Management (4 APIs)
+- **Create Annotation**: Add new annotations to chat messages
+- **Update Annotation**: Modify existing annotation content
+- **Delete Annotation**: Remove annotations
+- **List Annotations**: Retrieve annotations with pagination support
+
+### Reply Configuration (2 APIs)
+- **Configure Reply Settings**: Set up automatic annotation-based replies
+- **Check Reply Status**: Monitor annotation reply configuration status
+
+### Advanced Capabilities
+- **Content Quality Control**: Improve response accuracy through annotations
+- **Automated Responses**: Set up intelligent auto-replies based on annotations
+- **Threshold Management**: Configure similarity thresholds for annotation matching
+- **Pagination Support**: Handle large annotation datasets efficiently
+- **Type Safety**: Full type validation with Pydantic models
+- **Error Handling**: Comprehensive error management and recovery
 
 ## 📖 Use Cases
 

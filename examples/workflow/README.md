@@ -1,6 +1,6 @@
 # Workflow API Examples
 
-The Workflow API enables automated workflow execution with support for both blocking and streaming modes. This directory contains examples for workflow management and execution.
+The Workflow API enables automated workflow execution with 4 APIs supporting both blocking and streaming modes. This directory contains examples for workflow management and execution.
 
 ## 📁 Resources
 
@@ -15,11 +15,13 @@ Core workflow execution and management operations.
 - `blocking_workflow.py` - Blocking workflow execution example
 - `streaming_workflow.py` - Streaming workflow execution example
 
-### [file/](./file/) - File Management
-File upload and management for workflow inputs.
+## 🔧 API Overview
 
-**Available Examples:**
-- `upload_file.py` - Upload files for workflow processing
+### Workflow Execution (4 APIs)
+- **Run Workflow**: Execute workflows with parameters (blocking/streaming)
+- **Stop Workflow**: Stop running workflow executions
+- **Get Workflow Logs**: Retrieve detailed execution logs and status
+- **Get Workflow Run Detail**: Get comprehensive workflow run information
 
 ## 🚀 Quick Start
 

@@ -26,21 +26,29 @@ Dify-OAPI2 is a Python SDK for interacting with the Dify Service-API, providing 
 dify-oapi2/
 ├── dify_oapi/              # Main SDK package
 │   ├── api/                # API service modules
-│   │   ├── chat/           # Chat API (22 APIs)
-│   │   ├── chatflow/       # Chatflow API (17 APIs)
-│   │   ├── completion/     # Completion API (15 APIs)
+│   │   ├── chat/           # Chat API (18 APIs)
+│   │   │   └── v1/         # Version 1 implementation
+│   │   ├── chatflow/       # Chatflow API (15 APIs)
+│   │   │   └── v1/         # Version 1 implementation
+│   │   ├── completion/     # Completion API (10 APIs)
+│   │   │   └── v1/         # Version 1 implementation
 │   │   ├── knowledge/      # Knowledge Base API (33 APIs)
-│   │   ├── workflow/       # Workflow API
-│   │   └── dify/           # Core Dify API
+│   │   │   └── v1/         # Version 1 implementation
+│   │   ├── workflow/       # Workflow API (6 APIs)
+│   │   │   └── v1/         # Version 1 implementation
+│   │   └── dify/           # Core Dify API (9 APIs)
+│   │       └── v1/         # Version 1 implementation
 │   ├── core/               # Core functionality
-│   │   ├── http/           # HTTP transport layer
-│   │   ├── model/          # Base models
+│   │   ├── http/           # HTTP transport layer with connection pooling
+│   │   ├── model/          # Base models and configurations
 │   │   └── utils/          # Utility functions
-│   └── client.py           # Main client interface
-├── docs/                   # Documentation
-├── examples/               # Usage examples
-├── tests/                  # Test suite
-└── Configuration files
+│   └── client.py           # Main client interface with builder pattern
+├── docs/                   # Comprehensive documentation
+├── examples/               # Complete usage examples for all APIs
+├── tests/                  # Comprehensive test suite
+├── pyproject.toml          # Project configuration (Poetry + tools)
+├── Makefile               # Development automation
+└── DEVELOPMENT.md         # Development guide
 ```
 
 ## Core Module Details
@@ -48,29 +56,34 @@ dify-oapi2/
 ### 1. API Service Modules (`dify_oapi/api/`)
 
 #### Chat API (`chat/`)
-- **Features**: Interactive conversations, file management, feedback collection, conversation management, audio processing
-- **API Count**: 22 APIs
-- **Capabilities**: Streaming responses, type safety
+- **Features**: Interactive conversations, file management, feedback collection, conversation management, annotation management
+- **API Count**: 18 APIs
+- **Capabilities**: Streaming responses, type safety with strict Literal types
 
 #### Chatflow API (`chatflow/`)
-- **Features**: Enhanced chat functionality, workflow event handling
-- **API Count**: 17 APIs
-- **Capabilities**: Real-time streaming, event processing
+- **Features**: Enhanced chat functionality, workflow event handling, multimodal file processing
+- **API Count**: 15 APIs
+- **Capabilities**: Real-time streaming with comprehensive event handling
 
 #### Completion API (`completion/`)
-- **Features**: Text generation, annotation management, audio processing
-- **API Count**: 15 APIs
+- **Features**: Text generation, annotation management, feedback system
+- **API Count**: 10 APIs
+- **Capabilities**: Blocking/streaming responses, file support
 
 #### Knowledge API (`knowledge/`)
-- **Features**: Dataset management, document processing, content segmentation, tag management
+- **Features**: Dataset management, document processing, content segmentation, tag management, model management
 - **API Count**: 33 APIs
-- **Capabilities**: Complete knowledge base lifecycle management
+- **Capabilities**: Complete knowledge base lifecycle management with CRUD operations
 
 #### Workflow API (`workflow/`)
-- **Features**: Automated workflow execution, parameter configuration, status monitoring
+- **Features**: Automated workflow execution, parameter configuration, file upload support
+- **API Count**: 6 APIs
+- **Capabilities**: Blocking/streaming execution, multimodal file inputs
 
 #### Dify Core API (`dify/`)
-- **Features**: Essential Dify service functionality
+- **Features**: Essential Dify service functionality, audio processing, feedback management
+- **API Count**: 9 APIs
+- **Capabilities**: Speech-to-text, text-to-speech, file management, application configuration
 
 ### 2. Core Functionality Modules (`dify_oapi/core/`)
 
@@ -103,25 +116,24 @@ dify-oapi2/
 ### Production Dependencies
 ```toml
 python = ">=3.10"
-pydantic = "^2"      # Data validation and settings management
-httpx = "^0"         # Modern HTTP client
+pydantic = "^2"                # Data validation and settings management with type safety
+httpx = "^0"                   # Modern async HTTP client
 ```
 
 ### Development Dependencies
 ```toml
 # Testing
-pytest = "^8"
-pytest-env = "^1"
-pytest-asyncio = "^1"
+pytest = "^8"              # Testing framework
+pytest-env = "^1"          # Environment variable management for tests
+pytest-asyncio = "^1"      # Async test support
 
 # Code Quality
-pre-commit = "^4"
-mypy = "^1"
-ruff = "^0"
-black = "^25"
+ruff = "^0"                # Fast Python linter and formatter (replaces Black + isort + flake8)
+mypy = "^1"                # Static type checking
+pre-commit = "^4"          # Git hooks for automated code quality checks
 
 # Version Management
-commitizen = "^4"
+commitizen = "^4"          # Semantic versioning and changelog generation
 ```
 
 ## Design Patterns
@@ -201,9 +213,20 @@ commitizen = "^4"
 4. Package building (Poetry)
 5. Publishing to PyPI
 
-## Version Information
+## Project Statistics
 
 - **Current Version**: 0.5.0
 - **Python Requirements**: 3.10+
 - **License**: MIT
 - **Maintenance Status**: Active development
+- **Total APIs**: 91 API methods across 6 services
+- **API Distribution**:
+  - Chat API: 18 APIs (4 resources)
+  - Chatflow API: 15 APIs (3 resources)
+  - Completion API: 10 APIs (2 resources)
+  - Knowledge Base API: 33 APIs (6 resources)
+  - Workflow API: 6 APIs (1 resource)
+  - Dify Core API: 9 APIs (4 resources)
+- **Documentation**: 22 Markdown documents
+- **Test Coverage**: Comprehensive test suite with unit, integration, and service tests
+- **Example Coverage**: Complete examples for all API services and resources

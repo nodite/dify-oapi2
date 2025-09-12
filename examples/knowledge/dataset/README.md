@@ -1,6 +1,6 @@
 # Knowledge Dataset Management Examples
 
-This directory contains examples for managing datasets in the Knowledge Base API. Datasets are the top-level containers for organizing knowledge content.
+This directory contains examples for managing datasets in the Knowledge Base API (6 APIs). Datasets are the top-level containers for organizing knowledge content and serve as the foundation for all knowledge management operations.
 
 ## 📋 Available Examples
 
@@ -82,23 +82,34 @@ for record in response.query_result:
 
 ## 🔧 Features
 
+### Dataset Management APIs (6 APIs)
+- **Create Dataset**: Initialize new knowledge containers with configuration
+- **Get Dataset**: Retrieve detailed dataset information and settings
+- **List Datasets**: Browse all datasets with pagination and filtering
+- **Update Dataset**: Modify dataset configuration and metadata
+- **Delete Dataset**: Remove datasets and all contained content
+- **Retrieve from Dataset**: Query and search dataset content
+
 ### Dataset Configuration
-- **Permissions**: Control access with "only_me" or "all_team_members"
-- **Metadata**: Rich description and categorization
-- **Settings**: Indexing and retrieval configuration
-- **Tags**: Organize datasets with tags
+- **Access Control**: Granular permissions ("only_me" or "all_team_members")
+- **Rich Metadata**: Comprehensive description and categorization
+- **Indexing Settings**: Advanced indexing and retrieval configuration
+- **Tag Integration**: Organize datasets with hierarchical tagging
+- **Performance Tuning**: Optimize for specific use cases
 
-### Retrieval Configuration
-- **Search Methods**: Semantic search, keyword search, hybrid search
-- **Reranking**: Improve result quality with reranking models
-- **Filtering**: Score thresholds and result limits
-- **Weighting**: Custom scoring and ranking strategies
+### Advanced Retrieval
+- **Multiple Search Methods**: Semantic, keyword, and hybrid search
+- **Intelligent Reranking**: Improve result quality with ML models
+- **Flexible Filtering**: Score thresholds, result limits, and custom criteria
+- **Scoring Strategies**: Custom weighting and ranking algorithms
+- **Real-time Queries**: Low-latency search with caching optimization
 
-### Management Features
+### Enterprise Features
 - **Bulk Operations**: Efficient handling of multiple datasets
-- **Version Control**: Track dataset changes and updates
-- **Statistics**: Monitor usage and performance metrics
-- **Integration**: Connect with other Dify services
+- **Version Control**: Track dataset changes and rollback capabilities
+- **Analytics**: Monitor usage patterns and performance metrics
+- **API Integration**: Seamless connection with Chat, Completion, and Workflow APIs
+- **Scalability**: Handle large-scale knowledge bases efficiently
 
 ## 📖 Retrieval Models
 

@@ -12,13 +12,16 @@ from dify_oapi.core.model.request_option import RequestOption
 def update_annotation_sync():
     """Update annotation synchronously."""
     # Validate environment variables
-    api_key = os.getenv("API_KEY")
+    api_key = os.getenv("CHATFLOW_KEY")
     if not api_key:
-        raise ValueError("API_KEY environment variable is required")
+        raise ValueError("CHATFLOW_KEY environment variable is required")
 
     annotation_id = os.getenv("ANNOTATION_ID")
     if not annotation_id:
-        raise ValueError("ANNOTATION_ID environment variable is required")
+        print("Note: ANNOTATION_ID environment variable is required for this example.")
+        print("This example demonstrates the API structure but needs a real annotation id to execute.")
+        print("Set ANNOTATION_ID environment variable with a valid ID to test this functionality.")
+        return
 
     # Initialize client
     domain = os.getenv("DOMAIN", "https://api.dify.ai")
@@ -61,13 +64,16 @@ def update_annotation_sync():
 async def update_annotation_async():
     """Update annotation asynchronously."""
     # Validate environment variables
-    api_key = os.getenv("API_KEY")
+    api_key = os.getenv("CHATFLOW_KEY")
     if not api_key:
-        raise ValueError("API_KEY environment variable is required")
+        raise ValueError("CHATFLOW_KEY environment variable is required")
 
     annotation_id = os.getenv("ANNOTATION_ID")
     if not annotation_id:
-        raise ValueError("ANNOTATION_ID environment variable is required")
+        print("Note: ANNOTATION_ID environment variable is required for this example.")
+        print("This example demonstrates the API structure but needs a real annotation id to execute.")
+        print("Set ANNOTATION_ID environment variable with a valid ID to test this functionality.")
+        return
 
     # Initialize client
     domain = os.getenv("DOMAIN", "https://api.dify.ai")
@@ -109,13 +115,16 @@ async def update_annotation_async():
 def update_annotation_with_validation():
     """Update annotation with validation example."""
     # Validate environment variables
-    api_key = os.getenv("API_KEY")
+    api_key = os.getenv("CHATFLOW_KEY")
     if not api_key:
-        raise ValueError("API_KEY environment variable is required")
+        raise ValueError("CHATFLOW_KEY environment variable is required")
 
     annotation_id = os.getenv("ANNOTATION_ID")
     if not annotation_id:
-        raise ValueError("ANNOTATION_ID environment variable is required")
+        print("Note: ANNOTATION_ID environment variable is required for this example.")
+        print("This example demonstrates the API structure but needs a real annotation id to execute.")
+        print("Set ANNOTATION_ID environment variable with a valid ID to test this functionality.")
+        return
 
     # Initialize client
     domain = os.getenv("DOMAIN", "https://api.dify.ai")

@@ -15,68 +15,76 @@ from ..model.stop_chat_response import StopChatResponse
 
 class Chat:
     def __init__(self, config: Config) -> None:
-        self.config: Config = config
+        self.config = config
 
     @overload
     def chat(
-        self, request: ChatRequest, option: RequestOption | None, stream: Literal[True]
+        self,
+        request: ChatRequest,
+        request_option: RequestOption,
+        stream: Literal[True],
     ) -> Generator[bytes, None, None]: ...
 
     @overload
-    def chat(self, request: ChatRequest, option: RequestOption | None, stream: Literal[False]) -> ChatResponse: ...
-
-    @overload
-    def chat(self, request: ChatRequest, option: RequestOption | None) -> ChatResponse: ...
+    def chat(
+        self,
+        request: ChatRequest,
+        request_option: RequestOption,
+        stream: Literal[False] = False,
+    ) -> ChatResponse: ...
 
     def chat(
         self,
         request: ChatRequest,
-        option: RequestOption | None = None,
+        request_option: RequestOption,
         stream: bool = False,
-    ):
+    ) -> ChatResponse | Generator[bytes, None, None]:
         if stream:
-            return Transport.execute(self.config, request, option=option, stream=True)
-        else:
-            return Transport.execute(self.config, request, unmarshal_as=ChatResponse, option=option)
+            return Transport.execute(self.config, request, stream=True, option=request_option)
+        return Transport.execute(self.config, request, unmarshal_as=ChatResponse, option=request_option)
 
     @overload
     async def achat(
-        self, request: ChatRequest, option: RequestOption | None, stream: Literal[True]
+        self,
+        request: ChatRequest,
+        request_option: RequestOption,
+        stream: Literal[True],
     ) -> AsyncGenerator[bytes, None]: ...
 
     @overload
     async def achat(
-        self, request: ChatRequest, option: RequestOption | None, stream: Literal[False]
+        self,
+        request: ChatRequest,
+        request_option: RequestOption,
+        stream: Literal[False] = False,
     ) -> ChatResponse: ...
-
-    @overload
-    async def achat(self, request: ChatRequest, option: RequestOption | None) -> ChatResponse: ...
 
     async def achat(
         self,
         request: ChatRequest,
-        option: RequestOption | None = None,
+        request_option: RequestOption,
         stream: bool = False,
-    ):
+    ) -> ChatResponse | AsyncGenerator[bytes, None]:
         if stream:
-            return await ATransport.aexecute(self.config, request, option=option, stream=True)
-        else:
-            return await ATransport.aexecute(self.config, request, unmarshal_as=ChatResponse, option=option)
+            return await ATransport.aexecute(self.config, request, stream=True, option=request_option)
+        return await ATransport.aexecute(self.config, request, unmarshal_as=ChatResponse, option=request_option)
 
-    def stop(self, request: StopChatRequest, option: RequestOption | None = None) -> StopChatResponse:
-        return Transport.execute(self.config, request, unmarshal_as=StopChatResponse, option=option)
+    def stop(self, request: StopChatRequest, request_option: RequestOption) -> StopChatResponse:
+        return Transport.execute(self.config, request, unmarshal_as=StopChatResponse, option=request_option)
 
-    async def astop(self, request: StopChatRequest, option: RequestOption | None = None) -> StopChatResponse:
-        return await ATransport.aexecute(self.config, request, unmarshal_as=StopChatResponse, option=option)
+    async def astop(self, request: StopChatRequest, request_option: RequestOption) -> StopChatResponse:
+        return await ATransport.aexecute(self.config, request, unmarshal_as=StopChatResponse, option=request_option)
 
     def suggested(
-        self, request: GetSuggestedQuestionsRequest, option: RequestOption | None = None
+        self, request: GetSuggestedQuestionsRequest, request_option: RequestOption
     ) -> GetSuggestedQuestionsResponse:
-        return Transport.execute(self.config, request, unmarshal_as=GetSuggestedQuestionsResponse, option=option)
+        return Transport.execute(
+            self.config, request, unmarshal_as=GetSuggestedQuestionsResponse, option=request_option
+        )
 
     async def asuggested(
-        self, request: GetSuggestedQuestionsRequest, option: RequestOption | None = None
+        self, request: GetSuggestedQuestionsRequest, request_option: RequestOption
     ) -> GetSuggestedQuestionsResponse:
         return await ATransport.aexecute(
-            self.config, request, unmarshal_as=GetSuggestedQuestionsResponse, option=option
+            self.config, request, unmarshal_as=GetSuggestedQuestionsResponse, option=request_option
         )

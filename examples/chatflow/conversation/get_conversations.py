@@ -11,9 +11,9 @@ from dify_oapi.core.model.request_option import RequestOption
 def get_conversations_sync():
     """Get conversations list synchronously."""
     # Validate environment variables
-    api_key = os.getenv("API_KEY")
+    api_key = os.getenv("CHATFLOW_KEY")
     if not api_key:
-        raise ValueError("API_KEY environment variable is required")
+        raise ValueError("CHATFLOW_KEY environment variable is required")
 
     # Initialize client
     domain = os.getenv("DOMAIN", "https://api.dify.ai")
@@ -53,9 +53,9 @@ def get_conversations_sync():
 async def get_conversations_async():
     """Get conversations list asynchronously."""
     # Validate environment variables
-    api_key = os.getenv("API_KEY")
+    api_key = os.getenv("CHATFLOW_KEY")
     if not api_key:
-        raise ValueError("API_KEY environment variable is required")
+        raise ValueError("CHATFLOW_KEY environment variable is required")
 
     # Initialize client
     domain = os.getenv("DOMAIN", "https://api.dify.ai")
@@ -91,9 +91,9 @@ async def get_conversations_async():
 def get_conversations_with_pagination():
     """Get conversations with pagination example."""
     # Validate environment variables
-    api_key = os.getenv("API_KEY")
+    api_key = os.getenv("CHATFLOW_KEY")
     if not api_key:
-        raise ValueError("API_KEY environment variable is required")
+        raise ValueError("CHATFLOW_KEY environment variable is required")
 
     # Initialize client
     domain = os.getenv("DOMAIN", "https://api.dify.ai")
@@ -147,9 +147,9 @@ def get_conversations_with_pagination():
 def get_conversations_with_sorting():
     """Get conversations with different sorting options."""
     # Validate environment variables
-    api_key = os.getenv("API_KEY")
+    api_key = os.getenv("CHATFLOW_KEY")
     if not api_key:
-        raise ValueError("API_KEY environment variable is required")
+        raise ValueError("CHATFLOW_KEY environment variable is required")
 
     # Initialize client
     domain = os.getenv("DOMAIN", "https://api.dify.ai")

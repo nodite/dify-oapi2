@@ -12,9 +12,9 @@ from dify_oapi.core.model.request_option import RequestOption
 def create_annotation_sync():
     """Create annotation synchronously."""
     # Validate environment variables
-    api_key = os.getenv("API_KEY")
+    api_key = os.getenv("CHATFLOW_KEY")
     if not api_key:
-        raise ValueError("API_KEY environment variable is required")
+        raise ValueError("CHATFLOW_KEY environment variable is required")
 
     # Initialize client
     domain = os.getenv("DOMAIN", "https://api.dify.ai")
@@ -57,9 +57,9 @@ def create_annotation_sync():
 async def create_annotation_async():
     """Create annotation asynchronously."""
     # Validate environment variables
-    api_key = os.getenv("API_KEY")
+    api_key = os.getenv("CHATFLOW_KEY")
     if not api_key:
-        raise ValueError("API_KEY environment variable is required")
+        raise ValueError("CHATFLOW_KEY environment variable is required")
 
     # Initialize client
     domain = os.getenv("DOMAIN", "https://api.dify.ai")
@@ -101,9 +101,9 @@ async def create_annotation_async():
 def create_multiple_annotations():
     """Create multiple annotations example."""
     # Validate environment variables
-    api_key = os.getenv("API_KEY")
+    api_key = os.getenv("CHATFLOW_KEY")
     if not api_key:
-        raise ValueError("API_KEY environment variable is required")
+        raise ValueError("CHATFLOW_KEY environment variable is required")
 
     # Initialize client
     domain = os.getenv("DOMAIN", "https://api.dify.ai")

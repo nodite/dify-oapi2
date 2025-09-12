@@ -7,13 +7,16 @@ from dify_oapi.core.model.request_option import RequestOption
 
 
 def update_tag_example():
-    api_key = os.getenv("API_KEY")
+    api_key = os.getenv("KNOWLEDGE_KEY")
     if not api_key:
-        raise ValueError("API_KEY environment variable is required")
+        raise ValueError("KNOWLEDGE_KEY environment variable is required")
 
     tag_id = os.getenv("TAG_ID")
     if not tag_id:
-        raise ValueError("TAG_ID environment variable is required")
+        print("Note: TAG_ID environment variable is required for this example.")
+        print("This example demonstrates the API structure but needs a real tag id to execute.")
+        print("Set TAG_ID environment variable with a valid ID to test this functionality.")
+        return
 
     client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
@@ -31,13 +34,16 @@ def update_tag_example():
 
 
 async def aupdate_tag_example():
-    api_key = os.getenv("API_KEY")
+    api_key = os.getenv("KNOWLEDGE_KEY")
     if not api_key:
-        raise ValueError("API_KEY environment variable is required")
+        raise ValueError("KNOWLEDGE_KEY environment variable is required")
 
     tag_id = os.getenv("TAG_ID")
     if not tag_id:
-        raise ValueError("TAG_ID environment variable is required")
+        print("Note: TAG_ID environment variable is required for this example.")
+        print("This example demonstrates the API structure but needs a real tag id to execute.")
+        print("Set TAG_ID environment variable with a valid ID to test this functionality.")
+        return
 
     client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 

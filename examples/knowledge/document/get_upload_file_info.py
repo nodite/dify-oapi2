@@ -16,9 +16,9 @@ from dify_oapi.core.model.request_option import RequestOption
 def get_document_upload_file_sync() -> None:
     """Get document upload file information synchronously."""
     try:
-        api_key = os.getenv("API_KEY")
+        api_key = os.getenv("KNOWLEDGE_KEY")
         if not api_key:
-            raise ValueError("API_KEY environment variable is required")
+            raise ValueError("KNOWLEDGE_KEY environment variable is required")
 
         dataset_id = os.getenv("DATASET_ID")
         if not dataset_id:
@@ -58,9 +58,9 @@ def get_document_upload_file_sync() -> None:
 async def get_document_upload_file_async() -> None:
     """Get document upload file information asynchronously."""
     try:
-        api_key = os.getenv("API_KEY")
+        api_key = os.getenv("KNOWLEDGE_KEY")
         if not api_key:
-            raise ValueError("API_KEY environment variable is required")
+            raise ValueError("KNOWLEDGE_KEY environment variable is required")
 
         dataset_id = os.getenv("DATASET_ID")
         if not dataset_id:

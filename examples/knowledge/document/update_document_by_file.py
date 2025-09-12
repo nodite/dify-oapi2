@@ -12,6 +12,9 @@ import tempfile
 from dify_oapi.api.knowledge.v1.model.process_rule import ProcessRule
 from dify_oapi.api.knowledge.v1.model.update_document_by_file_request import UpdateDocumentByFileRequest
 from dify_oapi.api.knowledge.v1.model.update_document_by_file_request_body import UpdateDocumentByFileRequestBody
+from dify_oapi.api.knowledge.v1.model.update_document_by_file_request_body_data import (
+    UpdateDocumentByFileRequestBodyData,
+)
 from dify_oapi.client import Client
 from dify_oapi.core.model.request_option import RequestOption
 
@@ -28,9 +31,9 @@ def create_sample_file() -> str:
 def update_document_by_file_sync() -> None:
     """Update a document by file synchronously."""
     try:
-        api_key = os.getenv("API_KEY")
+        api_key = os.getenv("KNOWLEDGE_KEY")
         if not api_key:
-            raise ValueError("API_KEY environment variable is required")
+            raise ValueError("KNOWLEDGE_KEY environment variable is required")
 
         dataset_id = os.getenv("DATASET_ID")
         if not dataset_id:
@@ -54,7 +57,10 @@ def update_document_by_file_sync() -> None:
 
             process_rule = ProcessRule.builder().mode("automatic").build()
 
-            request_body = UpdateDocumentByFileRequestBody.builder().process_rule(process_rule).build()
+            # Create data object
+            data = UpdateDocumentByFileRequestBodyData.builder().process_rule(process_rule).build()
+
+            request_body = UpdateDocumentByFileRequestBody.builder().data(data).build()
 
             request = (
                 UpdateDocumentByFileRequest.builder()
@@ -87,9 +93,9 @@ def update_document_by_file_sync() -> None:
 async def update_document_by_file_async() -> None:
     """Update a document by file asynchronously."""
     try:
-        api_key = os.getenv("API_KEY")
+        api_key = os.getenv("KNOWLEDGE_KEY")
         if not api_key:
-            raise ValueError("API_KEY environment variable is required")
+            raise ValueError("KNOWLEDGE_KEY environment variable is required")
 
         dataset_id = os.getenv("DATASET_ID")
         if not dataset_id:
@@ -113,7 +119,10 @@ async def update_document_by_file_async() -> None:
 
             process_rule = ProcessRule.builder().mode("automatic").build()
 
-            request_body = UpdateDocumentByFileRequestBody.builder().process_rule(process_rule).build()
+            # Create data object
+            data = UpdateDocumentByFileRequestBodyData.builder().process_rule(process_rule).build()
+
+            request_body = UpdateDocumentByFileRequestBody.builder().data(data).build()
 
             request = (
                 UpdateDocumentByFileRequest.builder()

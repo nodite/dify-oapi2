@@ -30,6 +30,7 @@ class ConfigureAnnotationReplyRequestBuilder:
         self, request_body: ConfigureAnnotationReplyRequestBody
     ) -> "ConfigureAnnotationReplyRequestBuilder":
         self._configure_annotation_reply_request.request_body = request_body
+        self._configure_annotation_reply_request.body = request_body.model_dump(exclude_none=True, mode="json")
         return self
 
     def build(self) -> ConfigureAnnotationReplyRequest:

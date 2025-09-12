@@ -11,14 +11,17 @@ from dify_oapi.core.model.request_option import RequestOption
 def get_conversation_messages_sync():
     """Get conversation messages synchronously with pagination."""
     # Validate environment variables
-    api_key = os.getenv("API_KEY")
+    api_key = os.getenv("CHATFLOW_KEY")
     domain = os.getenv("DOMAIN", "https://api.dify.ai")
     if not api_key:
-        raise ValueError("API_KEY environment variable is required")
+        raise ValueError("CHATFLOW_KEY environment variable is required")
 
     conversation_id = os.getenv("CONVERSATION_ID")
     if not conversation_id:
-        raise ValueError("CONVERSATION_ID environment variable is required")
+        print("Note: CONVERSATION_ID environment variable is required for this example.")
+        print("This example demonstrates the API structure but needs a real conversation id to execute.")
+        print("Set CONVERSATION_ID environment variable with a valid ID to test this functionality.")
+        return
 
     # Initialize client
     domain = os.getenv("DOMAIN", "https://api.dify.ai")
@@ -56,14 +59,17 @@ def get_conversation_messages_sync():
 async def get_conversation_messages_async():
     """Get conversation messages asynchronously with pagination."""
     # Validate environment variables
-    api_key = os.getenv("API_KEY")
+    api_key = os.getenv("CHATFLOW_KEY")
     domain = os.getenv("DOMAIN", "https://api.dify.ai")
     if not api_key:
-        raise ValueError("API_KEY environment variable is required")
+        raise ValueError("CHATFLOW_KEY environment variable is required")
 
     conversation_id = os.getenv("CONVERSATION_ID")
     if not conversation_id:
-        raise ValueError("CONVERSATION_ID environment variable is required")
+        print("Note: CONVERSATION_ID environment variable is required for this example.")
+        print("This example demonstrates the API structure but needs a real conversation id to execute.")
+        print("Set CONVERSATION_ID environment variable with a valid ID to test this functionality.")
+        return
 
     # Initialize client
     domain = os.getenv("DOMAIN", "https://api.dify.ai")
@@ -101,14 +107,17 @@ async def get_conversation_messages_async():
 def get_conversation_messages_with_pagination():
     """Get conversation messages with pagination example."""
     # Validate environment variables
-    api_key = os.getenv("API_KEY")
+    api_key = os.getenv("CHATFLOW_KEY")
     domain = os.getenv("DOMAIN", "https://api.dify.ai")
     if not api_key:
-        raise ValueError("API_KEY environment variable is required")
+        raise ValueError("CHATFLOW_KEY environment variable is required")
 
     conversation_id = os.getenv("CONVERSATION_ID")
     if not conversation_id:
-        raise ValueError("CONVERSATION_ID environment variable is required")
+        print("Note: CONVERSATION_ID environment variable is required for this example.")
+        print("This example demonstrates the API structure but needs a real conversation id to execute.")
+        print("Set CONVERSATION_ID environment variable with a valid ID to test this functionality.")
+        return
 
     # Initialize client
     domain = os.getenv("DOMAIN", "https://api.dify.ai")

@@ -12,9 +12,9 @@ from dify_oapi.core.model.request_option import RequestOption
 def enable_annotation_reply_sync():
     """Enable annotation reply settings synchronously."""
     # Validate environment variables
-    api_key = os.getenv("API_KEY")
+    api_key = os.getenv("CHATFLOW_KEY")
     if not api_key:
-        raise ValueError("API_KEY environment variable is required")
+        raise ValueError("CHATFLOW_KEY environment variable is required")
 
     # Initialize client
     domain = os.getenv("DOMAIN", "https://api.dify.ai")
@@ -53,9 +53,9 @@ def enable_annotation_reply_sync():
 async def enable_annotation_reply_async():
     """Enable annotation reply settings asynchronously."""
     # Validate environment variables
-    api_key = os.getenv("API_KEY")
+    api_key = os.getenv("CHATFLOW_KEY")
     if not api_key:
-        raise ValueError("API_KEY environment variable is required")
+        raise ValueError("CHATFLOW_KEY environment variable is required")
 
     # Initialize client
     domain = os.getenv("DOMAIN", "https://api.dify.ai")
@@ -94,9 +94,9 @@ async def enable_annotation_reply_async():
 def disable_annotation_reply_sync():
     """Disable annotation reply settings synchronously."""
     # Validate environment variables
-    api_key = os.getenv("API_KEY")
+    api_key = os.getenv("CHATFLOW_KEY")
     if not api_key:
-        raise ValueError("API_KEY environment variable is required")
+        raise ValueError("CHATFLOW_KEY environment variable is required")
 
     # Initialize client
     domain = os.getenv("DOMAIN", "https://api.dify.ai")
@@ -129,9 +129,9 @@ def disable_annotation_reply_sync():
 def configure_annotation_reply_with_different_models():
     """Configure annotation reply with different embedding models."""
     # Validate environment variables
-    api_key = os.getenv("API_KEY")
+    api_key = os.getenv("CHATFLOW_KEY")
     if not api_key:
-        raise ValueError("API_KEY environment variable is required")
+        raise ValueError("CHATFLOW_KEY environment variable is required")
 
     # Initialize client
     domain = os.getenv("DOMAIN", "https://api.dify.ai")

@@ -1,86 +1,92 @@
-import asyncio
-import os
-from io import BytesIO
+"""
+Chat File Upload Example
 
-from dify_oapi.api.chat.v1.model.upload_file_request import UploadFileRequest
-from dify_oapi.api.chat.v1.model.upload_file_request_body import UploadFileRequestBody
+This example demonstrates how to upload files in the Chat API.
+"""
+
+import os
+
+from dify_oapi.api.chat.v1.model.chat_file import ChatFile
+from dify_oapi.api.chat.v1.model.chat_request import ChatRequest
+from dify_oapi.api.chat.v1.model.chat_request_body import ChatRequestBody
 from dify_oapi.client import Client
 from dify_oapi.core.model.request_option import RequestOption
 
 
-def upload_file():
-    """Upload a file for chat"""
-    api_key = os.getenv("API_KEY")
-    if not api_key:
-        raise ValueError("API_KEY environment variable is required")
-
+def upload_image_example():
+    """Upload an image file and ask about it."""
     client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
+    # Create file object with remote URL
+    req_file = (
+        ChatFile.builder()
+        .type("image")
+        .transfer_method("remote_url")
+        .url("https://cloud.dify.ai/logo/logo-site.png")
+        .build()
+    )
+
+    req_body = (
+        ChatRequestBody.builder()
+        .inputs({})
+        .query("What do you see in this image? Please be concise. Please answer within 10 words. No thinking process.")
+        .response_mode("blocking")
+        .user("user-123")
+        .files([req_file])
+        .build()
+    )
+
+    req = ChatRequest.builder().request_body(req_body).build()
+    req_option = RequestOption.builder().api_key(os.getenv("CHAT_KEY", "<your-api-key>")).build()
+
     try:
-        # Create sample image content (simple PNG header)
-        # This is a minimal 1x1 pixel PNG image
-        png_content = (
-            b"\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01"
-            b"\x08\x02\x00\x00\x00\x90wS\xde\x00\x00\x00\tpHYs\x00\x00\x0b\x13"
-            b"\x00\x00\x0b\x13\x01\x00\x9a\x9c\x18\x00\x00\x00\nIDATx\x9cc```"
-            b"\x00\x00\x00\x02\x00\x01H\xaf\xa4q\x00\x00\x00\x00IEND\xaeB`\x82"
-        )
-        file_data = BytesIO(png_content)
-
-        req_body = UploadFileRequestBody.builder().user("[Example] user-123").build()
-        req = UploadFileRequest.builder().file(file_data, "[Example] test_image.png").request_body(req_body).build()
-        req_option = RequestOption.builder().api_key(api_key).build()
-
-        response = client.chat.v1.file.upload(req, req_option)
-        print("File uploaded successfully!")
-        print(f"File ID: {response.id}")
-        print(f"File name: {response.name}")
-        print(f"File size: {response.size} bytes")
-        print(f"MIME type: {response.mime_type}")
-        return response
+        response = client.chat.v1.chat.chat(req, req_option, False)
+        print(f"Response: {response.answer}")
     except Exception as e:
         print(f"Error: {e}")
-        raise
 
 
-async def upload_file_async():
-    """Upload a file for chat asynchronously"""
-    api_key = os.getenv("API_KEY")
-    if not api_key:
-        raise ValueError("API_KEY environment variable is required")
-
+def upload_document_example():
+    """Upload a document file."""
     client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
+    # Create file object for document
+    req_file = (
+        ChatFile.builder()
+        .type("document")
+        .transfer_method("local_file")
+        .upload_file_id("your-uploaded-file-id")  # Get this from file upload API
+        .build()
+    )
+
+    req_body = (
+        ChatRequestBody.builder()
+        .inputs({})
+        .query("Please provide a brief summary of this document. Please answer within 10 words. No thinking process.")
+        .response_mode("blocking")
+        .user("user-123")
+        .files([req_file])
+        .build()
+    )
+
+    req = ChatRequest.builder().request_body(req_body).build()
+    req_option = RequestOption.builder().api_key(os.getenv("CHAT_KEY", "<your-api-key>")).build()
+
     try:
-        # Create sample image content (simple PNG header)
-        # This is a minimal 1x1 pixel PNG image
-        png_content = (
-            b"\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDR\x00\x00\x00\x01\x00\x00\x00\x01"
-            b"\x08\x02\x00\x00\x00\x90wS\xde\x00\x00\x00\tpHYs\x00\x00\x0b\x13"
-            b"\x00\x00\x0b\x13\x01\x00\x9a\x9c\x18\x00\x00\x00\nIDATx\x9cc```"
-            b"\x00\x00\x00\x02\x00\x01H\xaf\xa4q\x00\x00\x00\x00IEND\xaeB`\x82"
-        )
-        file_data = BytesIO(png_content)
-
-        req_body = UploadFileRequestBody.builder().user("[Example] user-123").build()
-        req = (
-            UploadFileRequest.builder().file(file_data, "[Example] test_image_async.png").request_body(req_body).build()
-        )
-        req_option = RequestOption.builder().api_key(api_key).build()
-
-        response = await client.chat.v1.file.aupload(req, req_option)
-        print("File uploaded asynchronously!")
-        print(f"File ID: {response.id}")
-        print(f"File name: {response.name}")
-        return response
+        response = client.chat.v1.chat.chat(req, req_option, False)
+        print(f"Response: {response.answer}")
     except Exception as e:
         print(f"Error: {e}")
-        raise
+
+
+def main():
+    """Run file upload examples."""
+    print("=== Image Upload Example ===")
+    upload_image_example()
+
+    print("\n=== Document Upload Example ===")
+    upload_document_example()
 
 
 if __name__ == "__main__":
-    print("=== Upload File Sync ===")
-    upload_file()
-
-    print("\n=== Upload File Async ===")
-    asyncio.run(upload_file_async())
+    main()

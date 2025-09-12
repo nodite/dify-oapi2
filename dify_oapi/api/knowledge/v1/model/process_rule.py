@@ -6,7 +6,6 @@ from pydantic import BaseModel
 
 from .knowledge_types import ProcessingMode
 from .process_rules import ProcessRules
-from .segmentation_rule import SegmentationRule
 
 
 class ProcessRule(BaseModel):
@@ -14,7 +13,6 @@ class ProcessRule(BaseModel):
 
     mode: Optional[ProcessingMode] = None
     rules: Optional[ProcessRules] = None
-    segmentation: Optional[SegmentationRule] = None
 
     @staticmethod
     def builder() -> "ProcessRuleBuilder":
@@ -36,8 +34,4 @@ class ProcessRuleBuilder:
 
     def rules(self, rules: ProcessRules) -> "ProcessRuleBuilder":
         self._process_rule.rules = rules
-        return self
-
-    def segmentation(self, segmentation: SegmentationRule) -> "ProcessRuleBuilder":
-        self._process_rule.segmentation = segmentation
         return self

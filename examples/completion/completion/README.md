@@ -1,6 +1,6 @@
 # Completion Operations Examples
 
-This directory contains examples for core completion functionality including text generation and response handling.
+This directory contains examples for core completion functionality (6 APIs) including advanced text generation, response handling, and application management with comprehensive streaming support.
 
 ## 📋 Available Examples
 
@@ -36,7 +36,32 @@ print(response.answer)
 
 ## 🔧 Features
 
-- **Text Generation**: AI-powered text completion
-- **Multiple Modes**: Blocking and streaming responses
-- **Input Variables**: Dynamic input parameter support
-- **Stop Control**: Ability to stop long-running generations
+### Core Completion APIs (6 APIs)
+- **Send Message**: Primary text generation interface with advanced parameters
+- **Stop Response**: Interrupt ongoing text generation processes
+- **Get Application Parameters**: Retrieve app configuration and parameter schemas
+- **Get Application Information**: Access application metadata and settings
+- **Get Application Meta**: Retrieve comprehensive application metadata
+- **Get Site Information**: Access site-level configuration and settings
+
+### Text Generation Capabilities
+- **Advanced AI Models**: Access to state-of-the-art language models
+- **Dual Response Modes**: Blocking (synchronous) and streaming (real-time) responses
+- **Parameter Control**: Fine-tune generation with temperature, max tokens, etc.
+- **Input Flexibility**: Support for complex input variables and context
+- **Generation Control**: Start, stop, and manage text generation processes
+
+### Application Management
+- **Configuration Access**: Retrieve application settings and parameters
+- **Metadata Management**: Access comprehensive application information
+- **Site Integration**: Connect with site-level configurations
+- **Parameter Schemas**: Understand available input parameters and types
+- **Runtime Information**: Access real-time application status and capabilities
+
+### Advanced Features
+- **Streaming Support**: Real-time text generation with AsyncGenerator
+- **Context Management**: Maintain conversation context and history
+- **File Integration**: Process files through Dify Core API integration
+- **Error Recovery**: Robust error handling and retry mechanisms
+- **Performance Optimization**: Efficient text generation with caching
+- **Type Safety**: Comprehensive type validation with Pydantic models

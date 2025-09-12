@@ -1,141 +1,168 @@
-# Dify系统级API示例
+# Dify Core API Examples
 
-本目录包含了Dify统一系统级API的使用示例。这些API提供了跨所有模块的通用功能。
+The Dify Core API provides essential system-level functionality across all Dify services. This directory contains examples for unified core operations with 9 APIs across 4 resource types.
 
-## 目录结构
+## 📁 Resources
 
-```
-dify/
-├── audio/                      # 音频处理API示例 (2 APIs)
-│   ├── audio_to_text.py        # 音频转文本
-│   └── text_to_audio.py        # 文本转音频
-├── feedback/                   # 反馈管理API示例 (2 APIs)
-│   ├── submit_feedback.py      # 提交用户反馈
-│   └── get_feedbacks.py        # 获取反馈列表
-├── file/                       # 文件管理API示例 (1 API)
-│   └── upload_file.py          # 文件上传
-├── info/                       # 应用信息API示例 (4 APIs)
-│   ├── get_app_info.py         # 获取应用基本信息
-│   ├── get_app_parameters.py   # 获取应用配置参数
-│   ├── get_app_meta.py         # 获取应用元数据
-│   └── get_site_settings.py    # 获取站点设置
-└── README.md                   # 本文档
-```
+### [audio/](./audio/) - Audio Processing (2 APIs)
+Speech-to-text and text-to-speech capabilities.
 
-## API概览
+**Available Examples:**
+- `audio_to_text.py` - Convert audio files to text
+- `text_to_audio.py` - Convert text to audio files
 
-### 文件管理 (dify.v1.file)
-- **文件上传**: 统一的文件上传接口，支持各种文件类型
+### [feedback/](./feedback/) - Feedback Management (2 APIs)
+User feedback collection and analysis.
 
-### 音频处理 (dify.v1.audio)
-- **音频转文本**: 将音频文件转换为文本
-- **文本转音频**: 将文本转换为音频文件
+**Available Examples:**
+- `submit_feedback.py` - Submit user feedback (like/dislike)
+- `get_feedbacks.py` - Retrieve feedback data and statistics
 
-### 应用信息 (dify.v1.info)
-- **基本信息**: 获取应用的基本信息
-- **应用参数**: 获取应用的配置参数
-- **应用元数据**: 获取应用的元数据信息
-- **站点设置**: 获取站点的配置设置
+### [file/](./file/) - File Management (1 API)
+Unified file upload and processing.
 
-### 反馈管理 (dify.v1.feedback)
-- **提交反馈**: 提交用户反馈（点赞/点踩）
-- **获取反馈**: 获取反馈列表和统计信息
+**Available Examples:**
+- `upload_file.py` - Upload files for various Dify services
 
-## 使用方式
+### [info/](./info/) - Application Information (4 APIs)
+Application configuration and metadata retrieval.
 
-### 直接使用系统级API
+**Available Examples:**
+- `get_app_info.py` - Get basic application information
+- `get_app_parameters.py` - Get application configuration parameters
+- `get_app_meta.py` - Get application metadata
+- `get_site_settings.py` - Get site configuration settings
+
+## 🚀 Quick Start
+
+### File Upload Example
+
 ```python
-from dify_oapi.client import Client
+from dify_oapi.api.dify.v1.model.upload_file_request import UploadFileRequest
+from dify_oapi.api.dify.v1.model.upload_file_request_body import UploadFileRequestBody
 
-client = Client.builder().domain("https://api.dify.ai").build()
+with open("document.pdf", "rb") as file:
+    req_body = (
+        UploadFileRequestBody.builder()
+        .file(file)
+        .user("user-123")
+        .build()
+    )
 
-# 文件上传
-response = client.dify.v1.file.upload(request, option)
-
-# 音频处理
-response = client.dify.v1.audio.to_text(request, option)
-response = client.dify.v1.audio.from_text(request, option)
-
-# 应用信息
-response = client.dify.v1.info.get(request, option)
-response = client.dify.v1.info.parameters(request, option)
-response = client.dify.v1.info.meta(request, option)
-response = client.dify.v1.info.site(request, option)
-
-# 反馈管理
-response = client.dify.v1.feedback.submit(request, option)
-response = client.dify.v1.feedback.list(request, option)
+req = UploadFileRequest.builder().request_body(req_body).build()
+response = client.dify.v1.file.upload_file(req, req_option)
+print(f"File ID: {response.id}")
 ```
 
-### 通过业务模块使用（完全兼容）
+### Audio Processing Example
+
 ```python
-# 这些调用方式仍然有效，内部会使用dify系统级API
-client.chat.v1.file.upload(request, option)
-client.completion.v1.audio.text_to_audio(request, option)
-client.chatflow.v1.application.info(request, option)
-client.workflow.v1.feedback.submit(request, option)
+from dify_oapi.api.dify.v1.model.audio_to_text_request import AudioToTextRequest
+from dify_oapi.api.dify.v1.model.audio_to_text_request_body import AudioToTextRequestBody
+
+with open("audio.mp3", "rb") as audio_file:
+    req_body = (
+        AudioToTextRequestBody.builder()
+        .file(audio_file)
+        .user("user-123")
+        .build()
+    )
+
+req = AudioToTextRequest.builder().request_body(req_body).build()
+response = client.dify.v1.audio.audio_to_text(req, req_option)
+print(f"Transcription: {response.text}")
 ```
 
-## 运行示例
+### Application Info Example
 
-### 环境设置
+```python
+from dify_oapi.api.dify.v1.model.get_application_info_request import GetApplicationInfoRequest
+
+req = GetApplicationInfoRequest.builder().build()
+response = client.dify.v1.info.get_application_info(req, req_option)
+print(f"App Name: {response.name}")
+print(f"Description: {response.description}")
+```
+
+## 🔧 Features
+
+### Unified Interface
+- **Consistent API**: All core functionality through unified dify module
+- **Cross-Service Support**: Used by Chat, Completion, Chatflow, and Workflow APIs
+- **Standardized Responses**: Consistent response formats across all services
+
+### File Management
+- **Multiple Formats**: Support for images, documents, audio, and video files
+- **Secure Upload**: Built-in file validation and security checks
+- **Metadata Extraction**: Automatic file metadata processing
+
+### Audio Processing
+- **Speech Recognition**: High-quality audio-to-text conversion
+- **Text-to-Speech**: Natural voice synthesis from text
+- **Multiple Formats**: Support for various audio formats
+
+### Application Configuration
+- **Runtime Info**: Get application status and configuration
+- **Parameter Management**: Access and manage app parameters
+- **Metadata Access**: Retrieve comprehensive app metadata
+- **Site Settings**: Access global site configuration
+
+### Feedback System
+- **User Feedback**: Collect likes, dislikes, and ratings
+- **Analytics**: Comprehensive feedback statistics
+- **Quality Improvement**: Data-driven service enhancement
+
+## 📖 Environment Variables
+
 ```bash
 export DOMAIN="https://api.dify.ai"
 export DIFY_KEY="your-dify-api-key"
 ```
 
-### 运行单个示例
+## 🔧 Running Examples
+
 ```bash
-# 文件上传示例
+# File management
 python examples/dify/file/upload_file.py
 
-# 音频处理示例
+# Audio processing
 python examples/dify/audio/audio_to_text.py
 python examples/dify/audio/text_to_audio.py
 
-# 应用信息示例
+# Application information
 python examples/dify/info/get_app_info.py
 python examples/dify/info/get_app_parameters.py
 python examples/dify/info/get_app_meta.py
 python examples/dify/info/get_site_settings.py
 
-# 反馈管理示例
+# Feedback management
 python examples/dify/feedback/submit_feedback.py
 python examples/dify/feedback/get_feedbacks.py
 ```
 
-## 特性
+## 🔗 Integration with Other APIs
 
-### 统一接口
-- 所有系统级功能通过dify模块统一提供
-- 一致的API调用方式和响应格式
-- 统一的错误处理和异常管理
+The Dify Core API is used by all other Dify services:
 
-### 类型安全
-- 完整的类型提示支持
-- Pydantic模型验证
-- 编译时类型检查
+- **Chat API**: File upload, audio processing, feedback collection
+- **Completion API**: File management, application info
+- **Chatflow API**: Audio processing, feedback management
+- **Workflow API**: File upload, application configuration
+- **Knowledge Base API**: File processing for document upload
 
-### 异步支持
-- 所有API都提供同步和异步版本
-- 支持高并发场景
-- 异步上下文管理
+## 📚 Best Practices
 
-### 向后兼容
-- 保持所有原有API调用方式
-- 渐进式迁移支持
-- 无需修改现有代码
+1. **Use Core APIs Directly**: For new projects, use `client.dify.v1.*` interfaces
+2. **Handle File Resources**: Properly close file handles and manage memory
+3. **Error Handling**: Implement consistent exception handling patterns
+4. **Async Operations**: Use async versions for high-concurrency scenarios
+5. **Configuration Management**: Use environment variables for API keys and domains
+6. **File Validation**: Validate file types and sizes before upload
 
-## 最佳实践
+## 🔗 Related APIs
 
-1. **优先使用系统级API**: 新项目建议直接使用 `client.dify.v1.*` 接口
-2. **统一错误处理**: 使用一致的异常处理模式
-3. **资源管理**: 正确关闭文件句柄和网络连接
-4. **异步优化**: 在高并发场景下使用异步版本的API
-5. **配置管理**: 使用环境变量管理API密钥和域名
-
-## 相关文档
-
-- [项目README](../../README.md) - 项目总体介绍
-- [重复清理文档](../../docs/duplication/) - 了解API统一的背景
-- [其他模块示例](../) - 查看业务特定的API示例
+- [Chat API](../chat/) - Interactive conversations
+- [Completion API](../completion/) - Text generation
+- [Chatflow API](../chatflow/) - Enhanced chat with workflows
+- [Workflow API](../workflow/) - Automated workflow execution
+- [Knowledge Base API](../knowledge/) - Knowledge management

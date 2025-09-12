@@ -1,6 +1,6 @@
 # Knowledge Child Chunk Management Examples
 
-This directory contains examples for managing child chunks in the Knowledge Base API. Child chunks are sub-segments that provide fine-grained content organization.
+This directory contains examples for managing child chunks in the Knowledge Base API (4 APIs). Child chunks are sub-segments that provide the finest level of content granularity, enabling precise content organization and retrieval within the hierarchical knowledge structure.
 
 ## 📋 Available Examples
 
@@ -35,6 +35,29 @@ response = client.knowledge.v1.chunk.create_child_chunk(req, req_option)
 
 ## 🔧 Features
 
-- **Fine-grained Content**: Break down segments into smaller chunks
-- **Hierarchical Organization**: Dataset → Document → Segment → Child Chunk
-- **Content Management**: Full CRUD operations on child chunks
+### Child Chunk Management APIs (4 APIs)
+- **Create Child Chunk**: Add new sub-segments within existing segments
+- **List Child Chunks**: Retrieve all child chunks within a segment with pagination
+- **Update Child Chunk**: Modify child chunk content and metadata
+- **Delete Child Chunk**: Remove child chunks from segments
+
+### Content Organization
+- **Hierarchical Structure**: Dataset → Document → Segment → Child Chunk (4-level hierarchy)
+- **Fine-grained Control**: Precise content segmentation for optimal retrieval
+- **Content Granularity**: Break down large segments into manageable pieces
+- **Flexible Sizing**: Customize chunk sizes based on content type and use case
+- **Metadata Preservation**: Maintain content relationships and context
+
+### Advanced Capabilities
+- **Batch Operations**: Efficient handling of multiple child chunks
+- **Content Validation**: Ensure content quality and consistency
+- **Search Optimization**: Improve search accuracy with granular content
+- **Performance Tuning**: Optimize retrieval speed with appropriate chunk sizes
+- **Context Preservation**: Maintain semantic relationships between chunks
+
+### Use Cases
+- **Large Document Processing**: Break down lengthy documents into searchable pieces
+- **Precise Retrieval**: Enable exact content matching for specific queries
+- **Content Versioning**: Track changes at the most granular level
+- **Performance Optimization**: Balance content granularity with search performance
+- **Semantic Chunking**: Organize content by semantic meaning and context

@@ -1,6 +1,6 @@
 # Development Guide
 
-This guide covers the development setup and workflow for the dify-oapi project.
+This guide covers the development setup and workflow for the dify-oapi2 project.
 
 ## Prerequisites
 
@@ -14,7 +14,7 @@ This guide covers the development setup and workflow for the dify-oapi project.
 
 ```bash
 git clone https://github.com/nodite/dify-oapi2.git
-cd dify-oapi
+cd dify-oapi2
 make dev-setup
 ```
 
@@ -101,25 +101,38 @@ make test
 # Run tests with coverage
 make test-cov
 
-# Run specific test file
-poetry run pytest tests/knowledge/v1/model/test_dataset_models.py -v
+# Run specific API service tests
+poetry run pytest tests/knowledge/ -v
+poetry run pytest tests/chat/ -v
 
 # Run tests matching a pattern
 poetry run pytest tests/ -k "test_create" -v
+
+# Set environment variables for integration tests
+export DOMAIN="https://api.dify.ai"
+export CHAT_KEY="your-chat-api-key"
+export KNOWLEDGE_KEY="your-knowledge-api-key"
 ```
 
 ### Test Structure
 
 ```
 tests/
+├── chat/
+│   └── v1/                 # Chat API tests (18 APIs)
+├── chatflow/
+│   └── v1/                 # Chatflow API tests (15 APIs)
+├── completion/
+│   └── v1/                 # Completion API tests (10 APIs)
+├── dify/
+│   └── v1/                 # Dify Core API tests (9 APIs)
 ├── knowledge/
-│   └── v1/
-│       ├── model/          # Model tests
-│       ├── resource/       # Resource tests
-│       └── integration/    # Integration tests
-├── test_chat.py
-├── test_completion.py
-└── ...
+│   └── v1/                 # Knowledge Base API tests (33 APIs)
+├── workflow/
+│   └── v1/                 # Workflow API tests (6 APIs)
+├── core/                   # Core functionality tests
+├── integration/            # Integration tests
+└── conftest.py            # Test configuration
 ```
 
 ## Type Checking
@@ -279,6 +292,36 @@ make install
 4. Ensure all tests pass and code is properly formatted
 5. Submit a pull request
 
+## Project Architecture
+
+### API Services Overview
+
+The SDK provides comprehensive coverage of Dify's API services with **91 total API methods**:
+
+- **Chat API (18 APIs)**: Interactive conversations, file management, feedback, annotation management
+  - Resources: annotation, chat, conversation, message
+- **Chatflow API (15 APIs)**: Enhanced chat with workflow events and streaming
+  - Resources: annotation, chatflow, conversation
+- **Completion API (10 APIs)**: Text generation, completion, and annotation management
+  - Resources: annotation, completion
+- **Knowledge Base API (33 APIs)**: Complete knowledge management lifecycle
+  - Resources: chunk, dataset, document, model, segment, tag
+- **Workflow API (6 APIs)**: Automated workflow execution with file support
+  - Resources: workflow
+- **Dify Core API (9 APIs)**: Essential services including audio processing
+  - Resources: audio, feedback, file, info
+
+### Technology Stack
+
+- **Language**: Python 3.10+
+- **HTTP Client**: httpx with connection pooling optimization
+- **Type System**: Pydantic 2.x with comprehensive validation
+- **Architecture**: Builder pattern with fluent API design
+- **Async Support**: Full async/await with AsyncGenerator streaming
+- **Code Quality**: Ruff (linting + formatting) + MyPy (type checking)
+- **Testing**: pytest with async support and comprehensive coverage
+- **Packaging**: Poetry with modern Python packaging standards
+
 ## Code Style Guidelines
 
 - Line length: 120 characters
@@ -288,5 +331,6 @@ make install
 - Write docstrings for public APIs
 - Keep functions focused and small
 - Use meaningful variable names
+- Minimize comments by making code self-documenting
 
 The Ruff configuration enforces most of these automatically.

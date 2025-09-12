@@ -1,6 +1,6 @@
 # Completion API Examples
 
-The Completion API provides text generation and completion capabilities. This directory contains examples for all completion-related operations.
+The Completion API provides text generation and completion capabilities with 10 APIs across 2 resource types. This directory contains examples for all completion-related operations.
 
 ## 📁 Resources
 
@@ -24,24 +24,7 @@ Core text completion and generation functionality.
 - `blocking_completion.py` - Synchronous completion example
 - `streaming_completion.py` - Real-time streaming completion
 
-### [file/](./file/) - File Management
-Upload and manage files for completion processing.
-
-**Available Examples:**
-- `upload_file.py` - Upload files for processing
-
-### [feedback/](./feedback/) - Feedback Management
-Collect and manage user feedback on completion responses.
-
-**Available Examples:**
-- `get_feedbacks.py` - Retrieve feedback data
-- `submit_feedback.py` - Submit user feedback
-
-### [audio/](./audio/) - Audio Processing
-Text-to-speech capabilities for completion results.
-
-**Available Examples:**
-- `text_to_audio.py` - Convert completion text to audio
+**Note**: File upload, audio processing, and feedback examples are available in the [Dify Core API](../dify/) examples, as these are system-level features shared across all APIs.
 
 ## 🚀 Quick Start
 
@@ -83,10 +66,25 @@ for chunk in response:
 
 ## 🔧 Features
 
+### Core Completion (6 APIs)
+- **Text Generation**: Advanced text completion and generation
 - **Multiple Response Modes**: Blocking and streaming responses
-- **File Support**: Process documents and media files
-- **Annotation System**: Rich annotation and feedback management
-- **Audio Output**: Convert text responses to speech
+- **Parameter Control**: Flexible completion parameter configuration
+- **Stop Generation**: Control over ongoing text generation
+- **Application Info**: Access to completion app configuration
+
+### Annotation Management (4 APIs)
+- **Annotation CRUD**: Create, read, update, delete annotations
+- **Reply Settings**: Configure annotation reply behavior
+- **Status Monitoring**: Track annotation reply status
+- **Content Management**: Rich annotation content handling
+
+### Advanced Features
+- **File Support**: Process documents and media files (via Dify Core API)
+- **Audio Output**: Convert text responses to speech (via Dify Core API)
+- **Feedback System**: User feedback collection (via Dify Core API)
+- **Type Safety**: Comprehensive type hints with strict Literal types
+- **Builder Pattern**: Fluent API construction
 - **Error Handling**: Comprehensive error management
 
 ## 📖 Environment Variables

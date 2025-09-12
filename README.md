@@ -4,17 +4,17 @@
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-A Python SDK for interacting with the Dify Service-API. This library provides a fluent, type-safe interface for building AI-powered applications using Dify's API services including chat, completion, knowledge base, and workflow features.
+A modern Python SDK for interacting with the Dify Service-API. This library provides a fluent, type-safe interface for building AI-powered applications using Dify's comprehensive API services including chat, completion, knowledge base, workflow, and chatflow features.
 
-> This project is based on https://github.com/QiMington/dify-oapi, with refactoring and support for the latest Dify API.
+> This project is based on https://github.com/QiMington/dify-oapi, completely refactored with modern Python practices and full support for the latest Dify API.
 
 ## ✨ Features
 
-- **Multiple API Services**: Chat (22 APIs), Completion (15 APIs), Knowledge Base (33 APIs), Chatflow (17 APIs), Workflow, and Core Dify APIs
+- **Complete API Coverage**: Chat (18 APIs), Chatflow (15 APIs), Completion (10 APIs), Knowledge Base (33 APIs), Workflow (4 APIs), and Core Dify (9 APIs)
 - **Builder Pattern**: Fluent, chainable interface for constructing requests
 - **Sync & Async Support**: Both synchronous and asynchronous operations
 - **Streaming Responses**: Real-time streaming for chat and completion
-- **Type Safety**: Comprehensive type hints with Pydantic validation
+- **Type Safety**: Comprehensive type hints with Pydantic 2.x validation
 - **File Upload**: Support for images and documents
 - **Modern HTTP Client**: Built on httpx for reliable API communication
 - **Connection Pool Optimization**: Efficient TCP connection reuse to reduce resource overhead
@@ -27,120 +27,126 @@ pip install dify-oapi2
 
 **Requirements**: Python 3.10+
 
-**Dependencies**:
-- `pydantic` (>=1.10,<3.0.0) - Data validation and settings management
-- `httpx` (>=0.24,<1.0) - Modern HTTP client
+**Core Dependencies**:
+- `pydantic` (^2) - Data validation and settings management with type safety
+- `httpx` (^0) - Modern async HTTP client
+
+**Development Dependencies**:
+- `ruff` (^0) - Fast Python linter and formatter
+- `mypy` (^1) - Static type checking
+- `pytest` (^8) - Testing framework
+- `pre-commit` (^4) - Git hooks for code quality
+- `commitizen` (^4) - Semantic versioning and changelog generation
+- `poetry` - Dependency management and packaging
+
+## 🛠️ Technology Stack
+
+- **Language**: Python 3.10+
+- **HTTP Client**: httpx with connection pooling optimization
+- **Type System**: Pydantic 2.x with comprehensive type validation
+- **Architecture**: Builder pattern with fluent API design + Service layer pattern
+- **Async Support**: Full async/await support with AsyncGenerator streaming
+- **Code Quality**: Ruff (linting + formatting) + MyPy (type checking)
+- **Testing**: pytest with async support and comprehensive coverage
+- **Packaging**: Poetry with modern Python packaging standards
+- **Total Coverage**: 89 API methods across 6 services with complete examples
 
 ## 🚀 Quick Start
 
-### Basic Chat Example
+### Basic Usage
 
 ```python
-from dify_oapi.api.chat.v1.model.chat_request import ChatRequest
-from dify_oapi.api.chat.v1.model.chat_request_body import ChatRequestBody
 from dify_oapi.client import Client
 from dify_oapi.core.model.request_option import RequestOption
+from dify_oapi.api.chat.v1.model.chat_request import ChatRequest
 
-# Initialize client
-client = Client.builder().domain("https://api.dify.ai").build()
-
-# Build request
-req_body = (
-    ChatRequestBody.builder()
-    .inputs({})
-    .query("What can Dify API do?")
-    .response_mode("blocking")
-    .user("user-123")
+# Initialize client with builder pattern
+client = (
+    Client.builder()
+    .domain("https://api.dify.ai")
+    .max_connections(100)
+    .keepalive_expiry(30.0)
     .build()
 )
 
-req = ChatRequest.builder().request_body(req_body).build()
+# Create request options
 req_option = RequestOption.builder().api_key("your-api-key").build()
 
-# Execute request
-response = client.chat.v1.chat.chat(req, req_option, False)
+# Use the chat API
+response = client.chat.chat(
+    request=ChatRequest.builder()
+    .query("Hello, how are you?")
+    .user("user-123")
+    .build(),
+    request_option=req_option
+)
+
 print(response.answer)
 ```
 
-### Streaming Chat Example
+### Comprehensive Examples
 
-```python
-# Enable streaming for real-time responses
-req_body = (
-    ChatRequestBody.builder()
-    .query("Tell me a story")
-    .response_mode("streaming")
-    .user("user-123")
-    .build()
-)
+Ready to build AI-powered applications? Check out our comprehensive examples:
 
-req = ChatRequest.builder().request_body(req_body).build()
-response = client.chat.v1.chat.chat(req, req_option, True)
+- **[Chat Examples](./examples/chat/)** - Interactive conversations and streaming responses
+- **[Chatflow Examples](./examples/chatflow/)** - Enhanced chat with workflow events
+- **[Knowledge Base Examples](./examples/knowledge/)** - Build and query knowledge bases
+- **[Workflow Examples](./examples/workflow/)** - Automate complex AI workflows
+- **[Complete Examples Collection](./examples/)** - All API services with detailed usage patterns
 
-# Process streaming response
-for chunk in response:
-    print(chunk, end="", flush=True)
-```
-
-### Async Support
-
-```python
-import asyncio
-
-async def async_chat():
-    response = await client.chat.v1.chat.achat(req, req_option, False)
-    print(response.answer)
-
-asyncio.run(async_chat())
-```
+Each example includes complete, runnable code with detailed explanations.
 
 ## 🔧 API Services
 
-### Chat API (22 APIs)
-- **Chat Messages**: Interactive conversations with AI assistants (3 APIs)
-- **File Management**: Upload and manage images and documents (1 API)
-- **Feedback Management**: Collect and analyze user feedback (2 APIs)
-- **Conversation Management**: Complete conversation lifecycle management (5 APIs)
-- **Audio Processing**: Speech-to-text and text-to-speech capabilities (2 APIs)
-- **Application Information**: App configuration and metadata retrieval (4 APIs)
-- **Annotation Management**: Create and manage annotations with reply settings (6 APIs)
-- **Streaming Support**: Real-time streaming for chat and completion
+### Chat API (18 APIs)
+**Resources**: annotation (6), chat (3), conversation (6), message (3)
+- **Interactive Chat**: Send messages with blocking/streaming responses
+- **Conversation Management**: Complete conversation lifecycle operations
+- **Annotation System**: Create, update, delete annotations with reply settings
+- **Message Operations**: Basic message handling and history retrieval
+- **Streaming Support**: Real-time streaming for chat responses
 - **Type Safety**: Comprehensive type hints with strict Literal types
 
-### Completion API (15 APIs)
-- **Message Processing**: Send messages and control responses
-- **Annotation Management**: Create, update, and manage annotations
-- **Audio Processing**: Text-to-audio conversion
-- **Feedback System**: Collect and analyze user feedback
-- **File Upload**: Support for document and media files
-- **Application Info**: Configuration and metadata retrieval
-
-### Knowledge Base API (33 APIs)
-- **Dataset Management**: 6 APIs for dataset CRUD operations and content retrieval
-- **Document Management**: 10 APIs for document upload, processing, and management
-- **Segment Management**: 5 APIs for fine-grained content segmentation
-- **Child Chunks Management**: 4 APIs for sub-segment management
-- **Tag Management**: 7 APIs for metadata and knowledge type tags
-- **Model Management**: 1 API for embedding model information
-
-### Chatflow API (17 APIs)
-- **Advanced Chat**: 3 APIs for enhanced chat functionality with workflow events
-- **File Management**: 1 API for multimodal file upload and processing
-- **Feedback System**: 2 APIs for comprehensive feedback collection and analysis
-- **Conversation Management**: 5 APIs for complete conversation lifecycle management
-- **TTS Integration**: 2 APIs for speech-to-text and text-to-speech capabilities
-- **Application Configuration**: 4 APIs for app settings and metadata management
-- **Annotation System**: 6 APIs for annotation management and reply settings
-- **Streaming Support**: Real-time streaming with comprehensive event handling
+### Chatflow API (15 APIs)
+**Resources**: annotation (6), chatflow (3), conversation (6)
+- **Enhanced Chat**: Advanced chat functionality with workflow events
+- **Conversation Management**: Complete conversation operations with variables
+- **Annotation System**: Full annotation management and reply configuration
+- **Workflow Integration**: Seamless integration with workflow events
+- **Event Streaming**: Real-time streaming with comprehensive event handling
 - **Type Safety**: Strict Literal types for all predefined values
 
-### Workflow API
-- Automated workflow execution
-- Parameter configuration
-- Status monitoring
+### Completion API (10 APIs)
+**Resources**: annotation (6), completion (4)
+- **Text Generation**: Advanced text completion and generation
+- **Message Processing**: Send messages and control text generation
+- **Annotation Management**: Create, update, and manage annotations
+- **Generation Control**: Stop ongoing text generation processes
+- **Streaming Support**: Real-time text generation with streaming responses
+- **Type Safety**: Full type validation with Pydantic models
 
-### Dify Core API
-- Essential Dify service functionality
+### Knowledge Base API (33 APIs)
+**Resources**: chunk (4), dataset (6), document (10), model (1), segment (5), tag (7)
+- **Dataset Management**: Complete dataset CRUD operations and content retrieval
+- **Document Processing**: File upload, text processing, and batch management
+- **Content Organization**: Fine-grained segmentation and chunk management
+- **Tag System**: Flexible tagging and categorization system
+- **Model Integration**: Embedding model information and configuration
+- **Search & Retrieval**: Advanced search with multiple retrieval strategies
+
+### Workflow API (4 APIs)
+**Resources**: workflow (4)
+- **Workflow Execution**: Run workflows with blocking or streaming responses
+- **Execution Control**: Stop running workflows and monitor progress
+- **Log Management**: Retrieve detailed execution logs and run details
+- **Parameter Support**: Flexible workflow parameter configuration
+
+### Dify Core API (9 APIs)
+**Resources**: audio (2), feedback (2), file (1), info (4)
+- **Audio Processing**: Speech-to-text and text-to-speech conversion
+- **Feedback System**: Submit and retrieve user feedback
+- **File Management**: Unified file upload and processing
+- **Application Info**: App configuration, parameters, and metadata access
 
 ## 💡 Examples
 
@@ -148,15 +154,15 @@ Explore comprehensive examples in the [examples directory](./examples):
 
 ### Chat Examples
 - [**Chat Messages**](./examples/chat/chat/) - Send messages, stop generation, get suggestions
-- [**File Management**](./examples/chat/file/) - Upload and manage files
-- [**Feedback Management**](./examples/chat/feedback/) - Submit and retrieve feedback
 - [**Conversation Management**](./examples/chat/conversation/) - Complete conversation operations
-- [**Audio Processing**](./examples/chat/audio/) - Speech-to-text and text-to-speech
-- [**Application Information**](./examples/chat/app/) - App configuration and settings
+- [**Message Operations**](./examples/chat/message/) - Basic message operations
 - [**Annotation Management**](./examples/chat/annotation/) - Annotation CRUD and reply settings
 
+*Note: File upload and feedback examples are available in [Dify Core API](./examples/dify/) as shared services.*
+
 ### Completion Examples
-- [**Basic Completion**](./examples/completion/basic_completion.py) - Text generation
+- [**Completion Operations**](./examples/completion/completion/) - Text generation and completion
+- [**Annotation Management**](./examples/completion/annotation/) - Annotation operations
 
 ### Knowledge Base Examples
 - [**Dataset Management**](./examples/knowledge/dataset/) - Complete dataset operations
@@ -166,12 +172,18 @@ Explore comprehensive examples in the [examples directory](./examples):
 
 ### Chatflow Examples
 - [**Advanced Chat**](./examples/chatflow/chatflow/) - Enhanced chat with streaming and workflow events
-- [**File Operations**](./examples/chatflow/file/) - Multimodal file upload and processing
-- [**Feedback Management**](./examples/chatflow/feedback/) - Comprehensive feedback collection
 - [**Conversation Management**](./examples/chatflow/conversation/) - Complete conversation operations
-- [**TTS Operations**](./examples/chatflow/tts/) - Speech-to-text and text-to-speech
-- [**Application Configuration**](./examples/chatflow/application/) - App settings and metadata
 - [**Annotation Management**](./examples/chatflow/annotation/) - Annotation CRUD and reply settings
+
+### Dify Core Examples
+- [**Audio Processing**](./examples/dify/audio/) - Speech-to-text and text-to-speech
+- [**Feedback Management**](./examples/dify/feedback/) - User feedback collection
+- [**File Management**](./examples/dify/file/) - File upload and processing
+- [**Application Info**](./examples/dify/info/) - App configuration and metadata
+
+### Workflow Examples
+- [**Workflow Operations**](./examples/workflow/workflow/) - Workflow execution and management
+- [**File Upload**](./examples/workflow/file/) - File upload for workflows
 
 For detailed examples and usage patterns, see the [examples README](./examples/README.md).
 
@@ -179,14 +191,15 @@ For detailed examples and usage patterns, see the [examples README](./examples/R
 
 ### Prerequisites
 - Python 3.10+
-- Poetry
+- Poetry (for dependency management)
+- Git (for version control)
 
 ### Setup
 
 ```bash
 # Clone repository
 git clone https://github.com/nodite/dify-oapi2.git
-cd dify-oapi
+cd dify-oapi2
 
 # Setup development environment (installs dependencies and pre-commit hooks)
 make dev-setup
@@ -194,12 +207,12 @@ make dev-setup
 
 ### Code Quality Tools
 
-This project uses modern Python tooling:
+This project uses modern Python tooling for code quality:
 
-- **Ruff**: Fast Python linter and formatter
-- **MyPy**: Static type checking
-- **Pre-commit**: Git hooks for code quality
-- **Pylint**: Additional code analysis
+- **Ruff**: Fast Python linter and formatter (replaces Black + isort + flake8)
+- **MyPy**: Static type checking for type safety
+- **Pre-commit**: Git hooks for automated code quality checks
+- **Poetry**: Modern dependency management and packaging
 
 ```bash
 # Format code
@@ -224,15 +237,23 @@ make pre-commit
 ### Testing
 
 ```bash
-# Set environment variables
+# Set environment variables for integration tests
 export DOMAIN="https://api.dify.ai"
-export CHAT_KEY="your-api-key"
+export CHAT_KEY="your-chat-api-key"
+export CHATFLOW_KEY="your-chatflow-api-key"
+export COMPLETION_KEY="your-completion-api-key"
+export DIFY_KEY="your-dify-api-key"
+export WORKFLOW_KEY="your-workflow-api-key"
+export KNOWLEDGE_KEY="your-knowledge-api-key"
 
 # Run tests
 make test
 
 # Run tests with coverage
 make test-cov
+
+# Run specific test module
+poetry run pytest tests/knowledge/ -v
 ```
 
 ### Build & Publish
@@ -255,43 +276,56 @@ make publish
 ### Project Structure
 
 ```
-dify-oapi/
+dify-oapi2/
 ├── dify_oapi/           # Main SDK package
 │   ├── api/             # API service modules
-│   │   ├── chat/        # Chat API
-│   │   ├── completion/  # Completion API
-│   │   ├── dify/        # Core Dify API
-│   │   ├── knowledge/ # Knowledge Base API (33 APIs)
-│   │   ├── chatflow/    # Chatflow API (17 APIs)
-│   │   └── workflow/    # Workflow API
+│   │   ├── chat/        # Chat API (18 APIs)
+│   │   │   └── v1/      # Version 1 implementation
+│   │   ├── chatflow/    # Chatflow API (15 APIs)
+│   │   │   └── v1/      # Version 1 implementation
+│   │   ├── completion/  # Completion API (10 APIs)
+│   │   │   └── v1/      # Version 1 implementation
+│   │   ├── dify/        # Core Dify API (9 APIs)
+│   │   │   └── v1/      # Version 1 implementation
+│   │   ├── knowledge/   # Knowledge Base API (33 APIs)
+│   │   │   └── v1/      # Version 1 implementation
+│   │   └── workflow/    # Workflow API (6 APIs)
+│   │       └── v1/      # Version 1 implementation
 │   ├── core/            # Core functionality
-│   │   ├── http/        # HTTP transport layer
-│   │   ├── model/       # Base models
-│   │   └── utils/       # Utilities
-│   └── client.py        # Main client interface
-├── docs/                # Documentation
-├── examples/            # Usage examples
-├── tests/               # Test suite
-└── pyproject.toml       # Project configuration
+│   │   ├── http/        # HTTP transport layer with connection pooling
+│   │   ├── model/       # Base models and configurations
+│   │   └── utils/       # Utility functions
+│   └── client.py        # Main client interface with builder pattern
+├── docs/                # Comprehensive documentation
+├── examples/            # Complete usage examples for all APIs
+├── tests/               # Comprehensive test suite
+├── pyproject.toml       # Project configuration (Poetry + tools)
+├── Makefile            # Development automation
+└── DEVELOPMENT.md      # Development guide
 ```
 
 ## 📖 Documentation
 
+- [**Development Guide**](./DEVELOPMENT.md) - Setup, workflow, and contribution guidelines
 - [**Project Overview**](./docs/overview.md) - Architecture and technical details
-- [**TCP Connection Optimization**](./docs/tcp-optimization.md) - Connection pool configuration and performance tuning
-- [**Completion APIs**](./docs/completion/apis.md) - Complete completion API documentation
-- [**Knowledge Base APIs**](./docs/knowledge/apis.md) - Complete knowledge base API documentation
-- [**Examples**](./examples/README.md) - Usage examples and patterns
+- [**API Documentation**](./docs/) - Complete API documentation by service
+- [**Examples**](./examples/README.md) - Comprehensive usage examples and patterns
+
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please:
+Contributions are welcome! Please follow our development workflow:
 
 1. Fork the repository
-2. Create a feature branch
-3. Make your changes with tests
-4. Ensure code quality (`ruff format`, `ruff check`, `mypy`)
-5. Submit a pull request
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Make your changes with comprehensive tests
+4. Ensure code quality passes (`make check`)
+5. Run the full test suite (`make test`)
+6. Commit your changes (`git commit -m 'Add amazing feature'`)
+7. Push to the branch (`git push origin feature/amazing-feature`)
+8. Submit a pull request
+
+See [DEVELOPMENT.md](./DEVELOPMENT.md) for detailed development guidelines.
 
 ## 📄 License
 
@@ -304,10 +338,6 @@ This project is licensed under the MIT License - see the [LICENSE](./LICENSE) fi
 - **Dify Platform**: https://dify.ai/
 - **Dify API Docs**: https://docs.dify.ai/
 
-## 📄 License
-
-MIT License - see [LICENSE](./LICENSE) file for details.
-
 ---
 
-**Keywords**: dify, nlp, ai, language-processing
+**Keywords**: dify, ai, nlp, language-processing, python-sdk, async, type-safe, api-client

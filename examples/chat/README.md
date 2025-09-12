@@ -1,6 +1,6 @@
 # Chat API Examples
 
-The Chat API provides interactive conversation capabilities with AI assistants. This directory contains examples for all chat-related operations organized by resource type.
+The Chat API provides interactive conversation capabilities with AI assistants through 18 APIs. This directory contains examples for all chat-related operations organized by resource type.
 
 ## 📁 Resources
 
@@ -48,19 +48,7 @@ Upload and manage files for chat interactions.
 **Available Examples:**
 - `upload_file.py` - Upload images and documents
 
-### [feedback/](./feedback/) - Feedback Management
-Collect and manage user feedback on chat responses.
-
-**Available Examples:**
-- `get_feedbacks.py` - Retrieve feedback data
-- `submit_feedback.py` - Submit user feedback
-
-### [audio/](./audio/) - Audio Processing
-Speech-to-text and text-to-speech capabilities.
-
-**Available Examples:**
-- `audio_to_text.py` - Convert audio to text
-- `text_to_audio.py` - Convert text to audio
+Note: Feedback and audio processing examples are available in the [Dify Core API](../dify/) examples, as these are part of the core Dify services.
 
 ## 🚀 Quick Start
 
@@ -114,8 +102,8 @@ for chunk in response:
 - **File Support**: Upload images and documents
 - **Conversation Management**: Full conversation lifecycle
 - **Annotation System**: Rich annotation and reply management
-- **Audio Processing**: Speech-to-text and text-to-speech
-- **Feedback Collection**: User feedback and analytics
+- **Type Safety**: Comprehensive type hints with strict Literal types
+- **Builder Pattern**: Fluent API construction
 - **Error Handling**: Comprehensive error handling examples
 
 ## 📖 Environment Variables

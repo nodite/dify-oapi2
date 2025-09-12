@@ -1,6 +1,6 @@
 # Chat Operations Examples
 
-This directory contains examples for core chat functionality including message sending, response handling, and conversation flow management.
+This directory contains examples for core chat functionality (3 APIs) including message sending, response handling, and conversation flow management with comprehensive streaming support.
 
 ## 📋 Available Examples
 
@@ -78,21 +78,30 @@ req_body = (
 
 ## 🔧 Features
 
-### Response Modes
-- **Blocking**: Synchronous responses, wait for complete answer
-- **Streaming**: Real-time responses, receive chunks as they're generated
+### Core Chat APIs (3 APIs)
+- **Send Chat Message**: Primary chat interface with blocking/streaming modes
+- **Stop Chat Generation**: Interrupt ongoing message generation
+- **Get Suggested Questions**: AI-powered follow-up question recommendations
 
-### Input Options
+### Response Modes
+- **Blocking Mode**: Synchronous responses, wait for complete answer
+- **Streaming Mode**: Real-time responses, receive chunks as they're generated
+- **Hybrid Support**: Switch between modes based on use case
+
+### Input Capabilities
 - **Text Queries**: Plain text questions and prompts
-- **File Attachments**: Images, documents, and other media
-- **Context Variables**: Pass additional context through inputs
-- **Conversation Continuity**: Maintain conversation history
+- **File Attachments**: Images, documents, and other media (via Dify Core API)
+- **Context Variables**: Pass additional context through inputs parameter
+- **Conversation Continuity**: Maintain conversation history with conversation_id
+- **User Tracking**: Associate messages with specific users
 
 ### Advanced Features
-- **Stop Generation**: Interrupt long-running responses
-- **Suggested Questions**: Get AI-generated follow-up questions
-- **User Identification**: Track conversations by user ID
-- **Error Handling**: Comprehensive error management
+- **Generation Control**: Start and stop message generation dynamically
+- **Intelligent Suggestions**: Context-aware follow-up question generation
+- **Multi-modal Support**: Text, image, and document processing
+- **Real-time Streaming**: Low-latency streaming with AsyncGenerator support
+- **Type Safety**: Comprehensive type validation with strict Literal types
+- **Error Recovery**: Robust error handling and retry mechanisms
 
 ## 📖 Best Practices
 

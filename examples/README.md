@@ -6,13 +6,15 @@ This directory contains comprehensive examples for all Dify-OAPI services. The e
 
 ```
 examples/
-├── chat/                    # Chat API Examples (22 APIs)
-├── chatflow/               # Chatflow API Examples (17 APIs)
-├── completion/             # Completion API Examples (15 APIs)
-├── dify/                   # Dify Core API Examples
-├── knowledge/              # Knowledge Base API Examples (33 APIs)
-├── workflow/               # Workflow API Examples
+├── chat/                    # Chat API Examples (18 APIs, 4 resources)
+├── chatflow/               # Chatflow API Examples (15 APIs, 3 resources)
+├── completion/             # Completion API Examples (10 APIs, 2 resources)
+├── dify/                   # Dify Core API Examples (9 APIs, 4 resources)
+├── knowledge/              # Knowledge Base API Examples (33 APIs, 6 resources)
+├── workflow/               # Workflow API Examples (4 APIs, 1 resource)
 └── connection_pool_example.py  # Connection pool optimization
+
+Total: 89 API methods with complete examples across 6 services
 ```
 
 ## 🚀 Quick Start
@@ -53,16 +55,18 @@ Interactive conversations with AI assistants
 Enhanced chat functionality with workflow events
 - **Resources**: annotation, chatflow, conversation
 - **Features**: Advanced streaming, workflow integration
+- **Note**: Audio and feedback examples are in Dify Core API
 
 ### [Completion API](./completion/README.md)
 Text generation and completion
 - **Resources**: annotation, completion
 - **Features**: Blocking/streaming responses, file support
+- **Note**: Audio and feedback examples are in Dify Core API
 
 ### [Dify Core API](./dify/README.md)
-Essential Dify service functionality
+Essential Dify service functionality (9 APIs)
 - **Resources**: audio, feedback, file, info
-- **Features**: Audio processing, file management, app info
+- **Features**: Audio processing, file management, app configuration, feedback collection
 
 ### [Knowledge Base API](./knowledge/README.md)
 Comprehensive knowledge management (33 APIs)
@@ -70,9 +74,9 @@ Comprehensive knowledge management (33 APIs)
 - **Features**: Full CRUD operations, content organization
 
 ### [Workflow API](./workflow/README.md)
-Automated workflow execution
+Automated workflow execution (6 APIs)
 - **Resources**: workflow
-- **Features**: Blocking/streaming execution, file upload
+- **Features**: Blocking/streaming execution, file upload, parameter configuration
 
 ## 🔧 Advanced Features
 

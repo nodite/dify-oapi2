@@ -9,10 +9,10 @@ from dify_oapi.core.model.request_option import RequestOption
 
 def stop_chat_generation():
     """Stop a chat generation task"""
-    api_key = os.getenv("CHAT_API_KEY")
+    api_key = os.getenv("CHAT_KEY")
     task_id = os.getenv("TASK_ID")
     if not api_key:
-        raise ValueError("CHAT_API_KEY environment variable is required")
+        raise ValueError("CHAT_KEY environment variable is required")
     if not task_id:
         print("Note: TASK_ID environment variable is required for this example.")
         print("This example demonstrates the API structure but needs a real task id to execute.")
@@ -36,10 +36,10 @@ def stop_chat_generation():
 
 async def stop_chat_generation_async():
     """Stop a chat generation task asynchronously"""
-    api_key = os.getenv("CHAT_API_KEY")
+    api_key = os.getenv("CHAT_KEY")
     task_id = os.getenv("TASK_ID")
     if not api_key:
-        raise ValueError("CHAT_API_KEY environment variable is required")
+        raise ValueError("CHAT_KEY environment variable is required")
     if not task_id:
         print("Note: TASK_ID environment variable is required for this example.")
         print("This example demonstrates the API structure but needs a real task id to execute.")

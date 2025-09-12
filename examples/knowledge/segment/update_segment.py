@@ -9,9 +9,9 @@ from dify_oapi.core.model.request_option import RequestOption
 
 
 def update_segment_example():
-    api_key = os.getenv("KNOWLEDGE_API_KEY")
+    api_key = os.getenv("KNOWLEDGE_KEY")
     if not api_key:
-        raise ValueError("KNOWLEDGE_API_KEY environment variable is required")
+        raise ValueError("KNOWLEDGE_KEY environment variable is required")
 
     dataset_id = os.getenv("DATASET_ID")
     if not dataset_id:
@@ -62,9 +62,9 @@ def update_segment_example():
 
 
 async def aupdate_segment_example():
-    api_key = os.getenv("KNOWLEDGE_API_KEY")
+    api_key = os.getenv("KNOWLEDGE_KEY")
     if not api_key:
-        raise ValueError("KNOWLEDGE_API_KEY environment variable is required")
+        raise ValueError("KNOWLEDGE_KEY environment variable is required")
 
     dataset_id = os.getenv("DATASET_ID")
     if not dataset_id:

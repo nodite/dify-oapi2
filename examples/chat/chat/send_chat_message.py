@@ -9,16 +9,16 @@ from dify_oapi.core.model.request_option import RequestOption
 
 def send_blocking_chat():
     """Send a blocking chat message"""
-    api_key = os.getenv("CHAT_API_KEY")
+    api_key = os.getenv("CHAT_KEY")
     if not api_key:
-        raise ValueError("CHAT_API_KEY environment variable is required")
+        raise ValueError("CHAT_KEY environment variable is required")
 
     client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
     req_body = (
         ChatRequestBody.builder()
         .inputs({})
-        .query("Hello, how are you?")
+        .query("Hello, how are you? Please keep it brief. Please answer within 10 words. No thinking process.")
         .response_mode("blocking")
         .user("user-123")
         .build()
@@ -40,16 +40,16 @@ def send_blocking_chat():
 
 def send_streaming_chat():
     """Send a streaming chat message"""
-    api_key = os.getenv("CHAT_API_KEY")
+    api_key = os.getenv("CHAT_KEY")
     if not api_key:
-        raise ValueError("CHAT_API_KEY environment variable is required")
+        raise ValueError("CHAT_KEY environment variable is required")
 
     client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
     req_body = (
         ChatRequestBody.builder()
         .inputs({})
-        .query("Tell me a short story")
+        .query("Tell me a very short story. Please answer within 10 words. No thinking process.")
         .response_mode("streaming")
         .user("user-123")
         .build()
@@ -73,16 +73,16 @@ def send_streaming_chat():
 
 async def send_async_chat():
     """Send an async chat message"""
-    api_key = os.getenv("CHAT_API_KEY")
+    api_key = os.getenv("CHAT_KEY")
     if not api_key:
-        raise ValueError("CHAT_API_KEY environment variable is required")
+        raise ValueError("CHAT_KEY environment variable is required")
 
     client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
     req_body = (
         ChatRequestBody.builder()
         .inputs({})
-        .query("What's the weather like?")
+        .query("What's the weather like? Keep your answer short. Please answer within 10 words. No thinking process.")
         .response_mode("blocking")
         .user("user-123")
         .build()

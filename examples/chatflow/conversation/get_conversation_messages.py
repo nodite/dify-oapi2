@@ -11,10 +11,10 @@ from dify_oapi.core.model.request_option import RequestOption
 def get_conversation_messages_sync():
     """Get conversation messages synchronously with pagination."""
     # Validate environment variables
-    api_key = os.getenv("CHATFLOW_API_KEY")
+    api_key = os.getenv("CHATFLOW_KEY")
     domain = os.getenv("DOMAIN", "https://api.dify.ai")
     if not api_key:
-        raise ValueError("CHATFLOW_API_KEY environment variable is required")
+        raise ValueError("CHATFLOW_KEY environment variable is required")
 
     conversation_id = os.getenv("CONVERSATION_ID")
     if not conversation_id:
@@ -59,10 +59,10 @@ def get_conversation_messages_sync():
 async def get_conversation_messages_async():
     """Get conversation messages asynchronously with pagination."""
     # Validate environment variables
-    api_key = os.getenv("CHATFLOW_API_KEY")
+    api_key = os.getenv("CHATFLOW_KEY")
     domain = os.getenv("DOMAIN", "https://api.dify.ai")
     if not api_key:
-        raise ValueError("CHATFLOW_API_KEY environment variable is required")
+        raise ValueError("CHATFLOW_KEY environment variable is required")
 
     conversation_id = os.getenv("CONVERSATION_ID")
     if not conversation_id:
@@ -107,10 +107,10 @@ async def get_conversation_messages_async():
 def get_conversation_messages_with_pagination():
     """Get conversation messages with pagination example."""
     # Validate environment variables
-    api_key = os.getenv("CHATFLOW_API_KEY")
+    api_key = os.getenv("CHATFLOW_KEY")
     domain = os.getenv("DOMAIN", "https://api.dify.ai")
     if not api_key:
-        raise ValueError("CHATFLOW_API_KEY environment variable is required")
+        raise ValueError("CHATFLOW_KEY environment variable is required")
 
     conversation_id = os.getenv("CONVERSATION_ID")
     if not conversation_id:

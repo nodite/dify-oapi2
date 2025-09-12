@@ -81,7 +81,7 @@ client.workflow.v1.feedback.submit(request, option)
 ### 环境设置
 ```bash
 export DOMAIN="https://api.dify.ai"
-export API_KEY="your-api-key"
+export DIFY_KEY="your-dify-api-key"
 ```
 
 ### 运行单个示例

@@ -17,9 +17,9 @@ from dify_oapi.core.model.request_option import RequestOption
 def unbind_tags_sync() -> None:
     """Unbind tags from dataset synchronously."""
     try:
-        api_key = os.getenv("KNOWLEDGE_API_KEY")
+        api_key = os.getenv("KNOWLEDGE_KEY")
         if not api_key:
-            raise ValueError("KNOWLEDGE_API_KEY environment variable is required")
+            raise ValueError("KNOWLEDGE_KEY environment variable is required")
 
         dataset_id = os.getenv("DATASET_ID")
         if not dataset_id:
@@ -53,9 +53,9 @@ def unbind_tags_sync() -> None:
 async def unbind_tags_async() -> None:
     """Unbind tags from dataset asynchronously."""
     try:
-        api_key = os.getenv("KNOWLEDGE_API_KEY")
+        api_key = os.getenv("KNOWLEDGE_KEY")
         if not api_key:
-            raise ValueError("KNOWLEDGE_API_KEY environment variable is required")
+            raise ValueError("KNOWLEDGE_KEY environment variable is required")
 
         dataset_id = os.getenv("DATASET_ID")
         if not dataset_id:

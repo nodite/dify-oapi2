@@ -7,10 +7,10 @@ from dify_oapi.core.model.request_option import RequestOption
 
 
 def delete_example_documents():
-    api_key = os.getenv("KNOWLEDGE_API_KEY")
+    api_key = os.getenv("KNOWLEDGE_KEY")
     dataset_id = os.getenv("DATASET_ID")
     if not api_key or not dataset_id:
-        print("Note: API_KEY and DATASET_ID environment variables are required for this example.")
+        print("Note: KNOWLEDGE_KEY and DATASET_ID environment variables are required for this example.")
         print("This example demonstrates the API structure but needs real IDs to execute.")
         return
 

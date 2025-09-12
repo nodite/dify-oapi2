@@ -23,6 +23,7 @@ class CreateAnnotationRequestBuilder:
 
     def request_body(self, request_body: CreateAnnotationRequestBody) -> "CreateAnnotationRequestBuilder":
         self._create_annotation_request.request_body = request_body
+        self._create_annotation_request.body = request_body.model_dump(exclude_none=True, mode="json")
         return self
 
     def build(self) -> CreateAnnotationRequest:

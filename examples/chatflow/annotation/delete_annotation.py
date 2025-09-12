@@ -11,9 +11,9 @@ from dify_oapi.core.model.request_option import RequestOption
 def delete_annotation_sync():
     """Delete annotation synchronously."""
     # Validate environment variables
-    api_key = os.getenv("CHATFLOW_API_KEY")
+    api_key = os.getenv("CHATFLOW_KEY")
     if not api_key:
-        raise ValueError("CHATFLOW_API_KEY environment variable is required")
+        raise ValueError("CHATFLOW_KEY environment variable is required")
 
     annotation_id = os.getenv("ANNOTATION_ID")
     if not annotation_id:
@@ -49,9 +49,9 @@ def delete_annotation_sync():
 async def delete_annotation_async():
     """Delete annotation asynchronously."""
     # Validate environment variables
-    api_key = os.getenv("CHATFLOW_API_KEY")
+    api_key = os.getenv("CHATFLOW_KEY")
     if not api_key:
-        raise ValueError("CHATFLOW_API_KEY environment variable is required")
+        raise ValueError("CHATFLOW_KEY environment variable is required")
 
     annotation_id = os.getenv("ANNOTATION_ID")
     if not annotation_id:
@@ -87,9 +87,9 @@ async def delete_annotation_async():
 def delete_example_annotations():
     """Delete all annotations with [Example] prefix for safety."""
     # Validate environment variables
-    api_key = os.getenv("CHATFLOW_API_KEY")
+    api_key = os.getenv("CHATFLOW_KEY")
     if not api_key:
-        raise ValueError("CHATFLOW_API_KEY environment variable is required")
+        raise ValueError("CHATFLOW_KEY environment variable is required")
 
     # Initialize client
     domain = os.getenv("DOMAIN", "https://api.dify.ai")
@@ -148,9 +148,9 @@ def delete_example_annotations():
 def delete_annotation_with_confirmation():
     """Delete annotation with confirmation example."""
     # Validate environment variables
-    api_key = os.getenv("CHATFLOW_API_KEY")
+    api_key = os.getenv("CHATFLOW_KEY")
     if not api_key:
-        raise ValueError("CHATFLOW_API_KEY environment variable is required")
+        raise ValueError("CHATFLOW_KEY environment variable is required")
 
     annotation_id = os.getenv("ANNOTATION_ID")
     if not annotation_id:

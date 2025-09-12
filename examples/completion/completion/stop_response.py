@@ -12,9 +12,9 @@ from dify_oapi.core.model.request_option import RequestOption
 def stop_response_sync() -> None:
     try:
         # Check required environment variables
-        api_key = os.getenv("COMPLETION_API_KEY")
+        api_key = os.getenv("COMPLETION_KEY")
         if not api_key:
-            raise ValueError("COMPLETION_API_KEY environment variable is required")
+            raise ValueError("COMPLETION_KEY environment variable is required")
 
         task_id = os.getenv("TASK_ID")
         if not task_id:
@@ -42,9 +42,9 @@ def stop_response_sync() -> None:
 async def stop_response_async() -> None:
     try:
         # Check required environment variables
-        api_key = os.getenv("COMPLETION_API_KEY")
+        api_key = os.getenv("COMPLETION_KEY")
         if not api_key:
-            raise ValueError("COMPLETION_API_KEY environment variable is required")
+            raise ValueError("COMPLETION_KEY environment variable is required")
 
         task_id = os.getenv("TASK_ID")
         if not task_id:

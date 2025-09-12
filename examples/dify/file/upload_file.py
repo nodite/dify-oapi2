@@ -15,9 +15,9 @@ from dify_oapi.core.model.request_option import RequestOption
 def upload_file_example():
     """File upload example"""
 
-    api_key = os.getenv("CHAT_API_KEY")
+    api_key = os.getenv("DIFY_KEY")
     if not api_key:
-        raise ValueError("CHAT_API_KEY environment variable is required")
+        raise ValueError("DIFY_KEY environment variable is required")
 
     # Initialize client
     client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
@@ -39,7 +39,6 @@ def upload_file_example():
         print(f"File ID: {response.id}")
         print(f"File name: {response.name}")
         print(f"File size: {response.size}")
-        print(f"File type: {response.type}")
 
     except Exception as e:
         print(f"File upload failed: {e}")
@@ -48,9 +47,9 @@ def upload_file_example():
 async def async_upload_file_example():
     """Async file upload example"""
 
-    api_key = os.getenv("CHAT_API_KEY")
+    api_key = os.getenv("DIFY_KEY")
     if not api_key:
-        raise ValueError("CHAT_API_KEY environment variable is required")
+        raise ValueError("DIFY_KEY environment variable is required")
 
     client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
     request_option = RequestOption.builder().api_key(api_key).build()

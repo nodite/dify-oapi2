@@ -8,10 +8,10 @@ from dify_oapi.core.model.request_option import RequestOption
 
 def get_annotation_reply_status():
     """Get annotation reply configuration status"""
-    api_key = os.getenv("CHAT_API_KEY")
+    api_key = os.getenv("CHAT_KEY")
     job_id = os.getenv("JOB_ID")
     if not api_key:
-        raise ValueError("CHAT_API_KEY environment variable is required")
+        raise ValueError("CHAT_KEY environment variable is required")
     if not job_id:
         print("Note: JOB_ID environment variable is required for this example.")
         print("This example demonstrates the API structure but needs a real job id to execute.")
@@ -38,10 +38,10 @@ def get_annotation_reply_status():
 
 def get_disable_status():
     """Get disable annotation reply status"""
-    api_key = os.getenv("CHAT_API_KEY")
+    api_key = os.getenv("CHAT_KEY")
     job_id = os.getenv("JOB_ID")
     if not api_key:
-        raise ValueError("CHAT_API_KEY environment variable is required")
+        raise ValueError("CHAT_KEY environment variable is required")
     if not job_id:
         print("Note: JOB_ID environment variable is required for this example.")
         print("This example demonstrates the API structure but needs a real job id to execute.")
@@ -65,10 +65,10 @@ def get_disable_status():
 
 def poll_status_until_complete():
     """Poll status until job is complete"""
-    api_key = os.getenv("CHAT_API_KEY")
+    api_key = os.getenv("CHAT_KEY")
     job_id = os.getenv("JOB_ID")
     if not api_key:
-        raise ValueError("CHAT_API_KEY environment variable is required")
+        raise ValueError("CHAT_KEY environment variable is required")
     if not job_id:
         print("Note: JOB_ID environment variable is required for this example.")
         print("This example demonstrates the API structure but needs a real job id to execute.")
@@ -108,10 +108,10 @@ def poll_status_until_complete():
 
 async def get_annotation_reply_status_async():
     """Get annotation reply status asynchronously"""
-    api_key = os.getenv("CHAT_API_KEY")
+    api_key = os.getenv("CHAT_KEY")
     job_id = os.getenv("JOB_ID")
     if not api_key:
-        raise ValueError("CHAT_API_KEY environment variable is required")
+        raise ValueError("CHAT_KEY environment variable is required")
     if not job_id:
         print("Note: JOB_ID environment variable is required for this example.")
         print("This example demonstrates the API structure but needs a real job id to execute.")

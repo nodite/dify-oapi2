@@ -11,9 +11,9 @@ from dify_oapi.core.model.request_option import RequestOption
 def get_conversation_variables_sync():
     """Get conversation variables synchronously."""
     # Validate environment variables
-    api_key = os.getenv("CHATFLOW_API_KEY")
+    api_key = os.getenv("CHATFLOW_KEY")
     if not api_key:
-        raise ValueError("CHATFLOW_API_KEY environment variable is required")
+        raise ValueError("CHATFLOW_KEY environment variable is required")
 
     conversation_id = os.getenv("CONVERSATION_ID")
     if not conversation_id:
@@ -63,9 +63,9 @@ def get_conversation_variables_sync():
 async def get_conversation_variables_async():
     """Get conversation variables asynchronously."""
     # Validate environment variables
-    api_key = os.getenv("CHATFLOW_API_KEY")
+    api_key = os.getenv("CHATFLOW_KEY")
     if not api_key:
-        raise ValueError("CHATFLOW_API_KEY environment variable is required")
+        raise ValueError("CHATFLOW_KEY environment variable is required")
 
     conversation_id = os.getenv("CONVERSATION_ID")
     if not conversation_id:
@@ -108,9 +108,9 @@ async def get_conversation_variables_async():
 def get_conversation_variables_with_filter():
     """Get conversation variables with name filter."""
     # Validate environment variables
-    api_key = os.getenv("CHATFLOW_API_KEY")
+    api_key = os.getenv("CHATFLOW_KEY")
     if not api_key:
-        raise ValueError("CHATFLOW_API_KEY environment variable is required")
+        raise ValueError("CHATFLOW_KEY environment variable is required")
 
     conversation_id = os.getenv("CONVERSATION_ID")
     if not conversation_id:
@@ -160,9 +160,9 @@ def get_conversation_variables_with_filter():
 def get_conversation_variables_with_pagination():
     """Get conversation variables with pagination."""
     # Validate environment variables
-    api_key = os.getenv("CHATFLOW_API_KEY")
+    api_key = os.getenv("CHATFLOW_KEY")
     if not api_key:
-        raise ValueError("CHATFLOW_API_KEY environment variable is required")
+        raise ValueError("CHATFLOW_KEY environment variable is required")
 
     conversation_id = os.getenv("CONVERSATION_ID")
     if not conversation_id:
@@ -225,9 +225,9 @@ def get_conversation_variables_with_pagination():
 def get_conversation_variables_by_type():
     """Get conversation variables and group by type."""
     # Validate environment variables
-    api_key = os.getenv("CHATFLOW_API_KEY")
+    api_key = os.getenv("CHATFLOW_KEY")
     if not api_key:
-        raise ValueError("CHATFLOW_API_KEY environment variable is required")
+        raise ValueError("CHATFLOW_KEY environment variable is required")
 
     conversation_id = os.getenv("CONVERSATION_ID")
     if not conversation_id:

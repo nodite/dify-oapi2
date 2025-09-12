@@ -9,9 +9,9 @@ from dify_oapi.core.model.request_option import RequestOption
 
 def enable_annotation_reply():
     """Enable annotation reply settings"""
-    api_key = os.getenv("CHAT_API_KEY")
+    api_key = os.getenv("CHAT_KEY")
     if not api_key:
-        raise ValueError("CHAT_API_KEY environment variable is required")
+        raise ValueError("CHAT_KEY environment variable is required")
 
     client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
@@ -39,9 +39,9 @@ def enable_annotation_reply():
 
 def disable_annotation_reply():
     """Disable annotation reply settings"""
-    api_key = os.getenv("CHAT_API_KEY")
+    api_key = os.getenv("CHAT_KEY")
     if not api_key:
-        raise ValueError("CHAT_API_KEY environment variable is required")
+        raise ValueError("CHAT_KEY environment variable is required")
 
     client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
@@ -63,9 +63,9 @@ def disable_annotation_reply():
 
 def configure_annotation_reply_custom():
     """Configure annotation reply with custom settings"""
-    api_key = os.getenv("CHAT_API_KEY")
+    api_key = os.getenv("CHAT_KEY")
     if not api_key:
-        raise ValueError("CHAT_API_KEY environment variable is required")
+        raise ValueError("CHAT_KEY environment variable is required")
 
     client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
@@ -92,9 +92,9 @@ def configure_annotation_reply_custom():
 
 async def configure_annotation_reply_async():
     """Configure annotation reply asynchronously"""
-    api_key = os.getenv("CHAT_API_KEY")
+    api_key = os.getenv("CHAT_KEY")
     if not api_key:
-        raise ValueError("CHAT_API_KEY environment variable is required")
+        raise ValueError("CHAT_KEY environment variable is required")
 
     client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 

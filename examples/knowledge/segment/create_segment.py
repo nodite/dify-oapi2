@@ -8,11 +8,11 @@ from dify_oapi.core.model.request_option import RequestOption
 
 
 def create_segment_example():
-    api_key = os.getenv("KNOWLEDGE_API_KEY")
+    api_key = os.getenv("KNOWLEDGE_KEY")
     dataset_id = os.getenv("DATASET_ID")
     document_id = os.getenv("DOCUMENT_ID")
     if not api_key or not dataset_id or not document_id:
-        print("Note: API_KEY, DATASET_ID, and DOCUMENT_ID environment variables are required for this example.")
+        print("Note: KNOWLEDGE_KEY, DATASET_ID, and DOCUMENT_ID environment variables are required for this example.")
         print("This example demonstrates the API structure but needs real IDs to execute.")
         return
 

@@ -25,5 +25,6 @@ class ChatResponse(BaseResponse):
 class ChatResponseMetadata(BaseModel):
     """Chat response metadata model."""
 
+    annotation_reply: str | None = None
     usage: UsageInfo | None = None
     retriever_resources: list[RetrieverResource] | None = None

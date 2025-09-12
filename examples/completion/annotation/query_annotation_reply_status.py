@@ -13,9 +13,9 @@ from dify_oapi.core.model.request_option import RequestOption
 def query_annotation_reply_status_sync() -> None:
     try:
         # Check required environment variables
-        api_key = os.getenv("COMPLETION_API_KEY")
+        api_key = os.getenv("COMPLETION_KEY")
         if not api_key:
-            raise ValueError("COMPLETION_API_KEY environment variable is required")
+            raise ValueError("COMPLETION_KEY environment variable is required")
 
         client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
         req_option = RequestOption.builder().api_key(api_key).build()
@@ -42,9 +42,9 @@ def query_annotation_reply_status_sync() -> None:
 async def query_annotation_reply_status_async() -> None:
     try:
         # Check required environment variables
-        api_key = os.getenv("COMPLETION_API_KEY")
+        api_key = os.getenv("COMPLETION_KEY")
         if not api_key:
-            raise ValueError("COMPLETION_API_KEY environment variable is required")
+            raise ValueError("COMPLETION_KEY environment variable is required")
 
         client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
         req_option = RequestOption.builder().api_key(api_key).build()

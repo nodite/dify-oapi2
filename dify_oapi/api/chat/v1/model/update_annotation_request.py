@@ -27,6 +27,7 @@ class UpdateAnnotationRequestBuilder:
 
     def request_body(self, request_body: UpdateAnnotationRequestBody) -> "UpdateAnnotationRequestBuilder":
         self._update_annotation_request.request_body = request_body
+        self._update_annotation_request.body = request_body.model_dump(exclude_none=True, mode="json")
         return self
 
     def build(self) -> UpdateAnnotationRequest:

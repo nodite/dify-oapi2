@@ -8,10 +8,10 @@ from dify_oapi.core.model.request_option import RequestOption
 
 def delete_annotation():
     """Delete an annotation"""
-    api_key = os.getenv("CHAT_API_KEY")
+    api_key = os.getenv("CHAT_KEY")
     annotation_id = os.getenv("ANNOTATION_ID")
     if not api_key:
-        raise ValueError("CHAT_API_KEY environment variable is required")
+        raise ValueError("CHAT_KEY environment variable is required")
     if not annotation_id:
         print("Note: ANNOTATION_ID environment variable is required for this example.")
         print("This example demonstrates the API structure but needs a real annotation id to execute.")
@@ -34,10 +34,10 @@ def delete_annotation():
 
 async def delete_annotation_async():
     """Delete an annotation asynchronously"""
-    api_key = os.getenv("CHAT_API_KEY")
+    api_key = os.getenv("CHAT_KEY")
     annotation_id = os.getenv("ANNOTATION_ID")
     if not api_key:
-        raise ValueError("CHAT_API_KEY environment variable is required")
+        raise ValueError("CHAT_KEY environment variable is required")
     if not annotation_id:
         print("Note: ANNOTATION_ID environment variable is required for this example.")
         print("This example demonstrates the API structure but needs a real annotation id to execute.")

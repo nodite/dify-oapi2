@@ -15,9 +15,9 @@ def get_app_meta_sync():
     """Synchronous app metadata retrieval"""
 
     # Environment validation
-    api_key = os.getenv("CHAT_API_KEY")
+    api_key = os.getenv("DIFY_KEY")
     if not api_key:
-        raise ValueError("CHAT_API_KEY environment variable is required")
+        raise ValueError("DIFY_KEY environment variable is required")
 
     user_id = os.getenv("USER_ID", "user-123")
     domain = os.getenv("DOMAIN", "https://api.dify.ai")
@@ -49,9 +49,9 @@ def get_app_meta_sync():
 async def get_app_meta_async():
     """Asynchronous app metadata retrieval"""
 
-    api_key = os.getenv("CHAT_API_KEY")
+    api_key = os.getenv("DIFY_KEY")
     if not api_key:
-        raise ValueError("CHAT_API_KEY environment variable is required")
+        raise ValueError("DIFY_KEY environment variable is required")
 
     user_id = os.getenv("USER_ID", "user-123")
     domain = os.getenv("DOMAIN", "https://api.dify.ai")

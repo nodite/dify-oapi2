@@ -12,9 +12,9 @@ from dify_oapi.core.model.request_option import RequestOption
 def delete_conversation_sync():
     """Delete conversation synchronously."""
     # Validate environment variables
-    api_key = os.getenv("CHATFLOW_API_KEY")
+    api_key = os.getenv("CHATFLOW_KEY")
     if not api_key:
-        raise ValueError("CHATFLOW_API_KEY environment variable is required")
+        raise ValueError("CHATFLOW_KEY environment variable is required")
 
     conversation_id = os.getenv("CONVERSATION_ID")
     if not conversation_id:
@@ -52,9 +52,9 @@ def delete_conversation_sync():
 async def delete_conversation_async():
     """Delete conversation asynchronously."""
     # Validate environment variables
-    api_key = os.getenv("CHATFLOW_API_KEY")
+    api_key = os.getenv("CHATFLOW_KEY")
     if not api_key:
-        raise ValueError("CHATFLOW_API_KEY environment variable is required")
+        raise ValueError("CHATFLOW_KEY environment variable is required")
 
     conversation_id = os.getenv("CONVERSATION_ID")
     if not conversation_id:
@@ -92,9 +92,9 @@ async def delete_conversation_async():
 def delete_example_conversation():
     """Delete a conversation with [Example] prefix for safety."""
     # Validate environment variables
-    api_key = os.getenv("CHATFLOW_API_KEY")
+    api_key = os.getenv("CHATFLOW_KEY")
     if not api_key:
-        raise ValueError("CHATFLOW_API_KEY environment variable is required")
+        raise ValueError("CHATFLOW_KEY environment variable is required")
 
     # Initialize client
     domain = os.getenv("DOMAIN", "https://api.dify.ai")
@@ -108,7 +108,9 @@ def delete_example_conversation():
         # Create a test conversation
         create_request_body = (
             SendChatMessageRequestBody.builder()
-            .query("[Example] Test conversation for deletion")
+            .query(
+                "[Example] Test conversation for deletion. Keep response brief. Please answer within 10 words. No thinking process."
+            )
             .user("user-123")
             .response_mode("blocking")
             .build()
@@ -152,9 +154,9 @@ def delete_example_conversation():
 def delete_conversation_with_confirmation():
     """Delete conversation with user confirmation."""
     # Validate environment variables
-    api_key = os.getenv("CHATFLOW_API_KEY")
+    api_key = os.getenv("CHATFLOW_KEY")
     if not api_key:
-        raise ValueError("CHATFLOW_API_KEY environment variable is required")
+        raise ValueError("CHATFLOW_KEY environment variable is required")
 
     conversation_id = os.getenv("CONVERSATION_ID")
     if not conversation_id:

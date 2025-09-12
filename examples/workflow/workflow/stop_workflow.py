@@ -12,9 +12,9 @@ from dify_oapi.core.model.request_option import RequestOption
 def stop_workflow_sync() -> None:
     try:
         # Check required environment variables (MUST be first)
-        api_key = os.getenv("WORKFLOW_API_KEY")
+        api_key = os.getenv("WORKFLOW_KEY")
         if not api_key:
-            raise ValueError("WORKFLOW_API_KEY environment variable is required")
+            raise ValueError("WORKFLOW_KEY environment variable is required")
 
         task_id = os.getenv("TASK_ID")
         if not task_id:
@@ -40,9 +40,9 @@ def stop_workflow_sync() -> None:
 async def stop_workflow_async() -> None:
     try:
         # Check required environment variables (MUST be first)
-        api_key = os.getenv("WORKFLOW_API_KEY")
+        api_key = os.getenv("WORKFLOW_KEY")
         if not api_key:
-            raise ValueError("WORKFLOW_API_KEY environment variable is required")
+            raise ValueError("WORKFLOW_KEY environment variable is required")
 
         task_id = os.getenv("TASK_ID")
         if not task_id:

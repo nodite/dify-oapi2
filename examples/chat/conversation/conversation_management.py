@@ -8,9 +8,9 @@ from dify_oapi.core.model.request_option import RequestOption
 
 def main():
     client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
-    api_key = os.getenv("CHAT_API_KEY")
+    api_key = os.getenv("CHAT_KEY")
     if not api_key:
-        raise ValueError("CHAT_API_KEY environment variable is required")
+        raise ValueError("CHAT_KEY environment variable is required")
     req_option = RequestOption.builder().api_key(api_key).build()
 
     # Get conversation list

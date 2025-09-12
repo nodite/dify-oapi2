@@ -8,10 +8,10 @@ from dify_oapi.core.model.request_option import RequestOption
 
 def get_suggested_questions():
     """Get suggested questions for a message"""
-    api_key = os.getenv("CHAT_API_KEY")
+    api_key = os.getenv("CHAT_KEY")
     message_id = os.getenv("MESSAGE_ID")
     if not api_key:
-        raise ValueError("CHAT_API_KEY environment variable is required")
+        raise ValueError("CHAT_KEY environment variable is required")
     if not message_id:
         print("Note: MESSAGE_ID environment variable is required for this example.")
         print("This example demonstrates the API structure but needs a real message id to execute.")
@@ -39,10 +39,10 @@ def get_suggested_questions():
 
 async def get_suggested_questions_async():
     """Get suggested questions for a message asynchronously"""
-    api_key = os.getenv("CHAT_API_KEY")
+    api_key = os.getenv("CHAT_KEY")
     message_id = os.getenv("MESSAGE_ID")
     if not api_key:
-        raise ValueError("CHAT_API_KEY environment variable is required")
+        raise ValueError("CHAT_KEY environment variable is required")
     if not message_id:
         print("Note: MESSAGE_ID environment variable is required for this example.")
         print("This example demonstrates the API structure but needs a real message id to execute.")

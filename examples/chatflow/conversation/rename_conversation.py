@@ -12,9 +12,9 @@ from dify_oapi.core.model.request_option import RequestOption
 def rename_conversation_sync():
     """Rename conversation synchronously."""
     # Validate environment variables
-    api_key = os.getenv("CHATFLOW_API_KEY")
+    api_key = os.getenv("CHATFLOW_KEY")
     if not api_key:
-        raise ValueError("CHATFLOW_API_KEY environment variable is required")
+        raise ValueError("CHATFLOW_KEY environment variable is required")
 
     conversation_id = os.getenv("CONVERSATION_ID")
     if not conversation_id:
@@ -57,9 +57,9 @@ def rename_conversation_sync():
 async def rename_conversation_async():
     """Rename conversation asynchronously."""
     # Validate environment variables
-    api_key = os.getenv("CHATFLOW_API_KEY")
+    api_key = os.getenv("CHATFLOW_KEY")
     if not api_key:
-        raise ValueError("CHATFLOW_API_KEY environment variable is required")
+        raise ValueError("CHATFLOW_KEY environment variable is required")
 
     conversation_id = os.getenv("CONVERSATION_ID")
     if not conversation_id:
@@ -103,9 +103,9 @@ async def rename_conversation_async():
 def rename_conversation_auto_generate():
     """Rename conversation with auto-generated name."""
     # Validate environment variables
-    api_key = os.getenv("CHATFLOW_API_KEY")
+    api_key = os.getenv("CHATFLOW_KEY")
     if not api_key:
-        raise ValueError("CHATFLOW_API_KEY environment variable is required")
+        raise ValueError("CHATFLOW_KEY environment variable is required")
 
     conversation_id = os.getenv("CONVERSATION_ID")
     if not conversation_id:
@@ -146,9 +146,9 @@ def rename_conversation_auto_generate():
 def rename_conversation_clear_name():
     """Clear conversation name (set to None)."""
     # Validate environment variables
-    api_key = os.getenv("CHATFLOW_API_KEY")
+    api_key = os.getenv("CHATFLOW_KEY")
     if not api_key:
-        raise ValueError("CHATFLOW_API_KEY environment variable is required")
+        raise ValueError("CHATFLOW_KEY environment variable is required")
 
     conversation_id = os.getenv("CONVERSATION_ID")
     if not conversation_id:
@@ -188,9 +188,9 @@ def rename_conversation_clear_name():
 def rename_example_conversation():
     """Create and rename an example conversation for safety."""
     # Validate environment variables
-    api_key = os.getenv("CHATFLOW_API_KEY")
+    api_key = os.getenv("CHATFLOW_KEY")
     if not api_key:
-        raise ValueError("CHATFLOW_API_KEY environment variable is required")
+        raise ValueError("CHATFLOW_KEY environment variable is required")
 
     # Initialize client
     domain = os.getenv("DOMAIN", "https://api.dify.ai")
@@ -204,7 +204,9 @@ def rename_example_conversation():
         # Create a test conversation
         create_request_body = (
             SendChatMessageRequestBody.builder()
-            .query("[Example] Test conversation for renaming")
+            .query(
+                "[Example] Test conversation for renaming. Keep response brief. Please answer within 10 words. No thinking process."
+            )
             .user("user-123")
             .response_mode("blocking")
             .build()

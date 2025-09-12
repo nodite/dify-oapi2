@@ -8,10 +8,10 @@ from dify_oapi.core.model.request_option import RequestOption
 
 def get_conversation_variables():
     """Get conversation variables"""
-    api_key = os.getenv("CHAT_API_KEY")
+    api_key = os.getenv("CHAT_KEY")
     conversation_id = os.getenv("CONVERSATION_ID")
     if not api_key:
-        raise ValueError("CHAT_API_KEY environment variable is required")
+        raise ValueError("CHAT_KEY environment variable is required")
     if not conversation_id:
         print("Note: CONVERSATION_ID environment variable is required for this example.")
         print("This example demonstrates the API structure but needs a real conversation id to execute.")
@@ -44,11 +44,11 @@ def get_conversation_variables():
 
 def get_conversation_variables_filtered():
     """Get conversation variables with name filter"""
-    api_key = os.getenv("CHAT_API_KEY")
+    api_key = os.getenv("CHAT_KEY")
     conversation_id = os.getenv("CONVERSATION_ID")
     variable_name = os.getenv("VARIABLE_NAME")
     if not api_key:
-        raise ValueError("CHAT_API_KEY environment variable is required")
+        raise ValueError("CHAT_KEY environment variable is required")
     if not conversation_id:
         print("Note: CONVERSATION_ID environment variable is required for this example.")
         print("This example demonstrates the API structure but needs a real conversation id to execute.")
@@ -78,11 +78,11 @@ def get_conversation_variables_filtered():
 
 def get_conversation_variables_paginated():
     """Get conversation variables with pagination"""
-    api_key = os.getenv("CHAT_API_KEY")
+    api_key = os.getenv("CHAT_KEY")
     conversation_id = os.getenv("CONVERSATION_ID")
     last_id = os.getenv("LAST_ID")
     if not api_key:
-        raise ValueError("CHAT_API_KEY environment variable is required")
+        raise ValueError("CHAT_KEY environment variable is required")
     if not conversation_id:
         print("Note: CONVERSATION_ID environment variable is required for this example.")
         print("This example demonstrates the API structure but needs a real conversation id to execute.")
@@ -108,10 +108,10 @@ def get_conversation_variables_paginated():
 
 async def get_conversation_variables_async():
     """Get conversation variables asynchronously"""
-    api_key = os.getenv("CHAT_API_KEY")
+    api_key = os.getenv("CHAT_KEY")
     conversation_id = os.getenv("CONVERSATION_ID")
     if not api_key:
-        raise ValueError("CHAT_API_KEY environment variable is required")
+        raise ValueError("CHAT_KEY environment variable is required")
     if not conversation_id:
         print("Note: CONVERSATION_ID environment variable is required for this example.")
         print("This example demonstrates the API structure but needs a real conversation id to execute.")

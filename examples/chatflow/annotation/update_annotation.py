@@ -12,9 +12,9 @@ from dify_oapi.core.model.request_option import RequestOption
 def update_annotation_sync():
     """Update annotation synchronously."""
     # Validate environment variables
-    api_key = os.getenv("CHATFLOW_API_KEY")
+    api_key = os.getenv("CHATFLOW_KEY")
     if not api_key:
-        raise ValueError("CHATFLOW_API_KEY environment variable is required")
+        raise ValueError("CHATFLOW_KEY environment variable is required")
 
     annotation_id = os.getenv("ANNOTATION_ID")
     if not annotation_id:
@@ -64,9 +64,9 @@ def update_annotation_sync():
 async def update_annotation_async():
     """Update annotation asynchronously."""
     # Validate environment variables
-    api_key = os.getenv("CHATFLOW_API_KEY")
+    api_key = os.getenv("CHATFLOW_KEY")
     if not api_key:
-        raise ValueError("CHATFLOW_API_KEY environment variable is required")
+        raise ValueError("CHATFLOW_KEY environment variable is required")
 
     annotation_id = os.getenv("ANNOTATION_ID")
     if not annotation_id:
@@ -115,9 +115,9 @@ async def update_annotation_async():
 def update_annotation_with_validation():
     """Update annotation with validation example."""
     # Validate environment variables
-    api_key = os.getenv("CHATFLOW_API_KEY")
+    api_key = os.getenv("CHATFLOW_KEY")
     if not api_key:
-        raise ValueError("CHATFLOW_API_KEY environment variable is required")
+        raise ValueError("CHATFLOW_KEY environment variable is required")
 
     annotation_id = os.getenv("ANNOTATION_ID")
     if not annotation_id:

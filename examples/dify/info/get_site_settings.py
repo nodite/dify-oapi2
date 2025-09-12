@@ -15,9 +15,9 @@ def get_site_settings_sync():
     """Synchronous site settings retrieval"""
 
     # Environment validation
-    api_key = os.getenv("CHAT_API_KEY")
+    api_key = os.getenv("DIFY_KEY")
     if not api_key:
-        raise ValueError("CHAT_API_KEY environment variable is required")
+        raise ValueError("DIFY_KEY environment variable is required")
 
     domain = os.getenv("DOMAIN", "https://api.dify.ai")
 
@@ -53,9 +53,9 @@ def get_site_settings_sync():
 async def get_site_settings_async():
     """Asynchronous site settings retrieval"""
 
-    api_key = os.getenv("CHAT_API_KEY")
+    api_key = os.getenv("DIFY_KEY")
     if not api_key:
-        raise ValueError("CHAT_API_KEY environment variable is required")
+        raise ValueError("DIFY_KEY environment variable is required")
 
     domain = os.getenv("DOMAIN", "https://api.dify.ai")
 

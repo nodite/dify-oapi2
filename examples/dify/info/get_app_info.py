@@ -15,9 +15,9 @@ def get_app_info_sync():
     """Synchronous app info retrieval"""
 
     # Environment validation
-    api_key = os.getenv("CHAT_API_KEY")
+    api_key = os.getenv("DIFY_KEY")
     if not api_key:
-        raise ValueError("CHAT_API_KEY environment variable is required")
+        raise ValueError("DIFY_KEY environment variable is required")
 
     domain = os.getenv("DOMAIN", "https://api.dify.ai")
 
@@ -47,9 +47,9 @@ def get_app_info_sync():
 async def get_app_info_async():
     """Asynchronous app info retrieval"""
 
-    api_key = os.getenv("CHAT_API_KEY")
+    api_key = os.getenv("DIFY_KEY")
     if not api_key:
-        raise ValueError("CHAT_API_KEY environment variable is required")
+        raise ValueError("DIFY_KEY environment variable is required")
 
     domain = os.getenv("DOMAIN", "https://api.dify.ai")
 

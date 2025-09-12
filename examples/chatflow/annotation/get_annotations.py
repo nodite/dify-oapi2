@@ -11,9 +11,9 @@ from dify_oapi.core.model.request_option import RequestOption
 def get_annotations_sync():
     """Get annotation list synchronously with pagination."""
     # Validate environment variables
-    api_key = os.getenv("API_KEY")
+    api_key = os.getenv("CHATFLOW_KEY")
     if not api_key:
-        raise ValueError("API_KEY environment variable is required")
+        raise ValueError("CHATFLOW_KEY environment variable is required")
 
     # Initialize client
     domain = os.getenv("DOMAIN", "https://api.dify.ai")
@@ -53,9 +53,9 @@ def get_annotations_sync():
 async def get_annotations_async():
     """Get annotation list asynchronously with pagination."""
     # Validate environment variables
-    api_key = os.getenv("API_KEY")
+    api_key = os.getenv("CHATFLOW_KEY")
     if not api_key:
-        raise ValueError("API_KEY environment variable is required")
+        raise ValueError("CHATFLOW_KEY environment variable is required")
 
     # Initialize client
     domain = os.getenv("DOMAIN", "https://api.dify.ai")
@@ -91,9 +91,9 @@ async def get_annotations_async():
 def get_annotations_with_pagination():
     """Get all annotations with pagination example."""
     # Validate environment variables
-    api_key = os.getenv("API_KEY")
+    api_key = os.getenv("CHATFLOW_KEY")
     if not api_key:
-        raise ValueError("API_KEY environment variable is required")
+        raise ValueError("CHATFLOW_KEY environment variable is required")
 
     # Initialize client
     domain = os.getenv("DOMAIN", "https://api.dify.ai")

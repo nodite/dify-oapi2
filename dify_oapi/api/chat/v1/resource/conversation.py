@@ -16,90 +16,56 @@ from ..model.rename_conversation_response import RenameConversationResponse
 
 class Conversation:
     def __init__(self, config: Config) -> None:
-        self.config: Config = config
+        self.config = config
 
-    def list(self, request: GetConversationsRequest, option: RequestOption | None = None) -> GetConversationsResponse:
-        # Send request
-        return Transport.execute(
-            self.config,
-            request,
-            unmarshal_as=GetConversationsResponse,
-            option=option,
-        )
+    def list(self, request: GetConversationsRequest, request_option: RequestOption) -> GetConversationsResponse:
+        return Transport.execute(self.config, request, unmarshal_as=GetConversationsResponse, option=request_option)
 
-    async def alist(
-        self, request: GetConversationsRequest, option: RequestOption | None = None
-    ) -> GetConversationsResponse:
-        # Send request
+    async def alist(self, request: GetConversationsRequest, request_option: RequestOption) -> GetConversationsResponse:
         return await ATransport.aexecute(
-            self.config,
-            request,
-            unmarshal_as=GetConversationsResponse,
-            option=option,
+            self.config, request, unmarshal_as=GetConversationsResponse, option=request_option
         )
 
-    def history(
-        self, request: GetMessageHistoryRequest, option: RequestOption | None = None
-    ) -> GetMessageHistoryResponse:
-        # Send request
-        return Transport.execute(
-            self.config,
-            request,
-            unmarshal_as=GetMessageHistoryResponse,
-            option=option,
-        )
+    def history(self, request: GetMessageHistoryRequest, request_option: RequestOption) -> GetMessageHistoryResponse:
+        return Transport.execute(self.config, request, unmarshal_as=GetMessageHistoryResponse, option=request_option)
 
     async def ahistory(
-        self, request: GetMessageHistoryRequest, option: RequestOption | None = None
+        self, request: GetMessageHistoryRequest, request_option: RequestOption
     ) -> GetMessageHistoryResponse:
-        # Send request
         return await ATransport.aexecute(
-            self.config,
-            request,
-            unmarshal_as=GetMessageHistoryResponse,
-            option=option,
+            self.config, request, unmarshal_as=GetMessageHistoryResponse, option=request_option
         )
 
     def variables(
-        self, request: GetConversationVariablesRequest, option: RequestOption | None = None
+        self, request: GetConversationVariablesRequest, request_option: RequestOption
     ) -> GetConversationVariablesResponse:
-        # Send request
         return Transport.execute(
-            self.config,
-            request,
-            unmarshal_as=GetConversationVariablesResponse,
-            option=option,
+            self.config, request, unmarshal_as=GetConversationVariablesResponse, option=request_option
         )
 
     async def avariables(
-        self, request: GetConversationVariablesRequest, option: RequestOption | None = None
+        self, request: GetConversationVariablesRequest, request_option: RequestOption
     ) -> GetConversationVariablesResponse:
-        # Send request
         return await ATransport.aexecute(
-            self.config,
-            request,
-            unmarshal_as=GetConversationVariablesResponse,
-            option=option,
+            self.config, request, unmarshal_as=GetConversationVariablesResponse, option=request_option
         )
 
-    def delete(
-        self, request: DeleteConversationRequest, option: RequestOption | None = None
-    ) -> DeleteConversationResponse:
-        return Transport.execute(self.config, request, unmarshal_as=DeleteConversationResponse, option=option)
+    def delete(self, request: DeleteConversationRequest, request_option: RequestOption) -> DeleteConversationResponse:
+        return Transport.execute(self.config, request, unmarshal_as=DeleteConversationResponse, option=request_option)
 
     async def adelete(
-        self, request: DeleteConversationRequest, option: RequestOption | None = None
+        self, request: DeleteConversationRequest, request_option: RequestOption
     ) -> DeleteConversationResponse:
-        # Send request
-        return await ATransport.aexecute(self.config, request, unmarshal_as=DeleteConversationResponse, option=option)
+        return await ATransport.aexecute(
+            self.config, request, unmarshal_as=DeleteConversationResponse, option=request_option
+        )
 
-    def rename(
-        self, request: RenameConversationRequest, option: RequestOption | None = None
-    ) -> RenameConversationResponse:
-        return Transport.execute(self.config, request, unmarshal_as=RenameConversationResponse, option=option)
+    def rename(self, request: RenameConversationRequest, request_option: RequestOption) -> RenameConversationResponse:
+        return Transport.execute(self.config, request, unmarshal_as=RenameConversationResponse, option=request_option)
 
     async def arename(
-        self, request: RenameConversationRequest, option: RequestOption | None = None
+        self, request: RenameConversationRequest, request_option: RequestOption
     ) -> RenameConversationResponse:
-        # Send request
-        return await ATransport.aexecute(self.config, request, unmarshal_as=RenameConversationResponse, option=option)
+        return await ATransport.aexecute(
+            self.config, request, unmarshal_as=RenameConversationResponse, option=request_option
+        )

@@ -1,45 +1,103 @@
 # Completion API Examples
 
-This directory contains comprehensive examples for all 9 Completion APIs, organized by resource functionality. Each example demonstrates both synchronous and asynchronous usage patterns with minimal code implementation.
+The Completion API provides text generation and completion capabilities. This directory contains examples for all completion-related operations.
 
-## API Overview
+## 📁 Resources
 
-**Total APIs**: 9 endpoints across 5 resource categories
+### [annotation/](./annotation/) - Annotation Management
+Manage annotations and reply settings for completion messages.
 
-- **Completion APIs (2)**: Message processing and generation control
-- **File APIs (1)**: File upload for multimodal understanding
-- **Feedback APIs (2)**: Message feedback and application feedback retrieval
-- **Audio APIs (1)**: Text-to-speech conversion
-- **Info APIs (3)**: Application information and configuration
+**Available Examples:**
+- `annotation_reply_settings.py` - Configure annotation reply settings
+- `create_annotation.py` - Create new annotations
+- `delete_annotation.py` - Delete existing annotations
+- `list_annotations.py` - List all annotations
+- `query_annotation_reply_status.py` - Check annotation reply status
+- `update_annotation.py` - Update annotation content
 
-## Directory Structure
+### [completion/](./completion/) - Completion Operations
+Core text completion and generation functionality.
 
+**Available Examples:**
+- `send_message.py` - Send completion requests
+- `stop_response.py` - Stop ongoing generation
+- `blocking_completion.py` - Synchronous completion example
+- `streaming_completion.py` - Real-time streaming completion
+
+### [file/](./file/) - File Management
+Upload and manage files for completion processing.
+
+**Available Examples:**
+- `upload_file.py` - Upload files for processing
+
+### [feedback/](./feedback/) - Feedback Management
+Collect and manage user feedback on completion responses.
+
+**Available Examples:**
+- `get_feedbacks.py` - Retrieve feedback data
+- `submit_feedback.py` - Submit user feedback
+
+### [audio/](./audio/) - Audio Processing
+Text-to-speech capabilities for completion results.
+
+**Available Examples:**
+- `text_to_audio.py` - Convert completion text to audio
+
+## 🚀 Quick Start
+
+### Basic Completion
+
+```python
+from dify_oapi.api.completion.v1.model.completion.send_message_request import SendMessageRequest
+from dify_oapi.api.completion.v1.model.completion.send_message_request_body import SendMessageRequestBody
+
+req_body = (
+    SendMessageRequestBody.builder()
+    .inputs({})
+    .query("Write a short story about AI.")
+    .response_mode("blocking")
+    .user("user-123")
+    .build()
+)
+
+req = SendMessageRequest.builder().request_body(req_body).build()
+response = client.completion.v1.completion.send_message(req, req_option, False)
+print(response.answer)
 ```
-completion/
-├── completion/          # Message processing examples
-├── file/               # File upload examples
-├── feedback/           # Feedback system examples
-├── audio/              # Audio processing examples
-├── info/               # Application info examples
-└── README.md           # This file
+
+### Streaming Completion
+
+```python
+req_body = (
+    SendMessageRequestBody.builder()
+    .query("Explain machine learning in detail")
+    .response_mode("streaming")
+    .user("user-123")
+    .build()
+)
+
+response = client.completion.v1.completion.send_message(req, req_option, True)
+for chunk in response:
+    print(chunk, end="", flush=True)
 ```
 
-## Environment Setup
+## 🔧 Features
+
+- **Multiple Response Modes**: Blocking and streaming responses
+- **File Support**: Process documents and media files
+- **Annotation System**: Rich annotation and feedback management
+- **Audio Output**: Convert text responses to speech
+- **Error Handling**: Comprehensive error management
+
+## 📖 Environment Variables
 
 ```bash
-export API_KEY="your-completion-api-key"
 export DOMAIN="https://api.dify.ai"
+export COMPLETION_KEY="your-completion-api-key"
 ```
 
-## Documentation
+## 🔗 Related APIs
 
-For detailed examples, migration guide, and testing strategies, see:
-- [Completion Design Document](../../docs/completion/completion-design.md)
-
-## Best Practices
-
-1. **API Key Security**: Store API keys server-side only
-2. **Error Handling**: Use BaseResponse properties for consistent error handling
-3. **Type Safety**: Use provided Literal types for all predefined values
-4. **Resource Management**: Properly manage and cleanup resources
-5. **Streaming Usage**: Use streaming mode for better user experience
+- [Chat API](../chat/) - Interactive conversations
+- [Dify Core API](../dify/) - Core functionality
+- [Workflow API](../workflow/) - Workflow integration

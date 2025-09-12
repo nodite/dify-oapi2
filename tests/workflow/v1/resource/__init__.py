@@ -1,1 +1,1 @@
-"""Workflow resource tests."""
+# Test module

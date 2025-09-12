@@ -17,9 +17,9 @@ def list_child_chunks_sync() -> None:
     """List child chunks synchronously."""
     try:
         # Check required environment variables
-        api_key = os.getenv("API_KEY")
+        api_key = os.getenv("KNOWLEDGE_KEY")
         if not api_key:
-            raise ValueError("API_KEY environment variable is required")
+            raise ValueError("KNOWLEDGE_KEY environment variable is required")
 
         dataset_id = os.getenv("DATASET_ID")
         if not dataset_id:
@@ -63,9 +63,9 @@ async def list_child_chunks_async() -> None:
     """List child chunks asynchronously."""
     try:
         # Check required environment variables
-        api_key = os.getenv("API_KEY")
+        api_key = os.getenv("KNOWLEDGE_KEY")
         if not api_key:
-            raise ValueError("API_KEY environment variable is required")
+            raise ValueError("KNOWLEDGE_KEY environment variable is required")
 
         dataset_id = os.getenv("DATASET_ID")
         if not dataset_id:

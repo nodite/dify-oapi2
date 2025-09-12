@@ -18,10 +18,10 @@ from dify_oapi.core.model.request_option import RequestOption
 
 def validate_environment():
     """Validate required environment variables."""
-    api_key = os.getenv("API_KEY")
+    api_key = os.getenv("CHATFLOW_KEY")
     domain = os.getenv("DOMAIN", "https://api.dify.ai")
     if not api_key:
-        raise ValueError("API_KEY environment variable is required")
+        raise ValueError("CHATFLOW_KEY environment variable is required")
     return api_key, domain
 
 
@@ -35,7 +35,9 @@ def send_chat_message_blocking():
     # Build request body
     req_body = (
         SendChatMessageRequestBody.builder()
-        .query("What can Dify API do?")
+        .query(
+            "What can Dify API do? Please keep your response brief. Please answer within 10 words. No thinking process."
+        )
         .response_mode("blocking")
         .user("user-123")
         .inputs({})
@@ -69,7 +71,7 @@ def send_chat_message_streaming():
     # Build request body for streaming
     req_body = (
         SendChatMessageRequestBody.builder()
-        .query("Tell me a story about AI")
+        .query("Tell me a short story about AI. Please answer within 10 words. No thinking process.")
         .response_mode("streaming")
         .user("user-123")
         .inputs({})
@@ -105,7 +107,7 @@ def send_chat_message_with_file():
     # Build request body with file
     req_body = (
         SendChatMessageRequestBody.builder()
-        .query("Analyze this document and summarize its content")
+        .query("Analyze this document and provide a brief summary. Please answer within 10 words. No thinking process.")
         .response_mode("blocking")
         .user("user-123")
         .inputs({})
@@ -141,7 +143,9 @@ async def send_chat_message_async_blocking():
     # Build request body
     req_body = (
         SendChatMessageRequestBody.builder()
-        .query("What are the benefits of async programming?")
+        .query(
+            "What are the key benefits of async programming? Keep it concise. Please answer within 10 words. No thinking process."
+        )
         .response_mode("blocking")
         .user("user-123")
         .inputs({})
@@ -174,7 +178,7 @@ async def send_chat_message_async_streaming():
     # Build request body for streaming
     req_body = (
         SendChatMessageRequestBody.builder()
-        .query("Explain machine learning in simple terms")
+        .query("Briefly explain machine learning in simple terms. Please answer within 10 words. No thinking process.")
         .response_mode("streaming")
         .user("user-123")
         .inputs({})
@@ -199,16 +203,24 @@ def send_chat_message_with_conversation():
     """Send chat message continuing an existing conversation."""
     api_key, domain = validate_environment()
 
+    # Check if CONVERSATION_ID is provided
+    conversation_id = os.getenv("CONVERSATION_ID")
+    if not conversation_id:
+        print("Note: CONVERSATION_ID environment variable is required for this example.")
+        print("This example demonstrates the API structure but needs a real conversation id to execute.")
+        print("Set CONVERSATION_ID environment variable with a valid ID to test this functionality.")
+        return
+
     domain = os.getenv("DOMAIN", "https://api.dify.ai")
     client = Client.builder().domain(domain).build()
 
     # Build request body with conversation ID
     req_body = (
         SendChatMessageRequestBody.builder()
-        .query("Can you elaborate on that?")
+        .query("Can you briefly elaborate on that? Please answer within 10 words. No thinking process.")
         .response_mode("blocking")
         .user("user-123")
-        .conversation_id("conv-12345")  # Use existing conversation ID
+        .conversation_id(conversation_id)
         .inputs({})
         .auto_generate_name(False)  # Don't auto-generate name for existing conversation
         .build()
@@ -252,14 +264,20 @@ def main():
         send_chat_message_with_conversation()
         print()
 
-        # Async examples
-        print("5. Blocking Mode (Async)")
-        asyncio.run(send_chat_message_async_blocking())
-        print()
+        # Async examples - run all in one event loop
+        async def run_async_examples():
+            print("5. Blocking Mode (Async)")
+            await send_chat_message_async_blocking()
+            print()
 
-        print("6. Streaming Mode (Async)")
-        asyncio.run(send_chat_message_async_streaming())
-        print()
+            print("6. Streaming Mode (Async)")
+            try:
+                await send_chat_message_async_streaming()
+            except Exception as e:
+                print(f"❌ Async streaming error: {e}")
+            print()
+
+        asyncio.run(run_async_examples())
 
     except ValueError as e:
         print(f"❌ Configuration Error: {e}")

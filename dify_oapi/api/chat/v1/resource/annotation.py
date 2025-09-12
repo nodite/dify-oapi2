@@ -18,60 +18,70 @@ from ..model.update_annotation_response import UpdateAnnotationResponse
 
 class Annotation:
     def __init__(self, config: Config) -> None:
-        self.config: Config = config
+        self.config = config
 
-    def list(self, request: ListAnnotationsRequest, option: RequestOption | None = None) -> ListAnnotationsResponse:
-        return Transport.execute(self.config, request, unmarshal_as=ListAnnotationsResponse, option=option)
+    def list(self, request: ListAnnotationsRequest, request_option: RequestOption) -> ListAnnotationsResponse:
+        return Transport.execute(self.config, request, unmarshal_as=ListAnnotationsResponse, option=request_option)
 
-    async def alist(
-        self, request: ListAnnotationsRequest, option: RequestOption | None = None
-    ) -> ListAnnotationsResponse:
-        return await ATransport.aexecute(self.config, request, unmarshal_as=ListAnnotationsResponse, option=option)
+    async def alist(self, request: ListAnnotationsRequest, request_option: RequestOption) -> ListAnnotationsResponse:
+        return await ATransport.aexecute(
+            self.config, request, unmarshal_as=ListAnnotationsResponse, option=request_option
+        )
 
-    def create(self, request: CreateAnnotationRequest, option: RequestOption | None = None) -> CreateAnnotationResponse:
-        return Transport.execute(self.config, request, unmarshal_as=CreateAnnotationResponse, option=option)
+    def create(self, request: CreateAnnotationRequest, request_option: RequestOption) -> CreateAnnotationResponse:
+        return Transport.execute(self.config, request, unmarshal_as=CreateAnnotationResponse, option=request_option)
 
     async def acreate(
-        self, request: CreateAnnotationRequest, option: RequestOption | None = None
+        self, request: CreateAnnotationRequest, request_option: RequestOption
     ) -> CreateAnnotationResponse:
-        return await ATransport.aexecute(self.config, request, unmarshal_as=CreateAnnotationResponse, option=option)
+        return await ATransport.aexecute(
+            self.config, request, unmarshal_as=CreateAnnotationResponse, option=request_option
+        )
 
-    def update(self, request: UpdateAnnotationRequest, option: RequestOption | None = None) -> UpdateAnnotationResponse:
-        return Transport.execute(self.config, request, unmarshal_as=UpdateAnnotationResponse, option=option)
+    def update(self, request: UpdateAnnotationRequest, request_option: RequestOption) -> UpdateAnnotationResponse:
+        return Transport.execute(self.config, request, unmarshal_as=UpdateAnnotationResponse, option=request_option)
 
     async def aupdate(
-        self, request: UpdateAnnotationRequest, option: RequestOption | None = None
+        self, request: UpdateAnnotationRequest, request_option: RequestOption
     ) -> UpdateAnnotationResponse:
-        return await ATransport.aexecute(self.config, request, unmarshal_as=UpdateAnnotationResponse, option=option)
+        return await ATransport.aexecute(
+            self.config, request, unmarshal_as=UpdateAnnotationResponse, option=request_option
+        )
 
-    def delete(self, request: DeleteAnnotationRequest, option: RequestOption | None = None) -> DeleteAnnotationResponse:
-        return Transport.execute(self.config, request, unmarshal_as=DeleteAnnotationResponse, option=option)
+    def delete(self, request: DeleteAnnotationRequest, request_option: RequestOption) -> DeleteAnnotationResponse:
+        return Transport.execute(self.config, request, unmarshal_as=DeleteAnnotationResponse, option=request_option)
 
     async def adelete(
-        self, request: DeleteAnnotationRequest, option: RequestOption | None = None
+        self, request: DeleteAnnotationRequest, request_option: RequestOption
     ) -> DeleteAnnotationResponse:
-        return await ATransport.aexecute(self.config, request, unmarshal_as=DeleteAnnotationResponse, option=option)
+        return await ATransport.aexecute(
+            self.config, request, unmarshal_as=DeleteAnnotationResponse, option=request_option
+        )
 
     def configure(
-        self, request: ConfigureAnnotationReplyRequest, option: RequestOption | None = None
+        self, request: ConfigureAnnotationReplyRequest, request_option: RequestOption
     ) -> ConfigureAnnotationReplyResponse:
-        return Transport.execute(self.config, request, unmarshal_as=ConfigureAnnotationReplyResponse, option=option)
+        return Transport.execute(
+            self.config, request, unmarshal_as=ConfigureAnnotationReplyResponse, option=request_option
+        )
 
     async def aconfigure(
-        self, request: ConfigureAnnotationReplyRequest, option: RequestOption | None = None
+        self, request: ConfigureAnnotationReplyRequest, request_option: RequestOption
     ) -> ConfigureAnnotationReplyResponse:
         return await ATransport.aexecute(
-            self.config, request, unmarshal_as=ConfigureAnnotationReplyResponse, option=option
+            self.config, request, unmarshal_as=ConfigureAnnotationReplyResponse, option=request_option
         )
 
     def status(
-        self, request: GetAnnotationReplyStatusRequest, option: RequestOption | None = None
+        self, request: GetAnnotationReplyStatusRequest, request_option: RequestOption
     ) -> GetAnnotationReplyStatusResponse:
-        return Transport.execute(self.config, request, unmarshal_as=GetAnnotationReplyStatusResponse, option=option)
+        return Transport.execute(
+            self.config, request, unmarshal_as=GetAnnotationReplyStatusResponse, option=request_option
+        )
 
     async def astatus(
-        self, request: GetAnnotationReplyStatusRequest, option: RequestOption | None = None
+        self, request: GetAnnotationReplyStatusRequest, request_option: RequestOption
     ) -> GetAnnotationReplyStatusResponse:
         return await ATransport.aexecute(
-            self.config, request, unmarshal_as=GetAnnotationReplyStatusResponse, option=option
+            self.config, request, unmarshal_as=GetAnnotationReplyStatusResponse, option=request_option
         )

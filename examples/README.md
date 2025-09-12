@@ -1,88 +1,105 @@
 # Dify-OAPI Examples
 
-This directory contains example code for using the Dify-OAPI SDK.
+This directory contains comprehensive examples for all Dify-OAPI services. The examples are organized by API service and resource type to match the SDK structure.
 
-## Chat Examples
-- [Blocking Response](./chat/blocking_response.py): Example of using the Chat API with blocking response mode
-- [Streaming Response](./chat/streaming_response.py): Example of using the Chat API with streaming response mode
-- [Conversation Management](./chat/conversation_management.py): Example of managing conversations and retrieving message history
+## 📁 Directory Structure
 
-## Completion Examples
+```
+examples/
+├── chat/                    # Chat API Examples (22 APIs)
+├── chatflow/               # Chatflow API Examples (17 APIs)
+├── completion/             # Completion API Examples (15 APIs)
+├── dify/                   # Dify Core API Examples
+├── knowledge/              # Knowledge Base API Examples (33 APIs)
+├── workflow/               # Workflow API Examples
+└── connection_pool_example.py  # Connection pool optimization
+```
 
-### Message Processing
-- [Send Message](./completion/completion/send_message.py): Send completion messages with streaming and blocking modes
-- [Stop Response](./completion/completion/stop_response.py): Stop ongoing completion responses
+## 🚀 Quick Start
 
-### Annotation Management
-- [List Annotations](./completion/annotation/list_annotations.py): List annotations for completion messages
-- [Create Annotation](./completion/annotation/create_annotation.py): Create new annotations for messages
-- [Update Annotation](./completion/annotation/update_annotation.py): Update existing annotations
-- [Delete Annotation](./completion/annotation/delete_annotation.py): Delete specific annotations
-- [Annotation Reply Settings](./completion/annotation/annotation_reply_settings.py): Configure annotation reply settings
-- [Query Annotation Reply Status](./completion/annotation/query_annotation_reply_status.py): Check annotation reply operation status
+### Environment Setup
 
-### Audio Processing
-- [Text to Audio](./completion/audio/text_to_audio.py): Convert text responses to audio format
+Set your environment variables:
 
-### Feedback Management
-- [Message Feedback](./completion/feedback/message_feedback.py): Submit feedback for completion messages
-- [Get Feedbacks](./completion/feedback/get_feedbacks.py): Retrieve feedback data for analysis
+```bash
+export DOMAIN="https://api.dify.ai"
+export CHAT_KEY="your-chat-api-key"
+export CHATFLOW_KEY="your-chatflow-api-key"
+export COMPLETION_KEY="your-completion-api-key"
+export DIFY_KEY="your-dify-api-key"
+export WORKFLOW_KEY="your-workflow-api-key"
+export KNOWLEDGE_KEY="your-knowledge-api-key"
+```
 
-### File Management
-- [Upload File](./completion/file/upload_file.py): Upload files for use in completion requests
+### Basic Usage
 
-### Application Information
-- [Get Application Info](./completion/info/get_info.py): Retrieve application configuration
-- [Get Parameters](./completion/info/get_parameters.py): Get application parameters and settings
-- [Get Site Info](./completion/info/get_site.py): Retrieve site-specific information
+```python
+from dify_oapi.client import Client
+from dify_oapi.core.model.request_option import RequestOption
 
-## Knowledge Base Examples
+# Initialize client
+client = Client.builder().domain("https://api.dify.ai").build()
+req_option = RequestOption.builder().api_key("your-api-key").build()
+```
 
-### Dataset Management
-- [Create Dataset](./knowledge/dataset/create.py): Create new datasets with various configurations
-- [List Datasets](./knowledge/dataset/list.py): List datasets with pagination and search
-- [Get Dataset](./knowledge/dataset/get.py): Get detailed dataset information
-- [Update Dataset](./knowledge/dataset/update.py): Update dataset configuration and settings
-- [Delete Dataset](./knowledge/dataset/delete.py): Delete datasets with confirmation prompts
-- [Retrieve from Dataset](./knowledge/dataset/retrieve.py): Perform retrieval search with different methods
+## 📚 API Services
 
-### Metadata Management
-- [Create Metadata](./knowledge/metadata/create.py): Create custom metadata fields
-- [List Metadata](./knowledge/metadata/list.py): List metadata configuration and usage
-- [Update Metadata](./knowledge/metadata/update.py): Update metadata field names
-- [Delete Metadata](./knowledge/metadata/delete.py): Delete metadata fields with warnings
-- [Toggle Built-in Metadata](./knowledge/metadata/toggle_builtin.py): Enable/disable built-in metadata
-- [Update Document Metadata](./knowledge/metadata/update_document.py): Update document metadata values
+### [Chat API](./chat/README.md)
+Interactive conversations with AI assistants
+- **Resources**: annotation, chat, conversation, message
+- **Features**: Streaming, file upload, feedback, audio processing
 
-### Tag Management
-- [Create Tags](./knowledge/tag/create.py): Create knowledge type tags
-- [List Tags](./knowledge/tag/list.py): List all available tags
-- [Update Tags](./knowledge/tag/update.py): Update tag names
-- [Delete Tags](./knowledge/tag/delete.py): Delete tags with confirmation
-- [Bind Tags](./knowledge/tag/bind.py): Bind tags to datasets
-- [Unbind Tags](./knowledge/tag/unbind.py): Unbind tags from datasets
-- [Query Bound Tags](./knowledge/tag/query_bound.py): Query tags bound to datasets
+### [Chatflow API](./chatflow/README.md)
+Enhanced chat functionality with workflow events
+- **Resources**: annotation, chatflow, conversation
+- **Features**: Advanced streaming, workflow integration
 
-### Documentation
-- [Knowledge Base README](./knowledge/README.md): Comprehensive usage guide with examples and best practices
+### [Completion API](./completion/README.md)
+Text generation and completion
+- **Resources**: annotation, completion
+- **Features**: Blocking/streaming responses, file support
 
-## Workflow Examples
+### [Dify Core API](./dify/README.md)
+Essential Dify service functionality
+- **Resources**: audio, feedback, file, info
+- **Features**: Audio processing, file management, app info
 
-### Workflow Execution
-- [Run Workflow](./workflow/run_workflow.py): Execute workflows with blocking and streaming modes
-- [Get Workflow Run Detail](./workflow/get_workflow_run_detail.py): Retrieve workflow execution details and status
-- [Stop Workflow](./workflow/stop_workflow.py): Stop running workflow executions
+### [Knowledge Base API](./knowledge/README.md)
+Comprehensive knowledge management (33 APIs)
+- **Resources**: chunk, dataset, document, model, segment, tag
+- **Features**: Full CRUD operations, content organization
 
-### File Management
-- [Upload File](./workflow/upload_file.py): Upload files for multimodal workflow support
+### [Workflow API](./workflow/README.md)
+Automated workflow execution
+- **Resources**: workflow
+- **Features**: Blocking/streaming execution, file upload
 
-### Logging and Monitoring
-- [Get Workflow Logs](./workflow/get_workflow_logs.py): Retrieve workflow execution logs with filtering
+## 🔧 Advanced Features
 
-### Application Configuration
-- [Get Application Info](./workflow/get_info.py): Retrieve basic application information
-- [Get Application Parameters](./workflow/get_parameters.py): Get application parameter configuration
-- [Get WebApp Settings](./workflow/get_site.py): Retrieve WebApp settings and theming
+### Connection Pool Optimization
+See [connection_pool_example.py](./connection_pool_example.py) for TCP connection optimization.
 
-### Documentation
-- [Workflow README](./workflow/README.md): Comprehensive workflow API usage guide with safety features
+### Error Handling
+All examples include proper error handling patterns.
+
+### Async Support
+Most examples can be adapted for async usage by using the `a*` methods (e.g., `achat` instead of `chat`).
+
+## 📖 Documentation
+
+Each directory contains:
+- **README.md**: Service overview and usage guide
+- **Resource directories**: Organized by API resource
+- **Example files**: Complete, runnable examples
+
+## 🤝 Contributing
+
+When adding new examples:
+1. Follow the existing directory structure
+2. Include proper error handling
+3. Add documentation and comments
+4. Test examples before submitting
+
+## 📄 License
+
+MIT License - see [LICENSE](../LICENSE) file for details.

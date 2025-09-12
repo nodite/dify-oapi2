@@ -4,23 +4,13 @@ from __future__ import annotations
 
 from pydantic import BaseModel
 
-from .knowledge_types import DocumentForm, IndexingTechnique
-from .process_rule import ProcessRule
-from .retrieval_model import RetrievalModel
+from .create_document_by_file_request_body_data import CreateDocumentByFileRequestBodyData
 
 
 class CreateDocumentByFileRequestBody(BaseModel):
     """Request body model for create document by file API."""
 
-    name: str | None = None
-    original_document_id: str | None = None  # UUID for re-upload/modify
-    indexing_technique: IndexingTechnique | None = None
-    doc_form: DocumentForm | None = None
-    doc_language: str | None = None
-    process_rule: ProcessRule | None = None
-    retrieval_model: RetrievalModel | None = None
-    embedding_model: str | None = None
-    embedding_model_provider: str | None = None
+    data: str | None = None
 
     @staticmethod
     def builder() -> CreateDocumentByFileRequestBodyBuilder:
@@ -36,38 +26,6 @@ class CreateDocumentByFileRequestBodyBuilder:
     def build(self) -> CreateDocumentByFileRequestBody:
         return self._create_document_by_file_request_body
 
-    def name(self, name: str) -> CreateDocumentByFileRequestBodyBuilder:
-        self._create_document_by_file_request_body.name = name
-        return self
-
-    def indexing_technique(self, indexing_technique: IndexingTechnique) -> CreateDocumentByFileRequestBodyBuilder:
-        self._create_document_by_file_request_body.indexing_technique = indexing_technique
-        return self
-
-    def process_rule(self, process_rule: ProcessRule) -> CreateDocumentByFileRequestBodyBuilder:
-        self._create_document_by_file_request_body.process_rule = process_rule
-        return self
-
-    def original_document_id(self, original_document_id: str) -> CreateDocumentByFileRequestBodyBuilder:
-        self._create_document_by_file_request_body.original_document_id = original_document_id
-        return self
-
-    def doc_form(self, doc_form: DocumentForm) -> CreateDocumentByFileRequestBodyBuilder:
-        self._create_document_by_file_request_body.doc_form = doc_form
-        return self
-
-    def doc_language(self, doc_language: str) -> CreateDocumentByFileRequestBodyBuilder:
-        self._create_document_by_file_request_body.doc_language = doc_language
-        return self
-
-    def retrieval_model(self, retrieval_model: RetrievalModel) -> CreateDocumentByFileRequestBodyBuilder:
-        self._create_document_by_file_request_body.retrieval_model = retrieval_model
-        return self
-
-    def embedding_model(self, embedding_model: str) -> CreateDocumentByFileRequestBodyBuilder:
-        self._create_document_by_file_request_body.embedding_model = embedding_model
-        return self
-
-    def embedding_model_provider(self, embedding_model_provider: str) -> CreateDocumentByFileRequestBodyBuilder:
-        self._create_document_by_file_request_body.embedding_model_provider = embedding_model_provider
+    def data(self, data: CreateDocumentByFileRequestBodyData) -> CreateDocumentByFileRequestBodyBuilder:
+        self._create_document_by_file_request_body.data = data.model_dump_json(exclude_none=True)
         return self

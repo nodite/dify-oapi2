@@ -19,9 +19,9 @@ def optimized_client_example():
     """Example of creating a client with optimized connection pool settings."""
 
     # Get API key from environment
-    api_key = os.getenv("API_KEY")
+    api_key = os.getenv("CHAT_KEY")
     if not api_key:
-        raise ValueError("API_KEY environment variable is required")
+        raise ValueError("CHAT_KEY environment variable is required")
 
     # Create client with optimized connection pool settings
     client = (
@@ -38,7 +38,9 @@ def optimized_client_example():
         req_body = (
             ChatRequestBody.builder()
             .inputs({})
-            .query("[Example] Test connection pool optimization")
+            .query(
+                "[Example] Test connection pool optimization. Keep response brief. Please answer within 10 words. No thinking process."
+            )
             .response_mode("blocking")
             .user("[Example] user-123")
             .build()
@@ -67,9 +69,9 @@ async def async_optimized_client_example():
     """Async example of using optimized connection pools."""
 
     # Get API key from environment
-    api_key = os.getenv("API_KEY")
+    api_key = os.getenv("CHAT_KEY")
     if not api_key:
-        raise ValueError("API_KEY environment variable is required")
+        raise ValueError("CHAT_KEY environment variable is required")
 
     # Create client with conservative connection pool settings
     client = (
@@ -86,7 +88,9 @@ async def async_optimized_client_example():
         req_body = (
             ChatRequestBody.builder()
             .inputs({})
-            .query("[Example] Async connection pool test")
+            .query(
+                "[Example] Async connection pool test. Keep response brief. Please answer within 10 words. No thinking process."
+            )
             .response_mode("blocking")
             .user("[Example] async-user-456")
             .build()
@@ -123,9 +127,9 @@ def high_throughput_example():
     """Example configuration for high-throughput scenarios."""
 
     # Get API key from environment
-    api_key = os.getenv("API_KEY")
+    api_key = os.getenv("CHAT_KEY")
     if not api_key:
-        raise ValueError("API_KEY environment variable is required")
+        raise ValueError("CHAT_KEY environment variable is required")
 
     # High-throughput configuration
     client = (
@@ -152,9 +156,9 @@ def low_resource_example():
     """Example configuration for resource-constrained environments."""
 
     # Get API key from environment
-    api_key = os.getenv("API_KEY")
+    api_key = os.getenv("CHAT_KEY")
     if not api_key:
-        raise ValueError("API_KEY environment variable is required")
+        raise ValueError("CHAT_KEY environment variable is required")
 
     # Low-resource configuration
     client = (
@@ -203,7 +207,7 @@ def main():
     except ValueError as e:
         print(f"Configuration Error: {e}")
         print("Please set the required environment variables:")
-        print("- API_KEY: Your Dify API key")
+        print("- CHAT_KEY: Your Dify Chat API key")
         print("- DOMAIN: Dify API domain (optional, defaults to https://api.dify.ai)")
     except Exception as e:
         print(f"Error: {e}")

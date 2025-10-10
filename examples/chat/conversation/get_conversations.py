@@ -1,7 +1,7 @@
 import asyncio
 import os
 
-from dify_oapi.api.chat.v1.model.get_conversation_list_request import GetConversationsRequest
+from dify_oapi.api.chat.v1.model.get_conversation_list_request import GetConversationsListRequest
 from dify_oapi.client import Client
 from dify_oapi.core.model.request_option import RequestOption
 
@@ -14,7 +14,7 @@ def get_conversations():
 
     client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
-    req = GetConversationsRequest.builder().user("user-123").limit(20).build()
+    req = GetConversationsListRequest.builder().user("user-123").limit(20).build()
     req_option = RequestOption.builder().api_key(api_key).build()
 
     try:
@@ -44,7 +44,7 @@ def get_conversations_sorted():
 
     client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
-    req = GetConversationsRequest.builder().user("user-123").limit(10).sort_by("-created_at").build()
+    req = GetConversationsListRequest.builder().user("user-123").limit(10).sort_by("-created_at").build()
     req_option = RequestOption.builder().api_key(api_key).build()
 
     try:
@@ -69,7 +69,7 @@ def get_conversations_paginated():
 
     client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
-    req_builder = GetConversationsRequest.builder().user("user-123").limit(5)
+    req_builder = GetConversationsListRequest.builder().user("user-123").limit(5)
     if last_id:
         req_builder.last_id(last_id)
     req = req_builder.build()
@@ -92,7 +92,7 @@ async def get_conversations_async():
 
     client = Client.builder().domain(os.getenv("DOMAIN", "https://api.dify.ai")).build()
 
-    req = GetConversationsRequest.builder().user("user-123").limit(20).build()
+    req = GetConversationsListRequest.builder().user("user-123").limit(20).build()
     req_option = RequestOption.builder().api_key(api_key).build()
 
     try:

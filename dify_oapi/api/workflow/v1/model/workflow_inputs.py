@@ -12,6 +12,7 @@ WorkflowInputValue = Union[
     int,  # Integer values
     float,  # Float values
     bool,  # Boolean values
+    WorkflowFileInfo,  # Single file type variable
     list[WorkflowFileInfo],  # File list type variables
     list[str],  # String arrays
     dict[str, Union[str, int, float, bool]],  # Object values

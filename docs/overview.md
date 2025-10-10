@@ -1,231 +1,231 @@
-# Dify-OAPI2 项目概览
+# Dify-OAPI2 Project Overview
 
-## 项目简介
+## Introduction
 
-Dify-OAPI2 是一个现代化的 Python SDK，用于与 Dify Service-API 进行交互。该项目基于 [dify-oapi](https://github.com/QiMington/dify-oapi) 完全重构，采用现代 Python 实践，全面支持最新的 Dify API。
+Dify-OAPI2 is a modern Python SDK for interacting with the Dify Service-API. This project is completely refactored from [dify-oapi](https://github.com/QiMington/dify-oapi), adopting modern Python practices with full support for the latest Dify API.
 
-- **项目名称**: dify-oapi2
-- **版本**: 1.0.1
-- **许可证**: MIT
-- **Python 版本**: 3.10+
+- **Project Name**: dify-oapi2
+- **Version**: 1.0.1
+- **License**: MIT
+- **Python Version**: 3.10+
 - **PyPI**: https://pypi.org/project/dify-oapi2/
-- **源代码**: https://github.com/nodite/dify-oapi2
+- **Source Code**: https://github.com/nodite/dify-oapi2
 
-## 技术栈
+## Technology Stack
 
-### 核心技术
+### Core Technologies
 
-- **编程语言**: Python 3.10+
-- **HTTP 客户端**: httpx (支持同步/异步，带连接池优化)
-- **类型系统**: Pydantic 2.x (数据验证和类型安全)
-- **架构模式**:
-  - Builder 模式 (流式 API 设计)
-  - Service 层模式 (服务分层)
-- **异步支持**: 完整的 async/await 支持，AsyncGenerator 流式响应
+- **Programming Language**: Python 3.10+
+- **HTTP Client**: httpx (sync/async support with connection pooling optimization)
+- **Type System**: Pydantic 2.x (data validation and type safety)
+- **Architecture Patterns**:
+  - Builder Pattern (fluent API design)
+  - Service Layer Pattern (service layering)
+- **Async Support**: Full async/await support with AsyncGenerator streaming
 
-### 开发工具
+### Development Tools
 
-- **代码质量**:
-  - Ruff (^0) - 快速的 Python linter 和 formatter (替代 Black + isort + flake8)
-  - MyPy (^1) - 静态类型检查
-  - Black (^25) - 代码格式化备选
+- **Code Quality**:
+  - Ruff (^0) - Fast Python linter and formatter (replaces Black + isort + flake8)
+  - MyPy (^1) - Static type checking
+  - Black (^25) - Alternative code formatter
 
-- **测试框架**:
-  - pytest (^8) - 测试框架
-  - pytest-asyncio (^1) - 异步测试支持
-  - pytest-env (^1) - 环境变量管理
+- **Testing Framework**:
+  - pytest (^8) - Testing framework
+  - pytest-asyncio (^1) - Async testing support
+  - pytest-env (^1) - Environment variable management
 
-- **开发流程**:
-  - pre-commit (^4) - Git hooks 自动化代码质量检查
-  - commitizen (^4) - 语义化版本控制和 changelog 生成
-  - Poetry - 依赖管理和打包工具
+- **Development Workflow**:
+  - pre-commit (^4) - Git hooks for automated code quality checks
+  - commitizen (^4) - Semantic versioning and changelog generation
+  - Poetry - Dependency management and packaging tool
 
-### 核心依赖
+### Core Dependencies
 
 ```toml
 [tool.poetry.dependencies]
 python = ">=3.10"
-pydantic = "^2"    # 数据验证和类型安全
-httpx = "^0"       # 现代 HTTP 客户端
+pydantic = "^2"    # Data validation and type safety
+httpx = "^0"       # Modern HTTP client
 ```
 
-## 项目结构
+## Project Structure
 
 ```
 dify-oapi2/
-├── dify_oapi/              # 主 SDK 包
+├── dify_oapi/              # Main SDK package
 │   ├── __init__.py
-│   ├── client.py           # 主客户端接口 (Builder 模式)
-│   ├── api/                # API 服务模块
+│   ├── client.py           # Main client interface (Builder pattern)
+│   ├── api/                # API service modules
 │   │   ├── chat/           # Chat API (18 APIs)
-│   │   │   ├── service.py  # 服务层
-│   │   │   └── v1/         # v1 版本实现
-│   │   │       ├── resource/   # 资源层 (annotation, chat, conversation, message)
-│   │   │       └── model/      # 数据模型
+│   │   │   ├── service.py  # Service layer
+│   │   │   └── v1/         # v1 implementation
+│   │   │       ├── resource/   # Resource layer (annotation, chat, conversation, message)
+│   │   │       └── model/      # Data models
 │   │   ├── chatflow/       # Chatflow API (15 APIs)
 │   │   │   ├── service.py
-│   │   │   └── v1/         # 资源: annotation, chatflow, conversation
+│   │   │   └── v1/         # Resources: annotation, chatflow, conversation
 │   │   ├── completion/     # Completion API (10 APIs)
 │   │   │   ├── service.py
-│   │   │   └── v1/         # 资源: annotation, completion
+│   │   │   └── v1/         # Resources: annotation, completion
 │   │   ├── dify/           # Dify Core API (9 APIs)
 │   │   │   ├── service.py
-│   │   │   └── v1/         # 资源: audio, feedback, file, info
+│   │   │   └── v1/         # Resources: audio, feedback, file, info
 │   │   ├── knowledge/      # Knowledge Base API (33 APIs)
 │   │   │   ├── service.py
-│   │   │   └── v1/         # 资源: chunk, dataset, document, model, segment, tag
+│   │   │   └── v1/         # Resources: chunk, dataset, document, model, segment, tag
 │   │   └── workflow/       # Workflow API (4 APIs)
 │   │       ├── service.py
-│   │       └── v1/         # 资源: workflow
-│   └── core/               # 核心功能
-│       ├── http/           # HTTP 传输层
-│       │   └── transport/  # 传输实现
-│       │       ├── sync_transport.py      # 同步传输
-│       │       ├── async_transport.py     # 异步传输
-│       │       ├── connection_pool.py     # 连接池管理
-│       │       └── _misc.py               # 辅助工具
-│       ├── model/          # 基础模型
-│       │   ├── base_request.py    # 请求基类
-│       │   ├── base_response.py   # 响应基类
-│       │   ├── config.py          # 配置模型
-│       │   ├── request_option.py  # 请求选项
-│       │   ├── raw_request.py     # 原始请求
-│       │   └── raw_response.py    # 原始响应
-│       ├── utils/          # 工具函数
-│       │   └── strings.py  # 字符串处理
-│       ├── const.py        # 常量定义
-│       ├── enum.py         # 枚举类型
-│       ├── json.py         # JSON 处理
-│       ├── log.py          # 日志配置
-│       ├── misc.py         # 杂项工具
-│       └── type.py         # 类型定义
-├── docs/                   # 文档
-│   ├── overview.md         # 项目概览 (本文档)
-│   ├── chat/               # Chat API 文档
-│   ├── chatflow/           # Chatflow API 文档
-│   ├── completion/         # Completion API 文档
-│   ├── dify/               # Dify Core API 文档
-│   ├── knowledge/          # Knowledge Base API 文档
-│   └── workflow/           # Workflow API 文档
-├── examples/               # 完整示例代码
-│   ├── README.md           # 示例总览
-│   ├── connection_pool_example.py  # 连接池优化示例
-│   ├── chat/               # Chat API 示例
-│   ├── chatflow/           # Chatflow API 示例
-│   ├── completion/         # Completion API 示例
-│   ├── dify/               # Dify Core API 示例
-│   ├── knowledge/          # Knowledge Base API 示例
-│   └── workflow/           # Workflow API 示例
-├── tests/                  # 测试套件
-│   ├── conftest.py         # pytest 配置
-│   ├── test_client.py      # 客户端测试
-│   ├── chat/               # Chat API 测试
-│   ├── chatflow/           # Chatflow API 测试
-│   ├── completion/         # Completion API 测试
-│   ├── dify/               # Dify Core API 测试
-│   ├── knowledge/          # Knowledge Base API 测试
-│   ├── workflow/           # Workflow API 测试
-│   ├── core/               # 核心功能测试
+│   │       └── v1/         # Resources: workflow
+│   └── core/               # Core functionality
+│       ├── http/           # HTTP transport layer
+│       │   └── transport/  # Transport implementations
+│       │       ├── sync_transport.py      # Synchronous transport
+│       │       ├── async_transport.py     # Asynchronous transport
+│       │       ├── connection_pool.py     # Connection pool management
+│       │       └── _misc.py               # Helper utilities
+│       ├── model/          # Base models
+│       │   ├── base_request.py    # Request base class
+│       │   ├── base_response.py   # Response base class
+│       │   ├── config.py          # Configuration model
+│       │   ├── request_option.py  # Request options
+│       │   ├── raw_request.py     # Raw request
+│       │   └── raw_response.py    # Raw response
+│       ├── utils/          # Utility functions
+│       │   └── strings.py  # String processing
+│       ├── const.py        # Constants
+│       ├── enum.py         # Enumerations
+│       ├── json.py         # JSON handling
+│       ├── log.py          # Logging configuration
+│       ├── misc.py         # Miscellaneous utilities
+│       └── type.py         # Type definitions
+├── docs/                   # Documentation
+│   ├── overview.md         # Project overview (this document)
+│   ├── chat/               # Chat API documentation
+│   ├── chatflow/           # Chatflow API documentation
+│   ├── completion/         # Completion API documentation
+│   ├── dify/               # Dify Core API documentation
+│   ├── knowledge/          # Knowledge Base API documentation
+│   └── workflow/           # Workflow API documentation
+├── examples/               # Complete example code
+│   ├── README.md           # Examples overview
+│   ├── connection_pool_example.py  # Connection pool optimization example
+│   ├── chat/               # Chat API examples
+│   ├── chatflow/           # Chatflow API examples
+│   ├── completion/         # Completion API examples
+│   ├── dify/               # Dify Core API examples
+│   ├── knowledge/          # Knowledge Base API examples
+│   └── workflow/           # Workflow API examples
+├── tests/                  # Test suite
+│   ├── conftest.py         # pytest configuration
+│   ├── test_client.py      # Client tests
+│   ├── chat/               # Chat API tests
+│   ├── chatflow/           # Chatflow API tests
+│   ├── completion/         # Completion API tests
+│   ├── dify/               # Dify Core API tests
+│   ├── knowledge/          # Knowledge Base API tests
+│   ├── workflow/           # Workflow API tests
+│   ├── core/               # Core functionality tests
 │   │   ├── test_config.py
 │   │   ├── test_error_handling.py
 │   │   └── test_streaming.py
-│   └── integration/        # 集成测试
+│   └── integration/        # Integration tests
 │       ├── test_edge_cases.py
 │       ├── test_end_to_end.py
 │       └── test_performance.py
-├── pyproject.toml          # 项目配置 (Poetry + 工具配置)
-├── poetry.lock             # 依赖锁定文件
-├── poetry.toml             # Poetry 配置
-├── Makefile                # 开发自动化
-├── .pre-commit-config.yaml # Pre-commit hooks 配置
-├── .editorconfig           # 编辑器配置
-├── .gitignore              # Git 忽略文件
-├── README.md               # 项目说明
-├── DEVELOPMENT.md          # 开发指南
-├── LICENSE                 # MIT 许可证
-└── MANIFEST.in             # 打包清单
+├── pyproject.toml          # Project configuration (Poetry + tools)
+├── poetry.lock             # Dependency lock file
+├── poetry.toml             # Poetry configuration
+├── Makefile                # Development automation
+├── .pre-commit-config.yaml # Pre-commit hooks configuration
+├── .editorconfig           # Editor configuration
+├── .gitignore              # Git ignore file
+├── README.md               # Project README
+├── DEVELOPMENT.md          # Development guide
+├── LICENSE                 # MIT License
+└── MANIFEST.in             # Package manifest
 ```
 
-## API 服务模块
+## API Service Modules
 
 ### 1. Chat API (18 APIs)
 
-**资源**: annotation (6), chat (3), conversation (6), message (3)
+**Resources**: annotation (6), chat (3), conversation (6), message (3)
 
-**功能特性**:
-- 交互式对话: 发送消息，支持阻塞/流式响应
-- 会话管理: 完整的会话生命周期操作
-- 标注系统: 创建、更新、删除标注，配置回复设置
-- 消息操作: 基础消息处理和历史记录检索
-- 流式支持: 实时流式聊天响应
-- 类型安全: 全面的类型提示，严格的 Literal 类型
+**Features**:
+- Interactive Chat: Send messages with blocking/streaming responses
+- Conversation Management: Complete conversation lifecycle operations
+- Annotation System: Create, update, delete annotations with reply settings
+- Message Operations: Basic message handling and history retrieval
+- Streaming Support: Real-time streaming for chat responses
+- Type Safety: Comprehensive type hints with strict Literal types
 
 ### 2. Chatflow API (15 APIs)
 
-**资源**: annotation (6), chatflow (3), conversation (6)
+**Resources**: annotation (6), chatflow (3), conversation (6)
 
-**功能特性**:
-- 增强聊天: 高级聊天功能，支持工作流事件
-- 会话管理: 完整的会话操作，支持变量
-- 标注系统: 完整的标注管理和回复配置
-- 工作流集成: 与工作流事件无缝集成
-- 事件流: 实时流式传输，全面的事件处理
-- 类型安全: 所有预定义值使用严格的 Literal 类型
+**Features**:
+- Enhanced Chat: Advanced chat functionality with workflow events
+- Conversation Management: Complete conversation operations with variables
+- Annotation System: Full annotation management and reply configuration
+- Workflow Integration: Seamless integration with workflow events
+- Event Streaming: Real-time streaming with comprehensive event handling
+- Type Safety: Strict Literal types for all predefined values
 
 ### 3. Completion API (10 APIs)
 
-**资源**: annotation (6), completion (4)
+**Resources**: annotation (6), completion (4)
 
-**功能特性**:
-- 文本生成: 高级文本补全和生成
-- 消息处理: 发送消息并控制文本生成
-- 标注管理: 创建、更新和管理标注
-- 生成控制: 停止正在进行的文本生成过程
-- 流式支持: 实时文本生成，支持流式响应
-- 类型安全: 使用 Pydantic 模型进行完整类型验证
+**Features**:
+- Text Generation: Advanced text completion and generation
+- Message Processing: Send messages and control text generation
+- Annotation Management: Create, update, and manage annotations
+- Generation Control: Stop ongoing text generation processes
+- Streaming Support: Real-time text generation with streaming responses
+- Type Safety: Full type validation with Pydantic models
 
 ### 4. Knowledge Base API (33 APIs)
 
-**资源**: chunk (4), dataset (6), document (10), model (1), segment (5), tag (7)
+**Resources**: chunk (4), dataset (6), document (10), model (1), segment (5), tag (7)
 
-**功能特性**:
-- 数据集管理: 完整的数据集 CRUD 操作和内容检索
-- 文档处理: 文件上传、文本处理和批量管理
-- 内容组织: 细粒度的分段和块管理
-- 标签系统: 灵活的标签和分类系统
-- 模型集成: 嵌入模型信息和配置
-- 搜索检索: 高级搜索，支持多种检索策略
+**Features**:
+- Dataset Management: Complete dataset CRUD operations and content retrieval
+- Document Processing: File upload, text processing, and batch management
+- Content Organization: Fine-grained segmentation and chunk management
+- Tag System: Flexible tagging and categorization system
+- Model Integration: Embedding model information and configuration
+- Search & Retrieval: Advanced search with multiple retrieval strategies
 
 ### 5. Workflow API (4 APIs)
 
-**资源**: workflow (4)
+**Resources**: workflow (4)
 
-**功能特性**:
-- 工作流执行: 运行工作流，支持阻塞或流式响应
-- 执行控制: 停止运行中的工作流并监控进度
-- 日志管理: 检索详细的执行日志和运行详情
-- 参数支持: 灵活的工作流参数配置
+**Features**:
+- Workflow Execution: Run workflows with blocking or streaming responses
+- Execution Control: Stop running workflows and monitor progress
+- Log Management: Retrieve detailed execution logs and run details
+- Parameter Support: Flexible workflow parameter configuration
 
 ### 6. Dify Core API (9 APIs)
 
-**资源**: audio (2), feedback (2), file (1), info (4)
+**Resources**: audio (2), feedback (2), file (1), info (4)
 
-**功能特性**:
-- 音频处理: 语音转文本和文本转语音转换
-- 反馈系统: 提交和检索用户反馈
-- 文件管理: 统一的文件上传和处理
-- 应用信息: 应用配置、参数和元数据访问
+**Features**:
+- Audio Processing: Speech-to-text and text-to-speech conversion
+- Feedback System: Submit and retrieve user feedback
+- File Management: Unified file upload and processing
+- Application Info: App configuration, parameters, and metadata access
 
-**总计**: 89 个 API 方法，覆盖 6 个服务
+**Total**: 89 API methods across 6 services
 
-## 核心架构设计
+## Core Architecture Design
 
-### 1. Builder 模式
+### 1. Builder Pattern
 
-客户端和请求对象都采用 Builder 模式，提供流式、可链式调用的接口:
+Both client and request objects use the Builder pattern, providing a fluent, chainable interface:
 
 ```python
-# 客户端构建
+# Client building
 client = (
     Client.builder()
     .domain("https://api.dify.ai")
@@ -235,7 +235,7 @@ client = (
     .build()
 )
 
-# 请求构建
+# Request building
 request = (
     ChatRequest.builder()
     .query("Hello")
@@ -244,56 +244,56 @@ request = (
 )
 ```
 
-### 2. 连接池优化
+### 2. Connection Pool Optimization
 
-使用 httpx 的连接池功能，优化 TCP 连接复用，减少资源开销:
+Uses httpx's connection pooling to optimize TCP connection reuse and reduce resource overhead:
 
 ```python
-# 配置参数
-max_keepalive_connections: int = 20  # 每个池的最大保活连接数
-max_connections: int = 100           # 每个池的最大总连接数
-keepalive_expiry: float = 30.0      # 保活连接过期时间(秒)
+# Configuration parameters
+max_keepalive_connections: int = 20  # Max keepalive connections per pool
+max_connections: int = 100           # Max total connections per pool
+keepalive_expiry: float = 30.0      # Keepalive connection expiry time (seconds)
 ```
 
-### 3. 同步/异步支持
+### 3. Sync/Async Support
 
-完整支持同步和异步操作:
+Full support for both synchronous and asynchronous operations:
 
 ```python
-# 同步
+# Synchronous
 response = client.chat.chat(request, request_option)
 
-# 异步
+# Asynchronous
 response = await client.chat.achat(request, request_option)
 
-# 流式同步
+# Streaming synchronous
 for chunk in client.chat.chat_stream(request, request_option):
     print(chunk)
 
-# 流式异步
+# Streaming asynchronous
 async for chunk in client.chat.achat_stream(request, request_option):
     print(chunk)
 ```
 
-### 4. 类型安全
+### 4. Type Safety
 
-使用 Pydantic 2.x 进行全面的类型验证:
+Comprehensive type validation using Pydantic 2.x:
 
-- 所有请求/响应模型都有完整的类型提示
-- 使用 Literal 类型定义预定义值
-- MyPy 静态类型检查确保类型安全
+- All request/response models have complete type hints
+- Literal types for predefined values
+- MyPy static type checking ensures type safety
 
-### 5. 错误处理
+### 5. Error Handling
 
-统一的错误处理机制:
+Unified error handling mechanism:
 
-- HTTP 错误自动重试 (可配置重试次数)
-- 详细的错误信息和日志
-- 异常类型层次结构
+- Automatic HTTP error retry (configurable retry count)
+- Detailed error messages and logging
+- Exception type hierarchy
 
-## 开发工具配置
+## Development Tools Configuration
 
-### Ruff 配置
+### Ruff Configuration
 
 ```toml
 [tool.ruff]
@@ -309,7 +309,7 @@ quote-style = "double"
 indent-style = "space"
 ```
 
-### MyPy 配置
+### MyPy Configuration
 
 ```toml
 [tool.mypy]
@@ -322,7 +322,7 @@ warn_return_any = true
 warn_unreachable = true
 ```
 
-### Pytest 配置
+### Pytest Configuration
 
 ```toml
 [tool.pytest.ini_options]
@@ -332,120 +332,120 @@ python_files = ["test_*.py"]
 addopts = ["--strict-markers", "--strict-config", "-ra"]
 ```
 
-## 开发流程
+## Development Workflow
 
-### 环境设置
+### Environment Setup
 
 ```bash
-# 克隆仓库
+# Clone repository
 git clone https://github.com/nodite/dify-oapi2.git
 cd dify-oapi2
 
-# 设置开发环境 (安装依赖和 pre-commit hooks)
+# Setup development environment (install dependencies and pre-commit hooks)
 make dev-setup
 ```
 
-### 代码质量检查
+### Code Quality Checks
 
 ```bash
-# 格式化代码
+# Format code
 make format
 
-# 检查代码规范
+# Check code style
 make lint
 
-# 修复可自动修复的问题
+# Fix auto-fixable issues
 make fix
 
-# 运行所有检查 (lint + 类型检查)
+# Run all checks (lint + type check)
 make check
 
-# 运行 pre-commit hooks
+# Run pre-commit hooks
 make pre-commit
 ```
 
-### 测试
+### Testing
 
 ```bash
-# 设置环境变量
+# Set environment variables
 export DOMAIN="https://api.dify.ai"
 export CHAT_KEY="your-chat-api-key"
 export KNOWLEDGE_KEY="your-knowledge-api-key"
 
-# 运行测试
+# Run tests
 make test
 
-# 运行测试并生成覆盖率报告
+# Run tests with coverage
 make test-cov
 
-# 运行特定模块测试
+# Run specific module tests
 poetry run pytest tests/knowledge/ -v
 ```
 
-### 构建和发布
+### Build and Publish
 
 ```bash
-# 配置 PyPI tokens (一次性设置)
+# Configure PyPI tokens (one-time setup)
 poetry config http-basic.testpypi __token__ <your-testpypi-token>
 poetry config http-basic.pypi __token__ <your-pypi-token>
 
-# 构建包
+# Build package
 make build
 
-# 发布到 TestPyPI (测试用)
+# Publish to TestPyPI (for testing)
 make publish-test
 
-# 发布到 PyPI (仅维护者)
+# Publish to PyPI (maintainers only)
 make publish
 ```
 
-## 主要特性
+## Key Features
 
-### 1. 完整的 API 覆盖
+### 1. Complete API Coverage
 
-- 89 个 API 方法
-- 6 个主要服务
-- 20+ 个资源类型
-- 完整的 CRUD 操作
+- 89 API methods
+- 6 major services
+- 20+ resource types
+- Complete CRUD operations
 
-### 2. 现代 Python 实践
+### 2. Modern Python Practices
 
-- Python 3.10+ 特性
-- 类型提示和验证
-- 异步/同步双支持
-- Builder 模式设计
+- Python 3.10+ features
+- Type hints and validation
+- Async/sync dual support
+- Builder pattern design
 
-### 3. 性能优化
+### 3. Performance Optimization
 
-- HTTP 连接池
-- TCP 连接复用
-- 可配置的超时和重试
-- 流式响应支持
+- HTTP connection pooling
+- TCP connection reuse
+- Configurable timeout and retry
+- Streaming response support
 
-### 4. 开发者友好
+### 4. Developer Friendly
 
-- 流式 API 设计
-- 完整的文档和示例
-- 全面的测试覆盖
-- 自动化开发工具
+- Fluent API design
+- Complete documentation and examples
+- Comprehensive test coverage
+- Automated development tools
 
-### 5. 生产就绪
+### 5. Production Ready
 
-- 严格的类型检查
-- 全面的错误处理
-- 日志和监控支持
-- SSL/TLS 支持
+- Strict type checking
+- Comprehensive error handling
+- Logging and monitoring support
+- SSL/TLS support
 
-## 使用示例
+## Usage Examples
 
-### 基础用法
+### Basic Usage
 
 ```python
 from dify_oapi.client import Client
 from dify_oapi.core.model.request_option import RequestOption
 from dify_oapi.api.chat.v1.model.chat_request import ChatRequest
 
-# 初始化客户端
+# Initialize client
 client = (
     Client.builder()
     .domain("https://api.dify.ai")
@@ -454,10 +454,10 @@ client = (
     .build()
 )
 
-# 创建请求选项
+# Create request options
 req_option = RequestOption.builder().api_key("your-api-key").build()
 
-# 使用 Chat API
+# Use Chat API
 response = client.chat.chat(
     request=ChatRequest.builder()
     .query("Hello, how are you?")
@@ -469,26 +469,26 @@ response = client.chat.chat(
 print(response.answer)
 ```
 
-### 流式响应
+### Streaming Response
 
 ```python
-# 同步流式
+# Synchronous streaming
 for event in client.chat.chat_stream(request, req_option):
     if event.event == "message":
         print(event.answer, end="", flush=True)
 
-# 异步流式
+# Asynchronous streaming
 async for event in client.chat.achat_stream(request, req_option):
     if event.event == "message":
         print(event.answer, end="", flush=True)
 ```
 
-### 文件上传
+### File Upload
 
 ```python
 from dify_oapi.api.dify.v1.model.file_upload_request import FileUploadRequest
 
-# 上传文件
+# Upload file
 with open("document.pdf", "rb") as f:
     response = client.dify.file_upload(
         request=FileUploadRequest.builder()
@@ -499,63 +499,63 @@ with open("document.pdf", "rb") as f:
     )
 ```
 
-## 测试覆盖
+## Test Coverage
 
-### 单元测试
+### Unit Tests
 
-- 核心功能测试 (config, error_handling, streaming)
-- 各服务 API 测试
-- 模型验证测试
+- Core functionality tests (config, error_handling, streaming)
+- Service API tests
+- Model validation tests
 
-### 集成测试
+### Integration Tests
 
-- 端到端测试
-- 边缘情况测试
-- 性能测试
+- End-to-end tests
+- Edge case tests
+- Performance tests
 
-### 测试结构
+### Test Structure
 
 ```
 tests/
-├── chat/           # Chat API 测试 (18 APIs)
-├── chatflow/       # Chatflow API 测试 (15 APIs)
-├── completion/     # Completion API 测试 (10 APIs)
-├── dify/           # Dify Core API 测试 (9 APIs)
-├── knowledge/      # Knowledge Base API 测试 (33 APIs)
-├── workflow/       # Workflow API 测试 (4 APIs)
-├── core/           # 核心功能测试
-└── integration/    # 集成测试
+├── chat/           # Chat API tests (18 APIs)
+├── chatflow/       # Chatflow API tests (15 APIs)
+├── completion/     # Completion API tests (10 APIs)
+├── dify/           # Dify Core API tests (9 APIs)
+├── knowledge/      # Knowledge Base API tests (33 APIs)
+├── workflow/       # Workflow API tests (4 APIs)
+├── core/           # Core functionality tests
+└── integration/    # Integration tests
 ```
 
-## 文档资源
+## Documentation Resources
 
-- **README.md**: 项目说明和快速开始
-- **DEVELOPMENT.md**: 开发指南和工作流程
-- **docs/**: API 文档和使用指南
-- **examples/**: 完整的示例代码集合
+- **README.md**: Project description and quick start
+- **DEVELOPMENT.md**: Development guide and workflow
+- **docs/**: API documentation and usage guides
+- **examples/**: Complete example code collection
 
-## 贡献指南
+## Contributing
 
-1. Fork 仓库
-2. 创建特性分支 (`git checkout -b feature/amazing-feature`)
-3. 编写代码和测试
-4. 确保代码质量通过 (`make check`)
-5. 运行完整测试套件 (`make test`)
-6. 提交更改 (`git commit -m 'Add amazing feature'`)
-7. 推送到分支 (`git push origin feature/amazing-feature`)
-8. 提交 Pull Request
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Write code and tests
+4. Ensure code quality passes (`make check`)
+5. Run full test suite (`make test`)
+6. Commit changes (`git commit -m 'Add amazing feature'`)
+7. Push to branch (`git push origin feature/amazing-feature`)
+8. Submit a Pull Request
 
-## 许可证
+## License
 
-MIT License - 详见 [LICENSE](../LICENSE) 文件
+MIT License - see [LICENSE](../LICENSE) file for details
 
-## 相关链接
+## Related Links
 
-- **PyPI 包**: https://pypi.org/project/dify-oapi2/
-- **源代码**: https://github.com/nodite/dify-oapi2
-- **Dify 平台**: https://dify.ai/
-- **Dify API 文档**: https://docs.dify.ai/
+- **PyPI Package**: https://pypi.org/project/dify-oapi2/
+- **Source Code**: https://github.com/nodite/dify-oapi2
+- **Dify Platform**: https://dify.ai/
+- **Dify API Docs**: https://docs.dify.ai/
 
-## 关键词
+## Keywords
 
 dify, ai, nlp, language-processing, python-sdk, async, type-safe, api-client

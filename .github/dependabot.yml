@@ -33,10 +33,10 @@ updates:
           - "minor"
           - "patch"
     # Ignore specific dependencies if needed
-    ignore:
-      # Example: ignore major version updates for stable dependencies
-      # - dependency-name: "pydantic"
-      #   update-types: ["version-update:semver-major"]
+    # ignore:
+    # Example: ignore major version updates for stable dependencies
+    # - dependency-name: "pydantic"
+    #   update-types: ["version-update:semver-major"]
 
   # GitHub Actions
   - package-ecosystem: "github-actions"

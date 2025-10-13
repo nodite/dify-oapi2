@@ -337,22 +337,21 @@ dify-oapi2/
 Contributions are welcome! Please follow our development workflow:
 
 1. Fork the repository
-2. Clone and checkout the `develop` branch (`git checkout develop`)
-3. Create a feature branch from `develop` (`git checkout -b feature/amazing-feature`)
+2. Clone and checkout the `main` branch (`git checkout main`)
+3. Create a feature branch from `main` (`git checkout -b feature/amazing-feature`)
 4. Make your changes with comprehensive tests
 5. Ensure code quality passes (`make check`)
 6. Run the full test suite (`make test`)
 7. Commit your changes (`git commit -m 'Add amazing feature'`)
 8. Push to the branch (`git push origin feature/amazing-feature`)
-9. Submit a pull request to the `develop` branch (not `main`)
+9. Submit a pull request to the `main` branch
 
 ### Branch Strategy
 
--   `main` - Production-ready code, stable releases only
--   `develop` - Active development branch, **all PRs should target this branch**
--   `feature/*` - Feature branches, created from and merged back to `develop`
--   `bugfix/*` - Bug fix branches, created from and merged back to `develop`
--   `hotfix/*` - Urgent fixes, may be created from `main` and merged to both `main` and `develop`
+-   `main` - Main development branch, **all development and PRs are based on this branch**
+-   `feature/*` - Feature branches, created from and merged back to `main`
+-   `bugfix/*` - Bug fix branches, created from and merged back to `main`
+-   `hotfix/*` - Urgent fixes, created from and merged back to `main`
 
 See [DEVELOPMENT.md](./DEVELOPMENT.md) for detailed development guidelines.
 

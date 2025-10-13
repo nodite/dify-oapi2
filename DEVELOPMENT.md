@@ -167,11 +167,11 @@ make pre-commit
 ### 1. Before Starting Work
 
 ```bash
-# Pull latest changes from develop branch
-git checkout develop
-git pull origin develop
+# Pull latest changes from main branch
+git checkout main
+git pull origin main
 
-# Create a feature branch from develop
+# Create a feature branch from main
 git checkout -b feature/your-feature-name
 
 # Install/update dependencies
@@ -210,7 +210,7 @@ git push origin feature/your-feature-name
 
 ### 5. Create Pull Request
 
--   Create a Pull Request from your feature branch to the `develop` branch (not `main`)
+-   Create a Pull Request from your feature branch to the `main` branch
 -   Ensure all CI checks pass
 -   Request review from maintainers
 -   Address any feedback
@@ -300,18 +300,17 @@ make install
 ## Contributing
 
 1. Fork the repository
-2. Create a feature branch from `develop` branch
+2. Create a feature branch from `main` branch
 3. Follow the development workflow above
 4. Ensure all tests pass and code is properly formatted
-5. Submit a pull request to the `develop` branch (not `main`)
+5. Submit a pull request to the `main` branch
 
 ### Branch Strategy
 
--   `main` - Production-ready code, stable releases only
--   `develop` - Active development branch, all PRs should target this branch
--   `feature/*` - Feature branches, created from and merged back to `develop`
--   `bugfix/*` - Bug fix branches, created from and merged back to `develop`
--   `hotfix/*` - Urgent fixes, may be created from `main` and merged to both `main` and `develop`
+-   `main` - Main development branch, all development and PRs are based on this branch
+-   `feature/*` - Feature branches, created from and merged back to `main`
+-   `bugfix/*` - Bug fix branches, created from and merged back to `main`
+-   `hotfix/*` - Urgent fixes, created from and merged back to `main`
 
 ## Project Architecture
 

@@ -9,12 +9,7 @@ updates:
       time: "09:00"
       timezone: "Asia/Shanghai"
     open-pull-requests-limit: 10
-    reviewers:
-      - "nodite/dify-oapi2-maintainers"
-    assignees:
-      - "nodite/dify-oapi2-maintainers"
     labels:
-      - "dependencies"
       - "python"
     commit-message:
       prefix: "chore"
@@ -47,13 +42,6 @@ updates:
       time: "09:00"
       timezone: "Asia/Shanghai"
     open-pull-requests-limit: 5
-    reviewers:
-      - "nodite/dify-oapi2-maintainers"
-    assignees:
-      - "nodite/dify-oapi2-maintainers"
-    labels:
-      - "dependencies"
-      - "github-actions"
     commit-message:
       prefix: "ci"
       include: "scope"

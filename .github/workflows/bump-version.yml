@@ -4,43 +4,45 @@ on:
   workflow_dispatch:
     inputs:
       version_type:
-        description: 'Version bump type'
+        description: "Version bump type"
         required: true
-        default: 'patch'
+        default: "patch"
         type: choice
         options:
-        - patch
-        - minor
-        - major
+          - patch
+          - minor
+          - major
 
 jobs:
   bump:
     runs-on: ubuntu-latest
-    
+    # Only allow execution on release branch
+    if: github.ref == 'refs/heads/release'
+
     steps:
-    - uses: actions/checkout@v5
-      with:
-        token: ${{ secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}
+      - uses: actions/checkout@v5
+        with:
+          token: ${{ secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}
 
-    - name: Set up Python
-      uses: actions/setup-python@v6
-      with:
-        python-version: "3.11"
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
 
-    - name: Install Poetry
-      uses: snok/install-poetry@v1
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
 
-    - name: Bump version
-      run: poetry version ${{ github.event.inputs.version_type }}
+      - name: Bump version
+        run: poetry version ${{ github.event.inputs.version_type }}
 
-    - name: Get new version
-      id: version
-      run: echo "version=$(poetry version -s)" >> $GITHUB_OUTPUT
+      - name: Get new version
+        id: version
+        run: echo "version=$(poetry version -s)" >> $GITHUB_OUTPUT
 
-    - name: Commit and push
-      run: |
-        git config user.name github-actions
-        git config user.email github-actions@github.com
-        git add pyproject.toml
-        git commit -m "chore: bump version to v${{ steps.version.outputs.version }}"
-        git push
+      - name: Commit and push
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add pyproject.toml
+          git commit -m "chore: bump version to v${{ steps.version.outputs.version }}"
+          git push

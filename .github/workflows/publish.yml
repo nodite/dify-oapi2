@@ -7,55 +7,57 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
+    # Only allow releases created from release branch to trigger publish
+    if: startsWith(github.event.release.target_commitish, 'release/')
 
     steps:
-    - uses: actions/checkout@v5
-      with:
-        token: ${{ secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}
+      - uses: actions/checkout@v5
+        with:
+          token: ${{ secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}
 
-    - name: Set up Python
-      uses: actions/setup-python@v6
-      with:
-        python-version: "3.11"
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
 
-    - name: Install Poetry
-      uses: snok/install-poetry@v1
-      with:
-        version: latest
-        virtualenvs-create: true
-        virtualenvs-in-project: true
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          version: latest
+          virtualenvs-create: true
+          virtualenvs-in-project: true
 
-    - name: Install dependencies
-      run: poetry install --with dev,format
+      - name: Install dependencies
+        run: poetry install --with dev,format
 
-    - name: Run tests
-      run: |
-        poetry run ruff check .
-        poetry run mypy .
-        poetry run pytest tests/ -v --tb=short
-      env:
-        # Integration tests will be skipped if API keys are not provided
-        DOMAIN: ${{ secrets.DOMAIN }}
-        CHAT_KEY: ${{ secrets.CHAT_KEY }}
-        COMPLETION_KEY: ${{ secrets.COMPLETION_KEY }}
-        APP_KEY: ${{ secrets.APP_KEY }}
-        WORKFLOW_KEY: ${{ secrets.WORKFLOW_KEY }}
+      - name: Run tests
+        run: |
+          poetry run ruff check .
+          poetry run mypy .
+          poetry run pytest tests/ -v --tb=short
+        env:
+          # Integration tests will be skipped if API keys are not provided
+          DOMAIN: ${{ secrets.DOMAIN }}
+          CHAT_KEY: ${{ secrets.CHAT_KEY }}
+          COMPLETION_KEY: ${{ secrets.COMPLETION_KEY }}
+          APP_KEY: ${{ secrets.APP_KEY }}
+          WORKFLOW_KEY: ${{ secrets.WORKFLOW_KEY }}
 
-    - name: Build package
-      run: poetry build
+      - name: Build package
+        run: poetry build
 
-    - name: Publish to PyPI
-      run: poetry publish
-      env:
-        POETRY_PYPI_TOKEN_PYPI: ${{ secrets.PYPI_TOKEN }}
+      - name: Publish to PyPI
+        run: poetry publish
+        env:
+          POETRY_PYPI_TOKEN_PYPI: ${{ secrets.PYPI_TOKEN }}
 
-    - name: Create PR to sync main to develop
-      run: |
-        gh pr create \
-          --base develop \
-          --head main \
-          --title "Sync main to develop after release" \
-          --body "Auto-generated PR to sync main branch changes back to develop after release." \
-          || echo "PR already exists or no changes to sync"
-      env:
-        GH_TOKEN: ${{ secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}
+      - name: Create PR to sync release to main
+        run: |
+          gh pr create \
+            --base main \
+            --head release \
+            --title "Sync release to main after publish" \
+            --body "Auto-generated PR to sync release branch changes back to main after publish." \
+            || echo "PR already exists or no changes to sync"
+        env:
+          GH_TOKEN: ${{ secrets.PAT_TOKEN || secrets.GITHUB_TOKEN }}

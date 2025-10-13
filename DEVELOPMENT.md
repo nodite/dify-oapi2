@@ -4,9 +4,9 @@ This guide covers the development setup and workflow for the dify-oapi2 project.
 
 ## Prerequisites
 
-- Python 3.10+
-- Poetry
-- VS Code (recommended)
+-   Python 3.10+
+-   Poetry
+-   VS Code (recommended)
 
 ## Development Setup
 
@@ -19,9 +19,10 @@ make dev-setup
 ```
 
 This will:
-- Install all dependencies (including dev and format groups)
-- Install pre-commit hooks
-- Set up the development environment
+
+-   Install all dependencies (including dev and format groups)
+-   Install pre-commit hooks
+-   Set up the development environment
 
 ### Manual Pre-commit Setup
 
@@ -42,9 +43,9 @@ If you're using VS Code, install the recommended extensions:
 
 #### Recommended Extensions
 
-- **Ruff** (`charliermarsh.ruff`) - Primary linter and formatter
-- **Python** (`ms-python.python`) - Python language support
-- **Pylance** (`ms-python.vscode-pylance`) - Python language server
+-   **Ruff** (`charliermarsh.ruff`) - Primary linter and formatter
+-   **Python** (`ms-python.python`) - Python language support
+-   **Pylance** (`ms-python.vscode-pylance`) - Python language server
 
 ## Code Formatting and Linting
 
@@ -52,8 +53,8 @@ This project uses **Ruff** for both linting and formatting, configured to be com
 
 ### Automatic Formatting
 
-- **VS Code**: Files are automatically formatted on save
-- **Pre-commit**: Code is automatically formatted before each commit
+-   **VS Code**: Files are automatically formatted on save
+-   **Pre-commit**: Code is automatically formatted before each commit
 
 ### Manual Commands
 
@@ -151,9 +152,9 @@ make check
 
 Pre-commit hooks are automatically installed during setup and will run:
 
-- Ruff formatting
-- Ruff linting with auto-fix
-- Pylint checks
+-   Ruff formatting
+-   Ruff linting with auto-fix
+-   Pylint checks
 
 To run pre-commit manually:
 
@@ -166,8 +167,12 @@ make pre-commit
 ### 1. Before Starting Work
 
 ```bash
-# Pull latest changes
+# Pull latest changes from main branch
+git checkout main
 git pull origin main
+
+# Create a feature branch from main
+git checkout -b feature/your-feature-name
 
 # Install/update dependencies
 make install
@@ -175,9 +180,9 @@ make install
 
 ### 2. During Development
 
-- Code is automatically formatted on save in VS Code
-- Run tests frequently: `make test`
-- Check for issues: `make check`
+-   Code is automatically formatted on save in VS Code
+-   Run tests frequently: `make test`
+-   Check for issues: `make check`
 
 ### 3. Before Committing
 
@@ -200,8 +205,15 @@ make pre-commit
 ```bash
 git add .
 git commit -m "Your commit message"
-git push origin your-branch
+git push origin feature/your-feature-name
 ```
+
+### 5. Create Pull Request
+
+-   Create a Pull Request from your feature branch to the `main` branch
+-   Ensure all CI checks pass
+-   Request review from maintainers
+-   Address any feedback
 
 ## Publishing Configuration
 
@@ -226,35 +238,36 @@ make help
 ```
 
 Common commands:
-- `make dev-setup` - Setup development environment
-- `make install` - Install dependencies
-- `make format` - Format code with ruff
-- `make lint` - Lint code with ruff
-- `make fix` - Fix linting issues with ruff
-- `make check` - Run all checks (lint + type check)
-- `make test` - Run tests
-- `make test-cov` - Run tests with coverage
-- `make clean` - Clean build artifacts
-- `make build` - Build package
-- `make publish` - Build and publish package to PyPI
-- `make publish-test` - Build and publish package to TestPyPI
-- `make pre-commit` - Run pre-commit hooks
-- `make install-hooks` - Install pre-commit hooks
+
+-   `make dev-setup` - Setup development environment
+-   `make install` - Install dependencies
+-   `make format` - Format code with ruff
+-   `make lint` - Lint code with ruff
+-   `make fix` - Fix linting issues with ruff
+-   `make check` - Run all checks (lint + type check)
+-   `make test` - Run tests
+-   `make test-cov` - Run tests with coverage
+-   `make clean` - Clean build artifacts
+-   `make build` - Build package
+-   `make publish` - Build and publish package to PyPI
+-   `make publish-test` - Build and publish package to TestPyPI
+-   `make pre-commit` - Run pre-commit hooks
+-   `make install-hooks` - Install pre-commit hooks
 
 ## VS Code Configuration
 
 The project includes VS Code configuration in `.vscode/`:
 
-- `settings.json` - Workspace settings with Ruff integration
-- `extensions.json` - Recommended extensions
-- `tasks.json` - Quick tasks for formatting, linting, and testing
+-   `settings.json` - Workspace settings with Ruff integration
+-   `extensions.json` - Recommended extensions
+-   `tasks.json` - Quick tasks for formatting, linting, and testing
 
 ### Key VS Code Features
 
-- **Format on Save**: Automatically formats Python files using Ruff
-- **Auto Import Organization**: Organizes imports on save
-- **Auto Fix**: Fixes linting issues on save
-- **Integrated Terminal**: Pre-configured for Poetry environment
+-   **Format on Save**: Automatically formats Python files using Ruff
+-   **Auto Import Organization**: Organizes imports on save
+-   **Auto Fix**: Fixes linting issues on save
+-   **Integrated Terminal**: Pre-configured for Poetry environment
 
 ## Troubleshooting
 
@@ -287,10 +300,17 @@ make install
 ## Contributing
 
 1. Fork the repository
-2. Create a feature branch
+2. Create a feature branch from `main` branch
 3. Follow the development workflow above
 4. Ensure all tests pass and code is properly formatted
-5. Submit a pull request
+5. Submit a pull request to the `main` branch
+
+### Branch Strategy
+
+-   `main` - Main development branch, all development and PRs are based on this branch
+-   `feature/*` - Feature branches, created from and merged back to `main`
+-   `bugfix/*` - Bug fix branches, created from and merged back to `main`
+-   `hotfix/*` - Urgent fixes, created from and merged back to `main`
 
 ## Project Architecture
 
@@ -298,39 +318,39 @@ make install
 
 The SDK provides comprehensive coverage of Dify's API services with **91 total API methods**:
 
-- **Chat API (18 APIs)**: Interactive conversations, file management, feedback, annotation management
-  - Resources: annotation, chat, conversation, message
-- **Chatflow API (15 APIs)**: Enhanced chat with workflow events and streaming
-  - Resources: annotation, chatflow, conversation
-- **Completion API (10 APIs)**: Text generation, completion, and annotation management
-  - Resources: annotation, completion
-- **Knowledge Base API (33 APIs)**: Complete knowledge management lifecycle
-  - Resources: chunk, dataset, document, model, segment, tag
-- **Workflow API (6 APIs)**: Automated workflow execution with file support
-  - Resources: workflow
-- **Dify Core API (9 APIs)**: Essential services including audio processing
-  - Resources: audio, feedback, file, info
+-   **Chat API (18 APIs)**: Interactive conversations, file management, feedback, annotation management
+    -   Resources: annotation, chat, conversation, message
+-   **Chatflow API (15 APIs)**: Enhanced chat with workflow events and streaming
+    -   Resources: annotation, chatflow, conversation
+-   **Completion API (10 APIs)**: Text generation, completion, and annotation management
+    -   Resources: annotation, completion
+-   **Knowledge Base API (33 APIs)**: Complete knowledge management lifecycle
+    -   Resources: chunk, dataset, document, model, segment, tag
+-   **Workflow API (6 APIs)**: Automated workflow execution with file support
+    -   Resources: workflow
+-   **Dify Core API (9 APIs)**: Essential services including audio processing
+    -   Resources: audio, feedback, file, info
 
 ### Technology Stack
 
-- **Language**: Python 3.10+
-- **HTTP Client**: httpx with connection pooling optimization
-- **Type System**: Pydantic 2.x with comprehensive validation
-- **Architecture**: Builder pattern with fluent API design
-- **Async Support**: Full async/await with AsyncGenerator streaming
-- **Code Quality**: Ruff (linting + formatting) + MyPy (type checking)
-- **Testing**: pytest with async support and comprehensive coverage
-- **Packaging**: Poetry with modern Python packaging standards
+-   **Language**: Python 3.10+
+-   **HTTP Client**: httpx with connection pooling optimization
+-   **Type System**: Pydantic 2.x with comprehensive validation
+-   **Architecture**: Builder pattern with fluent API design
+-   **Async Support**: Full async/await with AsyncGenerator streaming
+-   **Code Quality**: Ruff (linting + formatting) + MyPy (type checking)
+-   **Testing**: pytest with async support and comprehensive coverage
+-   **Packaging**: Poetry with modern Python packaging standards
 
 ## Code Style Guidelines
 
-- Line length: 120 characters
-- Use double quotes for strings
-- Follow PEP 8 naming conventions
-- Add type hints to all functions and methods
-- Write docstrings for public APIs
-- Keep functions focused and small
-- Use meaningful variable names
-- Minimize comments by making code self-documenting
+-   Line length: 120 characters
+-   Use double quotes for strings
+-   Follow PEP 8 naming conventions
+-   Add type hints to all functions and methods
+-   Write docstrings for public APIs
+-   Keep functions focused and small
+-   Use meaningful variable names
+-   Minimize comments by making code self-documenting
 
 The Ruff configuration enforces most of these automatically.

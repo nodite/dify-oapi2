@@ -7,8 +7,6 @@ on:
 jobs:
   publish:
     runs-on: ubuntu-latest
-    # Only allow releases created from release branch to trigger publish
-    if: startsWith(github.event.release.target_commitish, 'release/')
 
     steps:
       - uses: actions/checkout@v5

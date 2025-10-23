@@ -1,0 +1,2237 @@
+{
+  "info": {
+    "_postman_id": "cc83a7d6-7295-4949-bba4-f8d3418b35b9",
+    "name": "Dify Enterprise Admin APIs",
+    "description": "Docs Version: 20250125",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "31295558",
+    "_collection_link": "https://dify-enterprise.postman.co/workspace/Dify-Enterprise~46a1e0ca-bcc8-4cf2-893b-1c9a04f72084/collection/29452394-cc83a7d6-7295-4949-bba4-f8d3418b35b9?action=share&source=collection_link&creator=31295558"
+  },
+  "item": [
+    {
+      "name": "Workspaces",
+      "item": [
+        {
+          "name": "Get a Workspace",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/workspaces/{{workspace_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "workspaces",
+                "{{workspace_id}}"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Get a Workspace Example",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/workspaces/{{workspace_id}}",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "workspaces",
+                    "{{workspace_id}}"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"id\": \"sample-workspace-id\",\n    \"name\": \"Sample Workspace\",\n    \"status\": \"normal\",\n    \"created_at\": \"2025-01-15T10:30:00Z\",\n    \"updated_at\": \"2025-01-20T14:45:00Z\"\n}"
+            },
+            {
+              "name": "Get a Workspace - Not Found",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/workspaces/{{workspace_id}}",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "workspaces",
+                    "{{workspace_id}}"
+                  ]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"code\": 404,\n    \"reason\": \"WORKSPACE_NOT_FOUND\",\n    \"message\": \"workspace not found\",\n    \"metadata\": {}\n}"
+            }
+          ]
+        },
+        {
+          "name": "List Workspaces",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/workspaces?name&status&page=1&limit=10",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "workspaces"
+              ],
+              "query": [
+                {
+                  "key": "name",
+                  "value": null,
+                  "description": "Optional"
+                },
+                {
+                  "key": "status",
+                  "value": null,
+                  "description": "Optional [\"normal\" , \"archive\"]"
+                },
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Default 1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "description": "Default 10"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "List Workspaces Example",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/workspaces?page=1&limit=10",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "workspaces"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "10"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"data\": [\n        {\n            \"id\": \"sample-id-1\",\n            \"name\": \"Sample Workspace 1\",\n            \"status\": \"normal\",\n            \"created_at\": \"2025-01-15T10:30:00Z\",\n            \"updated_at\": \"2025-01-20T14:45:00Z\"\n        },\n        {\n            \"id\": \"sample-id-2\",\n            \"name\": \"Sample Workspace 2\",\n            \"status\": \"normal\",\n            \"created_at\": \"2025-01-10T08:20:00Z\",\n            \"updated_at\": \"2025-01-18T16:30:00Z\"\n        },\n        {\n            \"id\": \"sample-id-3\",\n            \"name\": \"Sample Workspace 3\",\n            \"status\": \"normal\",\n            \"created_at\": \"2025-01-05T12:15:00Z\",\n            \"updated_at\": \"2025-01-12T09:20:00Z\"\n        },\n        {\n            \"id\": \"sample-id-4\",\n            \"name\": \"Sample Workspace 4\",\n            \"status\": \"normal\",\n            \"created_at\": \"2024-12-20T14:00:00Z\",\n            \"updated_at\": \"2025-01-08T11:45:00Z\"\n        },\n        {\n            \"id\": \"sample-id-5\",\n            \"name\": \"Sample Workspace 5\",\n            \"status\": \"normal\",\n            \"created_at\": \"2024-12-15T09:30:00Z\",\n            \"updated_at\": \"2024-12-28T13:10:00Z\"\n        },\n        {\n            \"id\": \"sample-id-6\",\n            \"name\": \"Sample Workspace 6\",\n            \"status\": \"normal\",\n            \"created_at\": \"2024-12-10T11:45:00Z\",\n            \"updated_at\": \"2024-12-22T15:20:00Z\"\n        },\n        {\n            \"id\": \"sample-id-7\",\n            \"name\": \"Sample Workspace 7\",\n            \"status\": \"normal\",\n            \"created_at\": \"2024-12-05T08:00:00Z\",\n            \"updated_at\": \"2024-12-18T10:30:00Z\"\n        },\n        {\n            \"id\": \"sample-id-8\",\n            \"name\": \"Sample Workspace 8\",\n            \"status\": \"normal\",\n            \"created_at\": \"2024-11-28T13:20:00Z\",\n            \"updated_at\": \"2024-12-10T12:00:00Z\"\n        }\n    ],\n    \"has_more\": false,\n    \"limit\": 10,\n    \"total\": 8,\n    \"page\": 1\n}"
+            },
+            {
+              "name": "List Workspaces - Error",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/workspaces?page=1&limit=10",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "workspaces"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "10"
+                    }
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"code\": 400,\n    \"reason\": \"INVALID_PARAMETER\",\n    \"message\": \"invalid parameter\",\n    \"metadata\": {}\n}"
+            }
+          ]
+        },
+        {
+          "name": "Create a Workspace",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"<The name of workspace>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/workspaces",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "workspaces"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Create a Workspace Example",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"name\": \"New Sample Workspace\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/workspaces",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "workspaces"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"id\": \"sample-new-workspace-id\",\n    \"name\": \"New Sample Workspace\",\n    \"status\": \"normal\",\n    \"created_at\": \"2025-10-23T07:36:50Z\",\n    \"updated_at\": \"2025-10-23T07:36:50Z\"\n}"
+            },
+            {
+              "name": "Create a Workspace - Error",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"name\": \"\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/workspaces",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "workspaces"
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"code\": 400,\n    \"reason\": \"INVALID_PARAMETER\",\n    \"message\": \"invalid parameter\",\n    \"metadata\": {}\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update a Workspace",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"<The name of workspace>\",\n    \"status\": \"<The status of workspace: normal / archive>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/workspaces/{{workspace_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "workspaces",
+                "{{workspace_id}}"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Update a Workspace Example",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"name\": \"Sample Workspace Updated\",\n    \"status\": \"archive\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/workspaces/{{workspace_id}}",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "workspaces",
+                    "{{workspace_id}}"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"id\": \"sample-workspace-id\",\n    \"name\": \"Sample Workspace Updated\",\n    \"status\": \"archive\",\n    \"created_at\": \"2025-10-23T07:36:50Z\",\n    \"updated_at\": \"2025-10-23T07:38:04.544600Z\"\n}"
+            },
+            {
+              "name": "Update a Workspace - Error",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"name\": \"Sample Workspace Updated\",\n    \"status\": \"archive\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/workspaces/{{workspace_id}}",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "workspaces",
+                    "{{workspace_id}}"
+                  ]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"code\": 404,\n    \"reason\": \"WORKSPACE_NOT_FOUND\",\n    \"message\": \"workspace not found\",\n    \"metadata\": {}\n}"
+            }
+          ]
+        },
+        {
+          "name": "Delete a Workspace",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/workspaces/{{workspace_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "workspaces",
+                "{{workspace_id}}"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Delete a Workspace Example",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/workspaces/{{workspace_id}}",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "workspaces",
+                    "{{workspace_id}}"
+                  ]
+                }
+              },
+              "status": "No Content",
+              "code": 204,
+              "_postman_previewlanguage": "json",
+              "header": [],
+              "cookie": [],
+              "body": ""
+            },
+            {
+              "name": "Delete a Workspace - Error",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/workspaces/{{workspace_id}}",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "workspaces",
+                    "{{workspace_id}}"
+                  ]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"code\": 404,\n    \"reason\": \"WORKSPACE_NOT_FOUND\",\n    \"message\": \"workspace not found\",\n    \"metadata\": {}\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Members",
+      "item": [
+        {
+          "name": "Get a Member",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/members/{{member_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "members",
+                "{{member_id}}"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Get a Member Example",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/members/{{member_id}}",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "members",
+                    "{{member_id}}"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"id\": \"sample-member-id\",\n    \"name\": \"user@example.com\",\n    \"email\": \"user@example.com\",\n    \"status\": \"active\",\n    \"interface_language\": \"en-US\",\n    \"timezone\": \"America/New_York\",\n    \"last_login_at\": \"2025-10-23T05:32:17.330897Z\",\n    \"last_login_ip\": \"0.0.0.0\",\n    \"last_active_at\": \"2025-10-23T05:32:17.330897Z\",\n    \"initialized_at\": \"2025-10-23T05:32:17.330897Z\",\n    \"created_at\": \"2025-10-23T05:32:17.330897Z\",\n    \"updated_at\": \"2025-10-23T05:32:17.330898Z\"\n}"
+            },
+            {
+              "name": "Get a Member - Error",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/members/{{member_id}}",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "members",
+                    "{{member_id}}"
+                  ]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"code\": 404,\n    \"reason\": \"MEMBER_NOT_FOUND\",\n    \"message\": \"member not found\",\n    \"metadata\": {}\n}"
+            }
+          ]
+        },
+        {
+          "name": "List Members",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/members?name&email&status&page=1&limit=10",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "members"
+              ],
+              "query": [
+                {
+                  "key": "name",
+                  "value": null,
+                  "description": "Optional"
+                },
+                {
+                  "key": "email",
+                  "value": null,
+                  "description": "Optional"
+                },
+                {
+                  "key": "status",
+                  "value": null,
+                  "description": "Optional [\"active\" , \"banned\"]"
+                },
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Default 1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "description": "Default 10"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "List Members Example",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/members?page=1&limit=10",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "members"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "10"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"data\": [\n        {\n            \"id\": \"sample-member-id-1\",\n            \"name\": \"user1@example.com\",\n            \"email\": \"user1@example.com\",\n            \"status\": \"active\",\n            \"interface_language\": \"en-US\",\n            \"timezone\": \"America/New_York\",\n            \"last_login_at\": \"2025-10-23T05:32:17.330897Z\",\n            \"last_login_ip\": \"0.0.0.0\",\n            \"last_active_at\": \"2025-10-23T05:32:17.330897Z\",\n            \"initialized_at\": \"2025-10-23T05:32:17.330897Z\",\n            \"created_at\": \"2025-10-23T05:32:17.330897Z\",\n            \"updated_at\": \"2025-10-23T05:32:17.330898Z\"\n        },\n        {\n            \"id\": \"sample-member-id-2\",\n            \"name\": \"user2@example.com\",\n            \"email\": \"user2@example.com\",\n            \"status\": \"active\",\n            \"interface_language\": \"en-US\",\n            \"timezone\": \"America/New_York\",\n            \"last_login_at\": \"2025-10-23T05:04:32.623249Z\",\n            \"last_login_ip\": \"0.0.0.0\",\n            \"last_active_at\": \"2025-10-23T05:04:32.623249Z\",\n            \"initialized_at\": \"2025-10-23T05:04:32.623249Z\",\n            \"created_at\": \"2025-10-23T05:04:32.623249Z\",\n            \"updated_at\": \"2025-10-23T05:04:32.623249Z\"\n        },\n        {\n            \"id\": \"sample-member-id-3\",\n            \"name\": \"user3\",\n            \"email\": \"user3@example.com\",\n            \"status\": \"pending\",\n            \"interface_language\": \"zh-Hans\",\n            \"timezone\": \"Asia/Shanghai\",\n            \"last_login_at\": \"0001-01-01T00:00:00Z\",\n            \"last_login_ip\": \"\",\n            \"last_active_at\": \"2025-10-23T03:35:05Z\",\n            \"initialized_at\": \"2025-10-23T03:35:04.578004Z\",\n            \"created_at\": \"2025-10-23T03:35:05Z\",\n            \"updated_at\": \"2025-10-23T03:35:05Z\"\n        },\n        {\n            \"id\": \"sample-member-id-4\",\n            \"name\": \"user4\",\n            \"email\": \"user4@example.com\",\n            \"status\": \"active\",\n            \"interface_language\": \"zh-Hans\",\n            \"timezone\": \"Asia/Shanghai\",\n            \"last_login_at\": \"0001-01-01T00:00:00Z\",\n            \"last_login_ip\": \"172.21.1.48\",\n            \"last_active_at\": \"2025-10-23T03:34:14Z\",\n            \"initialized_at\": \"2025-10-23T03:34:13.640561Z\",\n            \"created_at\": \"2025-10-23T03:34:14Z\",\n            \"updated_at\": \"2025-10-23T03:36:01.116813Z\"\n        },\n        {\n            \"id\": \"sample-member-id-5\",\n            \"name\": \"user5@example.com\",\n            \"email\": \"user5@example.com\",\n            \"status\": \"active\",\n            \"interface_language\": \"en-US\",\n            \"timezone\": \"America/New_York\",\n            \"last_login_at\": \"2025-10-23T03:18:54.019063Z\",\n            \"last_login_ip\": \"0.0.0.0\",\n            \"last_active_at\": \"2025-10-23T03:18:54.019063Z\",\n            \"initialized_at\": \"2025-10-23T03:18:54.019063Z\",\n            \"created_at\": \"2025-10-23T03:18:54.019063Z\",\n            \"updated_at\": \"2025-10-23T03:18:54.019064Z\"\n        },\n        {\n            \"id\": \"sample-member-id-6\",\n            \"name\": \"user6\",\n            \"email\": \"user6@example.com\",\n            \"status\": \"active\",\n            \"interface_language\": \"zh-Hans\",\n            \"timezone\": \"Asia/Shanghai\",\n            \"last_login_at\": \"0001-01-01T00:00:00Z\",\n            \"last_login_ip\": \"172.21.2.213\",\n            \"last_active_at\": \"2025-10-22T05:45:38.806162Z\",\n            \"initialized_at\": \"2025-10-22T02:50:26.790979Z\",\n            \"created_at\": \"2025-10-22T02:50:27Z\",\n            \"updated_at\": \"2025-10-22T02:53:28.276368Z\"\n        },\n        {\n            \"id\": \"sample-member-id-7\",\n            \"name\": \"user7\",\n            \"email\": \"user7@example.com\",\n            \"status\": \"active\",\n            \"interface_language\": \"zh-Hans\",\n            \"timezone\": \"Asia/Shanghai\",\n            \"last_login_at\": \"0001-01-01T00:00:00Z\",\n            \"last_login_ip\": \"192.168.3.63\",\n            \"last_active_at\": \"2025-10-14T08:41:32.839541Z\",\n            \"initialized_at\": \"2025-10-14T06:30:19.581120Z\",\n            \"created_at\": \"2025-10-14T06:30:20Z\",\n            \"updated_at\": \"2025-10-14T06:32:22.277246Z\"\n        },\n        {\n            \"id\": \"sample-member-id-8\",\n            \"name\": \"user8\",\n            \"email\": \"user8@example.com\",\n            \"status\": \"active\",\n            \"interface_language\": \"zh-Hans\",\n            \"timezone\": \"Asia/Shanghai\",\n            \"last_login_at\": \"0001-01-01T00:00:00Z\",\n            \"last_login_ip\": \"172.21.2.35\",\n            \"last_active_at\": \"2025-10-22T07:38:25.147172Z\",\n            \"initialized_at\": \"2025-10-13T03:41:02.112066Z\",\n            \"created_at\": \"2025-10-13T03:41:02Z\",\n            \"updated_at\": \"2025-10-15T05:48:10.111252Z\"\n        },\n        {\n            \"id\": \"sample-member-id-9\",\n            \"name\": \"user9\",\n            \"email\": \"user9@example.com\",\n            \"status\": \"active\",\n            \"interface_language\": \"en-US\",\n            \"timezone\": \"America/New_York\",\n            \"last_login_at\": \"0001-01-01T00:00:00Z\",\n            \"last_login_ip\": \"192.168.6.12\",\n            \"last_active_at\": \"2025-10-15T00:43:18.835348Z\",\n            \"initialized_at\": \"2025-10-13T02:15:42.274399Z\",\n            \"created_at\": \"2025-10-13T02:15:42Z\",\n            \"updated_at\": \"2025-10-13T02:19:34.239449Z\"\n        },\n        {\n            \"id\": \"sample-member-id-10\",\n            \"name\": \"user10@example.com\",\n            \"email\": \"user10@example.com\",\n            \"status\": \"active\",\n            \"interface_language\": \"en-US\",\n            \"timezone\": \"America/New_York\",\n            \"last_login_at\": \"2025-09-25T02:41:53.629393Z\",\n            \"last_login_ip\": \"192.168.26.56\",\n            \"last_active_at\": \"2025-10-22T08:05:32.760122Z\",\n            \"initialized_at\": \"2025-09-25T02:41:53.629392Z\",\n            \"created_at\": \"2025-09-25T02:41:53.629392Z\",\n            \"updated_at\": \"2025-09-25T02:42:46.909529Z\"\n        }\n    ],\n    \"has_more\": true,\n    \"limit\": 10,\n    \"total\": 26,\n    \"page\": 1\n}"
+            },
+            {
+              "name": "List Members - Error",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/members?page=1&limit=10",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "members"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "10"
+                    }
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"code\": 400,\n    \"reason\": \"INVALID_PARAMETER\",\n    \"message\": \"invalid parameter\",\n    \"metadata\": {}\n}"
+            }
+          ]
+        },
+        {
+          "name": "Create a Member",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"<The name of member>\",\n    \"email\": \"<The email of memebr>\",\n    \"password\": \"<Optional: Password must contain letters and numbers, and the length must be greater than 8\",\n    \"interface_language\": \"en-US\",\n    \"timezone\": \"America/New_York\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/members",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "members"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Create a Member Example",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"name\": \"newuser@example.com\",\n    \"email\": \"newuser@example.com\",\n    \"password\": \"SecurePass123\",\n    \"interface_language\": \"en-US\",\n    \"timezone\": \"America/New_York\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/members",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "members"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"id\": \"sample-new-member-id\",\n    \"name\": \"newuser@example.com\",\n    \"email\": \"newuser@example.com\",\n    \"status\": \"active\",\n    \"interface_language\": \"en-US\",\n    \"timezone\": \"America/New_York\",\n    \"last_login_at\": \"0001-01-01T00:00:00Z\",\n    \"last_login_ip\": \"\",\n    \"last_active_at\": \"2025-10-23T08:00:00Z\",\n    \"initialized_at\": \"2025-10-23T08:00:00Z\",\n    \"created_at\": \"2025-10-23T08:00:00Z\",\n    \"updated_at\": \"2025-10-23T08:00:00Z\"\n}"
+            },
+            {
+              "name": "Create a Member - Error",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"name\": \"newuser@example.com\",\n    \"email\": \"invalid-email\",\n    \"password\": \"SecurePass123\",\n    \"interface_language\": \"en-US\",\n    \"timezone\": \"America/New_York\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/members",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "members"
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"code\": 400,\n    \"reason\": \"INVALID_PARAMETER\",\n    \"message\": \"invalid parameter\",\n    \"metadata\": {}\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update a Member",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"<The name of member>\",\n    \"email\": \"<The email of memebr>\",\n    \"status\": \"<The status of member: active / banned>\",\n    \"password\": \"<Optional: Password must contain letters and numbers, and the length must be greater than 8\",\n    \"interface_language\": \"en-US\",\n    \"timezone\": \"America/New_York\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/members/{{member_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "members",
+                "{{member_id}}"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Update a Member Example",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"name\": \"updateduser@example.com\",\n    \"email\": \"updateduser@example.com\",\n    \"status\": \"banned\",\n    \"interface_language\": \"zh-Hans\",\n    \"timezone\": \"Asia/Shanghai\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/members/{{member_id}}",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "members",
+                    "{{member_id}}"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"id\": \"sample-member-id\",\n    \"name\": \"updateduser@example.com\",\n    \"email\": \"updateduser@example.com\",\n    \"status\": \"banned\",\n    \"interface_language\": \"zh-Hans\",\n    \"timezone\": \"Asia/Shanghai\",\n    \"last_login_at\": \"2025-10-23T05:32:17.330897Z\",\n    \"last_login_ip\": \"0.0.0.0\",\n    \"last_active_at\": \"2025-10-23T05:32:17.330897Z\",\n    \"initialized_at\": \"2025-10-23T05:32:17.330897Z\",\n    \"created_at\": \"2025-10-23T05:32:17.330897Z\",\n    \"updated_at\": \"2025-10-23T08:15:30.123456Z\"\n}"
+            },
+            {
+              "name": "Update a Member - Error",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"name\": \"updateduser@example.com\",\n    \"email\": \"updateduser@example.com\",\n    \"status\": \"banned\",\n    \"interface_language\": \"zh-Hans\",\n    \"timezone\": \"Asia/Shanghai\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/members/{{member_id}}",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "members",
+                    "{{member_id}}"
+                  ]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"code\": 404,\n    \"reason\": \"MEMBER_NOT_FOUND\",\n    \"message\": \"member not found\",\n    \"metadata\": {}\n}"
+            }
+          ]
+        },
+        {
+          "name": "Delete a Member",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/members/{{member_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "members",
+                "{{member_id}}"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Delete a Member Example",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/members/{{member_id}}",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "members",
+                    "{{member_id}}"
+                  ]
+                }
+              },
+              "status": "No Content",
+              "code": 204,
+              "_postman_previewlanguage": "json",
+              "header": [],
+              "cookie": [],
+              "body": ""
+            },
+            {
+              "name": "Delete a Member - Error",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/members/{{member_id}}",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "members",
+                    "{{member_id}}"
+                  ]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"code\": 404,\n    \"reason\": \"MEMBER_NOT_FOUND\",\n    \"message\": \"member not found\",\n    \"metadata\": {}\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Workspace Member",
+      "item": [
+        {
+          "name": "Get Workspace Member",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/workspaces/{{workspace_id}}/members/{{member_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "workspaces",
+                "{{workspace_id}}",
+                "members",
+                "{{member_id}}"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Get Workspace Member Example",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/workspaces/{{workspace_id}}/members/{{member_id}}",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "workspaces",
+                    "{{workspace_id}}",
+                    "members",
+                    "{{member_id}}"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"workspace_id\": \"sample-workspace-id\",\n    \"member_id\": \"sample-member-id\",\n    \"workspace_role\": \"owner\"\n}"
+            },
+            {
+              "name": "Get Workspace Member - Error",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/workspaces/{{workspace_id}}/members/{{member_id}}",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "workspaces",
+                    "{{workspace_id}}",
+                    "members",
+                    "{{member_id}}"
+                  ]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"code\": 404,\n    \"reason\": \"WORKSPACE_MEMBER_NOT_FOUND\",\n    \"message\": \"workspace member not found\",\n    \"metadata\": {}\n}"
+            }
+          ]
+        },
+        {
+          "name": "List Workspace Members",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/workspaces/{{workspace_id}}/members?workspace_role&page=1&limit=10",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "workspaces",
+                "{{workspace_id}}",
+                "members"
+              ],
+              "query": [
+                {
+                  "key": "workspace_role",
+                  "value": null,
+                  "description": "Optional [\"owner\", \"admin\", \"editor\", \"normal\"]"
+                },
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Default 1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "description": "Default 10"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "List Workspace Members Example",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/workspaces/{{workspace_id}}/members?page=1&limit=10",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "workspaces",
+                    "{{workspace_id}}",
+                    "members"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "10"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"data\": [\n        {\n            \"workspace_id\": \"sample-workspace-id\",\n            \"member_id\": \"sample-member-id-1\",\n            \"workspace_role\": \"owner\"\n        },\n        {\n            \"workspace_id\": \"sample-workspace-id\",\n            \"member_id\": \"sample-member-id-2\",\n            \"workspace_role\": \"admin\"\n        }\n    ],\n    \"has_more\": false,\n    \"limit\": 10,\n    \"total\": 2,\n    \"page\": 1\n}"
+            },
+            {
+              "name": "List Workspace Members - Error",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/workspaces/{{workspace_id}}/members?page=1&limit=10",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "workspaces",
+                    "{{workspace_id}}",
+                    "members"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "10"
+                    }
+                  ]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"code\": 404,\n    \"reason\": \"WORKSPACE_NOT_FOUND\",\n    \"message\": \"workspace not found\",\n    \"metadata\": {}\n}"
+            }
+          ]
+        },
+        {
+          "name": "Add Workspace Member",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"member_id\": \"xxxxxxx\",\n    \"workspace_role\": \"<The role of memebr in workspace: owner / admin / editor / normal>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/workspaces/{{workspace_id}}/members",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "workspaces",
+                "{{workspace_id}}",
+                "members"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Add Workspace Member Example",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"member_id\": \"sample-member-id\",\n    \"workspace_role\": \"editor\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/workspaces/{{workspace_id}}/members",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "workspaces",
+                    "{{workspace_id}}",
+                    "members"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"workspace_id\": \"sample-workspace-id\",\n    \"member_id\": \"sample-member-id\",\n    \"workspace_role\": \"editor\"\n}"
+            },
+            {
+              "name": "Add Workspace Member - Error",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"member_id\": \"sample-member-id\",\n    \"workspace_role\": \"editor\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/workspaces/{{workspace_id}}/members",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "workspaces",
+                    "{{workspace_id}}",
+                    "members"
+                  ]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"code\": 404,\n    \"reason\": \"MEMBER_NOT_FOUND\",\n    \"message\": \"member not found\",\n    \"metadata\": {}\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update Workspace Member",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"workspace_role\": \"<The role of memebr in workspace: owner / admin / editor / normal>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/workspaces/{{workspace_id}}/members/{{member_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "workspaces",
+                "{{workspace_id}}",
+                "members",
+                "{{member_id}}"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Update Workspace Member Example",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"workspace_role\": \"admin\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/workspaces/{{workspace_id}}/members/{{member_id}}",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "workspaces",
+                    "{{workspace_id}}",
+                    "members",
+                    "{{member_id}}"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"workspace_id\": \"sample-workspace-id\",\n    \"member_id\": \"sample-member-id\",\n    \"workspace_role\": \"admin\"\n}"
+            },
+            {
+              "name": "Update Workspace Member - Error",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"workspace_role\": \"admin\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/workspaces/{{workspace_id}}/members/{{member_id}}",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "workspaces",
+                    "{{workspace_id}}",
+                    "members",
+                    "{{member_id}}"
+                  ]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"code\": 404,\n    \"reason\": \"WORKSPACE_MEMBER_NOT_FOUND\",\n    \"message\": \"workspace member not found\",\n    \"metadata\": {}\n}"
+            }
+          ]
+        },
+        {
+          "name": "Delete Workspace Member",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/workspaces/{{workspace_id}}/members/{{member_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "workspaces",
+                "{{workspace_id}}",
+                "members",
+                "{{member_id}}"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Delete Workspace Member Example",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/workspaces/{{workspace_id}}/members/{{member_id}}",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "workspaces",
+                    "{{workspace_id}}",
+                    "members",
+                    "{{member_id}}"
+                  ]
+                }
+              },
+              "status": "No Content",
+              "code": 204,
+              "_postman_previewlanguage": "json",
+              "header": [],
+              "cookie": [],
+              "body": ""
+            },
+            {
+              "name": "Delete Workspace Member - Error",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/workspaces/{{workspace_id}}/members/{{member_id}}",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "workspaces",
+                    "{{workspace_id}}",
+                    "members",
+                    "{{member_id}}"
+                  ]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"code\": 404,\n    \"reason\": \"WORKSPACE_MEMBER_NOT_FOUND\",\n    \"message\": \"workspace member not found\",\n    \"metadata\": {}\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Group",
+      "item": [
+        {
+          "name": "Get a Group",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/groups/{{group_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "groups",
+                "{{group_id}}"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Get a Group Example",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/groups/{{group_id}}",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "groups",
+                    "{{group_id}}"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"id\": \"sample-group-id\",\n    \"name\": \"Sample Group\",\n    \"created_at\": \"2025-08-13T08:53:23.539516Z\",\n    \"updated_at\": \"2025-08-15T06:41:48.634423Z\"\n}"
+            },
+            {
+              "name": "Get a Group - Error",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/groups/{{group_id}}",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "groups",
+                    "{{group_id}}"
+                  ]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"code\": 404,\n    \"reason\": \"GROUP_NOT_FOUND\",\n    \"message\": \"group not found\",\n    \"metadata\": {}\n}"
+            }
+          ]
+        },
+        {
+          "name": "List Group",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/groups?name=<string>&page=1&limit=10",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "groups"
+              ],
+              "query": [
+                {
+                  "key": "name",
+                  "value": "<string>",
+                  "description": "Optional"
+                },
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Default 1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "description": "Default 10"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "List Group Example",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/groups?page=1&limit=10",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "groups"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "10"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"data\": [\n        {\n            \"id\": \"sample-group-id\",\n            \"name\": \"Sample Group\",\n            \"created_at\": \"2025-08-13T08:53:23.539516Z\",\n            \"updated_at\": \"2025-08-15T06:41:48.634423Z\"\n        }\n    ],\n    \"has_more\": false,\n    \"limit\": 10,\n    \"total\": 1,\n    \"page\": 1\n}"
+            },
+            {
+              "name": "List Group - Error",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/groups?page=1&limit=10",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "groups"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "10"
+                    }
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"code\": 400,\n    \"reason\": \"INVALID_PARAMETER\",\n    \"message\": \"invalid parameter\",\n    \"metadata\": {}\n}"
+            }
+          ]
+        },
+        {
+          "name": "Create a Group",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"<The name of group>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/groups",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "groups"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Create a Group Example",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"name\": \"New Sample Group\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/groups",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "groups"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"id\": \"sample-new-group-id\",\n    \"name\": \"New Sample Group\",\n    \"created_at\": \"2025-10-23T08:30:00Z\",\n    \"updated_at\": \"2025-10-23T08:30:00Z\"\n}"
+            },
+            {
+              "name": "Create a Group - Error",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"name\": \"\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/groups",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "groups"
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"code\": 400,\n    \"reason\": \"INVALID_PARAMETER\",\n    \"message\": \"invalid parameter\",\n    \"metadata\": {}\n}"
+            }
+          ]
+        },
+        {
+          "name": "Update a Group",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"<The name of member>\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/groups/{{group_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "groups",
+                "{{group_id}}"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Update a Group Example",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"name\": \"Updated Sample Group\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/groups/{{group_id}}",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "groups",
+                    "{{group_id}}"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"id\": \"sample-group-id\",\n    \"name\": \"Updated Sample Group\",\n    \"created_at\": \"2025-08-13T08:53:23.539516Z\",\n    \"updated_at\": \"2025-10-23T08:35:00Z\"\n}"
+            },
+            {
+              "name": "Update a Group - Error",
+              "originalRequest": {
+                "method": "PUT",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"name\": \"Updated Sample Group\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/groups/{{group_id}}",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "groups",
+                    "{{group_id}}"
+                  ]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"code\": 404,\n    \"reason\": \"GROUP_NOT_FOUND\",\n    \"message\": \"group not found\",\n    \"metadata\": {}\n}"
+            }
+          ]
+        },
+        {
+          "name": "Delete a Group",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/groups/{{group_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "groups",
+                "{{group_id}}"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Delete a Group Example",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/groups/{{group_id}}",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "groups",
+                    "{{group_id}}"
+                  ]
+                }
+              },
+              "status": "No Content",
+              "code": 204,
+              "_postman_previewlanguage": "json",
+              "header": [],
+              "cookie": [],
+              "body": ""
+            },
+            {
+              "name": "Delete a Group - Error",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/groups/{{group_id}}",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "groups",
+                    "{{group_id}}"
+                  ]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"code\": 404,\n    \"reason\": \"GROUP_NOT_FOUND\",\n    \"message\": \"group not found\",\n    \"metadata\": {}\n}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Group Member",
+      "item": [
+        {
+          "name": "List Group Members",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/groups/{{group_id}}/members?page=1&limit=10",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "groups",
+                "{{group_id}}",
+                "members"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1",
+                  "description": "Default 1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10",
+                  "description": "Default 10"
+                }
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "List Group Members Example",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/groups/{{group_id}}/members?page=1&limit=10",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "groups",
+                    "{{group_id}}",
+                    "members"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "10"
+                    }
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"data\": [\n        {\n            \"group_id\": \"sample-group-id\",\n            \"member_id\": \"sample-member-id-1\"\n        },\n        {\n            \"group_id\": \"sample-group-id\",\n            \"member_id\": \"sample-member-id-2\"\n        },\n        {\n            \"group_id\": \"sample-group-id\",\n            \"member_id\": \"sample-member-id-3\"\n        },\n        {\n            \"group_id\": \"sample-group-id\",\n            \"member_id\": \"sample-member-id-4\"\n        },\n        {\n            \"group_id\": \"sample-group-id\",\n            \"member_id\": \"sample-member-id-5\"\n        },\n        {\n            \"group_id\": \"sample-group-id\",\n            \"member_id\": \"sample-member-id-6\"\n        }\n    ],\n    \"has_more\": false,\n    \"limit\": 10,\n    \"total\": 6,\n    \"page\": 1\n}"
+            },
+            {
+              "name": "List Group Members - Error",
+              "originalRequest": {
+                "method": "GET",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/groups/{{group_id}}/members?page=1&limit=10",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "groups",
+                    "{{group_id}}",
+                    "members"
+                  ],
+                  "query": [
+                    {
+                      "key": "page",
+                      "value": "1"
+                    },
+                    {
+                      "key": "limit",
+                      "value": "10"
+                    }
+                  ]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"code\": 404,\n    \"reason\": \"GROUP_NOT_FOUND\",\n    \"message\": \"group not found\",\n    \"metadata\": {}\n}"
+            }
+          ]
+        },
+        {
+          "name": "Add Group Member",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"member_id\": \"xxxxxxx\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/groups/{{group_id}}/members",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "groups",
+                "{{group_id}}",
+                "members"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Add Group Member Example",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"member_id\": \"sample-member-id\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/groups/{{group_id}}/members",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "groups",
+                    "{{group_id}}",
+                    "members"
+                  ]
+                }
+              },
+              "status": "OK",
+              "code": 200,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"group_id\": \"sample-group-id\",\n    \"member_id\": \"sample-member-id\"\n}"
+            },
+            {
+              "name": "Add Group Member - Member Not Found",
+              "originalRequest": {
+                "method": "POST",
+                "header": [],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n    \"member_id\": \"non-existent-member-id\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "{{base_url}}/groups/{{group_id}}/members",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "groups",
+                    "{{group_id}}",
+                    "members"
+                  ]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"code\": 404,\n    \"reason\": \"MEMBER_NOT_FOUND\",\n    \"message\": \"member not found\",\n    \"metadata\": {}\n}"
+            }
+          ]
+        },
+        {
+          "name": "Delete Group Member",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/groups/{{group_id}}/members/{{member_id}}",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "groups",
+                "{{group_id}}",
+                "members",
+                "{{member_id}}"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Delete Group Member Example",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/groups/{{group_id}}/members/{{member_id}}",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "groups",
+                    "{{group_id}}",
+                    "members",
+                    "{{member_id}}"
+                  ]
+                }
+              },
+              "status": "No Content",
+              "code": 204,
+              "_postman_previewlanguage": "json",
+              "header": [],
+              "cookie": [],
+              "body": ""
+            },
+            {
+              "name": "Delete Group Member - Error",
+              "originalRequest": {
+                "method": "DELETE",
+                "header": [],
+                "url": {
+                  "raw": "{{base_url}}/groups/{{group_id}}/members/{{member_id}}",
+                  "host": [
+                    "{{base_url}}"
+                  ],
+                  "path": [
+                    "groups",
+                    "{{group_id}}",
+                    "members",
+                    "{{member_id}}"
+                  ]
+                }
+              },
+              "status": "Not Found",
+              "code": 404,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"code\": 404,\n    \"reason\": \"GROUP_MEMBER_NOT_FOUND\",\n    \"message\": \"group member not found\",\n    \"metadata\": {}\n}"
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{secret_key}}",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://enterprise.dify.local/admin-api/v1",
+      "type": "string"
+    },
+    {
+      "key": "secret_key",
+      "value": "xxxxxxxxxxxxxxx",
+      "type": "string"
+    }
+  ]
+}

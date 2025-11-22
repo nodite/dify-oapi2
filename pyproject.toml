@@ -109,7 +109,7 @@ httpx = "^0"
 [tool.poetry.group.dev]
 optional = true
 [tool.poetry.group.dev.dependencies]
-pytest = "^8"
+pytest = ">=8,<10"
 pytest-env = "^1"
 pytest-asyncio = "^1"
 pre-commit = "^4"

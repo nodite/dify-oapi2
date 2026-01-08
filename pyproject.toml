@@ -150,7 +150,7 @@ optional = true
 [tool.poetry.group.format.dependencies]
 pre-commit = "^4"
 mypy = "^1"
-ruff = "^0"
+ruff = "^0.14"
 black = "^25"
 
 [tool.commitizen]

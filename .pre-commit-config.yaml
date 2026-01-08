@@ -1,6 +1,6 @@
 repos:
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.12.11
+    rev: v0.14.10
     hooks:
       - id: ruff
         args: [--config=pyproject.toml]
@@ -8,7 +8,7 @@ repos:
         args: [--config=pyproject.toml]
 
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.17.1
+    rev: v1.19.1
     hooks:
       - id: mypy
         args: [--config-file=pyproject.toml]
@@ -16,14 +16,14 @@ repos:
         exclude: ^(examples/|tests/)
 
   - repo: https://github.com/pylint-dev/pylint
-    rev: v3.3.8
+    rev: v4.0.4
     hooks:
       - id: pylint
         args: [--rcfile=pyproject.toml]
         files: ^dify_oapi/
 
   - repo: https://github.com/commitizen-tools/commitizen
-    rev: v4.8.3
+    rev: v4.11.1
     hooks:
       - id: commitizen
         stages: [commit-msg]

@@ -1,7 +1,5 @@
 """Retrieval segment information model for Knowledge Base API."""
 
-from typing import Optional
-
 from pydantic import BaseModel
 
 from .segment_document_info import SegmentDocumentInfo
@@ -10,9 +8,9 @@ from .segment_document_info import SegmentDocumentInfo
 class RetrievalSegmentInfo(BaseModel):
     """Retrieval segment information model with builder pattern."""
 
-    id: Optional[str] = None
-    content: Optional[str] = None
-    document: Optional[SegmentDocumentInfo] = None
+    id: str | None = None
+    content: str | None = None
+    document: SegmentDocumentInfo | None = None
 
     @staticmethod
     def builder() -> "RetrievalSegmentInfoBuilder":

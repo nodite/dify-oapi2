@@ -1,14 +1,12 @@
 """Query information model for Knowledge Base API."""
 
-from typing import Optional
-
 from pydantic import BaseModel
 
 
 class QueryInfo(BaseModel):
     """Query information model with builder pattern."""
 
-    content: Optional[str] = None
+    content: str | None = None
 
     @staticmethod
     def builder() -> "QueryInfoBuilder":

@@ -3,7 +3,7 @@
 This module defines the data structure for workflow_finished streaming events.
 """
 
-from typing import Any, Optional
+from typing import Any
 
 from pydantic import BaseModel
 
@@ -16,10 +16,10 @@ class WorkflowFinishedData(BaseModel):
     id: str
     workflow_id: str
     status: WorkflowStatus
-    outputs: Optional[dict[str, Any]] = None
-    error: Optional[str] = None
-    elapsed_time: Optional[float] = None
-    total_tokens: Optional[int] = None
+    outputs: dict[str, Any] | None = None
+    error: str | None = None
+    elapsed_time: float | None = None
+    total_tokens: int | None = None
     total_steps: int
     created_at: int
     finished_at: int

@@ -1,17 +1,15 @@
 """Pagination information model for Knowledge Base API."""
 
-from typing import Optional
-
 from pydantic import BaseModel
 
 
 class PaginationInfo(BaseModel):
     """Pagination information model with builder pattern."""
 
-    page: Optional[int] = None
-    limit: Optional[int] = None
-    total: Optional[int] = None
-    has_more: Optional[bool] = None
+    page: int | None = None
+    limit: int | None = None
+    total: int | None = None
+    has_more: bool | None = None
 
     @staticmethod
     def builder() -> "PaginationInfoBuilder":

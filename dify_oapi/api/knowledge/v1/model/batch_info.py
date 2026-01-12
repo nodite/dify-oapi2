@@ -1,7 +1,5 @@
 """Batch information model for Knowledge Base API."""
 
-from typing import Optional
-
 from pydantic import BaseModel
 
 from .knowledge_types import IndexingStatus
@@ -10,18 +8,18 @@ from .knowledge_types import IndexingStatus
 class BatchInfo(BaseModel):
     """Batch information model with builder pattern."""
 
-    id: Optional[str] = None
-    indexing_status: Optional[IndexingStatus] = None
-    processing_started_at: Optional[float] = None
-    parsing_completed_at: Optional[float] = None
-    cleaning_completed_at: Optional[float] = None
-    splitting_completed_at: Optional[float] = None
-    completed_at: Optional[float] = None
-    paused_at: Optional[float] = None
-    error: Optional[str] = None
-    stopped_at: Optional[float] = None
-    completed_segments: Optional[int] = None
-    total_segments: Optional[int] = None
+    id: str | None = None
+    indexing_status: IndexingStatus | None = None
+    processing_started_at: float | None = None
+    parsing_completed_at: float | None = None
+    cleaning_completed_at: float | None = None
+    splitting_completed_at: float | None = None
+    completed_at: float | None = None
+    paused_at: float | None = None
+    error: str | None = None
+    stopped_at: float | None = None
+    completed_segments: int | None = None
+    total_segments: int | None = None
 
     @staticmethod
     def builder() -> "BatchInfoBuilder":

@@ -1,16 +1,14 @@
 """Document metadata model for Knowledge Base API."""
 
-from typing import Optional
-
 from pydantic import BaseModel
 
 
 class DocumentMetadata(BaseModel):
     """Document metadata model with builder pattern."""
 
-    id: Optional[str] = None
-    name: Optional[str] = None
-    type: Optional[str] = None
+    id: str | None = None
+    name: str | None = None
+    type: str | None = None
 
     @staticmethod
     def builder() -> "DocumentMetadataBuilder":

@@ -1,7 +1,5 @@
 """Segment document information model for Knowledge Base API."""
 
-from typing import Optional
-
 from pydantic import BaseModel
 
 from .knowledge_types import DataSourceType
@@ -10,9 +8,9 @@ from .knowledge_types import DataSourceType
 class SegmentDocumentInfo(BaseModel):
     """Segment document information model with builder pattern."""
 
-    id: Optional[str] = None
-    data_source_type: Optional[DataSourceType] = None
-    name: Optional[str] = None
+    id: str | None = None
+    data_source_type: DataSourceType | None = None
+    name: str | None = None
 
     @staticmethod
     def builder() -> "SegmentDocumentInfoBuilder":

@@ -1,15 +1,13 @@
 """Model credentials for Knowledge Base API."""
 
-from typing import Optional
-
 from pydantic import BaseModel
 
 
 class ModelCredentials(BaseModel):
     """Model credentials with builder pattern."""
 
-    api_key: Optional[str] = None
-    api_base: Optional[str] = None
+    api_key: str | None = None
+    api_base: str | None = None
 
     @staticmethod
     def builder() -> "ModelCredentialsBuilder":

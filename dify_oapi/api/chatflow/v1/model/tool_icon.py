@@ -1,5 +1,3 @@
-from typing import Union
-
 from pydantic import BaseModel
 
 
@@ -29,7 +27,7 @@ class ToolIconDetailBuilder:
 
 
 class AppMeta(BaseModel):
-    tool_icons: dict[str, Union[str, ToolIconDetail]] | None = None
+    tool_icons: dict[str, str | ToolIconDetail] | None = None
 
     @staticmethod
     def builder() -> "AppMetaBuilder":
@@ -43,6 +41,6 @@ class AppMetaBuilder:
     def build(self) -> AppMeta:
         return self._app_meta
 
-    def tool_icons(self, tool_icons: dict[str, Union[str, ToolIconDetail]]) -> "AppMetaBuilder":
+    def tool_icons(self, tool_icons: dict[str, str | ToolIconDetail]) -> "AppMetaBuilder":
         self._app_meta.tool_icons = tool_icons
         return self

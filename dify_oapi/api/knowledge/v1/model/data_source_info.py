@@ -1,15 +1,13 @@
 """Data source info model for Knowledge Base API."""
 
-from typing import Optional
-
 from pydantic import BaseModel
 
 
 class DataSourceInfo(BaseModel):
     """Data source info model with builder pattern."""
 
-    upload_file_id: Optional[str] = None
-    original_document_id: Optional[str] = None
+    upload_file_id: str | None = None
+    original_document_id: str | None = None
 
     @staticmethod
     def builder() -> "DataSourceInfoBuilder":

@@ -1,7 +1,5 @@
 """Embedding model parameters for Knowledge Base API."""
 
-from typing import Optional
-
 from pydantic import BaseModel
 
 from .model_credentials import ModelCredentials
@@ -11,10 +9,10 @@ from .model_parameters import ModelParameters
 class EmbeddingModelParameters(BaseModel):
     """Embedding model parameters with builder pattern."""
 
-    model: Optional[str] = None
-    provider: Optional[str] = None
-    credentials: Optional[ModelCredentials] = None
-    model_parameters: Optional[ModelParameters] = None
+    model: str | None = None
+    provider: str | None = None
+    credentials: ModelCredentials | None = None
+    model_parameters: ModelParameters | None = None
 
     @staticmethod
     def builder() -> "EmbeddingModelParametersBuilder":

@@ -1,22 +1,20 @@
 from __future__ import annotations
 
-from typing import Union
-
 from pydantic import BaseModel
 
 from .workflow_file_info import WorkflowFileInfo
 
 # Define specific types for workflow input values
-WorkflowInputValue = Union[
-    str,  # Text values
-    int,  # Integer values
-    float,  # Float values
-    bool,  # Boolean values
-    WorkflowFileInfo,  # Single file type variable
-    list[WorkflowFileInfo],  # File list type variables
-    list[str],  # String arrays
-    dict[str, Union[str, int, float, bool]],  # Object values
-]
+WorkflowInputValue = (
+    str  # Text values
+    | int  # Integer values
+    | float  # Float values
+    | bool  # Boolean values
+    | WorkflowFileInfo  # Single file type variable
+    | list[WorkflowFileInfo]  # File list type variables
+    | list[str]  # String arrays
+    | dict[str, str | int | float | bool]  # Object values
+)
 
 
 class WorkflowInputs(BaseModel):

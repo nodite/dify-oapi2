@@ -1,7 +1,5 @@
 """Child chunk information model for Knowledge Base API."""
 
-from typing import Optional
-
 from pydantic import BaseModel
 
 from .knowledge_types import ChunkStatus
@@ -10,21 +8,21 @@ from .knowledge_types import ChunkStatus
 class ChildChunkInfo(BaseModel):
     """Child chunk information model with builder pattern."""
 
-    id: Optional[str] = None
-    segment_id: Optional[str] = None
-    content: Optional[str] = None
-    word_count: Optional[int] = None
-    tokens: Optional[int] = None
-    keywords: Optional[list[str]] = None
-    index_node_id: Optional[str] = None
-    index_node_hash: Optional[str] = None
-    status: Optional[ChunkStatus] = None
-    created_by: Optional[str] = None
-    created_at: Optional[float] = None
-    indexing_at: Optional[float] = None
-    completed_at: Optional[float] = None
-    error: Optional[str] = None
-    stopped_at: Optional[float] = None
+    id: str | None = None
+    segment_id: str | None = None
+    content: str | None = None
+    word_count: int | None = None
+    tokens: int | None = None
+    keywords: list[str] | None = None
+    index_node_id: str | None = None
+    index_node_hash: str | None = None
+    status: ChunkStatus | None = None
+    created_by: str | None = None
+    created_at: float | None = None
+    indexing_at: float | None = None
+    completed_at: float | None = None
+    error: str | None = None
+    stopped_at: float | None = None
 
     @staticmethod
     def builder() -> "ChildChunkInfoBuilder":

@@ -1,7 +1,5 @@
 """Dataset information model for Knowledge Base API."""
 
-from typing import Optional
-
 from pydantic import BaseModel
 
 from .dataset_metadata import DatasetMetadata
@@ -15,30 +13,30 @@ from .tag_info import TagInfo
 class DatasetInfo(BaseModel):
     """Dataset information model with builder pattern."""
 
-    id: Optional[str] = None
-    name: Optional[str] = None
-    description: Optional[str] = None
-    provider: Optional[str] = None
-    permission: Optional[Permission] = None
-    data_source_type: Optional[DataSourceType] = None
-    indexing_technique: Optional[IndexingTechnique] = None
-    app_count: Optional[int] = None
-    document_count: Optional[int] = None
-    word_count: Optional[int] = None
-    created_by: Optional[str] = None
-    created_at: Optional[int] = None
-    updated_by: Optional[str] = None
-    updated_at: Optional[int] = None
-    embedding_model: Optional[str] = None
-    embedding_model_provider: Optional[str] = None
-    embedding_available: Optional[bool] = None
-    retrieval_model_dict: Optional[RetrievalModel] = None
-    tags: Optional[list[TagInfo]] = None
-    doc_form: Optional[DocumentForm] = None
-    external_knowledge_info: Optional[ExternalKnowledgeInfo] = None
-    external_retrieval_model: Optional[ExternalRetrievalModel] = None
-    doc_metadata: Optional[list[DatasetMetadata]] = None
-    built_in_field_enabled: Optional[bool] = None
+    id: str | None = None
+    name: str | None = None
+    description: str | None = None
+    provider: str | None = None
+    permission: Permission | None = None
+    data_source_type: DataSourceType | None = None
+    indexing_technique: IndexingTechnique | None = None
+    app_count: int | None = None
+    document_count: int | None = None
+    word_count: int | None = None
+    created_by: str | None = None
+    created_at: int | None = None
+    updated_by: str | None = None
+    updated_at: int | None = None
+    embedding_model: str | None = None
+    embedding_model_provider: str | None = None
+    embedding_available: bool | None = None
+    retrieval_model_dict: RetrievalModel | None = None
+    tags: list[TagInfo] | None = None
+    doc_form: DocumentForm | None = None
+    external_knowledge_info: ExternalKnowledgeInfo | None = None
+    external_retrieval_model: ExternalRetrievalModel | None = None
+    doc_metadata: list[DatasetMetadata] | None = None
+    built_in_field_enabled: bool | None = None
 
     @staticmethod
     def builder() -> "DatasetInfoBuilder":

@@ -4,7 +4,7 @@ This module defines the base structure for workflow streaming events
 and specific event data models.
 """
 
-from typing import Any, Optional
+from typing import Any
 
 from pydantic import BaseModel
 
@@ -15,12 +15,12 @@ class ChunkWorkflowEvent(BaseModel):
     """Base streaming event structure for workflow execution."""
 
     event: EventType
-    task_id: Optional[str] = None
-    workflow_run_id: Optional[str] = None
-    data: Optional[dict[str, Any]] = None
-    message_id: Optional[str] = None
-    audio: Optional[str] = None
-    created_at: Optional[int] = None
+    task_id: str | None = None
+    workflow_run_id: str | None = None
+    data: dict[str, Any] | None = None
+    message_id: str | None = None
+    audio: str | None = None
+    created_at: int | None = None
 
     @staticmethod
     def builder() -> "ChunkWorkflowEventBuilder":

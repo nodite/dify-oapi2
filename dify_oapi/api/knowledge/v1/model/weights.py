@@ -1,27 +1,25 @@
 """Weights model for retrieval configuration."""
 
-from typing import Optional
-
 from pydantic import BaseModel
 
 
 class KeywordSetting(BaseModel):
     """Keyword search weight settings."""
 
-    keyword_weight: Optional[float] = None
+    keyword_weight: float | None = None
 
 
 class VectorSetting(BaseModel):
     """Vector search weight settings."""
 
-    vector_weight: Optional[float] = None
-    embedding_model_name: Optional[str] = None
-    embedding_provider_name: Optional[str] = None
+    vector_weight: float | None = None
+    embedding_model_name: str | None = None
+    embedding_provider_name: str | None = None
 
 
 class Weights(BaseModel):
     """Weights configuration for hybrid search."""
 
-    weight_type: Optional[str] = None
-    keyword_setting: Optional[KeywordSetting] = None
-    vector_setting: Optional[VectorSetting] = None
+    weight_type: str | None = None
+    keyword_setting: KeywordSetting | None = None
+    vector_setting: VectorSetting | None = None

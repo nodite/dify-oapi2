@@ -1,7 +1,5 @@
 """Process rule model for Knowledge Base API."""
 
-from typing import Optional
-
 from pydantic import BaseModel
 
 from .knowledge_types import ProcessingMode
@@ -11,8 +9,8 @@ from .process_rules import ProcessRules
 class ProcessRule(BaseModel):
     """Process rule model with builder pattern."""
 
-    mode: Optional[ProcessingMode] = None
-    rules: Optional[ProcessRules] = None
+    mode: ProcessingMode | None = None
+    rules: ProcessRules | None = None
 
     @staticmethod
     def builder() -> "ProcessRuleBuilder":

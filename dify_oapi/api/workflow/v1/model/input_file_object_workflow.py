@@ -4,8 +4,6 @@ This module defines the InputFileObjectWorkflow model for handling file inputs
 in workflow execution with proper validation rules.
 """
 
-from typing import Optional
-
 from pydantic import BaseModel, model_validator
 
 from .workflow_types import FileType, TransferMethod
@@ -21,8 +19,8 @@ class InputFileObjectWorkflow(BaseModel):
 
     type: FileType
     transfer_method: TransferMethod
-    url: Optional[str] = None
-    upload_file_id: Optional[str] = None
+    url: str | None = None
+    upload_file_id: str | None = None
 
     @model_validator(mode="after")
     def validate_transfer_method_fields(self):

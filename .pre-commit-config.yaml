@@ -17,14 +17,14 @@ repos:
 
       - id: mypy
         name: mypy
-        entry: poetry run mypy
+        entry: poetry run mypy .
         language: system
         pass_filenames: false
         always_run: true
 
       - id: pylint
         name: pylint
-        entry: poetry run pylint dify_oapi
+        entry: poetry run pylint .
         language: system
         pass_filenames: false
         always_run: true

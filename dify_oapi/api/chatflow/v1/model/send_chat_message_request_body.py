@@ -8,7 +8,7 @@ from .chatflow_types import ResponseMode
 
 class SendChatMessageRequestBody(BaseModel):
     query: str | None = None
-    #TODO: Create a more specific models for inputs values
+    # TODO: Create a more specific models for inputs values
     inputs: dict[str, Any] | None = None
     response_mode: ResponseMode | None = None
     user: str | None = None

@@ -1,29 +1,47 @@
 repos:
-  - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.14.10
+  - repo: local
     hooks:
-      - id: ruff
-        args: [--config=pyproject.toml]
+      - id: ruff-check
+        name: ruff check
+        entry: poetry run ruff check .
+        language: system
+        pass_filenames: false
+        always_run: true
+
       - id: ruff-format
-        args: [--config=pyproject.toml]
+        name: ruff format
+        entry: poetry run ruff format .
+        language: system
+        pass_filenames: false
+        always_run: true
 
-  - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.19.1
-    hooks:
       - id: mypy
-        args: [--config-file=pyproject.toml]
-        files: ^dify_oapi/
-        exclude: ^(examples/|tests/)
+        name: mypy
+        entry: poetry run mypy
+        language: system
+        pass_filenames: false
+        always_run: true
 
-  - repo: https://github.com/pylint-dev/pylint
-    rev: v4.0.4
-    hooks:
       - id: pylint
-        args: [--rcfile=pyproject.toml]
-        files: ^dify_oapi/
+        name: pylint
+        entry: poetry run pylint dify_oapi
+        language: system
+        pass_filenames: false
+        always_run: true
 
-  - repo: https://github.com/commitizen-tools/commitizen
-    rev: v4.11.1
-    hooks:
       - id: commitizen
+        name: commitizen check
+        entry: poetry run cz check
+        language: system
         stages: [commit-msg]
+        args: [--commit-msg-file]
+        pass_filenames: true
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-added-large-files
+      - id: check-merge-conflict

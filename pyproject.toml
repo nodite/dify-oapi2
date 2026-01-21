@@ -97,6 +97,10 @@ disable = ["all"]  # diable all rule first
 enable = ["too-many-statements"]  # then enable too-many-statements rule
 max-statements = 50  # function max statement
 
+[tool.pylint.main]
+py-version = "3.10"
+ignore = [".venv", "venv", "examples", "tests", "build", "dist"]
+
 ############################################################
 # Dependency group
 ############################################################
@@ -128,30 +132,14 @@ addopts = [
     "-ra"
 ]
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 [tool.poetry.group.format]
 optional = true
 [tool.poetry.group.format.dependencies]
 pre-commit = "^4"
 mypy = "^1"
-ruff = "^0"
-black = "^25"
+ruff = "^0.14"
+black = ">=25,<27"
+pylint = "^4"
 
 [tool.commitizen]
 name = "cz_conventional_commits"

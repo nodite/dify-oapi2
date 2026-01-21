@@ -29,7 +29,7 @@ class ConnectionPoolManager:
     def get_sync_client(
         self,
         domain: str,
-        timeout: Optional[float] = None,
+        timeout: float | None = None,
         max_keepalive: int = 20,
         max_connections: int = 100,
         keepalive_expiry: float = 30.0,
@@ -59,7 +59,7 @@ class ConnectionPoolManager:
     def get_async_client(
         self,
         domain: str,
-        timeout: Optional[float] = None,
+        timeout: float | None = None,
         max_keepalive: int = 20,
         max_connections: int = 100,
         keepalive_expiry: float = 30.0,

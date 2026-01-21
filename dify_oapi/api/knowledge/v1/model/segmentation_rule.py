@@ -1,17 +1,15 @@
 """Segmentation rule model for Knowledge Base API."""
 
-from typing import Optional
-
 from pydantic import BaseModel
 
 
 class SegmentationRule(BaseModel):
     """Segmentation rule model with builder pattern."""
 
-    separator: Optional[str] = None
-    max_tokens: Optional[int] = None
-    chunk_overlap: Optional[int] = None
-    rules: Optional[dict] = None
+    separator: str | None = None
+    max_tokens: int | None = None
+    chunk_overlap: int | None = None
+    rules: dict | None = None
 
     @staticmethod
     def builder() -> "SegmentationRuleBuilder":

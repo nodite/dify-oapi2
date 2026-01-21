@@ -1,7 +1,5 @@
 """Preprocessing rule model for Knowledge Base API."""
 
-from typing import Optional
-
 from pydantic import BaseModel
 
 from .knowledge_types import PreprocessingRuleId
@@ -10,8 +8,8 @@ from .knowledge_types import PreprocessingRuleId
 class PreprocessingRule(BaseModel):
     """Preprocessing rule model with builder pattern."""
 
-    id: Optional[PreprocessingRuleId] = None
-    enabled: Optional[bool] = None
+    id: PreprocessingRuleId | None = None
+    enabled: bool | None = None
 
     @staticmethod
     def builder() -> "PreprocessingRuleBuilder":

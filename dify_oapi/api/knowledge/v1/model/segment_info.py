@@ -1,7 +1,5 @@
 """Segment information model for Knowledge Base API."""
 
-from typing import Optional
-
 from pydantic import BaseModel
 
 from .knowledge_types import SegmentStatus
@@ -10,27 +8,27 @@ from .knowledge_types import SegmentStatus
 class SegmentInfo(BaseModel):
     """Segment information model with builder pattern."""
 
-    id: Optional[str] = None
-    position: Optional[int] = None
-    document_id: Optional[str] = None
-    content: Optional[str] = None
-    answer: Optional[str] = None
-    word_count: Optional[int] = None
-    tokens: Optional[int] = None
-    keywords: Optional[list[str]] = None
-    index_node_id: Optional[str] = None
-    index_node_hash: Optional[str] = None
-    hit_count: Optional[int] = None
-    enabled: Optional[bool] = None
-    disabled_at: Optional[float] = None
-    disabled_by: Optional[str] = None
-    status: Optional[SegmentStatus] = None
-    created_by: Optional[str] = None
-    created_at: Optional[float] = None
-    indexing_at: Optional[float] = None
-    completed_at: Optional[float] = None
-    error: Optional[str] = None
-    stopped_at: Optional[float] = None
+    id: str | None = None
+    position: int | None = None
+    document_id: str | None = None
+    content: str | None = None
+    answer: str | None = None
+    word_count: int | None = None
+    tokens: int | None = None
+    keywords: list[str] | None = None
+    index_node_id: str | None = None
+    index_node_hash: str | None = None
+    hit_count: int | None = None
+    enabled: bool | None = None
+    disabled_at: float | None = None
+    disabled_by: str | None = None
+    status: SegmentStatus | None = None
+    created_by: str | None = None
+    created_at: float | None = None
+    indexing_at: float | None = None
+    completed_at: float | None = None
+    error: str | None = None
+    stopped_at: float | None = None
 
     @staticmethod
     def builder() -> "SegmentInfoBuilder":

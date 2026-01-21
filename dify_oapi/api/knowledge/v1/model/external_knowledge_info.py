@@ -1,17 +1,15 @@
 """External knowledge info model for Knowledge Base API."""
 
-from typing import Optional
-
 from pydantic import BaseModel
 
 
 class ExternalKnowledgeInfo(BaseModel):
     """External knowledge info model with builder pattern."""
 
-    external_knowledge_id: Optional[str] = None
-    external_knowledge_api_id: Optional[str] = None
-    external_knowledge_api_name: Optional[str] = None
-    external_knowledge_api_endpoint: Optional[str] = None
+    external_knowledge_id: str | None = None
+    external_knowledge_api_id: str | None = None
+    external_knowledge_api_name: str | None = None
+    external_knowledge_api_endpoint: str | None = None
 
     @staticmethod
     def builder() -> "ExternalKnowledgeInfoBuilder":

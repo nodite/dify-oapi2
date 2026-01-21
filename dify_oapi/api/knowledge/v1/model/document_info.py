@@ -13,29 +13,29 @@ from .knowledge_types import DataSourceType, DocumentDisplayStatus, DocumentForm
 class DocumentInfo(BaseModel):
     """Document information model with builder pattern."""
 
-    id: Optional[str] = None
-    position: Optional[int] = None
-    data_source_type: Optional[DataSourceType] = None
+    id: str | None = None
+    position: int | None = None
+    data_source_type: DataSourceType | None = None
     data_source_info: Optional["DataSourceInfo"] = None
-    data_source_detail_dict: Optional[DataSourceDetailDict] = None
-    dataset_process_rule_id: Optional[str] = None
-    name: Optional[str] = None
-    created_from: Optional[str] = None
-    created_by: Optional[str] = None
-    created_at: Optional[int] = None
-    tokens: Optional[int] = None
-    indexing_status: Optional[IndexingStatus] = None
-    error: Optional[str] = None
-    enabled: Optional[bool] = None
-    disabled_at: Optional[int] = None
-    disabled_by: Optional[str] = None
-    archived: Optional[bool] = None
-    display_status: Optional[DocumentDisplayStatus] = None
-    word_count: Optional[int] = None
-    hit_count: Optional[int] = None
-    doc_form: Optional[DocumentForm] = None
-    doc_metadata: Optional[DocumentMetadata] = None
-    updated_at: Optional[int] = None
+    data_source_detail_dict: DataSourceDetailDict | None = None
+    dataset_process_rule_id: str | None = None
+    name: str | None = None
+    created_from: str | None = None
+    created_by: str | None = None
+    created_at: int | None = None
+    tokens: int | None = None
+    indexing_status: IndexingStatus | None = None
+    error: str | None = None
+    enabled: bool | None = None
+    disabled_at: int | None = None
+    disabled_by: str | None = None
+    archived: bool | None = None
+    display_status: DocumentDisplayStatus | None = None
+    word_count: int | None = None
+    hit_count: int | None = None
+    doc_form: DocumentForm | None = None
+    doc_metadata: DocumentMetadata | None = None
+    updated_at: int | None = None
 
     @staticmethod
     def builder() -> "DocumentInfoBuilder":

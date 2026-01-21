@@ -1,7 +1,5 @@
 """Reranking mode model for Knowledge Base API."""
 
-from typing import Optional
-
 from pydantic import BaseModel
 
 from .knowledge_types import RerankingModelName, RerankingProviderName
@@ -10,8 +8,8 @@ from .knowledge_types import RerankingModelName, RerankingProviderName
 class RerankingMode(BaseModel):
     """Reranking mode model with builder pattern."""
 
-    reranking_provider_name: Optional[RerankingProviderName] = None
-    reranking_model_name: Optional[RerankingModelName] = None
+    reranking_provider_name: RerankingProviderName | None = None
+    reranking_model_name: RerankingModelName | None = None
 
     @staticmethod
     def builder() -> "RerankingModeBuilder":

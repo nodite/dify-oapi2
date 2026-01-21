@@ -1,7 +1,5 @@
 """Process rules model for Knowledge Base API."""
 
-from typing import Optional
-
 from pydantic import BaseModel
 
 from .knowledge_types import ParentMode
@@ -13,10 +11,10 @@ from .subchunk_segmentation_rule import SubChunkSegmentationRule
 class ProcessRules(BaseModel):
     """Process rules model with builder pattern."""
 
-    pre_processing_rules: Optional[list[PreprocessingRule]] = None
-    segmentation: Optional[SegmentationRule] = None
-    parent_mode: Optional[ParentMode] = None
-    subchunk_segmentation: Optional[SubChunkSegmentationRule] = None
+    pre_processing_rules: list[PreprocessingRule] | None = None
+    segmentation: SegmentationRule | None = None
+    parent_mode: ParentMode | None = None
+    subchunk_segmentation: SubChunkSegmentationRule | None = None
 
     @staticmethod
     def builder() -> "ProcessRulesBuilder":

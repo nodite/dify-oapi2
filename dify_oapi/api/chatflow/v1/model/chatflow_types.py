@@ -8,7 +8,7 @@ from typing import Literal
 
 # Response mode types for chat messages
 ResponseMode = Literal["streaming", "blocking"]
-"""Response mode for chat messages. 
+"""Response mode for chat messages.
 - streaming: Real-time streaming response
 - blocking: Complete response after processing (Cloudflare timeout is 100s)
 """

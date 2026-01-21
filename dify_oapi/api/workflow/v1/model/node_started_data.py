@@ -3,7 +3,7 @@
 This module defines the data structure for node_started streaming events.
 """
 
-from typing import Any, Optional
+from typing import Any
 
 from pydantic import BaseModel
 
@@ -18,7 +18,7 @@ class NodeStartedData(BaseModel):
     node_type: NodeType
     title: str
     index: int
-    predecessor_node_id: Optional[str] = None
+    predecessor_node_id: str | None = None
     inputs: dict[str, Any]
     created_at: int
 

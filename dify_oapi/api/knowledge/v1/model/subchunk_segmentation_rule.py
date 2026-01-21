@@ -1,16 +1,14 @@
 """Sub-chunk segmentation rule model for Knowledge Base API."""
 
-from typing import Optional
-
 from pydantic import BaseModel
 
 
 class SubChunkSegmentationRule(BaseModel):
     """Sub-chunk segmentation rule model with builder pattern."""
 
-    separator: Optional[str] = None
-    max_tokens: Optional[int] = None
-    chunk_overlap: Optional[int] = None
+    separator: str | None = None
+    max_tokens: int | None = None
+    chunk_overlap: int | None = None
 
     @staticmethod
     def builder() -> "SubChunkSegmentationRuleBuilder":

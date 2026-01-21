@@ -1,7 +1,5 @@
 """Retrieval model for Knowledge Base API."""
 
-from typing import Optional
-
 from pydantic import BaseModel
 
 from .knowledge_types import SearchMethod
@@ -12,14 +10,14 @@ from .weights import Weights
 class RetrievalModel(BaseModel):
     """Retrieval model with builder pattern."""
 
-    search_method: Optional[SearchMethod] = None
-    reranking_enable: Optional[bool] = None
-    reranking_mode: Optional[str] = None
-    reranking_model: Optional[RerankingMode] = None
-    top_k: Optional[int] = None
-    score_threshold_enabled: Optional[bool] = None
-    score_threshold: Optional[float] = None
-    weights: Optional[Weights] = None
+    search_method: SearchMethod | None = None
+    reranking_enable: bool | None = None
+    reranking_mode: str | None = None
+    reranking_model: RerankingMode | None = None
+    top_k: int | None = None
+    score_threshold_enabled: bool | None = None
+    score_threshold: float | None = None
+    weights: Weights | None = None
 
     @staticmethod
     def builder() -> "RetrievalModelBuilder":

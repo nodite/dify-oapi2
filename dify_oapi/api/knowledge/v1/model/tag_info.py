@@ -1,7 +1,5 @@
 """Tag information model for Knowledge Base API."""
 
-from typing import Optional
-
 from pydantic import BaseModel
 
 from .knowledge_types import TagType
@@ -10,12 +8,12 @@ from .knowledge_types import TagType
 class TagInfo(BaseModel):
     """Tag information model with builder pattern."""
 
-    id: Optional[str] = None
-    name: Optional[str] = None
-    type: Optional[TagType] = None
-    binding_count: Optional[int] = None
-    created_by: Optional[str] = None
-    created_at: Optional[float] = None
+    id: str | None = None
+    name: str | None = None
+    type: TagType | None = None
+    binding_count: int | None = None
+    created_by: str | None = None
+    created_at: float | None = None
 
     @staticmethod
     def builder() -> "TagInfoBuilder":

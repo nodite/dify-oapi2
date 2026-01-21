@@ -3,7 +3,7 @@
 This module defines the data structure for node_finished streaming events.
 """
 
-from typing import Any, Optional
+from typing import Any
 
 from pydantic import BaseModel
 
@@ -19,14 +19,14 @@ class NodeFinishedData(BaseModel):
     node_type: NodeType
     title: str
     index: int
-    predecessor_node_id: Optional[str] = None
-    inputs: Optional[dict[str, Any]] = None
-    process_data: Optional[dict[str, Any]] = None
-    outputs: Optional[dict[str, Any]] = None
+    predecessor_node_id: str | None = None
+    inputs: dict[str, Any] | None = None
+    process_data: dict[str, Any] | None = None
+    outputs: dict[str, Any] | None = None
     status: NodeStatus
-    error: Optional[str] = None
-    elapsed_time: Optional[float] = None
-    execution_metadata: Optional[ExecutionMetadata] = None
+    error: str | None = None
+    elapsed_time: float | None = None
+    execution_metadata: ExecutionMetadata | None = None
     created_at: int
 
     @staticmethod

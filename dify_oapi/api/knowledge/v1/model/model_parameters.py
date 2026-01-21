@@ -1,15 +1,13 @@
 """Model parameters for Knowledge Base API."""
 
-from typing import Optional
-
 from pydantic import BaseModel
 
 
 class ModelParameters(BaseModel):
     """Model parameters with builder pattern."""
 
-    context_size: Optional[int] = None
-    max_chunks: Optional[int] = None
+    context_size: int | None = None
+    max_chunks: int | None = None
 
     @staticmethod
     def builder() -> "ModelParametersBuilder":

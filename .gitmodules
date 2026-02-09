@@ -1,3 +1,4 @@
 [submodule "docs/dify-docs"]
 	path = docs/dify-docs
 	url = git@github.com:langgenius/dify-docs.git
+	branch = main

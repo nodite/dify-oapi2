@@ -46,6 +46,7 @@ exclude = [
     "dist",
     "site-packages",
     "venv",
+    "docs",
 ]
 
 line-length = 120
@@ -99,7 +100,7 @@ max-statements = 50  # function max statement
 
 [tool.pylint.main]
 py-version = "3.10"
-ignore = [".venv", "venv", "examples", "tests", "build", "dist"]
+ignore = [".venv", "venv", "examples", "tests", "build", "dist", "docs"]
 
 ############################################################
 # Dependency group
@@ -150,7 +151,7 @@ update_changelog_on_bump = true
 
 [tool.mypy]
 files = ["dify_oapi"] # 只检查主要代码
-exclude = [".venv", "venv", "examples", "tests"]
+exclude = [".venv", "venv", "examples", "tests", "docs"]
 
 python_version = "3.10"
 strict_optional = true
@@ -178,6 +179,7 @@ extend-exclude = '''
 (
   ^/build/          # exclude a directory named build in the root of the project
   | ^/dist/         # exclude a directory named dist in the root of the project
+  | ^/docs/         # exclude docs directory (submodule)
   | \.venv/         # exclude .venv directories anywhere in the project
   | venv/           # exclude venv directories anywhere in the project
 )

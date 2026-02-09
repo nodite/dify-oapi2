@@ -138,7 +138,7 @@ optional = true
 [tool.poetry.group.format.dependencies]
 pre-commit = "^4"
 mypy = "^1"
-ruff = "^0.14"
+ruff = ">=0.14,<0.16"
 black = ">=25,<27"
 pylint = "^4"
 

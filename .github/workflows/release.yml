@@ -24,7 +24,8 @@ jobs:
     timeout-minutes: 30
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
           token: ${{ secrets.PAT_TOKEN }}
           fetch-depth: 0
@@ -44,12 +45,14 @@ jobs:
       - name: Install dependencies
         run: poetry install --with dev,format
 
-      - name: Run checks
+      - name: Run linting
         run: |
           poetry run ruff check .
           poetry run mypy .
           poetry run pylint .
-          poetry run pytest tests/ -v --tb=short
+
+      - name: Run tests
+        run: poetry run pytest tests/ -v --tb=short
         env:
           DOMAIN: ${{ secrets.DOMAIN }}
           CHAT_KEY: ${{ secrets.CHAT_KEY }}
@@ -74,12 +77,15 @@ jobs:
       - name: Commit and push
         id: bump_commit
         run: |
-          git config user.name github-actions
-          git config user.email github-actions@github.com
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
           git add pyproject.toml
           git commit -m "chore: bump version to v${{ steps.version.outputs.version }} [skip actions]"
           git push
           echo "sha=$(git rev-parse HEAD)" >> $GITHUB_OUTPUT
+
+      - name: Build package
+        run: poetry build
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v3
@@ -91,9 +97,6 @@ jobs:
           draft: false
           prerelease: false
           generate_release_notes: true
-
-      - name: Build package
-        run: poetry build
 
       - name: Publish to PyPI
         run: poetry publish

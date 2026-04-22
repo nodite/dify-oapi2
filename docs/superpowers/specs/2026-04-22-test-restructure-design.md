@@ -81,7 +81,8 @@ dify_oapi/
     │   │   └── test_service.py
     │   └── v1/
     │       ├── __tests__/
-    │       │   └── test_async.py
+    │       │   ├── test_async.py
+    │       │   └── test_integration.py
     │       ├── model/
     │       │   └── __tests__/
     │       │       └── test_models.py
@@ -109,6 +110,8 @@ dify_oapi/
 
 These are mock-based tests that duplicate unit test coverage with no additional value.
 
+Note: `tests/chatflow/v1/test_integration.py` and `tests/knowledge/v1/test_integration.py` are **not** the same as the `tests/integration/` files. They are service-specific tests that exercise multi-step workflows. These are migrated and rewritten with respx mocks (see Section 5).
+
 ---
 
 ## 3. Infrastructure Changes
@@ -122,7 +125,26 @@ Add `respx` to dev dependencies in `pyproject.toml`:
 respx = "^0.21"
 ```
 
-### 3.2 pytest Configuration
+### 3.2 Packaging & Tooling Exclusions
+
+Because `__tests__` directories live inside `dify_oapi/`, they fall under the `packages = [{include = "dify_oapi"}]` directive and would be shipped in the published wheel by default. Three config sections must exclude them:
+
+**pyproject.toml `[tool.poetry]`** — add both patterns to exclude (directory entry + contents):
+```toml
+exclude = [".vscode", "docs", "examples", "tests", "dify_oapi/**/__tests__", "dify_oapi/**/__tests__/**"]
+```
+
+**pyproject.toml `[tool.mypy]`** — add `"__tests__"` to exclude list:
+```toml
+exclude = [".venv", "venv", "examples", "tests", "docs", "__tests__"]
+```
+
+**pyproject.toml `[tool.pylint.main]`** — add `"__tests__"` to ignore list:
+```toml
+ignore = [".venv", "venv", "examples", "tests", "build", "dist", "docs", "__tests__"]
+```
+
+### 3.3 pytest Configuration
 
 Update `[tool.pytest.ini_options]` in `pyproject.toml`:
 
@@ -148,7 +170,7 @@ Key changes from current config:
 
 `__tests__` directories do **not** get `__init__.py` files. `importlib` mode handles imports correctly without them.
 
-### 3.3 conftest.py
+### 3.4 conftest.py
 
 The existing `tests/conftest.py` is deleted. A new `dify_oapi/conftest.py` replaces it with real objects instead of MagicMocks:
 
@@ -170,7 +192,9 @@ def request_option() -> RequestOption:
 
 @pytest.fixture
 def config(domain: str) -> Config:
-    return Config.builder().domain(domain).build()
+    c = Config()
+    c.domain = domain
+    return c
 ```
 
 Removed fixtures (not migrated):
@@ -180,6 +204,10 @@ Removed fixtures (not migrated):
 ---
 
 ## 4. Test Quality Standard
+
+### 4.0 respx + ConnectionPoolManager Isolation
+
+`respx.mock` patches `httpx.Client.send` and `httpx.AsyncClient.send` at the class method level (not instance level), so it covers both newly created and cached clients. The `ConnectionPoolManager` creates `httpx.Client` instances lazily on first request — `Dataset(config)` in `setup` does not create any client. Client creation only happens when `Transport.execute` is called, which is inside the `@respx.mock` scope. Test isolation is safe.
 
 ### 4.1 What Each Test Must Verify
 
@@ -198,14 +226,15 @@ import httpx
 import pytest
 import respx
 
-from dify_oapi.api.knowledge.v1.model.dataset.create_dataset_request import CreateDatasetRequest
-from dify_oapi.api.knowledge.v1.resource.dataset import DatasetResource
+from dify_oapi.api.knowledge.v1.model.create_dataset_request import CreateDatasetRequest
+from dify_oapi.api.knowledge.v1.model.create_dataset_request_body import CreateDatasetRequestBody
+from dify_oapi.api.knowledge.v1.resource.dataset import Dataset
 
 
-class TestDatasetResource:
+class TestDataset:
     @pytest.fixture(autouse=True)
     def setup(self, config, request_option):
-        self.resource = DatasetResource(config)
+        self.resource = Dataset(config)
         self.option = request_option
 
     @respx.mock
@@ -224,19 +253,21 @@ class TestDatasetResource:
         route = respx.post("https://api.dify.ai/v1/datasets").mock(
             return_value=httpx.Response(200, json={"id": "ds-123", "name": "Test"})
         )
+        body = CreateDatasetRequestBody.builder().name("Test").build()
         result = self.resource.create(
-            CreateDatasetRequest.builder().name("Test").build(), self.option
+            CreateDatasetRequest.builder().request_body(body).build(), self.option
         )
-        assert result.dataset.id == "ds-123"
+        assert result.id == "ds-123"
         assert route.calls.last.request.headers["Authorization"] == "Bearer test-key"
 
     @respx.mock
     def test_delete(self):
-        respx.delete("https://api.dify.ai/v1/datasets/ds-123").mock(
+        route = respx.delete("https://api.dify.ai/v1/datasets/ds-123").mock(
             return_value=httpx.Response(200, json={"result": "success"})
         )
         result = self.resource.delete("ds-123", self.option)
         assert result.result == "success"
+        assert route.calls.last.request.headers["Authorization"] == "Bearer test-key"
 ```
 
 ### 4.3 Async Test Template
@@ -246,13 +277,13 @@ import httpx
 import pytest
 import respx
 
-from dify_oapi.api.knowledge.v1.resource.dataset import DatasetResource
+from dify_oapi.api.knowledge.v1.resource.dataset import Dataset
 
 
-class TestDatasetResourceAsync:
+class TestDatasetAsync:
     @pytest.fixture(autouse=True)
     def setup(self, config, request_option):
-        self.resource = DatasetResource(config)
+        self.resource = Dataset(config)
         self.option = request_option
 
     @respx.mock
@@ -269,7 +300,11 @@ class TestDatasetResourceAsync:
 
 No `@pytest.mark.asyncio` decorators — redundant under `asyncio_mode = "auto"`.
 
+The sync `autouse` `setup` fixture setting `self.resource` and `self.option` is safe in both sync and async test methods: pytest creates a fresh class instance per test item, and the async method sees the same instance that the sync fixture ran on.
+
 ### 4.4 Streaming Test Template
+
+The SDK streaming generator yields raw bytes from `httpx.Response.iter_bytes()` — not parsed SSE lines. Chunk boundaries are not guaranteed, so assertions should use `in` on the fully joined bytes:
 
 ```python
 @respx.mock
@@ -299,7 +334,7 @@ respx.delete("https://api.dify.ai/v1/datasets/ds-123").mock(...)
 
 ## 5. Migration File Map
 
-All 42 test files are migrated. 3 integration files are deleted.
+36 test files are migrated and rewritten. 3 integration files are deleted. Total source files: 39.
 
 | Original Path | New Path | Action |
 |---|---|---|
@@ -329,6 +364,7 @@ All 42 test files are migrated. 3 integration files are deleted.
 | `tests/dify/v1/resource/test_info.py` | `dify_oapi/api/dify/v1/resource/__tests__/test_info.py` | migrate + rewrite |
 | `tests/knowledge/test_service.py` | `dify_oapi/api/knowledge/__tests__/test_service.py` | migrate + rewrite |
 | `tests/knowledge/v1/test_async.py` | `dify_oapi/api/knowledge/v1/__tests__/test_async.py` | migrate + rewrite |
+| `tests/knowledge/v1/test_integration.py` | `dify_oapi/api/knowledge/v1/__tests__/test_integration.py` | migrate + rewrite |
 | `tests/knowledge/v1/model/test_models.py` | `dify_oapi/api/knowledge/v1/model/__tests__/test_models.py` | migrate + rewrite |
 | `tests/knowledge/v1/resource/test_chunk.py` | `dify_oapi/api/knowledge/v1/resource/__tests__/test_chunk.py` | migrate + rewrite |
 | `tests/knowledge/v1/resource/test_dataset.py` | `dify_oapi/api/knowledge/v1/resource/__tests__/test_dataset.py` | migrate + rewrite |

@@ -136,7 +136,6 @@ addopts = [
     "--import-mode=importlib"
 ]
 
-
 [tool.poetry.group.format]
 optional = true
 [tool.poetry.group.format.dependencies]

@@ -9,7 +9,7 @@ keywords = ["dify", "nlp", "ai", "language-processing"]
 homepage = 'https://github.com/nodite/dify-oapi2'
 packages = [{include = "dify_oapi"}]
 include = ["README.md", "LICENSE"]
-exclude = [".vscode", "docs", "examples", "tests"]
+exclude = [".vscode", "docs", "examples", "tests", "dify_oapi/**/__tests__", "dify_oapi/**/__tests__/**"]
 
 [build-system]
 requires = ["poetry-core"]
@@ -100,7 +100,7 @@ max-statements = 50  # function max statement
 
 [tool.pylint.main]
 py-version = "3.10"
-ignore = [".venv", "venv", "examples", "tests", "build", "dist", "docs"]
+ignore = [".venv", "venv", "examples", "tests", "build", "dist", "docs", "__tests__"]
 
 ############################################################
 # Dependency group
@@ -119,19 +119,22 @@ pytest-env = "^1"
 pytest-asyncio = "^1"
 pre-commit = "^4"
 commitizen = "^4"
+respx = ">=0.21,<1"
 
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "function"
-testpaths = ["tests"]
+testpaths = ["dify_oapi"]
 python_files = ["test_*.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
 addopts = [
     "--strict-markers",
     "--strict-config",
-    "-ra"
+    "-ra",
+    "--import-mode=importlib"
 ]
+
 
 
 [tool.poetry.group.format]
@@ -151,7 +154,7 @@ update_changelog_on_bump = true
 
 [tool.mypy]
 files = ["dify_oapi"] # 只检查主要代码
-exclude = [".venv", "venv", "examples", "tests", "docs"]
+exclude = [".venv", "venv", "examples", "tests", "docs", "__tests__"]
 
 python_version = "3.10"
 strict_optional = true

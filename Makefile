@@ -21,10 +21,10 @@ check: ## Run all checks (lint + type check)
 	poetry run mypy --config-file=pyproject.toml .
 
 test: ## Run tests
-	poetry run pytest tests/ -v
+	poetry run pytest dify_oapi/ -v
 
 test-cov: ## Run tests with coverage
-	poetry run pytest tests/ -v --cov=dify_oapi --cov-report=html --cov-report=term
+	poetry run pytest dify_oapi/ -v --cov=dify_oapi --cov-report=html --cov-report=term
 
 clean: ## Clean build artifacts
 	rm -rf build/

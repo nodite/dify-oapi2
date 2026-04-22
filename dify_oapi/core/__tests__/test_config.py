@@ -1,5 +1,3 @@
-import pytest
-
 from dify_oapi.core.model.config import Config
 from dify_oapi.core.model.request_option import RequestOption
 

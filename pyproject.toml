@@ -9,7 +9,7 @@ keywords = ["dify", "nlp", "ai", "language-processing"]
 homepage = 'https://github.com/nodite/dify-oapi2'
 packages = [{include = "dify_oapi"}]
 include = ["README.md", "LICENSE"]
-exclude = [".vscode", "docs", "examples", "tests", "dify_oapi/**/__tests__", "dify_oapi/**/__tests__/**"]
+exclude = [".vscode", "docs", "examples", "tests", "dify_oapi/conftest.py", "dify_oapi/__tests__", "dify_oapi/__tests__/**", "dify_oapi/**/__tests__", "dify_oapi/**/__tests__/**"]
 
 [build-system]
 requires = ["poetry-core"]
@@ -47,6 +47,7 @@ exclude = [
     "site-packages",
     "venv",
     "docs",
+    "__tests__",
 ]
 
 line-length = 120
@@ -134,7 +135,6 @@ addopts = [
     "-ra",
     "--import-mode=importlib"
 ]
-
 
 
 [tool.poetry.group.format]
